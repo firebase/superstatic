@@ -49,3 +49,15 @@ apps. An example:
 
 **error_page:** the path to the page that you want to render 404 errors if an unrecognized
 URL is supplied. For example, `error.html`.
+
+**max_age:** by default, all pages served by superstatic have cache control headers set at
+24 hours. To change them, you can supply an object containing file globs and ages (in seconds).
+An example:
+
+```json
+{
+  "max_age": {
+    "**/*.html": 600
+  }
+}
+```
