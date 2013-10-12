@@ -17,17 +17,24 @@ By default, Superstatic will simply serve the current directory on port
 
     superstatic
     
-You can specify the port and hostname of the server:
+You can optionally specify the directory, port and hostname of the server:
 
-    superstatic --port 8080 --host 127.0.0.1
+    superstatic public --port 8080 --host 127.0.0.1
     
-Where it gets interesting is with the JSON configuration file.
+Where it gets interesting is with Superstatic's JSON configuration file.
 
 ## Configuration
 
 Superstatic reads special configuration from a JSON file (either `superstatic.json`
 or `divshot.json` by default, configurable with `-c`). This JSON file enables
 enhanced static server functionality beyond simply serving files.
+
+**root:** by default, Superstatic will serve the current working directory (or the
+ancestor of the current directory that contains the configuration json being used).
+This configuration key specifies a directory *relative to the configuration file* that
+should be served. For example, if serving a Jekyll app, this might be set to `"_site"`.
+A directory passed as an argument into the command line app supercedes this configuration
+directive.
 
 **clean_urls:** if `true`, all `.html` files will automatically have their extensions
 dropped. If `.html` is used at the end of a filename, it will perform a 301 redirect
@@ -61,3 +68,7 @@ An example:
   }
 }
 ```
+
+Note that you can pass the `--no-cache` option when you run the server to serve all content
+without caching. This is good to use during development when you want fresh content served
+on each request.
