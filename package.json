@@ -4,7 +4,7 @@
   "description": "Superstatic: a static file server for fancy apps",
   "main": "bin/superstatic.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/mocha --recursive --reporter spec ./test"
   },
   "repository": {
     "type": "git",
@@ -21,12 +21,9 @@
     "url": "https://github.com/divshot/superstatic/issues"
   },
   "dependencies": {
-    "commander": "~2.0.0",
     "colors": "~0.6.2",
-    "hapi": "~1.14.0",
     "optimist": "~0.6.0",
-    "stream-dir": "~0.1.0",
-    "mime": "~1.2.11"
+    "gaze": "~0.4.2"
   },
   "preferGlobal": "true",
   "bin": {
