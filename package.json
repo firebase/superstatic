@@ -1,0 +1,37 @@
+{
+  "name": "superstatic",
+  "version": "0.0.1",
+  "description": "Superstatic: a static file server for fancy apps",
+  "main": "bin/superstatic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/divshot/superstatic.git"
+  },
+  "keywords": [
+    "static",
+    "server",
+    "divshot"
+  ],
+  "author": "Divshot",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/divshot/superstatic/issues"
+  },
+  "dependencies": {
+    "commander": "~2.0.0",
+    "colors": "~0.6.2",
+    "hapi": "~1.14.0",
+    "optimist": "~0.6.0"
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "divshot": "bin/superstatic.js"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "expect.js": "~0.2.0"
+  }
+}
