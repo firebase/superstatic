@@ -23,7 +23,8 @@
   "dependencies": {
     "colors": "~0.6.2",
     "optimist": "~0.6.0",
-    "gaze": "~0.4.2"
+    "gaze": "~0.4.2",
+    "superstatic-server": "git+https://github.com/divshot/superstatic-server.git"
   },
   "preferGlobal": "true",
   "bin": {
