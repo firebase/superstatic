@@ -2,26 +2,50 @@
 
 var fs = require('fs');
 var path = require('path');
+var path = require('path');
 var colors = require('colors');
 var program = require('commander');
 var Hapi = require('hapi');
 var streamDir = require('stream-dir');
 var argv = require('optimist').argv;
 var package = require('../package');
-
-
 var SsConfigFile = require('../lib/config/ss_config_file');
-var config = new SsConfigFile({
-  file: 'divshot.json',
-  cwd: path.resolve(process.cwd(), './spikes')
-});
+var SsStoreLocal = require('../lib/store/ss_store_local');
 
-config.loadConfiguration(function () {
+var cwd = path.resolve(process.cwd(), './spikes');
+
+
+
+// var config = new SsConfigFile({
+//   file: 'divshot.json',
+//   cwd: cwd
+// });
+
+// config.loadConfiguration(function () {
   
-});
+// });
 
+// var store = new SsStoreLocal({
+//   cwd: cwd
+// });
 
+// var server = new Hapi.Server(4000);
 
+// server.route({
+//   method: 'GET',
+//   path: '/test',
+//   handler: function (request, reply) {
+//     var file = store.createReadStream('index.html');
+    
+//     this.reply(file)
+//       .hold()
+//       .type(file.type)
+//       .send();
+    
+//   }
+// });
+
+// server.start();
 
 
 
