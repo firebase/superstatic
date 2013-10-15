@@ -11,8 +11,6 @@ var argv = require('optimist').argv;
 var package = require('../package');
 
 var Superstatic = require('../lib/superstatic');
-var SsConfigFile = require('../lib/config/ss_config_file');
-var SsStoreLocal = require('../lib/store/ss_store_local');
 
 var defaults = {
   PORT: 3474,
@@ -20,27 +18,33 @@ var defaults = {
   DIRECTORY: process.cwd()
 };
 
-var ssConfig = new SsConfigFile({
-  file: 'divshot.json',
-  cwd: path.resolve(process.cwd(), './spikes')
-});
-
-var ssStore = new SsStoreLocal({
-  cwd: path.resolve(process.cwd(), './spikes')
-});
-
-var superstatic = new Superstatic({
-  config: ssConfig,
-  store: ssStore,
+var server = Superstatic.createServer({
   port: defaults.PORT,
   host: defaults.HOST,
+  settings: {
+    type: 'file',
+    options: {
+      file: 'divshot.json',
+      cwd: path.resolve(process.cwd(), './spikes')
+    }
+  },
+  store: {
+    type: 'local',
+    options: {
+      cwd: path.resolve(process.cwd(), './spikes')
+    }
+  }
 });
 
-superstatic.start(function () {
-  ssConfig.loadConfiguration(function (err, config) {
+server.start(function () {
+  server.settings.configure(function (err, config) {
     console.log('superstatic started'.blue);
   });
 });
+
+
+
+
 
 
 // Options/config
@@ -50,32 +54,4 @@ superstatic.start(function () {
 // - routes
 // - error_page
 // - max_age
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// program
-//   .option('-p, --port [port]', 'Server port', internals.setPort)
-//   .option('-h, --host [hostname]', 'Server hostname', internals.setHostname)
-//   .version(package.version)
-//   .usage('[options] filename');
-
-// program
-//   .command('* [directory]')
-//   .description('Start the Superstatic server') 
-//   .action(function (directory) {
-//     internals.setDirectory(directory);
-//   });
-  
-// program.parse(process.argv);
 
