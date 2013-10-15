@@ -28,7 +28,7 @@
   },
   "preferGlobal": "true",
   "bin": {
-    "divshot": "bin/superstatic.js"
+    "superstatic": "bin/superstatic.js"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
