@@ -41,17 +41,3 @@ server.start(function () {
     console.log('superstatic started'.blue);
   });
 });
-
-
-
-
-
-
-// Options/config
-// -----------------
-// - root
-// - clean_urls
-// - routes
-// - error_page
-// - max_age
-
