@@ -9,43 +9,63 @@ var Hapi = require('hapi');
 var streamDir = require('stream-dir');
 var argv = require('optimist').argv;
 var package = require('../package');
+
+var Superstatic = require('../lib/superstatic');
 var SsConfigFile = require('../lib/config/ss_config_file');
 var SsStoreLocal = require('../lib/store/ss_store_local');
 
-var cwd = path.resolve(process.cwd(), './spikes');
+var defaults = {
+  PORT: 3474,
+  HOST: '127.0.0.1',
+  DIRECTORY: process.cwd()
+};
+
+var ssConfig = new SsConfigFile({
+  file: 'divshot.json',
+  cwd: path.resolve(process.cwd(), './spikes')
+});
+
+var ssStore = new SsStoreLocal({
+  cwd: path.resolve(process.cwd(), './spikes')
+});
+
+var superstatic = new Superstatic({
+  config: ssConfig,
+  store: ssStore,
+  port: defaults.PORT,
+  host: defaults.HOST
+});
+
+superstatic.start(function () {
+  console.log('superstatic started'.blue);
+});
 
 
 
-// var config = new SsConfigFile({
-//   file: 'divshot.json',
-//   cwd: cwd
-// });
 
-// config.loadConfiguration(function () {
-  
-// });
 
-// var store = new SsStoreLocal({
-//   cwd: cwd
-// });
 
-// var server = new Hapi.Server(4000);
 
-// server.route({
-//   method: 'GET',
-//   path: '/test',
-//   handler: function (request, reply) {
-//     var file = store.createReadStream('index.html');
-    
-//     this.reply(file)
-//       .hold()
-//       .type(file.type)
-//       .send();
-    
-//   }
-// });
 
-// server.start();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
