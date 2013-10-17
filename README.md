@@ -75,6 +75,9 @@ on each request.
 
 ## Run Tests
 
+In superstatic module directory:
+
 ```
+npm install
 npm test
 ```
