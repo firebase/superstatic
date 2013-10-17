@@ -2,7 +2,7 @@
   "name": "superstatic",
   "version": "0.1.0",
   "description": "Superstatic: a static file server for fancy apps",
-  "main": "bin/superstatic.js",
+  "main": "lib/superstatic.js",
   "scripts": {
     "test": "node_modules/.bin/mocha --recursive --reporter spec ./test"
   },
@@ -24,7 +24,10 @@
     "colors": "~0.6.2",
     "optimist": "~0.6.0",
     "gaze": "~0.4.2",
-    "superstatic-server": "git+https://github.com/divshot/superstatic-server.git"
+    "mime": "~1.2.11",
+    "minimatch": "~0.2.12",
+    "file": "~0.2.1",
+    "connect": "~2.9.1"
   },
   "preferGlobal": "true",
   "bin": {
@@ -32,7 +35,8 @@
   },
   "devDependencies": {
     "mocha": "~1.13.0",
-    "expect.js": "~0.2.0"
+    "expect.js": "~0.2.0",
+    "sinon": "~1.7.3"
   },
   "private": true
 }

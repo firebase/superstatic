@@ -2,9 +2,8 @@
 
 var path = require('path');
 var argv = require('optimist').argv;
-var Superstatic = require('superstatic-server');
 var defaults = require('../lib/defaults');
-var server = require('../lib/server');
+var cli = require('../lib/cli');
 
 // app working directory
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
@@ -13,4 +12,4 @@ var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
  
-server.watch(server.createInstance(awd, host, port), path.resolve(awd, '**'));
+ cli.watch(cli.createInstance(awd, host, port), path.resolve(awd, '**'));
