@@ -1,0 +1,21 @@
+module.exports = {
+  cwd: process.cwd(),
+  configuration: {
+    root: './',
+    clean_urls: true,
+    routes: {
+      'custom-route': 'about.html',
+      'app**': 'index.html',
+      'app/**': 'index.html'
+    },
+    files: [
+      '/index.html',
+      '/about.html',
+      '/assets/app.js',
+      '/contact/index.html',
+      '/app/index.html',
+      '/app/css/style.css',
+      '/app/js/app.js'
+    ]
+  }
+};

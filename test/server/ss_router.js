@@ -52,26 +52,9 @@ describe('#SsRouter()', function () {
     expect(filePath).to.be(path.join(process.cwd(), this.router.settings.configuration.root, '/about.html'));
   });
   
-  it('determines if non html file is static', function () {
-    var path = '/assets/app.js';
-    expect(this.router.isStatic(path)).to.not.be(false);
-  });
-  
-  it('ignores html files as static files', function () {
-    var path = '/assets/about.html';
-    this.router.cleanUrls = false;
-    expect(this.router.isStatic(path)).to.be(false)
-  });
-  
   it('determines if a path is an html file', function () {
     var path = '/about.html';
     expect(this.router.isHtml(path)).to.be(true);
-  });
-  
-  it('expresses html files as static if clean urls are not configured', function () {
-    var path = '/about.html';
-    this.router.cleanUrls = false;
-    expect(this.router.isStatic(path)).to.be(this.router._buildFilePath(path));
   });
   
   it('determines if file exists in file list', function () {
@@ -85,16 +68,6 @@ describe('#SsRouter()', function () {
     
     expect(this.router.isDirectoryIndex(path1)).to.be('/contact/index.html');
     expect(this.router.isDirectoryIndex(path2)).to.be(false);
-  });
-  
-  it('determines if a route is a clean url', function () {
-    var path1 = '/about';
-    var path2 = '/assets/app';
-    var path3 = '/about.html';
-    
-    expect(this.router.isCleanUrl(path1)).to.be(path1 + '.html');
-    expect(this.router.isCleanUrl(path2)).to.be(false);
-    expect(this.router.isCleanUrl(path3)).to.be(false);
   });
   
   it('determines if a route is a custom route for non glob route definition', function () {
@@ -113,16 +86,6 @@ describe('#SsRouter()', function () {
     expect(this.router.isCustomRoute(path1)).to.not.be(undefined);
     expect(this.router.isCustomRoute(path2)).to.not.be(undefined);
     expect(this.router.isCustomRoute(path3)).to.not.be(undefined);
-  });
-
-  it('resolves a static file path when clean urls turned off', function (done) {
-    var self = this;
-    this.router.cleanUrls = false;
-    this.router.static(this.req, {}, function () {
-      expect(self.req.superstatic).to.not.be(undefined);
-      expect(self.req.superstatic.path).to.be(path.join(process.cwd(), '/about.html'));
-      done();
-    });
   });
   
   it('resolves the file path with a custom route', function (done) {
@@ -153,24 +116,6 @@ describe('#SsRouter()', function () {
     expect(this.res.end.called).to.be(true);
   });
   
-  it('resolves a file path as a "clean url" version of a static asset', function (done) {
-    var self = this;
-    this.req = { url: '/about' };
-    this.router.cleanUrl(this.req, this.res, function () {
-      expect(self.req.superstatic).to.not.be(undefined);
-      expect(self.req.superstatic.path).to.be(self.router._buildFilePath('/about.html'));
-      
-      done();
-    });
-  });
-  
-  it('redirects a static html file to the clean urls if clean urls are enabled', function () {
-    this.req = { url: '/assets/about.html' };
-    this.router.cleanUrl(this.req, this.res, sinon.spy());
-    expect(this.res.writeHead.calledWith(301, { Location: '/assets/about' })).to.be(true);
-    expect(this.res.end.called).to.be(true);
-  });
-  
   it('skips the middleware if the superstatic.path has already been set', function (done) {
     var self = this;
     this.req = {
@@ -194,19 +139,6 @@ describe('#SsRouter()', function () {
     it.skip('returns a 404 - not found response if a requested file does not exist', function (done) {
       done();
     });
-  });
-  
-  it.skip('redirects if path does not contain a trailing slash', function () {
-    this.req.url = '/about';
-    this.router.forceTrailingSlash(this.req, this.res, function () {});
-    expect(this.res.writeHead.calledWith(301, {Location: '/about/'})).to.be(true);
-  });
-  
-  it.skip('does not redirect if a static file does not have a trailing slash', function () {
-    var callbackSpy = sinon.spy();
-    this.req.url = '/about.png';
-    this.router.forceTrailingSlash(this.req, this.res, callbackSpy);
-    expect(callbackSpy.called).to.be(true);
   });
   
   it('removes the trailing slash for a given url', function () {
