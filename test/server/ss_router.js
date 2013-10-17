@@ -3,7 +3,7 @@ var expect = require('expect.js');
 var sinon = require('sinon');
 var SsRouter = require('../../lib/server/ss_router');
 
-describe('#SsRouter()', function () {
+describe.skip('#SsRouter()', function () {
   beforeEach(function () {
     this.req = {
       url: '/about.html'

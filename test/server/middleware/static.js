@@ -1,16 +1,16 @@
 var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
-var ssStatic = require('../../../lib/server/middleware/ss_static');
+var static = require('../../../lib/server/middleware/static');
 
-describe('#ssStatic() middleware', function() {
+describe('#static() middleware', function() {
   beforeEach(setup.beforeEach);
   
   it('determines if non html file is static', function (done) {
     var path = '/assets/app.js';
     
-    ssStatic(this.req, this.res, function () {
-      expect(ssStatic.internals.isStatic(path)).to.not.be(false);
+    static(this.req, this.res, function () {
+      expect(static.internals.isStatic(path)).to.not.be(false);
       done();
     });
   });
@@ -18,9 +18,9 @@ describe('#ssStatic() middleware', function() {
   it('ignores html files as static files', function (done) {
     var path = '/assets/about.html';
     
-    ssStatic(this.req, this.res, function () {
-      ssStatic.internals.router.cleanUrls = false;
-      expect(ssStatic.internals.isStatic(path)).to.be(false)
+    static(this.req, this.res, function () {
+      static.internals.router.cleanUrls = false;
+      expect(static.internals.isStatic(path)).to.be(false)
       done();
     });
   });
@@ -28,9 +28,9 @@ describe('#ssStatic() middleware', function() {
   it('expresses html files as static if clean urls are not configured', function (done) {
     var path = '/about.html';
     
-    ssStatic(this.req, this.res, function () {
-      ssStatic.internals.router.cleanUrls = false;
-      expect(ssStatic.internals.isStatic(path)).to.be(ssStatic.internals.router._buildFilePath(path));
+    static(this.req, this.res, function () {
+      static.internals.router.cleanUrls = false;
+      expect(static.internals.isStatic(path)).to.be(static.internals.router._buildFilePath(path));
       done();
     });
   });
@@ -39,7 +39,7 @@ describe('#ssStatic() middleware', function() {
     var self = this;
     this.req.ssRouter.cleanUrls = false;
     
-    ssStatic(this.req, this.res, function () {
+    static(this.req, this.res, function () {
       expect(self.req.superstatic).to.not.be(undefined);
       expect(self.req.superstatic.path).to.be(path.join(process.cwd(), '/about.html'));
       done();

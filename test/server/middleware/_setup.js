@@ -2,7 +2,7 @@ var path = exports.path = require('path');
 var expect = exports.expect = require('expect.js');
 var sinon = require('sinon');
 var extend = exports.extend = require('node.extend');
-var ssRouter = exports.ssRouter = require('../../../lib/server/middleware/ss_router');
+var router = exports.router = require('../../../lib/server/middleware/router');
 var settings = exports.settings = require('../../fixtures/settings');
 
 exports.beforeEach = function (done) {
@@ -16,5 +16,5 @@ exports.beforeEach = function (done) {
   };
   
   extend(true, this.settings, settings);
-  ssRouter(this.settings)(this.req, this.res, done);
+  router(this.settings)(this.req, this.res, done);
 };
