@@ -103,29 +103,4 @@ describe.skip('#SsRouter()', function () {
       done();
     });
   });
-  
-  describe('#notFound()', function() {
-    it('returns 404 if the response path does not exists', function () {
-      this.router.notFound(this.req, this.res, function () {});
-      expect(this.res.writeHead.calledWith(404)).to.be(true);
-    });
-    
-    it.skip('returns a 404 - not found response if a requested file does not exist', function (done) {
-      done();
-    });
-  });
-  
-  it('removes the trailing slash for a given url', function () {
-    this.req.url = '/about/';
-    this.router.removeTrailingSlash(this.req, this.res, function () {});
-    expect(this.res.writeHead.calledWith(301, {Location: '/about'})).to.be(true);
-    expect(this.res.end.called).to.be(true);
-  });
-  
-  it('does not redirect the root url because of the trailing slash', function () {
-    var callbackSpy = sinon.spy();
-    this.req.url = '/'
-    this.router.removeTrailingSlash(this.req, this.res, callbackSpy);
-    expect(callbackSpy.called).to.be(true);
-  });
 });
