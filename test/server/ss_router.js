@@ -62,14 +62,6 @@ describe('#SsRouter()', function () {
     expect(this.router.isFile(path)).to.be(true);
   });
   
-  it('determines if route resolves as directory serving the index.html file', function () {
-    var path1 = '/contact';
-    var path2 = '/about';
-    
-    expect(this.router.isDirectoryIndex(path1)).to.be('/contact/index.html');
-    expect(this.router.isDirectoryIndex(path2)).to.be(false);
-  });
-  
   it('determines if a route is a custom route for non glob route definition', function () {
     var path1 = '/custom-route';
     var path2 = '/non-custom-route'
@@ -96,24 +88,6 @@ describe('#SsRouter()', function () {
       expect(self.req.superstatic.path).to.be(self.router._buildFilePath('/about.html'));
       done();
     });
-  });
-  
-  it('resolves the file path as a directory index', function (done) {
-    var self = this;
-    this.req = { url: '/contact' };
-    
-    this.router.directoryIndex(this.req, {}, function () {
-      expect(self.req.superstatic).to.not.be(undefined);
-      expect(self.req.superstatic.path).to.be(self.router._buildFilePath('/contact/index.html'));
-      done();
-    });
-  });
-  
-  it('redirects to a directory base path if the path, as a clean url, ends with index', function () {
-    this.req = { url: '/contact/index' };
-    this.router.directoryIndex(this.req, this.res, sinon.spy());
-    expect(this.res.writeHead.calledWith(301, { Location: '/contact' })).to.be(true);
-    expect(this.res.end.called).to.be(true);
   });
   
   it('skips the middleware if the superstatic.path has already been set', function (done) {
