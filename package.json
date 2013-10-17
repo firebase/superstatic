@@ -27,8 +27,7 @@
     "mime": "~1.2.11",
     "minimatch": "~0.2.12",
     "file": "~0.2.1",
-    "connect": "~2.9.1",
-    "nodemon": "~0.7.10"
+    "connect": "~2.9.1"
   },
   "preferGlobal": "true",
   "bin": {

@@ -3,41 +3,70 @@
 var spawn = require('child_process').spawn;
 var path = require('path');
 var argv = require('optimist').argv;
+var gaze = require('gaze');
+var colors = require('colors');
+var Superstatic = require('../lib/server/ss_server');
 var defaults = require('../lib/defaults');
-var startCli = require('../lib/cli');
 
 // app working directory
+var watcherGlob = '**';
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
 var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
 
-
-var nodemonCmd = path.resolve(__dirname, '../node_modules/.bin/nodemon');
-var appDir = path.resolve(__dirname, '../lib/cli.js');
-var watcher = spawn(nodemonCmd, [appDir, awd, '--watch', awd, '-e', 'json']);
-
-watcher.stderr.on('data', function (data) {
-  console.log('stderr: ' + data);
+gaze(path.resolve(awd, watcherGlob), function (err, watcher) {
+  var self = this;
+  var server = createInstance(awd, host, port);
+  
+  server.start(function () {
+    preamble(host, port);
+  });
+  
+  this.on('all', function (evt, filePath) {
+    postamble(evt, filePath);
+    
+    server.stop(function () {
+      server = createInstance(awd, host, port);
+      server.start(function () {
+        preamble(host, port);
+      });
+    });
+  });
+  
 });
 
-watcher.stdout.on('data', function (data) {
-  process.stdout.write(data.toString());
-});
+function createInstance (awd, host, port) {
+  return Superstatic.createServer({
+    port: port,
+    host: host,
+    settings: {
+      type: 'file',
+      options: {
+        file: 'divshot.json',
+        cwd: awd
+      }
+    },
+    store: {
+      type: 'local',
+      options: {
+        cwd: awd
+      }
+    }
+  });
+};
 
-watcher.on('error', function () {
-  console.log('ERRORRRRR:', arguments);
-});
+function preamble (host, port) {
+  console.log('');
+  console.log('superstatic started'.blue);
+  console.log('--------------------');
+  console.log('Host:', host);
+  console.log('Port:', port);
+}
 
-watcher.on('close', function () {
-  console.log('CLOSED');
-});
-
-
-
-
-startCli(awd, host, port);
-
-// cli.watch(cli.createInstance(awd, host, port), path.resolve(awd, '**'));
-
+function postamble (evt, filePath) {
+  console.log('\n\n');
+  console.log(evt.green + ': ' + filePath);
+  console.log('Restarting server...'.yellow);
+}
