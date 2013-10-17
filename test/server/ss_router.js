@@ -149,7 +149,7 @@ describe('#SsRouter()', function () {
   it('redirects to a directory base path if the path, as a clean url, ends with index', function () {
     this.req = { url: '/contact/index' };
     this.router.directoryIndex(this.req, this.res, sinon.spy());
-    expect(this.res.writeHead.calledWith(301, { Location: '/contact/' })).to.be(true);
+    expect(this.res.writeHead.calledWith(301, { Location: '/contact' })).to.be(true);
     expect(this.res.end.called).to.be(true);
   });
   
@@ -167,7 +167,7 @@ describe('#SsRouter()', function () {
   it('redirects a static html file to the clean urls if clean urls are enabled', function () {
     this.req = { url: '/assets/about.html' };
     this.router.cleanUrl(this.req, this.res, sinon.spy());
-    expect(this.res.writeHead.calledWith(301, { Location: '/assets/about/' })).to.be(true);
+    expect(this.res.writeHead.calledWith(301, { Location: '/assets/about' })).to.be(true);
     expect(this.res.end.called).to.be(true);
   });
   
@@ -196,16 +196,30 @@ describe('#SsRouter()', function () {
     });
   });
   
-  it('redirects if path does not contain a trailling slash', function () {
+  it.skip('redirects if path does not contain a trailing slash', function () {
     this.req.url = '/about';
     this.router.forceTrailingSlash(this.req, this.res, function () {});
     expect(this.res.writeHead.calledWith(301, {Location: '/about/'})).to.be(true);
   });
   
-  it('does not redirect if a static file does not have a trailing slash', function () {
+  it.skip('does not redirect if a static file does not have a trailing slash', function () {
     var callbackSpy = sinon.spy();
     this.req.url = '/about.png';
     this.router.forceTrailingSlash(this.req, this.res, callbackSpy);
+    expect(callbackSpy.called).to.be(true);
+  });
+  
+  it('removes the trailing slash for a given url', function () {
+    this.req.url = '/about/';
+    this.router.removeTrailingSlash(this.req, this.res, function () {});
+    expect(this.res.writeHead.calledWith(301, {Location: '/about'})).to.be(true);
+    expect(this.res.end.called).to.be(true);
+  });
+  
+  it('does not redirect the root url because of the trailing slash', function () {
+    var callbackSpy = sinon.spy();
+    this.req.url = '/'
+    this.router.removeTrailingSlash(this.req, this.res, callbackSpy);
     expect(callbackSpy.called).to.be(true);
   });
 });
