@@ -5,7 +5,7 @@ var path = require('path');
 var argv = require('optimist').argv;
 var gaze = require('gaze');
 var colors = require('colors');
-var Superstatic = require('../lib/server/ss_server');
+var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
 
 // app working directory
