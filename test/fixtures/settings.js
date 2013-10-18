@@ -6,7 +6,9 @@ module.exports = {
     routes: {
       'custom-route': 'about.html',
       'app**': 'index.html',
-      'app/**': 'index.html'
+      'app/**': 'index.html',
+      'app/test/**': 'index.html',
+      'app/test**': 'index.html'
     },
     files: [
       '/index.html',
