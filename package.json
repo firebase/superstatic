@@ -37,7 +37,8 @@
     "mocha": "~1.13.0",
     "expect.js": "~0.2.0",
     "sinon": "~1.7.3",
-    "node.extend": "~1.0.8"
+    "node.extend": "~1.0.8",
+    "through": "~2.3.4"
   },
   "private": true
 }
