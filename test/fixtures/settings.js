@@ -1,4 +1,7 @@
 module.exports = {
+  cache: function (done) {
+    done()
+  },
   cwd: process.cwd(),
   configuration: {
     root: './',
