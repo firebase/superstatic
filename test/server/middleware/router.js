@@ -4,7 +4,7 @@ var expect = setup.expect;
 var sinon = require('sinon');
 var router = require('../../../lib/server/middleware/router');
 
-describe('description', function(done) {
+describe('#router() middleware', function(done) {
   beforeEach(function (done) {
     var self = this;
     this.routerMiddleware = router(setup.extend(setup.settings));
