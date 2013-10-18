@@ -44,7 +44,7 @@ function createInstance (awd, host, port) {
     settings: {
       type: 'file',
       options: {
-        file: 'divshot.json',
+        file: 'superstatic.json',
         cwd: awd
       }
     },
