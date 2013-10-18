@@ -36,4 +36,16 @@ describe('#directoryIndex() middleware', function() {
     expect(this.res.writeHead.calledWith(301, { Location: '/contact' })).to.be(true);
     expect(this.res.end.called).to.be(true);
   });
+  
+  it('skips the middleware if the superstatic.path has already been set', function (done) {
+    var self = this;
+    this.req = {
+      superstatic: { path: '/something.html' }
+    };
+    
+    directoryIndex(this.req, this.res, function () {
+      expect(self.req.superstatic.path).to.be('/something.html');
+      done();
+    });
+  });
 });

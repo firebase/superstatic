@@ -42,4 +42,16 @@ describe('#customRoute() middleware', function() {
       done();
     });
   });
+  
+  it('skips the middleware if the superstatic.path has already been set', function (done) {
+    var self = this;
+    this.req = {
+      superstatic: { path: '/something.html' }
+    };
+    
+    customRoute(this.req, this.res, function () {
+      expect(self.req.superstatic.path).to.be('/something.html');
+      done();
+    });
+  });
 });
