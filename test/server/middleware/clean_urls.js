@@ -53,4 +53,14 @@ describe('#cleanUrls() middleware', function() {
       done();
     });
   });
+  
+  it('404s the clean url version of the static http requests', function (done) {
+    var self = this;
+    this.req.ssRouter.cleanUrls = false;
+    
+    cleanUrls(this.req, this.res, function () {
+      expect(self.req.superstatic).to.be(undefined);
+      done();
+    });
+  });
 });
