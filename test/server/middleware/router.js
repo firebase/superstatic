@@ -7,7 +7,7 @@ var router = require('../../../lib/server/middleware/router');
 describe('#router() middleware', function(done) {
   beforeEach(function (done) {
     var self = this;
-    this.routerMiddleware = router(setup.extend(setup.settings));
+    this.routerMiddleware = router(setup.extend(setup.settings), setup.extend(setup.store));
     this.res = {
       writeHead: sinon.spy(),
       end: sinon.spy()
@@ -36,6 +36,10 @@ describe('#router() middleware', function(done) {
   
   it('defines default files attribute', function () {
     expect(this.router.files).to.not.be(undefined);
+  });
+  
+  it('defines the default file store', function () {
+    expect(this.router.store).to.not.be(undefined);
   });
   
   it('determines if file exists in file list', function () {

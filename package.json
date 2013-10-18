@@ -27,7 +27,8 @@
     "mime": "~1.2.11",
     "minimatch": "~0.2.12",
     "file": "~0.2.1",
-    "connect": "~2.9.1"
+    "connect": "~2.9.1",
+    "hyperquest": "~0.1.8"
   },
   "preferGlobal": "true",
   "bin": {

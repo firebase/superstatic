@@ -30,25 +30,17 @@ describe('#responder() middleware', function() {
       url: '/about.html',
       superstatic: {
         path: this.filePath
+      },
+      ssRouter: {
+        store: { get: function () {
+          var stream = through();
+          stream.type = 'text/html';
+          return stream;
+        } }
       }
     };
     
     responder(this.req, this.res);
     expect(this.res.setHeader.calledWith('Content-Type', 'text/html')).to.be(true);
-  });
-  
-  it('pipes file contents as the response', function (done) {
-    this.res = through();
-    this.res.setHeader = sinon.spy();
-    this.req = {
-      url: '/about.html',
-      superstatic: {
-        path: this.filePath
-      }
-    };
-    responder(this.req, this.res);
-    this.res.on('end', function () {
-      done();
-    });
   });
 });
