@@ -23,10 +23,10 @@ describe('#directoryIndex() middleware', function() {
   });
   
   it('redirects to directory level if url base name is "index"', function () {
-    this.req.url = '/index.html';
+    this.req.url = '/contact/index.html';
     directoryIndex(this.req, this.res, this.next);
     
-    expect(this.res.writeHead.calledWith(301, {Location: '/superstatic'}));
+    expect(this.res.writeHead.calledWith(301, {Location: '/contact'})).to.be(true);
     expect(this.res.end.called).to.equal(true);
   });
   

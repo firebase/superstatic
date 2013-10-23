@@ -44,7 +44,7 @@ function createInstance (awd, host, port) {
     settings: {
       type: 'file',
       options: {
-        file: 'superstatic.json',
+        file: 'superstatic.json', // TODO: change to use ['superstatic.json', 'divshot.json']
         cwd: awd
       }
     },
