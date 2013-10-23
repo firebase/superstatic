@@ -44,7 +44,8 @@
     "node.extend": "~1.0.8",
     "through": "~2.3.4",
     "lodash.clonedeep": "~2.2.1",
-    "mocksy": "~0.1.4"
+    "mocksy": "~0.1.4",
+    "lodash.assign": "~2.2.1"
   },
   "private": true
 }

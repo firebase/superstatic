@@ -37,7 +37,8 @@ var req = exports.req = function () {
 var res = exports.res = function () {
   return cloneDeep({
     writeHead: sinon.spy(),
-    end: sinon.spy()
+    end: sinon.spy(),
+    setHeader: sinon.spy()
   });
 };
 
