@@ -17,6 +17,7 @@ var req = exports.req = function () {
         cwd: '/',
         root: './',
         files: [
+          '/root/superstatic.html',
           '/superstatic.html',
           '/contact/index.html'
         ],

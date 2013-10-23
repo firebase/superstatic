@@ -2,7 +2,7 @@ var setup = require('./_setup');
 var expect = setup.expect;
 var router = require('../../../lib/server/middleware/router');
 
-describe.only('#router() middleware', function() {
+describe('#router() middleware', function() {
   beforeEach(setup.beforeEachMiddleware);
   
   it('creates our ss namespace', function () {

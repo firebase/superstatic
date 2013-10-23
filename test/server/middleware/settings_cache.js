@@ -1,9 +1,8 @@
 var setup = require('./_setup');
-var sinon = require('sinon');
 var expect = setup.expect;
 var settingsCache = require('../../../lib/server/middleware/settings_cache');
 
-describe.only('#settingsCache() middleware', function() {
+describe('#settingsCache() middleware', function() {
   beforeEach(function (done) {
     var self = this;
     this.loadCalled = false;
