@@ -42,7 +42,8 @@
     "expect.js": "~0.2.0",
     "sinon": "~1.7.3",
     "node.extend": "~1.0.8",
-    "through": "~2.3.4"
+    "through": "~2.3.4",
+    "lodash.clonedeep": "~2.2.1"
   },
   "private": true
 }

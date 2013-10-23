@@ -1,66 +1,47 @@
-var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
 var cleanUrls = require('../../../lib/server/middleware/clean_urls');
 
-describe('#cleanUrls() middleware', function() {
-  beforeEach(setup.beforeEach);
+describe.only('#cleanUrls() middleware', function() {
+  beforeEach(setup.beforeEachMiddleware);
   
-  it('determines if a route is a clean url', function (done) {
-    var path1 = '/about';
-    var path2 = '/assets/app';
-    var path3 = '/about.html';
-    
-    this.req.url = '/about';
-    
-    cleanUrls(this.req, this.res, function () {
-      expect(cleanUrls.internals.isCleanUrl(path1)).to.be(path1 + '.html');
-      expect(cleanUrls.internals.isCleanUrl(path2)).to.be(false);
-      expect(cleanUrls.internals.isCleanUrl(path3)).to.be(false);
-      
-      done();
+  describe('skipping middleware', function() {
+    it('skips if no config object available', function () {
+      delete this.req.ss.config;
+      setup.skipsMiddleware.call(this, cleanUrls);
     });
-  });
+    
+    it('skips if clean urls are turned off', function () {
+      setup.skipsMiddleware.call(this, cleanUrls);
+    });
 
-  it('resolves a file path as a "clean url" version of a static asset', function (done) {
-    var self = this;
+    it('skips middleware if it is not an html file and clean urls are on', function () {
+      this.req.ss.config.config.clean_urls = true;
+      this.req.url = '/image.png';
+      setup.skipsMiddleware.call(this, cleanUrls);
+    });
+    
+    it('skips middleware if superstatic path is alread set', function () {
+      this.req.superstatic = { path: '/index.html' };
+      cleanUrls(this.req, this.res, this.next);
+      expect(this.next.called).to.equal(true);
+    });
+  });
+  
+  it('redirects if url is an html file and clean urls are turned on', function () {
+    this.req.ss.config.config.clean_urls = true;
+    cleanUrls(this.req, this.res, this.next);
+    
+    expect(this.res.writeHead.calledWith(301, {Location: '/about'}));
+    expect(this.res.end.called).to.equal(true);
+  });
+  
+  it('sets the request path when clean urls are turned on and it is a clean url', function () {
     this.req.url = '/about';
+    this.req.ss.config.config.clean_urls = true;
+    cleanUrls(this.req, this.res, this.next);
     
-    cleanUrls(this.req, this.res, function () {
-      expect(self.req.superstatic).to.not.be(undefined);
-      expect(self.req.superstatic.path).to.be(cleanUrls.internals.router._buildFilePath('/about.html'));
-      
-      done();
-    });
-  });
-  
-  it('redirects a static html file to the clean urls if clean urls are enabled', function () {
-    this.req.url =  '/assets/about.html';
-    cleanUrls(this.req, this.res, function () {});
-    
-    expect(this.res.writeHead.calledWith(301, { Location: '/assets/about' })).to.be(true);
-    expect(this.res.end.called).to.be(true);
-  });
-  
-  it('skips the middleware if the superstatic.path has already been set', function (done) {
-    var self = this;
-    this.req = {
-      superstatic: { path: '/something.html' }
-    };
-    
-    cleanUrls(this.req, this.res, function () {
-      expect(self.req.superstatic.path).to.be('/something.html');
-      done();
-    });
-  });
-  
-  it('404s the clean url version of the static http requests', function (done) {
-    var self = this;
-    this.req.ssRouter.cleanUrls = false;
-    
-    cleanUrls(this.req, this.res, function () {
-      expect(self.req.superstatic).to.be(undefined);
-      done();
-    });
+    expect(this.next.called).to.equal(true);
+    expect(this.req.superstatic).to.eql({path: '/about.html'});
   });
 });
