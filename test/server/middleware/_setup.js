@@ -19,6 +19,8 @@ var req = exports.req = function () {
           '/superstatic.html',
           '/contact/index.html'
         ],
+        
+        // From config file
         routes: {
           'custom-route': 'superstatic.html',
           'app**': 'superstatic.html',
@@ -26,7 +28,9 @@ var req = exports.req = function () {
           'app/test/**': 'superstatic.html',
           'app/test**': 'superstatic.html'
         },
-        config: {}
+        config: {},
+        
+        // Routes defined by us
       },
       store: {}
     },
@@ -53,7 +57,18 @@ var skipsMiddleware = exports.skipsMiddleware = function (middleware) {
 }
 
 var setupRouter = exports.setupRouter = function (req, res, callback) {
-  router({}, {}, [])(req, res, callback);
+  router({}, {}, [
+    {
+      path: '/cache',
+      method: 'GET',
+      validate: {
+        headers: sinon.spy()
+      },
+      handler: function (req, res) {
+        res.callback();
+      }
+    }
+  ])(req, res, callback);
 };
 
 exports.beforeEachMiddleware = function (done) {
