@@ -1,59 +1,52 @@
-var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
-var sinon = require('sinon');
 var router = require('../../../lib/server/middleware/router');
 
-// describe('#router() middleware', function(done) {
-//   beforeEach(function (done) {
-//     var self = this;
-//     this.routerMiddleware = router(setup.extend(setup.settings), setup.extend(setup.store));
-//     this.res = {
-//       writeHead: sinon.spy(),
-//       end: sinon.spy()
-//     };
-//     this.req = {
-//       url: '/about.html'
-//     };
-    
-//     this.routerMiddleware(this.req, this.res, function () {
-//       self.router = self.req.ssRouter;
-//       done();
-//     });
-//   });
+describe.only('#router() middleware', function() {
+  beforeEach(setup.beforeEachMiddleware);
   
-//   it('defines default settings attribute', function () {
-//     expect(this.router.settings).to.not.be(undefined);
-//   });
+  it('creates our ss namespace', function () {
+    expect(this.req.ss).to.not.be(undefined);
+  });
   
-//   it('defines default cleanUrls attribute', function () {
-//     expect(this.router.cleanUrls).to.not.be(undefined);
-//   });
+  it('adds the settings object to the namespace', function () {
+    expect(this.req.ss.settings).to.not.be(undefined);
+  });
   
-//   it('defines default routes attribute', function () {
-//     expect(this.router.routes).to.not.be(undefined);
-//   });
+  it('adds the store object to the namespace', function () {
+    expect(this.req.ss.store).to.not.be(undefined);
+  });
   
-//   it('defines default files attribute', function () {
-//     expect(this.router.files).to.not.be(undefined);
-//   });
+  it('adds the cache client to the namespace', function () {
+    expect(this.req.ss.cache).to.not.be(undefined);
+  });
   
-//   it('defines the default file store', function () {
-//     expect(this.router.store).to.not.be(undefined);
-//   });
+  it('adds the routes list to the namespace', function () {
+    expect(this.req.ss.routes).to.not.be(undefined);
+  });
   
-//   it('determines if file exists in file list', function () {
-//     var path = '/index.html';
-//     expect(this.router.isFile(path)).to.be(true);
-//   });
+  it('adds the router to the namespace', function () {
+    expect(this.req.ssRouter).to.not.be(undefined);
+  });
   
-//   it('determines if a path is an html file', function () {
-//     var path = '/about.html';
-//     expect(this.router.isHtml(path)).to.be(true);
-//   });
+  it('builds a file path according to the current working directory and root of project', function () {
+    this.req.ss.config.cwd = 'cwd';
+    this.req.ss.config.root = 'root';
+    expect(this.req.ssRouter._buildFilePath('/filePath')).to.equal('/cwd/root/filePath');
+  });
   
-//   it('builds the file url', function () {
-//     var filePath = this.router._buildFilePath('/about.html');
-//     expect(filePath).to.be(path.join(process.cwd(), this.router.settings.configuration.root, '/about.html'));
-//   });
-// });
+  it('builds a relative file path according to the root of the projects', function () {
+    this.req.ss.config.root = 'root';
+    expect(this.req.ssRouter._buildRelativePath('/filePath')).to.equal('/root/filePath');
+  });
+  
+  it('determines if a given path is a file in the file list', function () {
+    expect(this.req.ssRouter.isFile('/superstatic.html')).to.be(true);
+    expect(this.req.ssRouter.isFile('/nope.html')).to.be(false);
+  });
+  
+  it('determines if a file is an html file', function () {
+    expect(this.req.ssRouter.isHtml('/superstatic.html')).to.be(true);
+    expect(this.req.ssRouter.isHtml('/superstatic.png')).to.be(false);
+  });
+});
