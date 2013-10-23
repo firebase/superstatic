@@ -1,51 +1,40 @@
-var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
 var directoryIndex = require('../../../lib/server/middleware/directory_index');
 
 describe('#directoryIndex() middleware', function() {
-  beforeEach(setup.beforeEach);
+  beforeEach(setup.beforeEachMiddleware);
   
-  it('determines if route resolves as directory serving the index.html file', function (done) {
-    var path1 = '/contact';
-    var path2 = '/about';
+  describe('skipping middleware', function() {
+    it('skips if no config object available', function () {
+      delete this.req.ss.config;
+      setup.skipsMiddleware.call(this, directoryIndex);
+    });
     
-    directoryIndex(this.req, this.res, function () {
-      expect(directoryIndex.internals.isDirectoryIndex(path1)).to.be('/contact/index.html');
-      expect(directoryIndex.internals.isDirectoryIndex(path2)).to.be(false);
-      
-      done();
+    it('skips middleware if superstatic path is alread set', function () {
+      this.req.superstatic = { path: '/superstatic.html' };
+      directoryIndex(this.req, this.res, this.next);
+      expect(this.next.called).to.equal(true);
+    });
+    
+    it('skips middleware if url is not a directory index', function () {
+      setup.skipsMiddleware.call(this, directoryIndex);
     });
   });
   
-  it('resolves the file path as a directory index', function (done) {
-    var self = this;
+  it('redirects to directory level if url base name is "index"', function () {
+    this.req.url = '/index.html';
+    directoryIndex(this.req, this.res, this.next);
+    
+    expect(this.res.writeHead.calledWith(301, {Location: '/superstatic'}));
+    expect(this.res.end.called).to.equal(true);
+  });
+  
+  it('sets the path to the closest "index.html" file if url is a directory index path', function () {
     this.req.url = '/contact';
+    directoryIndex(this.req, this.res, this.next);
     
-    directoryIndex(this.req, this.res, function () {
-      expect(self.req.superstatic).to.not.be(undefined);
-      expect(self.req.superstatic.path).to.be(directoryIndex.internals.router._buildFilePath('/contact/index.html'));
-      
-      done();
-    });
-  });
-  
-  it('redirects to a directory base path if the path, as a clean url, ends with index', function () {
-    this.req = { url: '/contact/index' };
-    directoryIndex(this.req, this.res, function () {});
-    expect(this.res.writeHead.calledWith(301, { Location: '/contact' })).to.be(true);
-    expect(this.res.end.called).to.be(true);
-  });
-  
-  it('skips the middleware if the superstatic.path has already been set', function (done) {
-    var self = this;
-    this.req = {
-      superstatic: { path: '/something.html' }
-    };
-    
-    directoryIndex(this.req, this.res, function () {
-      expect(self.req.superstatic.path).to.be('/something.html');
-      done();
-    });
+    expect(this.next.called).to.be(true);
+    expect(this.req.superstatic).to.eql({path: '/contact/index.html'});
   });
 });
