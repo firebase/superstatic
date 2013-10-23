@@ -10,6 +10,7 @@ var cloneDeep = require('lodash.clonedeep');
 
 var req = exports.req = function () {
   return cloneDeep({
+    connection: {},
     url: '/superstatic.html',
     ss: {
       config: {
