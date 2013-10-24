@@ -7,7 +7,7 @@ var fileOptions = {
   cwd: path.resolve(__dirname, '../../fixtures/sample_app')
 };
 
-describe.only('File - local settings', function() {
+describe('File - local settings', function() {
   beforeEach(function () {
     this.file = new File(fileOptions);
   });

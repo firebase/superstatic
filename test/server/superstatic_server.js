@@ -2,7 +2,7 @@ var path = require('path');
 var http = require('http');
 var connect = require('connect');
 var expect = require('expect.js');
-var fakeredis = require('fakeredis');
+var redis = require('redis-mock');
 var sinon = require('sinon');
 var Server = require('../../lib/server/superstatic_server');
 var ConfigFile = require('../../lib/server/config/file');
@@ -255,7 +255,7 @@ function redisSettings () {
   return {
     type: 'redis',
     options: {
-      client: fakeredis.createClient()
+      client: redis.createClient()
     } 
   };
 }
