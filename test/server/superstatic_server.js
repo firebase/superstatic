@@ -135,19 +135,22 @@ describe('Superstatic server', function() {
     expect(this.server.routes).to.eql([routeDef]);
   });
   
-  describe.only('middleware', function() {
+  describe('middleware', function() {
     beforeEach(function () {
       this._connectServer = this.server._createServer();
       this.stack = this._connectServer.stack;
+      
+      this.stackHandleStr = function (idx) {
+        return this.stack[idx].handle.toString();
+      }
     });
     
     it('uses the logger middleware', function () {
-      expect(this.stack[0].handle.toString()).to.equal(connect.logger('short').toString());
+      expect(this.stackHandleStr(0)).to.equal(connect.logger('short').toString());
     });
     
-    // Can't get to pass
-    it.skip('uses the query middleware', function () {
-      expect(this.stack[1].handle.prototype).to.eql(connect.query.prototype);
+    it('uses the query middleware', function () {
+      expect(this.stackHandleStr(1)).to.eql(connect.query().toString());
     });
     
     it('uses the superstatic router middleware', function () {
@@ -156,8 +159,49 @@ describe('Superstatic server', function() {
       
       expect(routerUsed).to.eql(routerTest);
     });
+    
+    it('uses the restful middleware', function () {
+      expect(this.stackHandleStr(3)).to.equal(middleware.restful().toString());
+    });
+    
+    it('uses the settings cache middleware', function () {
+      expect(this.stackHandleStr(4)).to.equal(middleware.settingsCache.toString());
+    });
+    
+    it('uses the static middleware', function () {
+      expect(this.stackHandleStr(5)).to.equal(middleware.static.toString());
+    });
+    
+    it('uses the custom route middleware', function () {
+      expect(this.stackHandleStr(6)).to.equal(middleware.customRoute.toString());
+    });
+    
+    it('uses the directory index middleware', function () {
+      expect(this.stackHandleStr(7)).to.equal(middleware.directoryIndex.toString());
+    });
+    
+    it('uses the clean urls middleware', function () {
+      expect(this.stackHandleStr(8)).to.equal(middleware.cleanUrls.toString());
+    });
+    
+    it('uses the trailing slash remover middleware', function () {
+      expect(this.stackHandleStr(9)).to.equal(middleware.removeTrailingSlash.toString());
+    });
+    
+    it('uses the connect gzip middleware', function () {
+      expect(this.stackHandleStr(10)).to.equal(connect.compress().toString());
+    });
+    
+    it('uses the not found middleware', function () {
+      expect(this.stackHandleStr(11)).to.equal(middleware.notFound.toString());
+    });
+    
+    it('uses the responder middleware', function () {
+      expect(this.stackHandleStr(12)).to.equal(middleware.responder.toString());
+    });
   });
 });
+
 
 
 function startServer (server, callback) {
