@@ -31,7 +31,8 @@
     "URIjs": "~1.11.2",
     "knox": "~0.8.6",
     "async": "~0.2.9",
-    "request": "~2.27.0"
+    "request": "~2.27.0",
+    "hyperquest": "~0.1.8"
   },
   "preferGlobal": "true",
   "bin": {
