@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -47,6 +47,5 @@
     "mocksy": "~0.1.4",
     "lodash.assign": "~2.2.1",
     "redis-mock": "~0.2.0"
-  },
-  "private": true
+  }
 }
