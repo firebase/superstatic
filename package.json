@@ -28,10 +28,10 @@
     "minimatch": "~0.2.12",
     "file": "~0.2.1",
     "connect": "~2.9.1",
-    "hyperquest": "~0.1.8",
     "URIjs": "~1.11.2",
     "knox": "~0.8.6",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "request": "~2.27.0"
   },
   "preferGlobal": "true",
   "bin": {

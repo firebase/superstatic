@@ -2,7 +2,7 @@ var path = require('path');
 var expect = require('expect.js');
 var Local = require('../../../lib/server/store/local');
 
-describe.only('File store - local', function() {
+describe('File store - local', function() {
   beforeEach(function () {
     this.local = new Local({});
     this.filePath = path.resolve(__dirname, '../../fixtures/sample_app/index.html');
