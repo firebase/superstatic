@@ -1,6 +1,3 @@
 language: node_js
 node_js:
 - 0.10.1
-notifications:
-  flowdock:
-  - af506fc36e23cdba630377271adcee4d
