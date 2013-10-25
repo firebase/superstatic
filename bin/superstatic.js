@@ -9,7 +9,7 @@ var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
 
 // app working directory
-var watcherGlob = '**';
+var watcherGlob = '**/*';
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
 var awd = exports.awd = (argv._[0])
@@ -26,15 +26,9 @@ gaze(path.resolve(awd, watcherGlob), function (err, watcher) {
   
   this.on('all', function (evt, filePath) {
     postamble(evt, filePath);
-    
-    server.stop(function () {
-      server = createInstance(awd, host, port);
-      server.start(function () {
-        preamble(host, port);
-      });
-    });
+    server.settings.configure();
+    doneabmle();
   });
-  
 });
 
 function createInstance (awd, host, port) {
@@ -63,10 +57,16 @@ function preamble (host, port) {
   console.log('--------------------');
   console.log('Host:', host);
   console.log('Port:', port);
+  console.log('\nListening for changes...');
 }
 
 function postamble (evt, filePath) {
-  console.log('\n\n');
+  console.log('');
   console.log(evt.green + ': ' + filePath);
-  console.log('Restarting server...'.yellow);
+  process.stdout.write('Reconfiguring server ... '.yellow);
+}
+
+function doneabmle () {
+  process.stdout.write('done'.blue);
+  console.log('\n\nListening for changes...');
 }
