@@ -14,7 +14,7 @@ describe('File - local settings', function() {
   });
   
   it('uses "superstatic.json" as the default config file', function () {
-    expect(this.file.file).to.be('superstatic.json');
+    expect(this.file.fileName).to.be('superstatic.json');
   });
   
   it('loads the config file on instantiation', function () {
