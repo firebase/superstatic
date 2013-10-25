@@ -44,7 +44,7 @@ describe('Redis - remote settings', function() {
     var self = this;
     this.redis.client.set('1234', JSON.stringify({ id: '1234', config: {} }), function () {
       self.redis.load('app.hostname.com', function (err, build) {
-        expect(build).to.have.keys(['id', 'root', 'host', 'buildId', 'cwd']);
+        expect(build).to.have.keys(['id', 'root', 'host', 'buildId', 'cwd', 'routes', 'max_age']);
         done();
       });
     });
