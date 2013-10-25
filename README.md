@@ -4,7 +4,7 @@ Superstatic is an enhanced static web server that was built to power
 [Divshot.io](http://www.divshot.io). It has fantastic support for HTML5
 pushState applications as well as clean URLs and other goodies.
 
-[![Build Status](https://magnum.travis-ci.com/divshot/superstatic.png?token=risp44KKhevYDMpUCs3M&branch=master)](https://magnum.travis-ci.com/divshot/superstatic)
+[![Build Status](https://travis-ci.org/divshot/superstatic.png?branch=master)](https://travis-ci.org/divshot/superstatic)
 
 ## Installation
 
