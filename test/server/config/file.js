@@ -3,8 +3,9 @@ var expect = require('expect.js');
 var sinon = require('sinon');
 var File = require('../../../lib/server/config/file');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
+var CWD_DIO = path.resolve(__dirname, '../../fixtures/sample_app_dio');
 var fileOptions = {
-  // file: 'superstatic.json',
+  file: 'custom.json',
   cwd: CWD
 };
 
@@ -13,17 +14,50 @@ describe('File - local settings', function() {
     this.file = new File(fileOptions);
   });
   
-  it('uses "superstatic.json" as the default config file', function () {
-    expect(this.file.fileName).to.be('superstatic.json');
+  it('has a list of default config file names', function () {
+    expect(this.file._configFileNames).to.contain('superstatic.json', 'divshot.json');
+  });
+  
+  it('adds the custom config file name to the config file name list', function () {
+    expect(this.file._configFileNames).to.contain('custom.json');
+  });
+  
+  it('adds the custom config file to the beginning of the config file list', function () {
+    expect(this.file._configFileNames[0]).to.be('custom.json');
   });
   
   it('loads the config file on instantiation', function () {
     expect(this.file.configuration).to.have.keys(['name', 'root', 'files']);
   });
   
-  it('loads the configuration file', function () {
-    var configFile = this.file.loadConfigurationFile();
-    expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
+  describe('loading configuration file', function() {
+    it('loads the config file named superstatic.json', function () {
+      var file= new File({
+        cwd: CWD
+      });
+      
+      var configFile = file.loadConfigurationFile();
+      expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
+    });
+    
+    it('loads the config file named divshot.json', function () {
+      var file= new File({
+        cwd: CWD_DIO
+      });
+      
+      var configFile = file.loadConfigurationFile();
+      expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
+    });
+    
+    it('loads the config file named custom.json', function () {
+      var file= new File({
+        file: 'custom.json',
+        cwd: CWD_DIO
+      });
+      
+      var configFile = file.loadConfigurationFile();
+      expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
+    });
   });
   
   it('loads the file list', function () {
