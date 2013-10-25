@@ -2,9 +2,10 @@ var path = require('path');
 var expect = require('expect.js');
 var sinon = require('sinon');
 var File = require('../../../lib/server/config/file');
+var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 var fileOptions = {
   // file: 'superstatic.json',
-  cwd: path.resolve(__dirname, '../../fixtures/sample_app')
+  cwd: CWD
 };
 
 describe('File - local settings', function() {

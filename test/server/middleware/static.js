@@ -35,6 +35,15 @@ describe('#static() middleware', function() {
     this.req.ss.config.config.clean_urls = false;
     static(this.req, this.res, this.next);
     
-    expect(this.req.superstatic).to.eql({path: '/cwd/root/superstatic.html'});
+    expect(this.req.superstatic.path).to.be('/cwd/root/superstatic.html');
+  });
+  
+  it('sets the relative path', function () {
+    this.req.url = '/superstatic.html'
+    this.req.ss.config.cwd = 'cwd';
+    this.req.ss.config.root = 'root';
+    static(this.req, this.res, this.next);
+    
+    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
   });
 });

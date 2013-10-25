@@ -42,6 +42,15 @@ describe('#cleanUrls() middleware', function() {
     cleanUrls(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic).to.eql({path: '/superstatic.html'});
+    expect(this.req.superstatic.path).to.be('/superstatic.html');
+  });
+  
+  it('sets the relative path', function () {
+    this.req.url = '/superstatic';
+    this.req.ss.config.config.clean_urls = true;
+    cleanUrls(this.req, this.res, this.next);
+    
+    expect(this.next.called).to.equal(true);
+    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
   });
 });

@@ -196,8 +196,12 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(11)).to.equal(middleware.notFound.toString());
     });
     
+    it('uses the cache control middleware', function () {
+      expect(this.stackHandleStr(12)).to.equal(middleware.cacheControl().toString());
+    });
+    
     it('uses the responder middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.responder.toString());
+      expect(this.stackHandleStr(13)).to.equal(middleware.responder.toString());
     });
   });
 });

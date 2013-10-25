@@ -1,10 +1,12 @@
 var fs = require('fs');
+var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
 var through = require('through');
 var cloneDeep = require('lodash.clonedeep');
 var extend = require('lodash.assign');
 var responder = require('../../../lib/server/middleware/responder');
+var awd = path.resolve(__dirname, '.../../fixtures/sample_app');
 
 describe('#responder() middleware', function() {
   beforeEach(function (done) {
@@ -25,6 +27,8 @@ describe('#responder() middleware', function() {
         return fileStream;
       };
       
+      self.req.ss.settings.asRelativePath = function () { return '.tmp.html'; }
+      
       done();
     });
   });
@@ -32,7 +36,6 @@ describe('#responder() middleware', function() {
   afterEach(function () {
     fs.unlinkSync(this.filePath);
   });
-  
   
   it('sets the content header according the response path', function () {
     responder(this.req, this.res);

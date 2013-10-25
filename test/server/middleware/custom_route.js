@@ -27,7 +27,7 @@ describe('#customRoute() middleware', function() {
     customRoute(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic).to.eql({path: '/superstatic.html'});
+    expect(this.req.superstatic.path).to.be('/superstatic.html');
   });
   
   it('sets the request path if url matches a custom route as a glob', function () {
@@ -35,6 +35,14 @@ describe('#customRoute() middleware', function() {
     customRoute(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic).to.eql({path: '/superstatic.html'});
+    expect(this.req.superstatic.path).to.be('/superstatic.html');
+  });
+  
+  it('sets the relative path', function () {
+    this.req.url = '/app/test/some/route';
+    customRoute(this.req, this.res, this.next);
+    
+    expect(this.next.called).to.equal(true);
+    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
   });
 });

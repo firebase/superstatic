@@ -35,6 +35,14 @@ describe('#directoryIndex() middleware', function() {
     directoryIndex(this.req, this.res, this.next);
     
     expect(this.next.called).to.be(true);
-    expect(this.req.superstatic).to.eql({path: '/contact/index.html'});
+    expect(this.req.superstatic.path).to.be('/contact/index.html');
+  });
+  
+  it('sets the relative path', function () {
+    this.req.url = '/contact';
+    directoryIndex(this.req, this.res, this.next);
+    
+    expect(this.next.called).to.be(true);
+    expect(this.req.superstatic.relativePath).to.be('/contact/index.html');
   });
 });
