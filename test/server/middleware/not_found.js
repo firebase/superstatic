@@ -1,6 +1,5 @@
 var setup = require('./_setup');
 var expect = setup.expect;
-var through = require('through');
 var notFound = require('../../../lib/server/middleware/not_found');
 var Mocksy = require('mocksy');
 var mocksy = new Mocksy({port: 4567});
