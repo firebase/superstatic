@@ -1,6 +1,6 @@
 var setup = require('./_setup');
 var expect = setup.expect;
-var cacheControl = require('../../../lib/server/middleware/cache_control')();
+var cacheControl = require('../../../lib/server/middleware/cache_control');
 
 describe('#cacheControl() middleware', function() {
   beforeEach(function (done) {
@@ -14,14 +14,28 @@ describe('#cacheControl() middleware', function() {
   });
   
   it('sets the max age cache header if specified in config file', function () {
-    this.req.ss.config.max_age = { '.tmp.html': 1000 };
+    this.req.ss.config.cache_control = { '.tmp.html': 1000 };
     this.req.superstatic.relativePath = '.tmp.html';
     cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'max-age=1000')).to.be(true);
+    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=1000')).to.be(true);
   });
   
-  it('does not set the cache header if nothing is specified in config file', function () {
+  it('sets cache control to no-cache if false is specified in config file', function () {
+    this.req.ss.config.cache_control = { '.tmp.html': false };
+    this.req.superstatic.relativePath = '.tmp.html';
     cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'max-age=1000')).to.be(false);
+    expect(this.res.setHeader.calledWith('Cache-Control', 'no-cache')).to.be(true);
+  });
+  
+  it('sets cache control to the passed string if specified in config file', function () {
+    this.req.ss.config.cache_control = { '.tmp.html': 'private, max-age=300' };
+    this.req.superstatic.relativePath = '.tmp.html';
+    cacheControl(this.req, this.res, this.next);
+    expect(this.res.setHeader.calledWith('Cache-Control', 'private, max-age=300')).to.be(true);
+  });
+  
+  it('sets cache control to 24 hours by default', function() {
+    cacheControl(this.req, this.res, this.next);
+    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=86400')).to.be(true);
   });
 })

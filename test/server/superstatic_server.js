@@ -197,7 +197,7 @@ describe('Superstatic server', function() {
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.cacheControl().toString());
+      expect(this.stackHandleStr(12)).to.equal(middleware.cacheControl.toString());
     });
     
     it('uses the responder middleware', function () {
