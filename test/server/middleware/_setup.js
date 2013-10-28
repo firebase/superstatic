@@ -4,10 +4,10 @@ var sinon = require('sinon');
 var router = exports.router = require('../../../lib/server/middleware/router');
 var settings = exports.settings = require('../../fixtures/settings');
 var store = exports.store = {};
-var cloneDeep = require('lodash.clonedeep');
+var _ = require('lodash');
 
 var req = exports.req = function () {
-  return cloneDeep({
+  return _.cloneDeep({
     connection: {},
     url: '/superstatic.html',
     ss: {
@@ -39,7 +39,7 @@ var req = exports.req = function () {
 };
 
 var res = exports.res = function () {
-  return cloneDeep({
+  return _.cloneDeep({
     writeHead: sinon.spy(),
     end: sinon.spy(),
     setHeader: sinon.spy()

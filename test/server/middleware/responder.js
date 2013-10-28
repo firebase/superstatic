@@ -3,8 +3,7 @@ var path = require('path');
 var setup = require('./_setup');
 var expect = setup.expect;
 var through = require('through');
-var cloneDeep = require('lodash.clonedeep');
-var extend = require('lodash.assign');
+var _ = require('lodash');
 var responder = require('../../../lib/server/middleware/responder');
 var awd = path.resolve(__dirname, '.../../fixtures/sample_app');
 
@@ -18,7 +17,7 @@ describe('#responder() middleware', function() {
     fs.writeFileSync(this.filePath, this.fileContents);
     
     setup.beforeEachMiddleware.call(this, function () {
-      self.res = extend(through(), cloneDeep(self.res));
+      self.res = _.extend(through(), _.cloneDeep(self.res));
       self.req.superstatic = {path: self.filePath};
       
       self.req.ss.store.get = function (path) {

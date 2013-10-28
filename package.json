@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -31,7 +31,6 @@
     "async": "~0.2.9",
     "request": "~2.27.0",
     "hyperquest": "~0.1.8",
-    "lodash.rest": "~2.2.1",
     "lodash": "~2.2.1"
   },
   "preferGlobal": "true",
@@ -43,9 +42,7 @@
     "expect.js": "~0.2.0",
     "sinon": "~1.7.3",
     "through": "~2.3.4",
-    "lodash.clonedeep": "~2.2.1",
     "mocksy": "~0.1.4",
-    "lodash.assign": "~2.2.1",
     "redis-mock": "~0.2.0",
     "knox": "~0.8.6"
   }
