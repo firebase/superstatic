@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {

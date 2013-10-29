@@ -67,6 +67,19 @@ describe('File - local settings', function() {
     expect(fileList).to.contain('/index.html');
   });
   
+  it('ignores the directory and files that are blacklisted', function () {
+    this.file._blacklist = ['**/.git/**', '**/.git**'];
+    var config = this.file.loadConfigurationFile();
+    var fileList = this.file.loadFileList(config);
+    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
+  });
+  
+  it('ignores the ".git" directory by default', function () {
+    var config = this.file.loadConfigurationFile();
+    var fileList = this.file.loadFileList(config);
+    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
+  });
+  
   it('loads a server config object', function (done) {
     this.file.load(null, function (err, config) {
       expect(config).to.have.keys(['root', 'cwd', 'config']);
