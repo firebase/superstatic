@@ -15,17 +15,4 @@ describe('defaults', function() {
   it('has a default directory', function () {
     expect(defaults.DIRECTORY).to.equal(process.cwd());
   });
-  
-  it('defaults to glob matching ".git" directories and nested fiels', function () {
-    var matchedGlob1 = _.find(defaults.IGNORE, function (glob) {
-      return minimatch('/.git/file.js', glob);
-    });
-    
-    var matchedGlob2 = _.find(defaults.IGNORE, function (glob) {
-      return minimatch('/.git', glob);
-    });
-    
-    expect(matchedGlob1).to.not.be(undefined);
-    expect(matchedGlob2).to.not.be(undefined);
-  });
 })

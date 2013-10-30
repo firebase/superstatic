@@ -2,9 +2,9 @@ var path = exports.path = require('path');
 var expect = exports.expect = require('expect.js');
 var sinon = require('sinon');
 var router = exports.router = require('../../../lib/server/middleware/router');
-var settings = exports.settings = require('../../fixtures/settings');
-var store = exports.store = {};
 var _ = require('lodash');
+var Settings = require('../../../lib/server/config/file');
+var Store = require('../../../lib/server/store/local');
 
 var req = exports.req = function () {
   return _.cloneDeep({
@@ -14,11 +14,6 @@ var req = exports.req = function () {
       config: {
         cwd: '/',
         root: './',
-        files: [
-          '/root/superstatic.html',
-          '/superstatic.html',
-          '/contact/index.html'
-        ],
         
         // From config file
         routes: {
@@ -29,12 +24,8 @@ var req = exports.req = function () {
           'app/test**': 'superstatic.html'
         },
         config: {},
-        
-        // Routes defined by us
       },
-      store: {}
     },
-    ssRouter: {}
   });
 };
 
@@ -57,7 +48,11 @@ var skipsMiddleware = exports.skipsMiddleware = function (middleware) {
 }
 
 var setupRouter = exports.setupRouter = function (req, res, callback) {
-  router({}, {}, [
+  var cwd = path.resolve(__dirname, '../../fixtures/sample_app');
+  var settings = new Settings({ cwd: cwd });
+  var store = new Store({ cwd: cwd });
+  
+  router(settings, store, [
     {
       path: '/cache',
       method: 'GET',

@@ -45,6 +45,19 @@ describe('Redis - remote settings', function() {
     this.redis.client.set('1234', JSON.stringify({ id: '1234', config: {} }), function () {
       self.redis.load('app.hostname.com', function (err, build) {
         expect(build).to.have.keys(['id', 'root', 'host', 'buildId', 'cwd', 'routes', 'max_age']);
+        expect(self.redis.build).to.eql(build);
+        done();
+      });
+    });
+  });
+  
+  it('determines of a given file path is a file', function (done) {
+    var self = this;
+    this.redis.client.set('1234', JSON.stringify({ id: '1234', config: {}, files: ['/index.html'] }), function () {
+      self.redis.load('app.hostname.com', function (err, build) {
+        expect(self.redis.isFile('/index.html')).to.be(true);
+        expect(self.redis.isFile('/dir')).to.be(false);
+        expect(self.redis.isFile('/file.html')).to.be(false);
         done();
       });
     });

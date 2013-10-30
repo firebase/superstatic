@@ -1,5 +1,6 @@
 var setup = require('./_setup');
 var expect = setup.expect;
+var sinon = require('sinon');
 var router = require('../../../lib/server/middleware/router');
 
 describe('#router() middleware', function() {
@@ -41,8 +42,9 @@ describe('#router() middleware', function() {
   });
   
   it('determines if a given path is a file in the file list', function () {
-    expect(this.req.ssRouter.isFile('/superstatic.html')).to.be(true);
-    expect(this.req.ssRouter.isFile('/nope.html')).to.be(false);
+    var isFileSpy = this.req.ss.settings.isFile = sinon.spy();
+    this.req.ssRouter.isFile('/superstatic.html');
+    expect(isFileSpy.called).to.be(true);
   });
   
   it('determines if a file is an html file', function () {

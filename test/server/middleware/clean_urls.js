@@ -1,4 +1,5 @@
 var setup = require('./_setup');
+var path = require('path');
 var expect = setup.expect;
 var cleanUrls = require('../../../lib/server/middleware/clean_urls');
 
@@ -37,20 +38,20 @@ describe('#cleanUrls() middleware', function() {
   });
   
   it('sets the request path when clean urls are turned on and it is a clean url', function () {
-    this.req.url = '/superstatic';
+    this.req.url = '/test';
     this.req.ss.config.config.clean_urls = true;
     cleanUrls(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.path).to.be('/superstatic.html');
+    expect(this.req.superstatic.path).to.be('/test.html');
   });
   
   it('sets the relative path', function () {
-    this.req.url = '/superstatic';
+    this.req.url = '/test';
     this.req.ss.config.config.clean_urls = true;
     cleanUrls(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
+    expect(this.req.superstatic.relativePath).to.be('/test.html');
   });
 });

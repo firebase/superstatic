@@ -29,21 +29,21 @@ describe('#static() middleware', function() {
   });
   
   it('sets the request path if the file is static and clean urls are not turned on', function () {
-    this.req.url = '/superstatic.html';
+    this.req.url = '/test.html';
     this.req.ss.config.cwd = 'cwd';
-    this.req.ss.config.root = 'root';
+    this.req.ss.config.root = './';
     this.req.ss.config.config.clean_urls = false;
     static(this.req, this.res, this.next);
     
-    expect(this.req.superstatic.path).to.be('/cwd/root/superstatic.html');
+    expect(this.req.superstatic.path).to.be('/cwd/test.html');
   });
   
   it('sets the relative path', function () {
-    this.req.url = '/superstatic.html'
+    this.req.url = '/test.html'
     this.req.ss.config.cwd = 'cwd';
-    this.req.ss.config.root = 'root';
+    this.req.ss.config.root = './';
     static(this.req, this.res, this.next);
     
-    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
+    expect(this.req.superstatic.relativePath).to.be('/test.html');
   });
 });

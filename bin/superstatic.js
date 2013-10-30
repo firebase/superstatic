@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-var spawn = require('child_process').spawn;
+require('colors');
+
 var path = require('path');
 var argv = require('optimist').argv;
-var gaze = require('gaze');
-var colors = require('colors');
 var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
 
@@ -16,19 +15,9 @@ var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
 
-gaze(path.resolve(awd, watcherGlob), function (err, watcher) {
-  var self = this;
-  var server = createInstance(awd, host, port);
-  
-  server.start(function () {
-    preamble(host, port);
-  });
-  
-  this.on('all', function (evt, filePath) {
-    postamble(evt, filePath);
-    server.settings.configure();
-    doneabmle();
-  });
+var server = createInstance(awd, host, port);
+server.start(function () {
+  preamble(host, port);
 });
 
 function createInstance (awd, host, port) {
@@ -53,11 +42,7 @@ function createInstance (awd, host, port) {
 
 function preamble (host, port) {
   console.log('');
-  console.log('superstatic started'.blue);
-  console.log('--------------------');
-  console.log('Host:', host);
-  console.log('Port:', port);
-  console.log('\nListening for changes...');
+  console.log('server started on port ' + port.toString().bold.blue);
 }
 
 function postamble (evt, filePath) {
