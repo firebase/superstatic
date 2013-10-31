@@ -36,6 +36,6 @@ describe('#cacheControl() middleware', function() {
   
   it('sets cache control to 24 hours by default', function() {
     cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=86400')).to.be(true);
+    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=3600')).to.be(true);
   });
 })
