@@ -60,7 +60,7 @@ apps. An example:
 URL is supplied. For example, `error.html`.
 
 **cache_control:** by default, all pages served by superstatic have cache control headers set at
-24 hours. To change them, you can supply an object containing file globs and ages (in seconds).
+1 hour. To change them, you can supply an object containing file globs and ages (in seconds).
 You can also specify `false` to indicate that no caching should be performed, and a string to
 manually set the cache control header. An example:
 
