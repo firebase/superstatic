@@ -23,7 +23,7 @@ describe('#customRoute() middleware', function() {
   });
   
   it('sets the request path if url matches a custom route exactly', function () {
-    this.req.url = '/custom-route'
+    this.req.ss.pathname = '/custom-route';
     customRoute(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
@@ -31,7 +31,7 @@ describe('#customRoute() middleware', function() {
   });
   
   it('sets the request path if url matches a custom route as a glob', function () {
-    this.req.url = '/app/test/some/route';
+    this.req.ss.pathname = '/app/test/some/route';
     customRoute(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);
@@ -39,7 +39,7 @@ describe('#customRoute() middleware', function() {
   });
   
   it('sets the relative path', function () {
-    this.req.url = '/app/test/some/route';
+    this.req.ss.pathname = '/app/test/some/route';
     customRoute(this.req, this.res, this.next);
     
     expect(this.next.called).to.equal(true);

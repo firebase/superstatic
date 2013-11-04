@@ -30,6 +30,7 @@ describe('#static() middleware', function() {
   
   it('sets the request path if the file is static and clean urls are not turned on', function () {
     this.req.url = '/test.html';
+    this.req.ss.pathname = '/test.html';
     this.req.ss.config.cwd = 'cwd';
     this.req.ss.config.root = './';
     this.req.ss.config.config.clean_urls = false;
@@ -39,7 +40,8 @@ describe('#static() middleware', function() {
   });
   
   it('sets the relative path', function () {
-    this.req.url = '/test.html'
+    this.req.url = '/test.html';
+    this.req.ss.pathname = '/test.html';
     this.req.ss.config.cwd = 'cwd';
     this.req.ss.config.root = './';
     static(this.req, this.res, this.next);

@@ -11,6 +11,7 @@ var req = exports.req = function () {
     connection: {},
     url: '/superstatic.html',
     ss: {
+      pathname: '/superstatic.html',
       config: {
         cwd: '/',
         root: './',

@@ -2,6 +2,8 @@ var setup = require('./_setup');
 var expect = setup.expect;
 var sinon = require('sinon');
 var router = require('../../../lib/server/middleware/router');
+var _ = require('lodash');
+var connect = require('connect');
 
 describe('#router() middleware', function() {
   beforeEach(setup.beforeEachMiddleware);
@@ -28,6 +30,17 @@ describe('#router() middleware', function() {
   
   it('adds the router to the namespace', function () {
     expect(this.req.ssRouter).to.not.be(undefined);
+  });
+  
+  it('parses the url pathname without the query parameters', function () {
+    var req = setup.req();
+    req.url = '/params.html?param=one&another=two';
+    req.ss.pathname = null;
+    
+    setup.setupRouter(req, this.res, this.next);
+    
+    expect(req.ss.pathname).to.equal('/params.html');
+    expect(req.ss.pathname.indexOf('?')).to.equal(-1);
   });
   
   it('builds a file path according to the current working directory and root of project', function () {
