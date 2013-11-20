@@ -23,13 +23,12 @@ describe('#static() middleware', function() {
     });
     
     it('skips middleware if path is not a static file', function () {
-      this.req.url = '/superstatic';
+      this.req.ss.pathname = '/superstatic';
       setup.skipsMiddleware.call(this, static);
     });
   });
   
   it('sets the request path if the file is static and clean urls are not turned on', function () {
-    this.req.url = '/test.html';
     this.req.ss.pathname = '/test.html';
     this.req.ss.config.cwd = 'cwd';
     this.req.ss.config.root = './';
@@ -40,7 +39,6 @@ describe('#static() middleware', function() {
   });
   
   it('sets the relative path', function () {
-    this.req.url = '/test.html';
     this.req.ss.pathname = '/test.html';
     this.req.ss.config.cwd = 'cwd';
     this.req.ss.config.root = './';

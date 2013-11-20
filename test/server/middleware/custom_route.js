@@ -11,13 +11,19 @@ describe('#customRoute() middleware', function() {
       setup.skipsMiddleware.call(this, customRoute);
     });
     
-    it('skips middleware if superstatic path is alread set', function () {
+    it('skips middleware if superstatic path is already set', function () {
       this.req.superstatic = { path: '/superstatic.html' };
       customRoute(this.req, this.res, this.next);
       expect(this.next.called).to.equal(true);
     });
     
     it('skips middleware if the url is not a custom route', function () {
+      setup.skipsMiddleware.call(this, customRoute);
+    });
+    
+    it('skips the middleware if custom route resolve file does not exist', function () {
+      this.req.url = '/exists';
+      this.req.ss.pathname = '/exists';
       setup.skipsMiddleware.call(this, customRoute);
     });
   });

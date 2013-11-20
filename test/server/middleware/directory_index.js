@@ -11,13 +11,19 @@ describe('#directoryIndex() middleware', function() {
       setup.skipsMiddleware.call(this, directoryIndex);
     });
     
-    it('skips middleware if superstatic path is alread set', function () {
+    it('skips middleware if superstatic path is already set', function () {
       this.req.superstatic = { path: '/superstatic.html' };
       directoryIndex(this.req, this.res, this.next);
       expect(this.next.called).to.equal(true);
     });
     
     it('skips middleware if url is not a directory index', function () {
+      setup.skipsMiddleware.call(this, directoryIndex);
+    });
+    
+    it('skips the middleware if index.html does not exists', function () {
+      this.req.url = '/no_index';
+      this.req.ss.pathname = '/no_index';
       setup.skipsMiddleware.call(this, directoryIndex);
     });
   });

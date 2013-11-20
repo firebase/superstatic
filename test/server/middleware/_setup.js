@@ -22,7 +22,8 @@ var req = exports.req = function () {
           'app**': 'superstatic.html',
           'app/**': 'superstatic.html',
           'app/test/**': 'superstatic.html',
-          'app/test**': 'superstatic.html'
+          'app/test**': 'superstatic.html',
+          'exists': 'does-not-exists.html'
         },
         config: {},
       },
