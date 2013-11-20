@@ -3,22 +3,38 @@
 require('colors');
 
 var path = require('path');
+var chokidar = require('chokidar');
 var argv = require('optimist').argv;
 var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
+var server;
 
 // app working directory
-var watcherGlob = '**/*';
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
 var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
 
-var server = createInstance(awd, host, port);
-server.start(function () {
-  preamble(host, port);
+startServer();
+
+// Watch config file for changes
+process.nextTick(function () {
+  chokidar.watch(server.settings.getConfigFileName())
+    .on('change', configFileChanged);
 });
+
+function configFileChanged () {
+  console.log('Configuration file changed. Restarting...');
+  server.stop(startServer);
+}
+
+function startServer () {
+  server = createInstance(awd, host, port);
+  server.start(function () {
+    preamble(host, port);
+  });
+}
 
 function createInstance (awd, host, port) {
   return Superstatic.createServer({
@@ -41,8 +57,8 @@ function createInstance (awd, host, port) {
 };
 
 function preamble (host, port) {
+  console.log('Server started on port ' + port.toString());
   console.log('');
-  console.log('server started on port ' + port.toString().bold.blue);
 }
 
 function postamble (evt, filePath) {
