@@ -1,10 +1,10 @@
 {
   "name": "superstatic",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --recursive --reporter spec ./test"
+    "test": "node_modules/.bin/mocha --recursive ./test"
   },
   "repository": {
     "type": "git",
