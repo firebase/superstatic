@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -31,7 +31,8 @@
     "request": "~2.27.0",
     "hyperquest": "~0.1.8",
     "lodash": "~2.2.1",
-    "chokidar": "~0.7.1"
+    "chokidar": "~0.7.1",
+    "jsun": "~0.1.0"
   },
   "preferGlobal": "true",
   "bin": {
