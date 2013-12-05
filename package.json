@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "through": "~2.3.4",
     "mocksy": "~0.1.4",
     "redis-mock": "~0.2.0",
-    "knox": "~0.8.6"
+    "knox": "~0.8.6",
+    "redis": "~0.9.1"
   }
 }
