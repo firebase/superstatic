@@ -4,7 +4,7 @@
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --recursive ./test --reporter progress"
+    "test": "node_modules/.bin/mocha --recursive ./test --reporter spec"
   },
   "repository": {
     "type": "git",
