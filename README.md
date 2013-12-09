@@ -22,6 +22,10 @@ By default, Superstatic will simply serve the current directory on port
 You can optionally specify the directory, port and hostname of the server:
 
     superstatic public --port 8080 --host 127.0.0.1
+
+If you would request loggin for each http request, you can do the following:
+
+    superstatic --logging
     
 Where it gets interesting is with Superstatic's JSON configuration file.
 

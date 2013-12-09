@@ -12,6 +12,7 @@ var server;
 // app working directory
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
+var logging = exports.loggin = argv.logging || argv.l || defaults.LOGGING;
 var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
@@ -40,6 +41,7 @@ function createInstance (awd, host, port) {
   return Superstatic.createServer({
     port: port,
     host: host,
+    logging: logging,
     settings: {
       type: 'file',
       options: {
