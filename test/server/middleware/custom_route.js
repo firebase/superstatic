@@ -44,14 +44,6 @@ describe('#customRoute() middleware', function() {
     expect(this.req.superstatic.path).to.be('/superstatic.html');
   });
   
-  it('matches the catch all glob to all paths', function () {
-    this.req.ss.config.routes['**'] = 'test.html';
-    this.req.ss.pathname = '/any/route/testing';
-    customRoute(this.req, this.res, this.next);
-    
-    expect(this.req.superstatic.path).to.be('/test.html');
-  });
-  
   it('sets the relative path', function () {
     this.req.ss.pathname = '/app/test/some/route';
     customRoute(this.req, this.res, this.next);

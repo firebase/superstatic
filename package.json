@@ -1,10 +1,10 @@
 {
   "name": "superstatic",
-  "version": "0.5.0",
+  "version": "0.4.7",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --recursive ./test --reporter spec"
+    "test": "node_modules/.bin/mocha --recursive ./test"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,6 @@
     "through": "~2.3.4",
     "mocksy": "~0.1.4",
     "redis-mock": "~0.2.0",
-    "knox": "~0.8.6",
-    "redis": "~0.9.1"
+    "knox": "~0.8.6"
   }
 }

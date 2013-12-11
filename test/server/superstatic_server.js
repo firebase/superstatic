@@ -32,13 +32,8 @@ describe('Superstatic server', function() {
     expect(this.server.settings).to.not.be(undefined);
   });
   
-  it('sets the port on the instance', function () {
+  it('sets the port on the instancje', function () {
     expect(this.server._port).to.be(PORT);
-  });
-  
-  it('sets the logging flag on the instance', function () {
-    var server = localServer(true);
-    expect(server._logging).to.be(true);
   });
   
   describe('#createServer()', function() {
@@ -150,9 +145,8 @@ describe('Superstatic server', function() {
       }
     });
     
-    // TODO: re test for custom logger
     it('uses the logger middleware', function () {
-      expect(this.stackHandleStr(0)).to.equal(middleware.logger().toString());
+      expect(this.stackHandleStr(0)).to.equal(connect.logger('short').toString());
     });
     
     it('uses the query middleware', function () {
@@ -233,11 +227,10 @@ function httpGet(path, callback) {
   });
 }
 
-function localServer (logging) {
+function localServer () {
   return Server.createServer({
     port: PORT,
     host: HOST,
-    logging: logging,
     settings: localSettings(),
     store: localStore()
   });

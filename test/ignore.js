@@ -4,7 +4,6 @@ var ignore = require('../lib/ignore');
 describe('ignoring files', function() {
   it('determine if a directory matches an ignore glob', function () {
     expect(ignore.match('/.git')).to.be(true);
-    expect(ignore.match('.DS_STORE')).to.be(true);
     expect(ignore.match('/dir')).to.be(false);
   });
   
