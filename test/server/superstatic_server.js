@@ -6,7 +6,6 @@ var redis = require('redis-mock');
 var sinon = require('sinon');
 var Server = require('../../lib/server/superstatic_server');
 var ConfigFile = require('../../lib/server/config/file');
-var ConfigRedis = require('../../lib/server/config/redis');
 var StoreLocal = require('../../lib/server/store/local');
 var StoreS3 = require('../../lib/server/store/s3');
 var middleware = require('../../lib/server/middleware');
@@ -59,10 +58,6 @@ describe('Superstatic server', function() {
     describe('remote options', function() {
       beforeEach(function () {
         this.server = remoteServer();
-      });
-      
-      it('configures the settings object as a redis client', function () {
-        expect(this.server.settings instanceof ConfigRedis).to.be(true);
       });
       
       it('configures the file store as an s3 bucket', function () {
@@ -256,12 +251,7 @@ function localSettings () {
 }
 
 function redisSettings () {
-  return {
-    type: 'redis',
-    options: {
-      client: redis.createClient()
-    } 
-  };
+  return {};
 }
 
 function localStore () {
