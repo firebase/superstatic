@@ -163,40 +163,44 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(4)).to.equal(middleware.settingsCache.toString());
     });
     
+    it('users the basic auth protect middlware', function () {
+      expect(this.stackHandleStr(5)).to.equal(middleware.protect.toString());
+    });
+    
     it('uses the static middleware', function () {
-      expect(this.stackHandleStr(5)).to.equal(middleware.static.toString());
+      expect(this.stackHandleStr(6)).to.equal(middleware.static.toString());
     });
     
     it('uses the custom route middleware', function () {
-      expect(this.stackHandleStr(6)).to.equal(middleware.customRoute.toString());
+      expect(this.stackHandleStr(7)).to.equal(middleware.customRoute.toString());
     });
     
     it('uses the directory index middleware', function () {
-      expect(this.stackHandleStr(7)).to.equal(middleware.directoryIndex.toString());
+      expect(this.stackHandleStr(8)).to.equal(middleware.directoryIndex.toString());
     });
     
     it('uses the clean urls middleware', function () {
-      expect(this.stackHandleStr(8)).to.equal(middleware.cleanUrls.toString());
+      expect(this.stackHandleStr(9)).to.equal(middleware.cleanUrls.toString());
     });
     
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(9)).to.equal(middleware.removeTrailingSlash.toString());
+      expect(this.stackHandleStr(10)).to.equal(middleware.removeTrailingSlash.toString());
     });
     
     it('uses the connect gzip middleware', function () {
-      expect(this.stackHandleStr(10)).to.equal(connect.compress().toString());
+      expect(this.stackHandleStr(11)).to.equal(connect.compress().toString());
     });
     
     it('uses the not found middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(middleware.notFound.toString());
+      expect(this.stackHandleStr(12)).to.equal(middleware.notFound.toString());
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.cacheControl.toString());
+      expect(this.stackHandleStr(13)).to.equal(middleware.cacheControl.toString());
     });
     
     it('uses the responder middleware', function () {
-      expect(this.stackHandleStr(13)).to.equal(middleware.responder.toString());
+      expect(this.stackHandleStr(14)).to.equal(middleware.responder.toString());
     });
   });
 });

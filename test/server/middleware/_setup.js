@@ -10,6 +10,7 @@ var req = exports.req = function () {
   return _.cloneDeep({
     connection: {},
     url: '/superstatic.html',
+    headers: {},
     ss: {
       pathname: '/superstatic.html',
       config: {
