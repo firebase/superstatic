@@ -183,24 +183,28 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(9)).to.equal(middleware.cleanUrls.toString());
     });
     
+    it('uses the default favicon middleware', function () {
+      expect(this.stackHandleStr(10)).to.eql(connect.favicon().toString());
+    });
+    
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(10)).to.equal(middleware.removeTrailingSlash.toString());
+      expect(this.stackHandleStr(11)).to.equal(middleware.removeTrailingSlash.toString());
     });
     
     it('uses the connect gzip middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(connect.compress().toString());
+      expect(this.stackHandleStr(12)).to.equal(connect.compress().toString());
     });
     
     it('uses the not found middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.notFound.toString());
+      expect(this.stackHandleStr(13)).to.equal(middleware.notFound.toString());
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(13)).to.equal(middleware.cacheControl.toString());
+      expect(this.stackHandleStr(14)).to.equal(middleware.cacheControl.toString());
     });
     
     it('uses the responder middleware', function () {
-      expect(this.stackHandleStr(14)).to.equal(middleware.responder.toString());
+      expect(this.stackHandleStr(15)).to.equal(middleware.responder.toString());
     });
   });
 });
