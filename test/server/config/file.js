@@ -92,4 +92,17 @@ describe('File - local settings', function() {
       done();
     });
   });
+  
+  it('overrides config values with values passed to the constructor', function () {
+    var options = {
+      config: {
+        name: 'override',
+        root: './'
+      }
+    };
+    
+    var file = new File(options);
+    
+    expect(file.configuration).to.eql(options.config);
+  });
 })
