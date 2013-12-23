@@ -8,11 +8,13 @@ var argv = require('optimist').argv;
 var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/config/file');
+var JSUN = require('jsun');
 var server;
 
 // app working directory
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
+var overrideConfig =  exports.overrideConfig = parseOverrideConfig(argv);
 var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
@@ -41,10 +43,17 @@ function startServer () {
 }
 
 function createInstance (awd, host, port) {
-  var config = new ConfigFile({
-    file: (argv.c || argv.config || 'superstatic.json'),
-    cwd: awd
-  });
+  var configOptions = (overrideConfig)
+    ? {
+        config: overrideConfig,
+        cwd: awd
+      }
+    : {
+        file: (argv.c || argv.config || 'superstatic.json'),
+        cwd: awd
+      }
+  
+  var config = new ConfigFile(configOptions);
   
   return Superstatic.createServer({
     port: port,
@@ -76,4 +85,17 @@ function postamble (evt, filePath) {
 function doneabmle () {
   process.stdout.write('done'.blue);
   console.log('\n\nListening for changes...');
+}
+
+function parseOverrideConfig (argv) {
+  var overrideConfig = argv.config || argv.c || undefined;
+  
+  if (overrideConfig) {
+    var parsed = JSUN.parse(overrideConfig);
+    if (parsed.err) return overrideConfig = undefined;
+    
+    overrideConfig = parsed.json;
+  }
+  
+  return overrideConfig;
 }
