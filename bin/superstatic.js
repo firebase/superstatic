@@ -41,15 +41,17 @@ function startServer () {
 }
 
 function createInstance (awd, host, port) {
+  var config = new ConfigFile({
+    file: (argv.c || argv.config || 'superstatic.json'),
+    cwd: awd
+  });
+  
   return Superstatic.createServer({
     port: port,
     host: host,
     settings: {
       type: 'file',
-      options: {
-        file: (argv.c || argv.config || 'superstatic.json'),
-        cwd: awd
-      }
+      base: config
     },
     store: {
       type: 'local',

@@ -249,12 +249,14 @@ function remoteServer() {
 }
 
 function localSettings () {
+  var config = new ConfigFile({
+    file: 'superstatic.json',
+    cwd: CWD
+  });
+  
   return {
     type: 'file',
-    options: {
-      file: 'superstatic.json',
-      cwd: CWD
-    }
+    base: config
   };
 }
 
