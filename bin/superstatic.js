@@ -7,6 +7,7 @@ var chokidar = require('chokidar');
 var argv = require('optimist').argv;
 var Superstatic = require('../lib/server/superstatic_server');
 var defaults = require('../lib/defaults');
+var ConfigFile = require('../lib/server/config/file');
 var server;
 
 // app working directory
@@ -20,8 +21,11 @@ startServer();
 
 // Watch config file for changes
 process.nextTick(function () {
-  chokidar.watch(server.settings.getConfigFileName())
-    .on('change', configFileChanged);
+  try{
+    chokidar.watch(server.settings.getConfigFileName())
+      .on('change', configFileChanged);
+  }
+  catch (e) {}
 });
 
 function configFileChanged () {
