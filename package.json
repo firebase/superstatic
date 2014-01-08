@@ -32,7 +32,8 @@
     "hyperquest": "~0.1.8",
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
-    "jsun": "~0.1.0"
+    "jsun": "~0.1.0",
+    "send": "~0.1.4"
   },
   "preferGlobal": "true",
   "bin": {

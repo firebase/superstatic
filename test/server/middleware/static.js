@@ -11,7 +11,7 @@ describe('#static() middleware', function() {
       setup.skipsMiddleware.call(this, static);
     });
     
-    it('skips middleware if superstatic path is alread set', function () {
+    it('skips middleware if superstatic path is already set', function () {
       this.req.superstatic = { path: '/superstatic.html' };
       static(this.req, this.res, this.next);
       expect(this.next.called).to.equal(true);
