@@ -19,6 +19,7 @@ var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
 
+//
 startServer();
 
 // Watch config file for changes
