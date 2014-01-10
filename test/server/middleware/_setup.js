@@ -2,6 +2,8 @@ var sinon = require('sinon');
 
 exports.configure = function (ctx) {
   ctx.req = {
+    connection: {},
+    url: '/superstatic.html',
     _parsedUrl: {
       pathname: '/parsedUrl'
     },
@@ -19,7 +21,8 @@ exports.configure = function (ctx) {
     settings: {
       isFile: function () {
         return true;
-      }
+      },
+      client: {}
     },
     query: ''
   };
