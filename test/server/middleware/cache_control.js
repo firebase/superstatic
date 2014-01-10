@@ -2,7 +2,7 @@ var setup = require('./_setup');
 var expect = require('expect.js');
 var cacheControl = require('../../../lib/server/middleware/cache_control');
 
-describe.only('cache control middleware', function() {
+describe('cache control middleware', function() {
   beforeEach(function () {
     this.cacheControl = cacheControl();
     setup.configure(this);
@@ -31,7 +31,10 @@ describe.only('cache control middleware', function() {
     expect(this.res.setHeader.calledWith('Cache-Control', 'private, max-age=300')).to.be(true);
   });
   
+  // FIXME: not passing!!!!!!!!!!!!
+  
   it('sets cache control to 24 hours by default', function() {
+    this.req.ss.pathname = '/default.html';
     this.cacheControl(this.req, this.res, this.next);
     expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=3600')).to.be(true);
   });
