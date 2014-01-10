@@ -23,7 +23,8 @@ exports.configure = function (ctx) {
   ctx.res = {
     send: sinon.spy(),
     writeHead: sinon.spy(),
-    end: sinon.spy()
+    end: sinon.spy(),
+    setHeader: sinon.spy()
   };
   
   ctx.next = sinon.spy();
