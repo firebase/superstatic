@@ -15,13 +15,6 @@
 //     mocksy.stop(done);
 //   });
   
-//   it.skip('skips middleware if request path is set', function () {
-//     this.req.superstatic = {path: '/superstatc.html'};
-//     notFound(this.req, this.res, this.next);
-    
-//     expect(this.next.called).to.be(true);
-//   });
-  
 //   it.skip('it responds with a default 404 page', function () {
     
 //   });
