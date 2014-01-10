@@ -1,33 +1,33 @@
-var setup = require('./_setup');
-var expect = setup.expect;
-var notFound = require('../../../lib/server/middleware/not_found');
-var Mocksy = require('mocksy');
-var mocksy = new Mocksy({port: 4567});
+// var setup = require('./_setup');
+// var expect = setup.expect;
+// var notFound = require('../../../lib/server/middleware/not_found');
+// var Mocksy = require('mocksy');
+// var mocksy = new Mocksy({port: 4567});
 
-describe.skip('#notFound() middleware', function() {
-  beforeEach(function (done) {
-    setup.beforeEachMiddleware.call(this, function () {
-      mocksy.start(done);
-    });
-  });
+// describe.skip('#notFound() middleware', function() {
+//   beforeEach(function (done) {
+//     setup.beforeEachMiddleware.call(this, function () {
+//       mocksy.start(done);
+//     });
+//   });
   
-  afterEach(function (done) {
-    mocksy.stop(done);
-  });
+//   afterEach(function (done) {
+//     mocksy.stop(done);
+//   });
   
-  it.skip('skips middleware if request path is set', function () {
-    this.req.superstatic = {path: '/superstatc.html'};
-    notFound(this.req, this.res, this.next);
+//   it.skip('skips middleware if request path is set', function () {
+//     this.req.superstatic = {path: '/superstatc.html'};
+//     notFound(this.req, this.res, this.next);
     
-    expect(this.next.called).to.be(true);
-  });
+//     expect(this.next.called).to.be(true);
+//   });
   
-  it.skip('it responds with a default 404 page', function () {
+//   it.skip('it responds with a default 404 page', function () {
     
-  });
+//   });
   
-  it('responds with a custom 404 page', function () {
-    this.req.ss.config.config.error_page = 'http://localhost:4567/error.html';
-    notFound(this.req, this.res, this.next);
-  });
-});
+//   it('responds with a custom 404 page', function () {
+//     this.req.ss.config.config.error_page = 'http://localhost:4567/error.html';
+//     notFound(this.req, this.res, this.next);
+//   });
+// });
