@@ -2,6 +2,9 @@ var sinon = require('sinon');
 
 exports.configure = function (ctx) {
   ctx.req = {
+    _parsedUrl: {
+      pathname: '/parsedUrl'
+    },
     headers: {},
     ss: {
       pathname: '/superstatic.html'
