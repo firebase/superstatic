@@ -31,7 +31,8 @@
     "hyperquest": "0.2.x",
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
-    "jsun": "0.1.x"
+    "jsun": "0.1.x",
+    "normalize-pathname": "~1.0.1"
   },
   "preferGlobal": "true",
   "bin": {
