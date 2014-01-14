@@ -105,4 +105,4 @@ describe('File - local settings', function() {
     
     expect(file.configuration).to.eql(options.config);
   });
-})
+});

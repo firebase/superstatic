@@ -18,6 +18,9 @@ exports.configure = function (ctx) {
     rootPathname: function (pathname) {
       return pathname;
     },
+    workingPathname: function (pathname) {
+      return pathname;
+    },
     settings: {
       isFile: function () {
         return true;

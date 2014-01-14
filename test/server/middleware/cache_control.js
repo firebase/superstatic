@@ -31,8 +31,6 @@ describe('cache control middleware', function() {
     expect(this.res.setHeader.calledWith('Cache-Control', 'private, max-age=300')).to.be(true);
   });
   
-  // FIXME: not passing!!!!!!!!!!!!
-  
   it('sets cache control to 24 hours by default', function() {
     this.req.ss.pathname = '/default.html';
     this.cacheControl(this.req, this.res, this.next);

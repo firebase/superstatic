@@ -11,4 +11,4 @@ describe('Exposing superstatic', function() {
   it('exposes file globs to ignore', function () {
     expect(superstatic.ignore).to.eql(ignore);
   });
-})
+});
