@@ -32,7 +32,8 @@
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
     "jsun": "0.1.x",
-    "normalize-pathname": "~1.0.1"
+    "normalize-pathname": "~1.0.1",
+    "deliver": "~0.1.1"
   },
   "preferGlobal": "true",
   "bin": {
