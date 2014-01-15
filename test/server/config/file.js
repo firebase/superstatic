@@ -60,30 +60,10 @@ describe('File - local settings', function() {
     });
   });
   
-  it.skip('loads the file list', function () {
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList).to.be.an('array');
-    expect(fileList).to.contain('/index.html');
-  });
-  
   it('determines of a given file path is a file', function () {
     expect(this.file.isFile('/index.html')).to.be(true);
     expect(this.file.isFile('/dir')).to.be(false);
     expect(this.file.isFile('/file.html')).to.be(false);
-  });
-  
-  it.skip('ignores the directory and files that are blacklisted', function () {
-    this.file._blacklist = ['**/.git/**', '**/.git**'];
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
-  });
-  
-  it.skip('ignores the ".git" directory by default', function () {
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
   });
   
   it('loads a server config object', function (done) {

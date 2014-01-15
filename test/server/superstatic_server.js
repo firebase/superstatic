@@ -75,9 +75,8 @@ describe('Superstatic server', function() {
     });
   });
   
-  it.skip('tracks all open connections', function (done) {
+  it('tracks all open connections', function (done) {
     var self = this;
-    
     startServer(this.server, function (finished) {
       self.server._openServer.on('connection', function () {
         expect(self.server._openServer._connects).to.not.eql({});
@@ -200,6 +199,11 @@ describe('Superstatic server', function() {
 
 function startServer (server, callback) {
   server.start(function () {
+    // Suppress all connect.logger output
+    if (server._server.stack[0].handle.toString() === connect.logger().toString()) {
+      server._server.stack[0].handle = function (req, res, next) {next();};
+    }
+    
     callback(function (done) {
       server.stop(done);
     });
@@ -238,7 +242,10 @@ function remoteServer() {
 function localSettings () {
   var config = new ConfigFile({
     file: 'superstatic.json',
-    cwd: CWD
+    cwd: CWD,
+    config: {
+      routes: []
+    }
   });
   
   return {
