@@ -2,7 +2,6 @@ var path = require('path');
 var http = require('http');
 var connect = require('connect');
 var expect = require('expect.js');
-var redis = require('redis-mock');
 var sinon = require('sinon');
 var Server = require('../../lib/server/superstatic_server');
 var ConfigFile = require('../../lib/server/config/file');
