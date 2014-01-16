@@ -2,7 +2,7 @@ var expect = require('expect.js');
 var setup = require('./_setup');
 var customRoute = require('../../../lib/server/middleware/custom_route');
 
-describe('custom route middleware', function() {
+describe.only('custom route middleware', function() {
   beforeEach(function () {
     this.customRoute = customRoute();
     setup.configure(this);
