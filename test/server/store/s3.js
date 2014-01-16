@@ -34,16 +34,9 @@ describe('File store - s3', function() {
     expect(this.client._client.signedUrl.calledWith(filePath)).to.be(true);
   });
   
-  it('sets the mime type of a file', function (done) {
-    var response = getRequest(this);
-    expect(response.type).to.be('text/html');
-    response.on('end', done);
-  });
-  
-  it('streams the file contents from the given path', function (done) {
-    var response = getRequest(this);
-    expect(response.pipe).to.not.be(undefined);
-    response.on('end', done);
+  it('returns the the url path', function () {
+    var filePath = '/index.html';
+    expect(this.client.getPath(filePath)).to.equal(this.client._generateSignedUrl(filePath));
   });
 });
 

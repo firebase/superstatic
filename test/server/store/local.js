@@ -12,11 +12,7 @@ describe('File store - local', function() {
     expect(this.local.cwd).to.be(process.cwd());
   });
   
-  it('sets the mime type of a file', function () {
-    expect(this.local.get(this.filePath).type).to.be('text/html');
-  });
-  
-  it('streams the file contents from the given path', function () {
-    expect(this.local.get(this.filePath).pipe).to.not.be(undefined);
-  });
-})
+  it('returns th file path', function () {
+    expect(this.local.getPath('/path')).to.equal('/path');
+  });  
+});
