@@ -51,4 +51,15 @@ describe('#customRoute() middleware', function() {
     expect(this.next.called).to.equal(true);
     expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
   });
+  
+  it('finds custom route when a sub folder is used as the root', function () {
+    this.req.ss.pathname = '/app/anything';
+    this.req.url = '/app/anything';
+    this.req.ss.config.root = './public';
+    this.req.ss.config.routes['/app/**'] = 'app/index.html';
+    
+    customRoute(this.req, this.res, this.next);
+    
+    expect(this.req.superstatic.path).to.be('/public/app/index.html');
+  });
 });
