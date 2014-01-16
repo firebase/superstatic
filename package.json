@@ -34,8 +34,8 @@
     "jsun": "0.1.x",
     "normalize-pathname": "~1.0.1",
     "deliver": "0.1.x",
-    "slasher": "~0.1.0",
-    "globject": "~0.1.0"
+    "slasher": "0.1.x",
+    "globject": "0.1.x"
   },
   "preferGlobal": "true",
   "bin": {

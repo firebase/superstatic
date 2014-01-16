@@ -1,8 +1,9 @@
+var path = require('path');
 var expect = require('expect.js');
 var setup = require('./_setup');
 var customRoute = require('../../../lib/server/middleware/custom_route');
 
-describe.only('custom route middleware', function() {
+describe('custom route middleware', function() {
   beforeEach(function () {
     this.customRoute = customRoute();
     setup.configure(this);
@@ -24,6 +25,18 @@ describe.only('custom route middleware', function() {
     this.req.ss.pathname = '/test3';
     this.customRoute(this.req, this.res, this.next);
     expect(this.res.send.calledWith('/test/dir/index.html')).to.equal(true);
+  });
+  
+  it('serves the mapped route file for a custom route with a declared root', function () {
+    var self = this;
+    this.req.ss.pathname = '/test1';
+    this.req.config.root = './public';
+    this.req.rootPathname = function (pathname) {
+      return path.join('/', self.req.config.root, pathname);
+    };
+    
+    this.customRoute(this.req, this.res, this.next);
+    expect(this.res.send.calledWith('/public/superstatic.html')).to.equal(true);
   });
   
   it('skips the middleware if there is no custom route', function () {

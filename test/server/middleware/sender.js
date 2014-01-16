@@ -31,12 +31,4 @@ describe('sender middleware', function() {
     this.sender(this.req, this.res, this.next);
     expect(this.res.send).to.not.equal(undefined);
   });
-  
-  it.skip('should set the header type', function (done) {
-    this.sender(this.req, this.res, this.next);
-    this.res.send('/superstatic.html');
-    
-    // expect(this.res.setHeader.calledWith('Content-Type', 'text/html')).to.equal(true);
-    expect(this.res.send.calledWith(this.res)).to.equal(true);
-  });
 });
