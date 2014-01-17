@@ -31,4 +31,16 @@ describe('sender middleware', function() {
     this.sender(this.req, this.res, this.next);
     expect(this.res.send).to.not.equal(undefined);
   });
+  
+  it('sends a file with no relative path', function (done) {
+    var contents = '';
+    var url = '../../fixtures/sample_app/index.html';
+    
+    this.sender(this.req, this.res, this.next);
+    this.res.send(url, true)
+    
+    expect(this.req.url).to.equal(url);
+    expect(this.res.end.called).to.equal(true);
+    done();
+  });
 });

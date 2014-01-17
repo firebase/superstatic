@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-require('colors');
-
 var path = require('path');
 var chokidar = require('chokidar');
 var argv = require('optimist').argv;

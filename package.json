@@ -21,18 +21,14 @@
     "url": "https://github.com/divshot/superstatic/issues"
   },
   "dependencies": {
-    "colors": "~0.6.2",
     "optimist": "~0.6.0",
     "mime": "~1.2.11",
     "minimatch": "~0.2.12",
     "connect": "~2.9.1",
     "async": "~0.2.9",
-    "request": "~2.27.0",
-    "hyperquest": "0.2.x",
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
     "jsun": "0.1.x",
-    "normalize-pathname": "~1.0.1",
     "deliver": "0.1.x",
     "slasher": "0.1.x",
     "globject": "0.1.x"
