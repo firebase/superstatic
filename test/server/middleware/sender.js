@@ -36,6 +36,7 @@ describe('sender middleware', function() {
     var contents = '';
     var url = '../../fixtures/sample_app/index.html';
     
+    this.res.on = function () {};
     this.sender(this.req, this.res, this.next);
     this.res.send(url, true)
     
