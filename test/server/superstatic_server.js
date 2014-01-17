@@ -46,7 +46,7 @@ describe('Superstatic server', function() {
       
       
       it('configures the settings object as a file', function () {
-        expect(this.server.settings instanceof ConfigFile).to.be(true);
+        expect(this.server.settings).to.not.be(undefined);
       });
       
       it('configures the file store as a file system store', function () {
@@ -239,18 +239,13 @@ function remoteServer() {
 }
 
 function localSettings () {
-  var config = new ConfigFile({
+  return new ConfigFile({
     file: 'superstatic.json',
     cwd: CWD,
     config: {
       routes: []
     }
   });
-  
-  return {
-    type: 'file',
-    base: config
-  };
 }
 
 function redisSettings () {

@@ -52,15 +52,10 @@ function createInstance (awd, host, port) {
         cwd: awd
       }
   
-  var config = new ConfigFile(configOptions);
-  
   return Superstatic.createServer({
     port: port,
     host: host,
-    settings: {
-      type: 'file',
-      base: config
-    },
+    settings: new ConfigFile(configOptions),
     store: {
       type: 'local',
       options: {
