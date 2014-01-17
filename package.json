@@ -31,7 +31,8 @@
     "jsun": "0.1.x",
     "deliver": "0.1.x",
     "slasher": "0.1.x",
-    "globject": "0.1.x"
+    "globject": "0.1.x",
+    "is-url": "~1.0.0"
   },
   "preferGlobal": "true",
   "bin": {
