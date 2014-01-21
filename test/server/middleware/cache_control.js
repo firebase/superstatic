@@ -1,8 +1,11 @@
-var setup = require('./_setup');
 var connect = require('connect');
 var request = require('supertest');
-var expect = require('expect.js');
 var cacheControl = require('../../../lib/server/middleware/cache_control');
+var caches = {
+  'index.html': 1000,
+  'none.html': false,
+  'private.html': 'private, max-age=300'
+};
 
 describe('cache control middleware', function() {
   var app;
@@ -10,13 +13,7 @@ describe('cache control middleware', function() {
   beforeEach(function () {
     app = connect();
     app.use(function (req, res, next) {
-      req.config = {
-        cache_control: {
-          'index.html': 1000,
-          'none.html': false,
-          'private.html': 'private, max-age=300'
-        }
-      };
+      req.config = {cache_control: caches};
       next();
     });
   });
