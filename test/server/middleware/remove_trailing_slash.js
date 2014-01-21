@@ -1,7 +1,5 @@
 var connect = require('connect');
 var request = require('supertest');
-var setup = require('./_setup');
-var expect = require('expect.js');
 var removeTrailingSlash = require('../../../lib/server/middleware/remove_trailing_slash');
 
 describe('remove trailing slash middleware', function() {
