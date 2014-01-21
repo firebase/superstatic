@@ -39,7 +39,7 @@ describe('static middleware', function() {
   });
   
   it('skips the middleware if the file does not exist', function (done) {
-    fileStore.exists = function () {return false;};
+    settings.isFile = function () {return false;};
     app.use(static(settings, fileStore));
     
     request(app) 

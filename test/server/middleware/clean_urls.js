@@ -86,7 +86,7 @@ describe('clean urls middleware', function () {
     });
     
     it('skips the middleware if it is not a file and clean_urls are on', function (done) {
-      fileStore.exists = function () {return false;}
+      settings.isFile = function () {return false;}
       
       app.use(function (req, res, next) {
         req.config.clean_urls = true;

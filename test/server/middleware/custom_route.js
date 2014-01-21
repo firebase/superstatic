@@ -78,7 +78,7 @@ describe('custom route middleware', function() {
   });
   
   it('skips the middleware if the custom route is for a file that does not exist', function (done) {
-    fileStore.exists = function () {return false;}
+    settings.isFile = function () {return false;}
     app.use(customRoute(settings, fileStore));
     
     request(app)

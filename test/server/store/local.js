@@ -17,10 +17,4 @@ describe('File store - local', function() {
   it('returns th file path', function () {
     expect(this.local.getPath('/path')).to.equal('/path');
   });
-  
-  it('detects if a file exists', function () {
-    expect(this.local.exists('/index.html')).to.be(true);
-    expect(this.local.exists('/dir')).to.be(false);
-    expect(this.local.exists('/file.html')).to.be(false);
-  });
 });
