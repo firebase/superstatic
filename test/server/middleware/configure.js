@@ -26,28 +26,12 @@ describe('configure middleware', function() {
     expect(this.req.ss).to.not.equal(undefined);
   });
   
-  it('adds the settings object to the namespace', function () {
-    expect(this.req.settings).to.not.be(undefined);
-  });
-  
-  it('adds the store object to the namespace', function () {
-    expect(this.req.ss.store).to.not.be(undefined);
-  });
-  
   it('adds the cache client to the namespace', function () {
     expect(this.req.ss.cache).to.not.be(undefined);
   });
   
   it('adds the routes list to the namespace', function () {
     expect(this.req.ss.routes).to.not.be(undefined);
-  });
-  
-  it('parses the url pathname without the query parameters', function () {
-    this.req.ss.pathname = null;
-    this.req.url = '/params.html'
-    this.configure(this.req, this.res, this.next);
-    expect(this.req.ss.pathname).to.equal('/params.html');
-    expect(this.req.ss.pathname.indexOf('?')).to.equal(-1);
   });
   
   it('loads the settings', function () {
