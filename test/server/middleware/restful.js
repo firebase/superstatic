@@ -2,27 +2,22 @@ var connect = require('connect');
 var request = require('supertest');
 var expect = require('expect.js');
 var restful = require('../../../lib/server/middleware/restful');
+var defaultRoutes =  [
+  {
+    path: '/router',
+    method: 'GET'
+  }
+];
 
 describe('restful middleware', function() {
   var app;
   
   beforeEach(function () {
     app = connect();
-    app.use(function (req, res, next) {
-      req.ss = {
-        routes: [
-          {
-            path: '/router',
-            method: 'GET'
-          }
-        ]
-      };
-      next();
-    });
   });
   
   it('skips the middleware if pathname has no match in routes', function (done) {
-    app.use(restful());
+    app.use(restful(defaultRoutes));
     
     request(app)
       .get('/nope')
@@ -31,7 +26,7 @@ describe('restful middleware', function() {
   });
   
   it('skips the middleware if request method has no match in routes', function (done) {
-    app.use(restful());
+    app.use(restful(defaultRoutes));
     
     request(app)
       .post('/router')
@@ -41,25 +36,21 @@ describe('restful middleware', function() {
   
   it('runs each validate method in parallel and calls route handler as last item in chain', function (done) {
     var headersCalled = false;
-    
-    app.use(function (req, res, next) {
-      req.ss.routes = [{
-        path: '/cache',
-        method: 'GET',
-        handler: function (req, res) {
-          res.writeHead(200);
-          res.end()
-        },
-        validate: {
-          headers: function  (req, res, next) {
-            headersCalled = true;
-            next();
-          }
+    var routes = [{
+      path: '/cache',
+      method: 'GET',
+      handler: function (req, res) {
+        res.writeHead(200);
+        res.end()
+      },
+      validate: {
+        headers: function  (req, res, next) {
+          headersCalled = true;
+          next();
         }
-      }];
-      next();
-    });
-    app.use(restful());
+      }
+    }];
+    app.use(restful(routes));
     
     request(app)
       .get('/cache')

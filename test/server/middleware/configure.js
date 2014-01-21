@@ -1,51 +1,42 @@
+var connect = require('connect');
+var request = require('supertest');
 var setup = require('./_setup');
 var expect = require('expect.js');
 var sinon = require('sinon');
 var configure = require('../../../lib/server/middleware/configure');
+var defaultSettings = require('../../../lib/server/settings/default');
 var _ = require('lodash');
 var connect = require('connect');
 
 describe('configure middleware', function() {
+  var app;
+  var settings;
+  
   beforeEach(function () {
-    var self = this;
-    this.ctx = {};
-    this.config = {};
-    this.configure = configure(this.ctx);
-    setup.configure(this);
+    app = connect();
+    settings = defaultSettings.create();
+  });
+  
+  it('loads the settings', function (done) {
+    app.use(configure(settings));
+    app.use(function (req, res, next) {
+      expect(req.config).to.not.equal(undefined);
+      next();
+    });
     
-    this.ctx.settings = this.req.settings;
-    this.ctx.store = {};
-    this.ctx.routes = {};
-    this.req.settings.load = function (hostname, next) {
-      next(null, self.config);
-    };
-    this.configure(this.req, this.res, this.next);
+    request(app).get('/').end(done);
   });
   
-  it('creates our ss namespace', function () {
-    expect(this.req.ss).to.not.equal(undefined);
-  });
+  it('sets the default index file', function (done) {
+    app.use(configure(settings));
+    app.use(function (req, res, next) {
+      expect(req.config.index).to.equal('index.html');
+      next();
+    });
+    
+    request(app).get('/').end(done);
+  });  
   
-  it('adds the cache client to the namespace', function () {
-    expect(this.req.ss.cache).to.not.be(undefined);
-  });
-  
-  it('adds the routes list to the namespace', function () {
-    expect(this.req.ss.routes).to.not.be(undefined);
-  });
-  
-  it('loads the settings', function () {
-    this.configure(this.req, this.res, this.next);
-    expect(this.req.config).to.eql(this.config);
-  });
-  
-  it('sets the default index file', function () {
-    this.configure(this.req, this.res, this.next);
-    expect(this.req.config.index).to.equal('index.html');
-  });
-  
-  it('completes with the callback', function () {
-    this.configure(this.req, this.res, this.next);
-    expect(this.next.called).to.equal(true);
-  });
+  // TODO: test this
+  it('parses the hostname to get the request configuration')
 });
