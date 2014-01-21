@@ -26,8 +26,4 @@ describe('default settings', function() {
   it('gets the default root pathname', function () {
     expect(obj.rootPathname('path')).to.equal('/path');
   });
-  
-  it('gets the default working path', function () {
-    expect(obj.workingPathname('path')).to.equal('/path');
-  });
 });

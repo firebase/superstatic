@@ -2,17 +2,14 @@ var path = require('path');
 var connect = require('connect');
 var request = require('supertest');
 var static = require('../../../lib/server/middleware/static');
-var defaultFileStore = require('../../../lib/server/store/default');
 var defaultSettings = require('../../../lib/server/settings/default');
 
 describe('static middleware', function() {
   var app;
   var settings;
-  var fileStore;
   
   beforeEach(function () {
     app = connect();
-    fileStore = defaultFileStore.create();
     settings = defaultSettings.create();
     
     static.isDirectoryIndex = function () {return false;};
@@ -29,7 +26,7 @@ describe('static middleware', function() {
   });
   
   it('servers a static file', function (done) {
-    app.use(static(settings, fileStore));
+    app.use(static(settings));
     
     request(app)
       .get('/test.html')
@@ -40,7 +37,7 @@ describe('static middleware', function() {
   
   it('skips the middleware if the file does not exist', function (done) {
     settings.isFile = function () {return false;};
-    app.use(static(settings, fileStore));
+    app.use(static(settings));
     
     request(app) 
       .get('/test.html')
@@ -50,7 +47,7 @@ describe('static middleware', function() {
   
   it('serves the directory index file if it is a path to a directory', function (done) {
     static.isDirectoryIndex = function () {return true;};
-    app.use(static(settings, fileStore));
+    app.use(static(settings));
     
     request(app)
       .get('/public')
@@ -61,7 +58,7 @@ describe('static middleware', function() {
   
   it('serves the static file when root directory is a sub director', function (done) {
     settings.configuration.root = './public';
-    app.use(static(settings, fileStore));
+    app.use(static(settings));
     
     request(app)
       .get('/image.jpg')

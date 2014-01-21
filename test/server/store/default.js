@@ -19,10 +19,6 @@ describe('default file store', function() {
     expect(obj.cwd).to.equal('./');
   });
   
-  it('defaults to all files exist', function () {
-    expect(obj.exists('/')).to.equal(true);
-  });
-  
   it('gets the path', function () {
     expect(obj.getPath('/path')).to.equal('/path');
   });
