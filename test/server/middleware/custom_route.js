@@ -1,65 +1,107 @@
-var setup = require('./_setup');
-var expect = setup.expect;
+var path = require('path');
+var connect = require('connect');
+var request = require('supertest');
 var customRoute = require('../../../lib/server/middleware/custom_route');
+var defaultSettings = require('../../../lib/server/settings/default');
+var defaultRoutes = {
+  '/test1': '/index.html',
+  '/test3': '/test/dir'
+};
 
-describe('#customRoute() middleware', function() {
-  beforeEach(setup.beforeEachMiddleware);
+describe('custom route middleware', function() {
+  var app;
   
-  describe('skipping middleware', function() {
-    it('skips if no config object available', function () {
-      delete this.req.ss.config;
-      setup.skipsMiddleware.call(this, customRoute);
-    });
+  beforeEach(function () {
+    app = connect();
+    settings = defaultSettings.create();
+    settings.configuration.routes = defaultRoutes
     
-    it('skips middleware if superstatic path is already set', function () {
-      this.req.superstatic = { path: '/superstatic.html' };
-      customRoute(this.req, this.res, this.next);
-      expect(this.next.called).to.equal(true);
-    });
-    
-    it('skips middleware if the url is not a custom route', function () {
-      setup.skipsMiddleware.call(this, customRoute);
-    });
-    
-    it('skips the middleware if custom route resolve file does not exist', function () {
-      this.req.url = '/exists';
-      this.req.ss.pathname = '/exists';
-      setup.skipsMiddleware.call(this, customRoute);
+    app.use(function (req, res, next) {
+      res.send = function (pathname) {
+        res.writeHead(200);
+        res.end(pathname);
+      }
+      req.config = settings.configuration;
+      
+      next();
     });
   });
   
-  it('sets the request path if url matches a custom route exactly', function () {
-    this.req.ss.pathname = '/custom-route';
-    customRoute(this.req, this.res, this.next);
+  it('serves the mapped route file for a custom route', function (done) {
+    app.use(customRoute(settings));
     
-    expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.path).to.be('/superstatic.html');
+    request(app)
+      .get('/test1')
+      .expect(200)
+      .expect('/index.html')
+      .end(done);
   });
   
-  it('sets the request path if url matches a custom route as a glob', function () {
-    this.req.ss.pathname = '/app/test/some/route';
-    customRoute(this.req, this.res, this.next);
+  it('serves the index file of a directory if mapped route is mapped to a directory', function (done) {
+    app.use(customRoute(settings));
     
-    expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.path).to.be('/superstatic.html');
+    request(app)
+      .get('/test3')
+      .expect(200)
+      .expect('/test/dir/index.html')
+      .end(done);
   });
   
-  it('sets the relative path', function () {
-    this.req.ss.pathname = '/app/test/some/route';
-    customRoute(this.req, this.res, this.next);
+  it('serves the mapped route file for a custom route with a declared root', function (done) {
+    app.use(function (req, res, next) {
+      req.config.root = './public';
+      next();
+    });
+    app.use(customRoute(settings));
     
-    expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.relativePath).to.be('/superstatic.html');
+    request(app)
+      .get('/test1')
+      .expect(200)
+      .expect('/public/index.html')
+      .end(done);
   });
   
-  it('finds custom route when a sub folder is used as the root', function () {
-    this.req.ss.pathname = '/app/anything';
-    this.req.url = '/app/anything';
-    this.req.ss.config.root = './public';
-    this.req.ss.config.routes['/app/**'] = 'app/index.html';
+  it('skips the middleware if there is no custom route', function (done) {
+    settings.configuration.routes = {};
+    app.use(customRoute(settings));
     
-    customRoute(this.req, this.res, this.next);
+    request(app)
+      .get('/no-route')
+      .expect(404)
+      .end(done);
+  });
+  
+  it('skips the middleware if the custom route is for a file that does not exist', function (done) {
+    settings.isFile = function () {return false;}
+    app.use(customRoute(settings));
     
-    expect(this.req.superstatic.path).to.be('/public/app/index.html');
+    request(app)
+      .get('/test1')
+      .expect(404)
+      .end(done);
+  });
+  
+  describe('glob matching', function() {
+    it('maps all paths to the same pathname', function (done) {
+      settings.configuration.routes = {'**': 'index.html'};
+      app.use(customRoute(settings));
+      
+      request(app)
+        .get('/any-route')
+        .expect(200)
+        .expect('/index.html')
+        .end(done);
+    });
+    
+    it('maps all requests to files in a given directory to the same pathname', function (done) {
+      settings.configuration.routes = {'subdir/**': 'index.html'};
+      app.use(customRoute(settings));
+      
+      request(app)
+        .get('/subdir/anything/here')
+        .expect(200)
+        .expect('/index.html')
+        .end(done);
+    });
   });
 });

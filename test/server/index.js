@@ -2,10 +2,9 @@ var path = require('path');
 var http = require('http');
 var connect = require('connect');
 var expect = require('expect.js');
-var redis = require('redis-mock');
 var sinon = require('sinon');
-var Server = require('../../lib/server/superstatic_server');
-var ConfigFile = require('../../lib/server/config/file');
+var Server = require('../../lib/server');
+var ConfigFile = require('../../lib/server/settings/file');
 var StoreLocal = require('../../lib/server/store/local');
 var StoreS3 = require('../../lib/server/store/s3');
 var middleware = require('../../lib/server/middleware');
@@ -47,7 +46,7 @@ describe('Superstatic server', function() {
       
       
       it('configures the settings object as a file', function () {
-        expect(this.server.settings instanceof ConfigFile).to.be(true);
+        expect(this.server.settings).to.not.be(undefined);
       });
       
       it('configures the file store as a file system store', function () {
@@ -75,9 +74,8 @@ describe('Superstatic server', function() {
     });
   });
   
-  it('tracks all open connectionss', function (done) {
+  it('tracks all open connections', function (done) {
     var self = this;
-    
     startServer(this.server, function (finished) {
       self.server._openServer.on('connection', function () {
         expect(self.server._openServer._connects).to.not.eql({});
@@ -148,71 +146,63 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(1)).to.eql(connect.query().toString());
     });
     
-    it('uses the superstatic router middleware', function () {
-      var routerUsed = this.stack[2].handle.toString();
-      var routerTest = middleware.router(this.server.settings, this.server.store, this.server.routes).toString();
-      
-      expect(routerUsed).to.eql(routerTest);
+    it('uses the connect gzip middleware', function () {
+      expect(this.stackHandleStr(2)).to.equal(connect.compress().toString());
     });
     
-    it('uses the restful middleware', function () {
-      expect(this.stackHandleStr(3)).to.equal(middleware.restful().toString());
-    });
-    
-    it('uses the settings cache middleware', function () {
-      expect(this.stackHandleStr(4)).to.equal(middleware.settingsCache.toString());
-    });
-    
-    it('users the basic auth protect middlware', function () {
-      expect(this.stackHandleStr(5)).to.equal(middleware.protect.toString());
-    });
-    
-    it('uses the static middleware', function () {
-      expect(this.stackHandleStr(6)).to.equal(middleware.static.toString());
-    });
-    
-    it('uses the custom route middleware', function () {
-      expect(this.stackHandleStr(7)).to.equal(middleware.customRoute.toString());
-    });
-    
-    it('uses the directory index middleware', function () {
-      expect(this.stackHandleStr(8)).to.equal(middleware.directoryIndex.toString());
-    });
-    
-    it('uses the clean urls middleware', function () {
-      expect(this.stackHandleStr(9)).to.equal(middleware.cleanUrls.toString());
-    });
-    
-    it('uses the default favicon middleware', function () {
-      expect(this.stackHandleStr(10)).to.eql(connect.favicon().toString());
+    it('uses the configure middleware', function () {
+      expect(this.stackHandleStr(3)).to.equal(middleware.configure().toString());
     });
     
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(middleware.removeTrailingSlash.toString());
+      expect(this.stackHandleStr(4)).to.equal(middleware.removeTrailingSlash().toString());
     });
     
-    it('uses the connect gzip middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(connect.compress().toString());
+    it('uses the restful middleware', function () {
+      expect(this.stackHandleStr(5)).to.equal(middleware.restful().toString());
     });
     
-    it('uses the not found middleware', function () {
-      expect(this.stackHandleStr(13)).to.equal(middleware.notFound.toString());
+    it('uses the basic auth protect middlware', function () {
+      expect(this.stackHandleStr(6)).to.equal(middleware.protect().toString());
+    });
+    
+    it('uses the basic auth sender middlware', function () {
+      expect(this.stackHandleStr(7)).to.equal(middleware.sender().toString());
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(14)).to.equal(middleware.cacheControl.toString());
+      expect(this.stackHandleStr(8)).to.equal(middleware.cacheControl().toString());
     });
     
-    it('uses the responder middleware', function () {
-      expect(this.stackHandleStr(15)).to.equal(middleware.responder.toString());
+    it('uses the custom route middleware', function () {
+      expect(this.stackHandleStr(9)).to.equal(middleware.customRoute().toString());
+    });
+    
+    it('uses the clean urls middleware', function () {
+      expect(this.stackHandleStr(10)).to.equal(middleware.cleanUrls().toString());
+    });
+    
+    it('uses the static middleware', function () {
+      expect(this.stackHandleStr(11)).to.equal(middleware.static().toString());
+    });
+    
+    it('uses the default favicon middleware', function () {
+      expect(this.stackHandleStr(12)).to.eql(connect.favicon().toString());
+    });
+    
+    it('uses the not found middleware', function () {
+      expect(this.stackHandleStr(13)).to.equal(middleware.notFound().toString());
     });
   });
 });
 
-
-
 function startServer (server, callback) {
   server.start(function () {
+    // Suppress all connect.logger output
+    if (server._server.stack[0].handle.toString() === connect.logger().toString()) {
+      server._server.stack[0].handle = function (req, res, next) {next();};
+    }
+    
     callback(function (done) {
       server.stop(done);
     });
@@ -249,15 +239,13 @@ function remoteServer() {
 }
 
 function localSettings () {
-  var config = new ConfigFile({
+  return new ConfigFile({
     file: 'superstatic.json',
-    cwd: CWD
+    cwd: CWD,
+    config: {
+      routes: []
+    }
   });
-  
-  return {
-    type: 'file',
-    base: config
-  };
 }
 
 function redisSettings () {

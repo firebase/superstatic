@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 
-require('colors');
-
 var path = require('path');
 var chokidar = require('chokidar');
 var argv = require('optimist').argv;
-var Superstatic = require('../lib/server/superstatic_server');
+var Superstatic = require('../lib/server');
 var defaults = require('../lib/defaults');
-var ConfigFile = require('../lib/server/config/file');
+var ConfigFile = require('../lib/server/settings/file');
 var JSUN = require('jsun');
 var server;
 
@@ -54,15 +52,10 @@ function createInstance (awd, host, port) {
         cwd: awd
       }
   
-  var config = new ConfigFile(configOptions);
-  
   return Superstatic.createServer({
     port: port,
     host: host,
-    settings: {
-      type: 'file',
-      base: config
-    },
+    settings: new ConfigFile(configOptions),
     store: {
       type: 'local',
       options: {

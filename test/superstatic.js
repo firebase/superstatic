@@ -1,7 +1,8 @@
 var expect = require('expect.js');
 var superstatic = require('../lib/superstatic');
-var SuperstaticServer = require('../lib/server/superstatic_server');
+var SuperstaticServer = require('../lib/server');
 var ignore = require('../lib/ignore');
+var defaultSettings = require('../lib/server/settings/default');
 
 describe('Exposing superstatic', function() {
   it('exposes Superstatic server', function () {
@@ -11,4 +12,8 @@ describe('Exposing superstatic', function() {
   it('exposes file globs to ignore', function () {
     expect(superstatic.ignore).to.eql(ignore);
   });
-})
+  
+  it('exposes the default settings', function () {
+    expect(superstatic.defaultSettings).to.eql(defaultSettings);
+  });
+});

@@ -1,49 +1,69 @@
-var setup = require('./_setup');
-var expect = setup.expect;
+var path = require('path');
+var connect = require('connect');
+var request = require('supertest');
 var static = require('../../../lib/server/middleware/static');
+var defaultSettings = require('../../../lib/server/settings/default');
 
-describe('#static() middleware', function() {
-  beforeEach(setup.beforeEachMiddleware);
+describe('static middleware', function() {
+  var app;
+  var settings;
   
-  describe('skipping middleware', function() {
-    it('skips middleware if no config object available', function () {
-      delete this.req.ss.config;
-      setup.skipsMiddleware.call(this, static);
-    });
+  beforeEach(function () {
+    app = connect();
+    settings = defaultSettings.create();
     
-    it('skips middleware if superstatic path is alread set', function () {
-      this.req.superstatic = { path: '/superstatic.html' };
-      static(this.req, this.res, this.next);
-      expect(this.next.called).to.equal(true);
-    });
+    static.isDirectoryIndex = function () {return false;};
     
-    it('skips middleware if path is an html file and clean urls are turned on', function () {
-      this.req.ss.config.config.clean_urls = true;
-      setup.skipsMiddleware.call(this, static);
-    });
-    
-    it('skips middleware if path is not a static file', function () {
-      this.req.ss.pathname = '/superstatic';
-      setup.skipsMiddleware.call(this, static);
+    app.use(function (req, res, next) {
+      res.send = function (pathname) {
+        res.writeHead(200);
+        res.end(pathname);
+      }
+      req.config = settings.configuration;
+      
+      next();
     });
   });
   
-  it('sets the request path if the file is static and clean urls are not turned on', function () {
-    this.req.ss.pathname = '/test.html';
-    this.req.ss.config.cwd = 'cwd';
-    this.req.ss.config.root = './';
-    this.req.ss.config.config.clean_urls = false;
-    static(this.req, this.res, this.next);
+  it('servers a static file', function (done) {
+    app.use(static(settings));
     
-    expect(this.req.superstatic.path).to.be('/cwd/test.html');
+    request(app)
+      .get('/test.html')
+      .expect(200)
+      .expect('/test.html')
+      .end(done);
   });
   
-  it('sets the relative path', function () {
-    this.req.ss.pathname = '/test.html';
-    this.req.ss.config.cwd = 'cwd';
-    this.req.ss.config.root = './';
-    static(this.req, this.res, this.next);
+  it('skips the middleware if the file does not exist', function (done) {
+    settings.isFile = function () {return false;};
+    app.use(static(settings));
     
-    expect(this.req.superstatic.relativePath).to.be('/test.html');
+    request(app) 
+      .get('/test.html')
+      .expect(404)
+      .end(done);
+  });
+  
+  it('serves the directory index file if it is a path to a directory', function (done) {
+    static.isDirectoryIndex = function () {return true;};
+    app.use(static(settings));
+    
+    request(app)
+      .get('/public')
+      .expect(200)
+      .expect('/public/index.html')
+      .end(done);
+  });
+  
+  it('serves the static file when root directory is a sub director', function (done) {
+    settings.configuration.root = './public';
+    app.use(static(settings));
+    
+    request(app)
+      .get('/image.jpg')
+      .expect(200)
+      .expect('/public/image.jpg')
+      .end(done);
   });
 });

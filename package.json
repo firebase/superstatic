@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -21,18 +21,20 @@
     "url": "https://github.com/divshot/superstatic/issues"
   },
   "dependencies": {
-    "colors": "~0.6.2",
     "optimist": "~0.6.0",
     "mime": "~1.2.11",
     "minimatch": "~0.2.12",
-    "file": "~0.2.1",
     "connect": "~2.9.1",
     "async": "~0.2.9",
-    "request": "~2.27.0",
-    "hyperquest": "~0.1.8",
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
-    "jsun": "~0.1.0"
+    "jsun": "0.1.x",
+    "deliver": "0.1.x",
+    "slasher": "0.1.x",
+    "globject": "0.1.x",
+    "is-url": "~1.0.0",
+    "mix-into": "~0.1.1",
+    "supertest": "~0.9.0"
   },
   "preferGlobal": "true",
   "bin": {
@@ -44,7 +46,8 @@
     "sinon": "~1.7.3",
     "through": "~2.3.4",
     "mocksy": "~0.1.4",
-    "redis-mock": "~0.2.0",
-    "knox": "~0.8.6"
+    "knox": "~0.8.6",
+    "supertest": "~0.8.3",
+    "connect": "~2.9.2"
   }
 }

@@ -1,7 +1,7 @@
 var path = require('path');
 var expect = require('expect.js');
 var sinon = require('sinon');
-var File = require('../../../lib/server/config/file');
+var File = require('../../../lib/server/settings/file');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 var CWD_DIO = path.resolve(__dirname, '../../fixtures/sample_app_dio');
 var fileOptions = {
@@ -32,7 +32,7 @@ describe('File - local settings', function() {
   
   describe('loading configuration file', function() {
     it('loads the config file named superstatic.json', function () {
-      var file= new File({
+      var file = new File({
         cwd: CWD
       });
       
@@ -60,30 +60,10 @@ describe('File - local settings', function() {
     });
   });
   
-  it.skip('loads the file list', function () {
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList).to.be.an('array');
-    expect(fileList).to.contain('/index.html');
-  });
-  
   it('determines of a given file path is a file', function () {
     expect(this.file.isFile('/index.html')).to.be(true);
     expect(this.file.isFile('/dir')).to.be(false);
     expect(this.file.isFile('/file.html')).to.be(false);
-  });
-  
-  it.skip('ignores the directory and files that are blacklisted', function () {
-    this.file._blacklist = ['**/.git/**', '**/.git**'];
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
-  });
-  
-  it.skip('ignores the ".git" directory by default', function () {
-    var config = this.file.loadConfigurationFile();
-    var fileList = this.file.loadFileList(config);
-    expect(fileList.indexOf('/.git/git.js')).to.be(-1);
   });
   
   it('loads a server config object', function (done) {
@@ -105,4 +85,4 @@ describe('File - local settings', function() {
     
     expect(file.configuration).to.eql(options.config);
   });
-})
+});

@@ -1,41 +1,56 @@
-var setup = require('./_setup');
-var expect = setup.expect;
+var connect = require('connect');
+var request = require('supertest');
 var cacheControl = require('../../../lib/server/middleware/cache_control');
+var caches = {
+  'index.html': 1000,
+  'none.html': false,
+  'private.html': 'private, max-age=300'
+};
 
-describe('#cacheControl() middleware', function() {
-  beforeEach(function (done) {
-    var self = this;
-    
-    setup.beforeEachMiddleware.call(this, function () {
-      self.req.superstatic = {path: '.tmp.html'};
-      self.req.ss.settings.asRelativePath = function () { return '.tmp.html'; }
-      done();
+describe('cache control middleware', function() {
+  var app;
+  
+  beforeEach(function () {
+    app = connect();
+    app.use(function (req, res, next) {
+      req.config = {cache_control: caches};
+      next();
     });
   });
   
-  it('sets the max age cache header if specified in config file', function () {
-    this.req.ss.config.cache_control = { '.tmp.html': 1000 };
-    this.req.superstatic.relativePath = '.tmp.html';
-    cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=1000')).to.be(true);
+  it('sets the max age cache header if specified in config file', function (done) {
+    app.use(cacheControl());
+    
+    request(app)
+      .get('/index.html')
+      .expect('Cache-Control', 'public, max-age=1000')
+      .end(done);
   });
   
-  it('sets cache control to no-cache if false is specified in config file', function () {
-    this.req.ss.config.cache_control = { '.tmp.html': false };
-    this.req.superstatic.relativePath = '.tmp.html';
-    cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'no-cache')).to.be(true);
+  it('sets cache control to no-cache if false is specified in config file', function (done) {
+    app.use(cacheControl());
+    
+    request(app)
+      .get('/none.html')
+      .expect('Cache-Control', 'no-cache')
+      .end(done);
   });
   
-  it('sets cache control to the passed string if specified in config file', function () {
-    this.req.ss.config.cache_control = { '.tmp.html': 'private, max-age=300' };
-    this.req.superstatic.relativePath = '.tmp.html';
-    cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'private, max-age=300')).to.be(true);
+  it('sets cache control to the passed string if specified in config file', function (done) {
+    app.use(cacheControl());
+    
+    request(app)
+      .get('/private.html')
+      .expect('Cache-Control', 'private, max-age=300')
+      .end(done);
   });
   
-  it('sets cache control to 24 hours by default', function() {
-    cacheControl(this.req, this.res, this.next);
-    expect(this.res.setHeader.calledWith('Cache-Control', 'public, max-age=3600')).to.be(true);
+  it('sets cache control to 24 hours by default', function(done) {
+    app.use(cacheControl());
+    
+    request(app)
+      .get('/default.html')
+      .expect('Cache-Control', 'public, max-age=3600')
+      .end(done);
   });
-})
+});

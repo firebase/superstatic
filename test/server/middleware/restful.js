@@ -1,41 +1,64 @@
-var setup = require('./_setup');
-var expect = setup.expect;
-var restful = require('../../../lib/server/middleware/restful')();
+var connect = require('connect');
+var request = require('supertest');
+var expect = require('expect.js');
+var restful = require('../../../lib/server/middleware/restful');
+var defaultRoutes =  [
+  {
+    path: '/router',
+    method: 'GET'
+  }
+];
 
-describe('#restful() middleware', function() {
-  beforeEach(setup.beforeEachMiddleware);
+describe('restful middleware', function() {
+  var app;
   
-  it('skips the middleware if pathname has no match in routes', function () {
-    this.req._parsedUrl = {pathname: '/nope'};
-    
-    restful(this.req, this.res, this.next);
-    expect(this.next.called).to.be(true);
+  beforeEach(function () {
+    app = connect();
   });
   
-  it('skips the middleware if request method has no match in routes', function () {
-    this.req._parsedUrl = {pathname: '/cache'};
-    this.req.method = 'POST';
+  it('skips the middleware if pathname has no match in routes', function (done) {
+    app.use(restful(defaultRoutes));
     
-    restful(this.req, this.res, this.next);
-    expect(this.next.called).to.be(true);
+    request(app)
+      .get('/nope')
+      .expect(404)
+      .end(done);
+  });
+  
+  it('skips the middleware if request method has no match in routes', function (done) {
+    app.use(restful(defaultRoutes));
+    
+    request(app)
+      .post('/router')
+      .expect(404)
+      .end(done);
   });
   
   it('runs each validate method in parallel and calls route handler as last item in chain', function (done) {
     var headersCalled = false;
-    this.req._parsedUrl = {pathname: '/cache'};
-    this.req.method = 'GET';
-    var route = this.req.ss.routes[0]
+    var routes = [{
+      path: '/cache',
+      method: 'GET',
+      handler: function (req, res) {
+        res.writeHead(200);
+        res.end()
+      },
+      validate: {
+        headers: function  (req, res, next) {
+          headersCalled = true;
+          next();
+        }
+      }
+    }];
+    app.use(restful(routes));
     
-    route.validate.headers = function  (req, res, next) {
-      headersCalled = true;
-      next();
-    };
-    
-    this.res.callback = function () {
-      expect(headersCalled).to.be(true);
-      done();
-    };
-    
-    restful(this.req, this.res, this.next);
+    request(app)
+      .get('/cache')
+      .expect(200)
+      .end(function (err) {
+        if (err) throw err;
+        expect(headersCalled).to.equal(true);
+        done();
+      });
   });
 });

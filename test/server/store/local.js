@@ -1,22 +1,20 @@
 var path = require('path');
 var expect = require('expect.js');
 var Local = require('../../../lib/server/store/local');
+var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 
 describe('File store - local', function() {
   beforeEach(function () {
-    this.local = new Local({});
-    this.filePath = path.resolve(__dirname, '../../fixtures/sample_app/index.html');
+    this.local = new Local({
+      cwd: CWD
+    });
   });
   
   it('sets the cwd by default', function () {
-    expect(this.local.cwd).to.be(process.cwd());
+    expect(this.local.cwd).to.be(CWD);
   });
   
-  it('sets the mime type of a file', function () {
-    expect(this.local.get(this.filePath).type).to.be('text/html');
+  it('returns the file path', function () {
+    expect(this.local.getPath('/path')).to.equal('/path');
   });
-  
-  it('streams the file contents from the given path', function () {
-    expect(this.local.get(this.filePath).pipe).to.not.be(undefined);
-  });
-})
+});

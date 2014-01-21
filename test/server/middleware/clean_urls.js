@@ -1,68 +1,100 @@
-var setup = require('./_setup');
-var path = require('path');
-var expect = setup.expect;
+var connect = require('connect');
+var http = require('http');
+var request = require('supertest');
 var cleanUrls = require('../../../lib/server/middleware/clean_urls');
+var defaultSettings = require('../../../lib/server/settings/default');
+var PORT = '7777'
 
-describe('#cleanUrls() middleware', function() {
-  beforeEach(setup.beforeEachMiddleware);
+describe('clean urls middleware', function () {
+  var settings;
+  var server;
+  var app;
   
-  describe('skipping middleware', function() {
-    it('skips if no config object available', function () {
-      delete this.req.ss.config;
-      setup.skipsMiddleware.call(this, cleanUrls);
-    });
+  beforeEach(function () {
+    app = connect();
+    settings = defaultSettings.create();
+    settings.configuration.clean_urls = true;
     
-    it('skips if clean urls are turned off', function () {
-      setup.skipsMiddleware.call(this, cleanUrls);
-    });
-
-    it('skips middleware if it is not an html file and clean urls are on', function () {
-      this.req.ss.config.config.clean_urls = true;
-      this.req.ss.pathname = '/superstatic.png';
-      setup.skipsMiddleware.call(this, cleanUrls);
-    });
-    
-    it('skips middleware if superstatic path is alread set', function () {
-      this.req.superstatic = { path: '/superstatic.html' };
-      cleanUrls(this.req, this.res, this.next);
-      expect(this.next.called).to.equal(true);
+    app.use(function (req, res, next) {
+      res.send = function (pathname) {
+        res.writeHead(200);
+        res.end(pathname);
+      }
+      req.config = settings.configuration;
+      
+      next();
     });
   });
   
-  it('sets the request path when clean urls are turned on and it is a clean url', function () {
-    this.req.ss.pathname = '/test';
-    this.req.ss.config.config.clean_urls = true;
-    cleanUrls(this.req, this.res, this.next);
+  it('redirects to the clean url path when static html file is requested', function (done) {
+    app.use(cleanUrls(settings));
     
-    expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.path).to.be('/test.html');
+    request(app)
+      .get('/superstatic.html')
+      .expect('Location', '/superstatic')
+      .expect(301)
+      .end(done);
   });
   
-  it('sets the relative path', function () {
-    this.req.ss.pathname = '/test';
-    this.req.ss.config.config.clean_urls = true;
-    cleanUrls(this.req, this.res, this.next);
+  it('it redirects and keeps the query string', function (done) {
+    app.use(connect.query());
+    app.use(cleanUrls(settings));
     
-    expect(this.next.called).to.equal(true);
-    expect(this.req.superstatic.relativePath).to.be('/test.html');
+    request(app)
+      .get('/superstatic.html?key=value')
+      .expect('Location', '/superstatic?key=value')
+      .expect(301)
+      .end(done);
   });
   
-  it('redirects if url is an html file and clean urls are turned on', function () {
-    this.req.ss.config.config.clean_urls = true;
-    cleanUrls(this.req, this.res, this.next);
+  it('serves the .html version of the clean url if clean_urls are on', function (done) {
+    app.use(cleanUrls(settings));
     
-    expect(this.res.writeHead.calledWith(301, {Location: '/superstatic'}));
-    expect(this.res.end.called).to.equal(true);
+    request(app)
+      .get('/superstatic')
+      .expect(200)
+      .expect('/superstatic.html')
+      .end(done);
   });
   
-  it('preserves the query parameters on redirect', function () {
-    this.req.url = '/superstatic.html?query=param';
-    this.req.ss.pathname = '/superstatic.html';
-    this.req.query = {query: 'param'};
+  describe('skips middleware', function() {
+    beforeEach(function () {
+      app.use(function (req, res, next) {
+        req.config.clean_urls = false;
+        next();
+      });
+    });
+    it('skips the middleware if clean_urls are turned off', function (done) {
+      app.use(cleanUrls(settings));
+      
+      request(app)
+        .get('/superstatic.html')
+        .expect(404)
+        .end(done);
+    });
     
-    cleanUrls.internals.redirect(this.req, this.res);
+    it('skips the middleware if it is the root path', function (done) {
+      app.use(cleanUrls(settings));
+      
+      request(app)
+        .get('/')
+        .expect(404)
+        .end(done);
+    });
     
-    expect(this.res.writeHead.args[0][1]).to.eql({Location: '/superstatic?query=param'});
-    expect(this.res.end.called).to.equal(true);
+    it('skips the middleware if it is not a file and clean_urls are on', function (done) {
+      settings.isFile = function () {return false;}
+      
+      app.use(function (req, res, next) {
+        req.config.clean_urls = true;
+        next();
+      });
+      app.use(cleanUrls(settings));
+      
+      request(app)
+        .get('/superstatic')
+        .expect(404)
+        .end(done);
+    })
   });
 });
