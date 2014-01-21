@@ -54,11 +54,6 @@ describe('custom route middleware', function() {
   });
   
   it('serves the mapped route file for a custom route with a declared root', function (done) {
-    settings.rootPathname = function (pathname) {
-      var root = this.configuration.root || './';
-      return path.join('/', root, pathname);
-    };
-    
     app.use(function (req, res, next) {
       req.config.root = './public';
       next();
