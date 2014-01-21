@@ -1,7 +1,7 @@
 var path = require('path');
 var expect = require('expect.js');
 var sinon = require('sinon');
-var File = require('../../../lib/server/config/file');
+var File = require('../../../lib/server/settings/file');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 var CWD_DIO = path.resolve(__dirname, '../../fixtures/sample_app_dio');
 var fileOptions = {

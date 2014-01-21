@@ -32,7 +32,8 @@
     "deliver": "0.1.x",
     "slasher": "0.1.x",
     "globject": "0.1.x",
-    "is-url": "~1.0.0"
+    "is-url": "~1.0.0",
+    "mix-into": "~0.1.1"
   },
   "preferGlobal": "true",
   "bin": {

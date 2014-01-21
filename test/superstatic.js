@@ -1,6 +1,6 @@
 var expect = require('expect.js');
 var superstatic = require('../lib/superstatic');
-var SuperstaticServer = require('../lib/server/superstatic_server');
+var SuperstaticServer = require('../lib/server');
 var ignore = require('../lib/ignore');
 
 describe('Exposing superstatic', function() {
