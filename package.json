@@ -46,6 +46,7 @@
     "through": "~2.3.4",
     "mocksy": "~0.1.4",
     "knox": "~0.8.6",
-    "supertest": "~0.8.3"
+    "supertest": "~0.8.3",
+    "connect": "~2.9.2"
   }
 }

@@ -32,7 +32,7 @@ describe('File - local settings', function() {
   
   describe('loading configuration file', function() {
     it('loads the config file named superstatic.json', function () {
-      var file= new File({
+      var file = new File({
         cwd: CWD
       });
       

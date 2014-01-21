@@ -2,7 +2,7 @@ var expect = require('expect.js');
 var defaultSettings = require('../../../lib/server/settings/default');
 
 
-describe.only('default settings', function() {
+describe('default settings', function() {
   var obj;
   
   beforeEach(function () {

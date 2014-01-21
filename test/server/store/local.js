@@ -1,18 +1,26 @@
 var path = require('path');
 var expect = require('expect.js');
 var Local = require('../../../lib/server/store/local');
+var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 
 describe('File store - local', function() {
   beforeEach(function () {
-    this.local = new Local({});
-    this.filePath = path.resolve(__dirname, '../../fixtures/sample_app/index.html');
+    this.local = new Local({
+      cwd: CWD
+    });
   });
   
   it('sets the cwd by default', function () {
-    expect(this.local.cwd).to.be(process.cwd());
+    expect(this.local.cwd).to.be(CWD);
   });
   
   it('returns th file path', function () {
     expect(this.local.getPath('/path')).to.equal('/path');
-  });  
+  });
+  
+  it('detects if a file exists', function () {
+    expect(this.local.exists('/index.html')).to.be(true);
+    expect(this.local.exists('/dir')).to.be(false);
+    expect(this.local.exists('/file.html')).to.be(false);
+  });
 });
