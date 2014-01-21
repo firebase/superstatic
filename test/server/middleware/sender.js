@@ -13,26 +13,6 @@ describe('sender middleware', function() {
   beforeEach(function () {
     app = connect();
     fileStore = defaultFileStore.create();
-    
-    // var self = this;
-    
-    // this.sender = sender();
-    // setup.configure(this);
-    
-    // this.pipeSpy = sinon.spy();
-    // this.req.ss.store = {
-    //   get: function () {
-    //     return {
-    //       type: 'text/html',
-    //       on: function () {
-    //         return {
-    //           type: 'text/html',
-    //           pipe: self.pipeSpy
-    //         };
-    //       }
-    //     };
-    //   }
-    // };
   });
   
   it('puts a #send() method on the response object', function (done) {
