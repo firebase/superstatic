@@ -81,6 +81,19 @@ describe('custom route middleware', function() {
       .end(done);
   });
   
+  it('skips the middleware if there is no config available', function (done) {
+    app.use(function (req, res, next) {
+      delete req.config;
+      next();
+    });
+    app.use(customRoute(settings));
+    
+    request(app)
+      .get('/test1')
+      .expect(404)
+      .end(done);
+  });
+  
   describe('glob matching', function() {
     it('maps all paths to the same pathname', function (done) {
       settings.configuration.routes = {'**': 'index.html'};

@@ -54,7 +54,7 @@ describe('cache control middleware', function() {
       .end(done);
   });
   
-  it.only('sets the cache control to 24 hours by default if no config is proveded', function (done) {
+  it('sets the cache control to 24 hours by default if no config is proveded', function (done) {
     app.use(function (req, res, next) {
       delete req.config;
       next();

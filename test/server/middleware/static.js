@@ -45,6 +45,19 @@ describe('static middleware', function() {
       .end(done);
   });
   
+  it('skips the middleware if there is no config object available', function (done) {
+    app.use(function (req, res, next) {
+      delete req.config;
+      next();
+    });
+    app.use(static(settings));
+    
+    request(app) 
+      .get('/test.html')
+      .expect(404)
+      .end(done);
+  });
+  
   it('serves the directory index file if it is a path to a directory', function (done) {
     static.isDirectoryIndex = function () {return true;};
     app.use(static(settings));

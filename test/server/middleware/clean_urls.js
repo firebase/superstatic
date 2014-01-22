@@ -95,6 +95,19 @@ describe('clean urls middleware', function () {
         .get('/superstatic')
         .expect(404)
         .end(done);
-    })
+    });
+    
+    it('skips the middleware if there is no config available', function (done) {
+      app.use(function (req, res, next) {
+        delete req.config
+        next();
+      });
+      app.use(cleanUrls(settings));
+      
+      request(app)
+        .get('/superstatic')
+        .expect(404)
+        .end(done);
+    });
   });
 });
