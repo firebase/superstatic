@@ -53,4 +53,17 @@ describe('cache control middleware', function() {
       .expect('Cache-Control', 'public, max-age=3600')
       .end(done);
   });
+  
+  it.only('sets the cache control to 24 hours by default if no config is proveded', function (done) {
+    app.use(function (req, res, next) {
+      delete req.config;
+      next();
+    });
+    app.use(cacheControl());
+    
+    request(app)
+      .get('/default.html')
+      .expect('Cache-Control', 'public, max-age=3600')
+      .end(done);
+  });
 });
