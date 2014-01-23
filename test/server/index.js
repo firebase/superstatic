@@ -174,16 +174,16 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(8)).to.equal(middleware.cacheControl().toString());
     });
     
-    it('uses the custom route middleware', function () {
-      expect(this.stackHandleStr(9)).to.equal(middleware.customRoute().toString());
-    });
-    
     it('uses the clean urls middleware', function () {
-      expect(this.stackHandleStr(10)).to.equal(middleware.cleanUrls().toString());
+      expect(this.stackHandleStr(9)).to.equal(middleware.cleanUrls().toString());
     });
     
     it('uses the static middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(middleware.static().toString());
+      expect(this.stackHandleStr(10)).to.equal(middleware.static().toString());
+    });
+    
+    it('uses the custom route middleware', function () {
+      expect(this.stackHandleStr(11)).to.equal(middleware.customRoute().toString());
     });
     
     it('uses the default favicon middleware', function () {
