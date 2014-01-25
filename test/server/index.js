@@ -150,16 +150,16 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(2)).to.equal(connect.compress().toString());
     });
     
+    it('uses the restful middleware', function () {
+      expect(this.stackHandleStr(3)).to.equal(middleware.restful().toString());
+    });
+    
     it('uses the configure middleware', function () {
-      expect(this.stackHandleStr(3)).to.equal(middleware.configure().toString());
+      expect(this.stackHandleStr(4)).to.equal(middleware.configure().toString());
     });
     
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(4)).to.equal(middleware.removeTrailingSlash().toString());
-    });
-    
-    it('uses the restful middleware', function () {
-      expect(this.stackHandleStr(5)).to.equal(middleware.restful().toString());
+      expect(this.stackHandleStr(5)).to.equal(middleware.removeTrailingSlash().toString());
     });
     
     it('uses the basic auth protect middlware', function () {
