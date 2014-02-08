@@ -45,16 +45,16 @@ describe('cache control middleware', function() {
       .end(done);
   });
   
-  it('sets cache control to 24 hours by default', function(done) {
+  it('sets cache control to 5 minutes? by default', function(done) {
     app.use(cacheControl());
     
     request(app)
       .get('/default.html')
-      .expect('Cache-Control', 'public, max-age=3600')
+      .expect('Cache-Control', 'public, max-age=300')
       .end(done);
   });
   
-  it('sets the cache control to 24 hours by default if no config is proveded', function (done) {
+  it('sets the cache control to 5 minutes? by default if no config is provided', function (done) {
     app.use(function (req, res, next) {
       delete req.config;
       next();
@@ -63,7 +63,7 @@ describe('cache control middleware', function() {
     
     request(app)
       .get('/default.html')
-      .expect('Cache-Control', 'public, max-age=3600')
+      .expect('Cache-Control', 'public, max-age=300')
       .end(done);
   });
 });
