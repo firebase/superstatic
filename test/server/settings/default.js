@@ -26,4 +26,9 @@ describe('default settings', function() {
   it('gets the default root pathname', function () {
     expect(obj.rootPathname('path')).to.equal('/path');
   });
+  
+  it('can set the root current working directory', function () {
+    obj._rootCwd = process.cwd();
+    expect(obj.rootPathname('path')).to.equal(process.cwd() + '/path');
+  });
 });
