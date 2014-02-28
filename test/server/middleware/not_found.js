@@ -3,7 +3,8 @@ var request = require('supertest');
 var fs = require('fs');
 var path = require('path');
 var expect = require('expect.js');
-var sinon = require('sinon');
+var mkdirp = require('mkdirp');
+var rmdir = require('rmdir');
 var notFound = require('../../../lib/server/middleware/not_found');
 var sender = require('../../../lib/server/middleware/sender');
 var defaultFileStore = require('../../../lib/server/store/default');
@@ -18,6 +19,7 @@ describe('not found middleware', function() {
     app.use(sender(defaultFileStore.create()));
     app.use(function (req, res, next) {
       req.config = {
+        root: './',
         error_page: notFoundTplPath
       };
     
@@ -35,7 +37,7 @@ describe('not found middleware', function() {
       .end(done)
   });
   
-  it('servers a custom 404 page', function (done) {
+  it('serves a custom 404 page', function (done) {
     app.use(function (req, res, next) {
       req.config.error_page = 'error.html';
       next();
@@ -55,7 +57,32 @@ describe('not found middleware', function() {
       });
   });
   
-  it('servers the default 404 page if the configured file does not exist', function (done) {
+  it('serves a custom 404 page when the root is set to a sub-directory, relative to the root directory', function (done) {
+    var rootDir = '.tmp';
+    
+    app.use(function (req, res, next) {
+      req.config.root = rootDir;
+      req.config.error_page = 'error.html';
+      next();
+    });
+    app.use(notFound());
+    
+    mkdirp.sync(rootDir);
+    fs.writeFileSync(rootDir + '/error.html', 'error');
+    
+    request(app)
+      .get('/not-found')
+      .expect('error')
+      .expect(404)
+      .end(function (err) {
+        rmdir(rootDir, function () {
+          if (err) throw err;
+          done();
+        });
+      });
+  });
+  
+  it('serves the default 404 page if the configured file does not exist', function (done) {
     app.use(function (req, res, next) {
       req.config.error_page = 'error.html';
       next();

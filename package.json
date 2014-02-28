@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -46,8 +46,9 @@
     "through": "~2.3.4",
     "mocksy": "~0.1.4",
     "knox": "~0.8.6",
-    "supertest": "~0.8.3",
+    "supertest": "~0.9.0",
     "connect": "~2.9.2",
-    "supertest": "~0.9.0"
+    "mkdirp": "0.3.x",
+    "rmdir": "1.0.x"
   }
 }
