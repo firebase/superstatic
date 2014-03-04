@@ -12,7 +12,7 @@ var notFoundTplPath = path.resolve(__dirname, '../../../lib/server/templates/not
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
 var defaultSettings = require('../../../lib/server/settings/default');
 
-describe('not found middleware', function() {
+describe.only('not found middleware', function() {
   var app;
   var settings;
   
