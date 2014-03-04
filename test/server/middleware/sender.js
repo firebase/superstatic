@@ -25,7 +25,7 @@ describe('sender middleware', function() {
     
     request(app).get('/').end(done);
   });
-  
+    
   it('sends a file with no relative path', function (done) {
     // var url = '../../fixtures/sample_app/index.html';
     

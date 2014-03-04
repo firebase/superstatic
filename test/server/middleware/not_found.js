@@ -12,20 +12,22 @@ var notFoundTplPath = path.resolve(__dirname, '../../../lib/server/templates/not
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
 var defaultSettings = require('../../../lib/server/settings/default');
 
-describe.only('not found middleware', function() {
+describe('not found middleware', function() {
   var app;
   var settings;
+  var store;
   
   beforeEach(function () {
     app = connect();
     settings = defaultSettings.create();
+    store = defaultFileStore.create();
     
     // Override where it looks for the file
     // When in production, it looks for the file relative
     // to the root directory
     settings._rootCwd = process.cwd();
     
-    app.use(sender(defaultFileStore.create()));
+    app.use(sender(store));
     app.use(function (req, res, next) {
       req.config = {
         root: './',
@@ -52,10 +54,10 @@ describe.only('not found middleware', function() {
   
   it('serves a custom 404 page', function (done) {
     app.use(function (req, res, next) {
-      req.config.error_page = 'error.html';
+      req.config.error_page = process.cwd() + '/error.html';
       next();
     });
-    app.use(notFound(settings));
+    app.use(notFound(settings, store));
     
     fs.writeFileSync('error.html', 'error');
     
@@ -78,10 +80,11 @@ describe.only('not found middleware', function() {
     
     app.use(function (req, res, next) {
       req.config.root = rootDir;
+      req.config.cwd = path.join(process.cwd(), rootDir);
       req.config.error_page = 'error.html';
       next();
     });
-    app.use(notFound(settings));
+    app.use(notFound(settings, store));
     
     mkdirp.sync(rootDir);
     fs.writeFileSync(rootDir + '/error.html', 'error');
