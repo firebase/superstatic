@@ -29,7 +29,7 @@
     "lodash": "~2.2.1",
     "chokidar": "~0.7.1",
     "jsun": "0.1.x",
-    "deliver": "0.1.8",
+    "deliver": "0.1.9",
     "slasher": "0.1.x",
     "globject": "0.1.x",
     "is-url": "~1.0.0",
