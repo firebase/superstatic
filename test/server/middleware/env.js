@@ -2,6 +2,7 @@ var connect = require('connect');
 var request = require('supertest');
 var env = require('../../../lib/server/middleware/env');
 var defaultSettings = require('../../../lib/server/settings/default');
+var util = require('util');
 
 describe('env middleware', function() {
   var app;
@@ -21,70 +22,35 @@ describe('env middleware', function() {
         }
       }
     };
+    app.use(env(settings));
   });
   
-  it('intercepts the request for the environment javascript file', function (done) {
+  it('intercepts the request for the environment javascript file');
+  // Not sure how to test the respons body here.
+  // response.body is an Object.
+  // , function (done) {
+  //   request(app)
+  //     .get('/__/env')
+  //     .expect('Content-Type', 'text/javascript')
+  //     .expect(200)
+  //     .expect(function (response) {
+  //       if (response.body != 'this.__env = ' + JSON.stringify(settings.build.env.config.env) + ';') {
+  //         return 'wrong js content: ' + JSON.stringify(response.body);
+  //       }
+  //     })
+  //     .end(done);
+  // });
+
+  it('intercepts the request for the environment json file', function (done) {
     request(app)
-      .get('/__/env.js')
+      .get('/__/env.json')
+      .expect('Content-Type', 'application/json')
+      .expect(200)
+      .expect(function (response) {
+        if (JSON.stringify(response.body) != JSON.stringify(settings.build.env.config.env)) { 
+          return 'wrong json content: ' + JSON.stringify(response.body);
+        }
+      })
       .end(done);
   });
-  
-  
-  
-  // it('skips middleware if environment is not protected', function (done) {
-  //   settings.build = { env: { config: { auth: undefined } } };
-  //   app.use(protect(settings));
-    
-  //   request(app)
-  //     .get('/')
-  //     .expect(404)
-  //     .end(done);
-  // });
-  
-  // it('skips middleware if there is no build for this environment', function (done) {
-  //   settings.build = undefined;
-  //   app.use(protect(settings));
-    
-  //   request(app)
-  //     .get('/')
-  //     .expect(404)
-  //     .end(done);
-  // });
-  
-  // it('requires http basic auth when environment is protected', function (done) {
-  //   app.use(protect(settings));
-    
-  //   request(app)
-  //     .get('/')
-  //     .expect(401)
-  //     .expect('WWW-Authenticate', 'Basic realm="Secure Area"')
-  //     .end(done);
-  // });
-  
-  // it('authorizes request if basic auth credentials match enviroment credentials', function (done) {
-  //   app.use(function (req, res, next) {
-  //     req.headers.authorization = 'Basic ' + new Buffer('username:password').toString('base64');
-  //     next();
-  //   });
-  //   app.use(protect(settings));
-    
-  //   request(app)
-  //     .get('/')
-  //     .expect(404)
-  //     .end(done);
-  // });
-  
-  // it('requires authentication if auth is provided invalid credentials', function (done) {
-  //   app.use(function (req, res, next) {
-  //     req.headers.authorization = 'Basic ' + new Buffer('username:wrongpassword').toString('base64');
-  //     next();
-  //   });
-  //   app.use(protect(settings));
-    
-  //   request(app)
-  //     .get('/')
-  //     .expect(401)
-  //     .expect('WWW-Authenticate', 'Basic realm="Secure Area"')
-  //     .end(done);
-  // });
 });
