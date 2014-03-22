@@ -44,7 +44,11 @@ describe('Superstatic server', function() {
         this.server = localServer();
       });
       
-      
+      it('configures a localEnv', function () {
+        console.log(this.server.localEnv);
+        expect(this.server.localEnv).to.not.be(undefined);
+      });
+
       it('configures the settings object as a file', function () {
         expect(this.server.settings).to.not.be(undefined);
       });
@@ -228,6 +232,7 @@ function localServer () {
   return Server.createServer({
     port: PORT,
     host: HOST,
+    localEnv: {},
     settings: localSettings(),
     store: localStore()
   });

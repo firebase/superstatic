@@ -7,6 +7,7 @@ var Superstatic = require('../lib/server');
 var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
 var JSUN = require('jsun');
+var fs = require('fs');
 var server;
 
 // app working directory
@@ -51,11 +52,17 @@ function createInstance (awd, host, port) {
         file: (argv.c || argv.config || 'superstatic.json'),
         cwd: awd
       }
-  
+
+    var envJSON = path.join(awd, "./.env.json");
+    if (fs.existsSync(envJSON)) {
+      var localEnv = JSON.parse(fs.readFileSync(envJSON));
+    }
+
   return Superstatic.createServer({
     port: port,
     host: host,
     settings: new ConfigFile(configOptions),
+    localEnv: localEnv,
     store: {
       type: 'local',
       options: {
