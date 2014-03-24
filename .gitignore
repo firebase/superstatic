@@ -15,3 +15,5 @@ npm-debug.log
 node_modules
 .tmp
 .tmp_root
+
+spikes
