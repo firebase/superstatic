@@ -4,7 +4,35 @@
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha --recursive --reporter spec ./test"
+    "test": "npm run lint && node_modules/.bin/mocha --recursive --reporter spec ./test",
+    "lint": "node_modules/.bin/jshint ./lib"
+  },
+  "jshintConfig": {
+    "expr": true,
+    "curly": false,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": false,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "unused": false,
+    "boss": true,
+    "eqnull": true,
+    "node": true,
+    "laxbreak": true,
+    "globals": {
+      "require": true,
+      "module": true,
+      "exports": true,
+      "it": true,
+      "describe": true,
+      "beforeEach": true,
+      "afterEach": true,
+      "chai": true,
+      "Regex": true
+    }
   },
   "repository": {
     "type": "git",
@@ -50,6 +78,7 @@
     "connect": "~2.9.2",
     "mkdirp": "0.3.x",
     "rmdir": "1.0.x",
-    "clone": "^0.1.11"
+    "clone": "^0.1.11",
+    "jshint": "^2.4.4"
   }
 }
