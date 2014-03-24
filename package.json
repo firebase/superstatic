@@ -78,7 +78,8 @@
     "connect": "~2.9.2",
     "mkdirp": "0.3.x",
     "rmdir": "1.0.x",
-    "clone": "^0.1.11",
-    "jshint": "^2.4.4"
+    "clone": "0.1.x",
+    "jshint": "2.4.x",
+    "pre-commit": "0.0.4"
   }
 }
