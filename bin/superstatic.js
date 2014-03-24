@@ -17,6 +17,7 @@ var overrideConfig =  exports.overrideConfig = parseOverrideConfig(argv);
 var awd = exports.awd = (argv._[0])
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
+var envJSON = path.join(awd, "./.env.json");
 
 //
 startServer();
@@ -53,7 +54,6 @@ function createInstance (awd, host, port) {
         cwd: awd
       }
 
-    var envJSON = path.join(awd, "./.env.json");
     if (fs.existsSync(envJSON)) {
       var localEnv = JSON.parse(fs.readFileSync(envJSON));
     }
