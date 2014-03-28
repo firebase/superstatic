@@ -1,38 +1,11 @@
 {
   "name": "superstatic",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
     "test": "npm run lint && node_modules/.bin/mocha --recursive --reporter spec ./test",
     "lint": "node_modules/.bin/jshint ./lib"
-  },
-  "jshintConfig": {
-    "expr": true,
-    "curly": false,
-    "eqeqeq": true,
-    "immed": true,
-    "latedef": false,
-    "newcap": true,
-    "noarg": true,
-    "sub": true,
-    "undef": true,
-    "unused": false,
-    "boss": true,
-    "eqnull": true,
-    "node": true,
-    "laxbreak": true,
-    "globals": {
-      "require": true,
-      "module": true,
-      "exports": true,
-      "it": true,
-      "describe": true,
-      "beforeEach": true,
-      "afterEach": true,
-      "chai": true,
-      "Regex": true
-    }
   },
   "repository": {
     "type": "git",
@@ -41,7 +14,8 @@
   "keywords": [
     "static",
     "server",
-    "divshot"
+    "divshot",
+    "hosting"
   ],
   "author": "Divshot",
   "license": "MIT",
@@ -49,12 +23,11 @@
     "url": "https://github.com/divshot/superstatic/issues"
   },
   "dependencies": {
-    "optimist": "~0.6.0",
-    "mime": "~1.2.11",
-    "minimatch": "~0.2.12",
-    "connect": "~2.9.1",
-    "async": "~0.2.9",
-    "lodash": "~2.2.1",
+    "mime": "1.2.x",
+    "minimatch": "0.2.x",
+    "connect": "2.9.x",
+    "async": "0.4.x",
+    "lodash": "2.4.x",
     "chokidar": "~0.7.1",
     "jsun": "0.1.x",
     "deliver": "0.1.9",
@@ -82,5 +55,32 @@
     "clone": "0.1.x",
     "jshint": "2.4.x",
     "pre-commit": "0.0.4"
+  },
+  "jshintConfig": {
+    "expr": true,
+    "curly": false,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": false,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "unused": false,
+    "boss": true,
+    "eqnull": true,
+    "node": true,
+    "laxbreak": true,
+    "globals": {
+      "require": true,
+      "module": true,
+      "exports": true,
+      "it": true,
+      "describe": true,
+      "beforeEach": true,
+      "afterEach": true,
+      "chai": true,
+      "Regex": true
+    }
   }
 }
