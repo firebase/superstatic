@@ -61,7 +61,8 @@
     "slasher": "0.1.x",
     "globject": "0.1.x",
     "is-url": "~1.0.0",
-    "mix-into": "~0.1.1"
+    "mix-into": "~0.1.1",
+    "minimist": "0.0.8"
   },
   "preferGlobal": "true",
   "bin": {

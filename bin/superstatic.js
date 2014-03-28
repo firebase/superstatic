@@ -2,7 +2,7 @@
 
 var path = require('path');
 var chokidar = require('chokidar');
-var argv = require('optimist').argv;
+var argv = require('minimist')(process.argv.slice(2));
 var Superstatic = require('../lib/server');
 var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
