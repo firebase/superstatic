@@ -78,6 +78,10 @@ Note that you can pass the `--no-cache` option when you run the server to serve 
 without caching. This is good to use during development when you want fresh content served
 on each request.
 
+## Services
+
+**Services** are extensions that provide additional functionality. More TBD.
+
 ## Run Tests
 
 In superstatic module directory:
