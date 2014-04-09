@@ -10,6 +10,9 @@ var JSUN = require('jsun');
 var fs = require('fs');
 var server;
 
+var ERROR_PAGE = __dirname + '/not_found.html';
+var NOT_FOUND_PAGE = __dirname + '/not_found.html';
+
 // app working directory
 var port = exports.port =  argv.port || argv.p || defaults.PORT;
 var host = exports.host = argv.host || argv.h || defaults.HOST;
@@ -54,10 +57,13 @@ function createInstance (awd, host, port) {
         cwd: awd
       }
 
-    if (fs.existsSync(envJSON)) {
-      var localEnv = JSON.parse(fs.readFileSync(envJSON));
-    }
-
+  if (fs.existsSync(envJSON)) {
+    var localEnv = JSON.parse(fs.readFileSync(envJSON));
+  }
+  
+  // Insert defaults into settings
+  configOptions._defaults = require('./_defaults.js');
+  
   return Superstatic.createServer({
     port: port,
     host: host,

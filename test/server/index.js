@@ -234,7 +234,9 @@ function localServer () {
     host: HOST,
     localEnv: {},
     settings: localSettings(),
-    store: localStore()
+    store: localStore(),
+    error_page: 'error.html',
+    not_found_page: 'not_found.html'
   });
 }
 

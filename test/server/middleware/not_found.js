@@ -8,7 +8,7 @@ var rmdir = require('rmdir');
 var notFound = require('../../../lib/server/middleware/not_found');
 var sender = require('../../../lib/server/middleware/sender');
 var defaultFileStore = require('../../../lib/server/store/default');
-var notFoundTplPath = path.resolve(__dirname, '../../../lib/server/templates/not_found.html');
+var notFoundTplPath = path.resolve(__dirname, '../../../bin/not_found.html');
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
 var defaultSettings = require('../../../lib/server/settings/default');
 
@@ -26,6 +26,9 @@ describe('not found middleware', function() {
     // When in production, it looks for the file relative
     // to the root directory
     settings._rootCwd = process.cwd();
+    settings._defaults = {
+      error_page: notFoundTplPath
+    };
     
     app.use(sender(store));
     app.use(function (req, res, next) {
