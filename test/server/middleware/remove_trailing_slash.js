@@ -1,4 +1,5 @@
 var connect = require('connect');
+var expect = require('expect.js');
 var request = require('supertest');
 var removeTrailingSlash = require('../../../lib/server/middleware/remove_trailing_slash');
 var defaultSettings = require('../../../lib/server/settings/default');
@@ -45,6 +46,9 @@ describe('remove trailing slash middleware', function() {
     request(app)
       .get('/about/')
       .expect(404)
+      .expect(function (data) {
+        expect(data.req.path).to.equal('/about/');
+      })
       .end(done);
   });
   
@@ -53,6 +57,9 @@ describe('remove trailing slash middleware', function() {
     
     request(app)
       .get('/about')
+      .expect(function (req) {
+        expect(req.headers.location).to.equal('/about/');
+      })
       .expect(301)
       .end(done);
   });
