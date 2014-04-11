@@ -8,6 +8,7 @@ var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
 var JSUN = require('jsun');
 var fs = require('fs');
+var feedback = require('feedback');
 var server;
 
 var ERROR_PAGE = __dirname + '/not_found.html';
@@ -40,10 +41,25 @@ function configFileChanged () {
 }
 
 function startServer () {
-  server = createInstance(awd, host, port);
-  server.start(function () {
-    preamble(host, port);
+  var domain = require('domain');
+  var d = domain.create();
+  
+  d.run(function () {
+    server = createInstance(awd, host, port);
+    server.start(function () {
+      preamble(host, port);
+    });
   });
+  
+  d.on('error', serverErrorHandler);
+}
+
+function serverErrorHandler (err) {
+  var msg = err.message;
+  
+  if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
+  
+  feedback.error(msg);
 }
 
 function createInstance (awd, host, port) {

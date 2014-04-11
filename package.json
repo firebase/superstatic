@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -35,7 +35,8 @@
     "globject": "0.1.x",
     "is-url": "~1.0.0",
     "mix-into": "~0.1.1",
-    "minimist": "0.0.8"
+    "minimist": "0.0.8",
+    "feedback": "^0.3.2"
   },
   "preferGlobal": "true",
   "bin": {
