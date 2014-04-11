@@ -48,6 +48,15 @@ describe('remove trailing slash middleware', function() {
       .end(done);
   });
   
+  it('redirects directory index to have a trailing slash', function (done) {
+    app.use(removeTrailingSlash(settings));
+    
+    request(app)
+      .get('/about')
+      .expect(301)
+      .end(done);
+  });
+  
   it('preservers the query parameters on redirect', function (done) {
     settings.isFile = function () {return false;};
     app.use(connect.query());
