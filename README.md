@@ -11,18 +11,18 @@ pushState applications as well as clean URLs and other goodies.
 Superstatic should be installed globally using npm:
 
     npm install -g superstatic
-    
+
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
 3474. This works just like any other static server:
 
     superstatic
-    
+
 You can optionally specify the directory, port and hostname of the server:
 
     superstatic public --port 8080 --host 127.0.0.1
-    
+
 Where it gets interesting is with Superstatic's JSON configuration file.
 
 ## Configuration
@@ -77,6 +77,9 @@ manually set the cache control header. An example:
 Note that you can pass the `--no-cache` option when you run the server to serve all content
 without caching. This is good to use during development when you want fresh content served
 on each request.
+
+**auth:** a user name and password which allows you to activate Basic Auth. For example, `username:password`.
+
 
 ## Run Tests
 
