@@ -40,7 +40,8 @@
   },
   "preferGlobal": "true",
   "bin": {
-    "superstatic": "bin/superstatic.js"
+    "superstatic": "bin/server",
+    "ss": "bin/server"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
