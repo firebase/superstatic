@@ -30,8 +30,12 @@ describe('Superstatic server', function() {
     expect(this.server.settings).to.not.be(undefined);
   });
   
-  it('sets the port on the instancje', function () {
+  it('sets the port on the instance', function () {
     expect(this.server._port).to.be(PORT);
+  });
+  
+  it('sets the current working directory on the instance', function () {
+    expect(this.server._cwd).to.be(process.cwd() + '/');
   });
   
   describe('#createServer()', function() {
@@ -235,7 +239,8 @@ function localServer () {
     settings: localSettings(),
     store: localStore(),
     error_page: 'error.html',
-    not_found_page: 'not_found.html'
+    not_found_page: 'not_found.html',
+    cwd: process.cwd() + '/'
   });
 }
 
