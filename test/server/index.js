@@ -76,7 +76,7 @@ describe('Superstatic server', function() {
     var self = this;
     
     startServer(this.server, function (finished) {
-      expect(self.server._server).to.not.be(undefined);
+      expect(self.server._client).to.not.be(undefined);
       finished(done);
     });
   });
@@ -210,8 +210,8 @@ describe('Superstatic server', function() {
 function startServer (server, callback) {
   server.start(function () {
     // Suppress all connect.logger output
-    if (server._server.stack[0].handle.toString() === connect.logger().toString()) {
-      server._server.stack[0].handle = function (req, res, next) {next();};
+    if (server._client.stack[0].handle.toString() === connect.logger().toString()) {
+      server._client.stack[0].handle = function (req, res, next) {next();};
     }
     
     callback(function (done) {

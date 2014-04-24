@@ -3,10 +3,10 @@
 var path = require('path');
 var chokidar = require('chokidar');
 var argv = require('minimist')(process.argv.slice(2));
-var Superstatic = require('../lib/server');
+var superstatic = require('../lib/superstatic');
 var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
-var JSUN = require('jsun');
+var jsun = require('jsun');
 var fs = require('fs');
 var feedback = require('feedback');
 var server;
@@ -63,22 +63,21 @@ function serverErrorHandler (err) {
 }
 
 function createInstance (cwd, host, port) {
-  var configOptions = (argv.c || argv.config || 'superstatic.json');
-  var localEnv
+  var localEnv;
   
-  if (overrideConfig) configOptions = overrideConfig
-  if (fs.existsSync(envJSON)) localEnv = JSON.parse(fs.readFileSync(envJSON));
+  try {localEnv = require(envJSON);}
+  catch (e) {}
   
   var serverOptions = {
     port: port,
     host: host,
     environment: localEnv,
     cwd: cwd,
-    config: configOptions,
+    config: overrideConfig || argv.c || argv.config || 'superstatic.json',
     _defaults: require('./_defaults') // Insert defaults into settings
   };
   
-  return Superstatic.createServer(serverOptions);
+  return new superstatic.Server(serverOptions);
 };
 
 function preamble (host, port) {
@@ -101,7 +100,7 @@ function parseOverrideConfig (argv) {
   var overrideConfig = argv.config || argv.c || undefined;
   
   if (overrideConfig) {
-    var parsed = JSUN.parse(overrideConfig);
+    var parsed = jsun.parse(overrideConfig);
     if (parsed.err) return overrideConfig = undefined;
     
     overrideConfig = parsed.json;

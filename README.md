@@ -80,11 +80,15 @@ on each request.
 
 ## API
 
-### createServer(options)
+### Server(options)
 
 ```js
 var superstatic = require('superstatic');
+var Server = superstatic.Server;
+
 var server = superstatic.createServer(/* Server Options */);
+// OR
+var sever = new Server(/* Server Options */);
 
 server.start(function () {
 
@@ -104,15 +108,15 @@ server.start(function () {
 
 **config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
 ```js
-var superstatic = require('superstatic');
+var Server = require('superstatic').Server;
 
-var server = superstatic.createServer({
+var server = new Server({
   config: require('config_file.json')
 });
 
 // OR
 
-var server = superstatic.createServer({
+var server = new Server({
   config: 'config_file.json'
 });
 ```
