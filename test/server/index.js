@@ -226,17 +226,15 @@ describe('Superstatic server', function() {
         debug: false
       });
       
-      server.use(function (req, res, next) {
+      server.use(function customMiddlewareTest (req, res, next) {
         middlewareExecuted = true;
         next();
       });
       
-      // FIXME: this test runs slow
-      
-      server.start(function () {
+      startServer(server, function (finished) {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
-          server.stop(done);
+          finished(done);
         });
       });
     });
