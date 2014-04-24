@@ -113,7 +113,6 @@ describe('Superstatic server', function() {
     var self = this;
     var removeSpy = sinon.spy();
     
-    
     startServer(this.server, function (finsished) {
       self.server._openServer.removeAllListeners = removeSpy;
       self.server.stop(function () {
@@ -203,6 +202,27 @@ describe('Superstatic server', function() {
     
     it('uses the not found middleware', function () {
       expect(this.stackHandleStr(14)).to.equal(middleware.notFound().toString());
+    });
+    
+    it('lets you inject custom middleware into the chain', function (done) {
+      var request = require('request');
+      var middlewareExecuted = false;
+      var server = new Server({
+        port: PORT,
+        cwd: CWD
+      });
+      
+      server.use(function (req, res, next) {
+        middlewareExecuted = true;
+        next();
+      });
+      
+      server.start(function () {
+        request('http://localhost:' + PORT, function (err, response) {
+          expect(middlewareExecuted).to.equal(true);
+          done();
+        });
+      });
     });
   });
 });
