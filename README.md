@@ -125,6 +125,8 @@ var server = new Server({
 
 **environment:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
 
+**debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
+
 ## Instance methods
 
 ### start(callback)
