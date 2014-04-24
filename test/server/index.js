@@ -59,6 +59,19 @@ describe('Superstatic server', function() {
       it('configures the file store as a file system store', function () {
         expect(this.server.store instanceof StoreLocal).to.be(true);
       });
+      
+      it('turns debug output off', function (done) {
+        var server = new Server({
+          port: PORT,
+          debug: false
+        });
+        
+        server.start(function () {
+          expect(server._debug).to.equal(false);
+          expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
+          server.stop(done);
+        });
+      });
     })
     
     describe('remote options', function() {
@@ -209,7 +222,8 @@ describe('Superstatic server', function() {
       var middlewareExecuted = false;
       var server = new Server({
         port: PORT,
-        cwd: CWD
+        cwd: CWD,
+        debug: false
       });
       
       server.use(function (req, res, next) {
@@ -217,10 +231,12 @@ describe('Superstatic server', function() {
         next();
       });
       
+      // FIXME: this test runs slow
+      
       server.start(function () {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
-          done();
+          server.stop(done);
         });
       });
     });
