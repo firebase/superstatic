@@ -96,13 +96,30 @@ server.start(function () {
 });
 ```
 
-Server Options *(all values are optional)*
+**Server Options** *(all values are optional)*
 
-* `port` - Port to run the server on. Defaults to `3474`
-* `host` - Host to run the server on. Defaults to `127.0.0.1` (localhost)
-* `config` - override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
-* `cwd` - the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
-* `environment` - an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+**port:** Port to run the server on. Defaults to `3474`
+
+**host:** Host to run the server on. Defaults to `127.0.0.1` (localhost)
+
+**config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
+```js
+var superstatic = require('superstatic');
+
+var server = superstatic.createServer({
+  config: require('config_file.json')
+});
+
+// OR
+
+var server = superstatic.createServer({
+  config: 'config_file.json'
+});
+```
+
+**cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
+
+**environment:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
 
 ## Instance methods
 
@@ -110,13 +127,13 @@ Server Options *(all values are optional)*
 
 Start the server
 
-* `callback` - gets called once the server starts. Gets passed an error argument if there is an error.
+**callback:** gets called once the server starts. Gets passed an error argument if there is an error.
 
 ### stop(callback)
 
 Stops the server
 
-* `callback` - gets caleld once the server stops. Gets passed an error argument if there is an error.
+**callback:** gets caleld once the server stops. Gets passed an error argument if there is an error.
 
 ## Run Tests
 
