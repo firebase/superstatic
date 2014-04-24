@@ -15,10 +15,10 @@ var ERROR_PAGE = __dirname + '/not_found.html';
 var NOT_FOUND_PAGE = __dirname + '/not_found.html';
 
 // app working directory
-var port = exports.port =  argv.port || argv.p || defaults.PORT;
-var host = exports.host = argv.host || argv.h || defaults.HOST;
-var overrideConfig =  exports.overrideConfig = parseOverrideConfig(argv);
-var awd = exports.awd = (argv._[0])
+var port = argv.port || argv.p || defaults.PORT;
+var host = argv.host || argv.h || defaults.HOST;
+var overrideConfig =  parseOverrideConfig(argv);
+var awd = argv._[0]
  ? path.resolve(process.cwd(), argv._[0])
  : defaults.DIRECTORY;
 var envJSON = path.join(awd, "./.env.json");
@@ -63,15 +63,15 @@ function serverErrorHandler (err) {
 }
 
 function createInstance (awd, host, port) {
-  var configOptions = (overrideConfig)
-    ? {
-        config: overrideConfig,
-        cwd: awd
-      }
-    : {
-        file: (argv.c || argv.config || 'superstatic.json'),
-        cwd: awd
-      }
+  var configOptions = {
+    file: (argv.c || argv.config || 'superstatic.json')
+  };
+  
+  if (overrideConfig) {
+    configOptions = {
+      config: overrideConfig
+    };
+  }
 
   if (fs.existsSync(envJSON)) {
     var localEnv = JSON.parse(fs.readFileSync(envJSON));
@@ -80,18 +80,15 @@ function createInstance (awd, host, port) {
   // Insert defaults into settings
   configOptions._defaults = require('./_defaults.js');
   
-  return Superstatic.createServer({
+  var serverOptions = {
     port: port,
     host: host,
-    settings: new ConfigFile(configOptions),
-    localEnv: localEnv,
-    store: {
-      type: 'local',
-      options: {
-        cwd: awd
-      }
-    }
-  });
+    environment: localEnv,
+    cwd: awd,
+    configuration: configOptions
+  };
+  
+  return Superstatic.createServer(serverOptions);
 };
 
 function preamble (host, port) {

@@ -35,7 +35,7 @@ describe('Superstatic server', function() {
   });
   
   describe('#createServer()', function() {
-    it('create and insatnce of SuperstaticServer', function () {
+    it('create and instance of SuperstaticServer', function () {
       expect(this.server instanceof Server).to.be(true);
     });
     
@@ -45,7 +45,6 @@ describe('Superstatic server', function() {
       });
       
       it('configures a localEnv', function () {
-        console.log(this.server.localEnv);
         expect(this.server.localEnv).to.not.be(undefined);
       });
 
@@ -232,7 +231,7 @@ function localServer () {
   return Server.createServer({
     port: PORT,
     host: HOST,
-    localEnv: {},
+    environment: {},
     settings: localSettings(),
     store: localStore(),
     error_page: 'error.html',
