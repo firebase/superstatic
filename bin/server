@@ -17,6 +17,7 @@ var NOT_FOUND_PAGE = __dirname + '/not_found.html';
 // app working directory
 var port = argv.port || argv.p || defaults.PORT;
 var host = argv.host || argv.h || defaults.HOST;
+var debug = (argv.quiet || argv.q) ? false : defaults.DEBUG;
 var overrideConfig =  parseOverrideConfig(argv);
 var cwd = argv._[0]
  ? path.resolve(process.cwd(), argv._[0])
@@ -74,6 +75,7 @@ function createInstance (cwd, host, port) {
     environment: localEnv,
     cwd: cwd,
     config: overrideConfig || argv.c || argv.config || 'superstatic.json',
+    debug: debug,
     _defaults: require('./_defaults') // Insert defaults into settings
   };
   
