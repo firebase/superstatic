@@ -50,7 +50,7 @@ describe('env middleware', function() {
         .get('/__/env.js')
         .expect('Content-Type', 'text/javascript')
         .expect(200)
-        .expect('this.__env = {"key1":"value1","key2":"value2"};')
+        .expect(/return {"key1":"value1","key2":"value2"};/)
         .end(done);
     });
 

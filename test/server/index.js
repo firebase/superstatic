@@ -30,12 +30,16 @@ describe('Superstatic server', function() {
     expect(this.server.settings).to.not.be(undefined);
   });
   
-  it('sets the port on the instancje', function () {
+  it('sets the port on the instance', function () {
     expect(this.server._port).to.be(PORT);
   });
   
+  it('sets the current working directory on the instance', function () {
+    expect(this.server._cwd).to.be(process.cwd() + '/');
+  });
+  
   describe('#createServer()', function() {
-    it('create and insatnce of SuperstaticServer', function () {
+    it('create and instance of SuperstaticServer', function () {
       expect(this.server instanceof Server).to.be(true);
     });
     
@@ -45,7 +49,6 @@ describe('Superstatic server', function() {
       });
       
       it('configures a localEnv', function () {
-        console.log(this.server.localEnv);
         expect(this.server.localEnv).to.not.be(undefined);
       });
 
@@ -55,6 +58,19 @@ describe('Superstatic server', function() {
       
       it('configures the file store as a file system store', function () {
         expect(this.server.store instanceof StoreLocal).to.be(true);
+      });
+      
+      it('turns debug output off', function (done) {
+        var server = new Server({
+          port: PORT,
+          debug: false
+        });
+        
+        server.start(function () {
+          expect(server._debug).to.equal(false);
+          expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
+          server.stop(done);
+        });
       });
     })
     
@@ -73,7 +89,7 @@ describe('Superstatic server', function() {
     var self = this;
     
     startServer(this.server, function (finished) {
-      expect(self.server._server).to.not.be(undefined);
+      expect(self.server._client).to.not.be(undefined);
       finished(done);
     });
   });
@@ -109,7 +125,6 @@ describe('Superstatic server', function() {
   it('removes all listensers when server is stopped', function (done) {
     var self = this;
     var removeSpy = sinon.spy();
-    
     
     startServer(this.server, function (finsished) {
       self.server._openServer.removeAllListeners = removeSpy;
@@ -201,14 +216,38 @@ describe('Superstatic server', function() {
     it('uses the not found middleware', function () {
       expect(this.stackHandleStr(14)).to.equal(middleware.notFound().toString());
     });
+    
+    it('lets you inject custom middleware into the chain', function (done) {
+      var request = require('request');
+      var middlewareExecuted = false;
+      var server = new Server({
+        port: PORT,
+        cwd: CWD,
+        debug: false
+      });
+      
+      server.use(function (req, res, next) {
+        middlewareExecuted = true;
+        next();
+      });
+      
+      // FIXME: this test runs slow
+      
+      server.start(function () {
+        request('http://localhost:' + PORT, function (err, response) {
+          expect(middlewareExecuted).to.equal(true);
+          server.stop(done);
+        });
+      });
+    });
   });
 });
 
 function startServer (server, callback) {
   server.start(function () {
     // Suppress all connect.logger output
-    if (server._server.stack[0].handle.toString() === connect.logger().toString()) {
-      server._server.stack[0].handle = function (req, res, next) {next();};
+    if (server._client.stack[0].handle.toString() === connect.logger().toString()) {
+      server._client.stack[0].handle = function (req, res, next) {next();};
     }
     
     callback(function (done) {
@@ -232,9 +271,12 @@ function localServer () {
   return Server.createServer({
     port: PORT,
     host: HOST,
-    localEnv: {},
+    environment: {},
     settings: localSettings(),
-    store: localStore()
+    store: localStore(),
+    error_page: 'error.html',
+    not_found_page: 'not_found.html',
+    cwd: process.cwd() + '/'
   });
 }
 
