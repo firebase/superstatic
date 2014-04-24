@@ -78,6 +78,69 @@ Note that you can pass the `--no-cache` option when you run the server to serve 
 without caching. This is good to use during development when you want fresh content served
 on each request.
 
+## API
+
+### Server(options)
+
+```js
+var superstatic = require('superstatic');
+var Server = superstatic.Server;
+
+var server = superstatic.createServer(/* Server Options */);
+// OR
+var sever = new Server(/* Server Options */);
+
+server.start(function () {
+
+	// Server started
+
+	server.stop(function () {
+  	// Server started
+  });
+});
+```
+
+**Server Options** *(all values are optional)*
+
+**port:** Port to run the server on. Defaults to `3474`
+
+**host:** Host to run the server on. Defaults to `127.0.0.1` (localhost)
+
+**config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
+```js
+var Server = require('superstatic').Server;
+
+var server = new Server({
+  config: require('config_file.json')
+});
+
+// OR
+
+var server = new Server({
+  config: 'config_file.json'
+});
+```
+
+**cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
+
+**environment:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+
+**debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
+
+## Instance methods
+
+### start(callback)
+
+Start the server
+
+**callback:** gets called once the server starts. Gets passed an error argument if there is an error.
+
+### stop(callback)
+
+Stops the server
+
+**callback:** gets caleld once the server stops. Gets passed an error argument if there is an error.
+
 ## Run Tests
 
 In superstatic module directory:

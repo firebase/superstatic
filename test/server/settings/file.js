@@ -4,14 +4,14 @@ var sinon = require('sinon');
 var File = require('../../../lib/server/settings/file');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 var CWD_DIO = path.resolve(__dirname, '../../fixtures/sample_app_dio');
-var fileOptions = {
-  file: 'custom.json',
-  cwd: CWD
-};
+var CWD_CUSTOM = path.resolve(__dirname, '../../fixtures/sample_app_custom');
 
 describe('File - local settings', function() {
   beforeEach(function () {
-    this.file = new File(fileOptions);
+    this.file = new File({
+      config: 'custom.json', 
+      cwd: CWD
+    });
   });
   
   it('has a list of default config file names', function () {
@@ -32,30 +32,26 @@ describe('File - local settings', function() {
   
   describe('loading configuration file', function() {
     it('loads the config file named superstatic.json', function () {
-      var file = new File({
-        cwd: CWD
-      });
+      var file = new File({cwd: CWD});
       
       var configFile = file.loadConfigurationFile();
       expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
     });
     
     it('loads the config file named divshot.json', function () {
-      var file= new File({
-        cwd: CWD_DIO
-      });
+      var file = new File({cwd: CWD_DIO});
       
       var configFile = file.loadConfigurationFile();
       expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
     });
     
     it('loads the config file named custom.json', function () {
-      var file= new File({
-        file: 'custom.json',
-        cwd: CWD_DIO
+      var _file = new File({
+        config: 'custom.json',
+        cwd: CWD_CUSTOM
       });
       
-      var configFile = file.loadConfigurationFile();
+      var configFile = _file.loadConfigurationFile();
       expect(configFile).to.have.keys(['name', 'root', 'clean_urls']);
     });
   });
@@ -74,15 +70,13 @@ describe('File - local settings', function() {
   });
   
   it('overrides config values with values passed to the constructor', function () {
-    var options = {
-      config: {
-        name: 'override',
-        root: './'
-      }
-    };
+    var config = {
+      name: 'override',
+      root: './'
+    }
     
-    var file = new File(options);
+    var file = new File({config: config});
     
-    expect(file.configuration).to.eql(options.config);
+    expect(file.configuration).to.eql(config);
   });
 });
