@@ -78,6 +78,48 @@ Note that you can pass the `--no-cache` option when you run the server to serve 
 without caching. This is good to use during development when you want fresh content served
 on each request.
 
+## API
+
+### createServer(options)
+
+```js
+var superstatic = require('superstatic');
+var server = superstatic.createServer(/* Server Options */);
+
+server.start(function () {
+
+	// Server started
+
+	server.stop(function () {
+  	// Server started
+  });
+});
+```
+
+Server Options *(all values are optional)*
+
+* `port` - Port to run the server on. Defaults to `3474`
+* `host` - Host to run the server on. Defaults to `127.0.0.1` (localhost)
+* `configuration` - override defaults in the [configuration file](#configuration).
+  * `file` - the name of the file that contains your app configuration. This defaults to the `superstatic.json` file.
+  * `config` - an entire app configuration object that overrides the [configuration file](#configuration)
+* `cwd` - the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
+* `environment` - an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+
+## Instance methods
+
+### start(callback)
+
+Start the server
+
+* `callback` - gets called once the server starts. Gets passed an error argument if there is an error.
+
+### stop(callback)
+
+Stops the server
+
+* `callback` - gets caleld once the server stops. Gets passed an error argument if there is an error.
+
 ## Run Tests
 
 In superstatic module directory:
