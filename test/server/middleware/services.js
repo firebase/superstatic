@@ -43,7 +43,7 @@ describe.only('services middleware', function () {
     
   // });
   
-  describe('running services', function () {
+  describe.skip('running services', function () {
     var service1Ran = false;
     var service2Ran = false;
     
