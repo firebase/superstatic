@@ -37,7 +37,8 @@
     "mix-into": "~0.1.1",
     "minimist": "0.0.8",
     "feedback": "^0.3.2",
-    "qmap": "^0.2.3"
+    "qmap": "^0.2.3",
+    "superstatic-proxy": "^0.1.0"
   },
   "preferGlobal": "true",
   "bin": {
