@@ -3,7 +3,7 @@ var expect = require('expect.js');
 var request = require('supertest');
 var services = require('../../../lib/server/middleware/services');
 
-describe.only('services middleware', function () {
+describe('services middleware', function () {
   var app;
   
   beforeEach(function () {
