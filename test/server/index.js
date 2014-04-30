@@ -4,6 +4,7 @@ var connect = require('connect');
 var expect = require('expect.js');
 var sinon = require('sinon');
 var Server = require('../../lib/server');
+var serverDefaults = require('../../lib/defaults');
 var ConfigFile = require('../../lib/server/settings/file');
 var StoreLocal = require('../../lib/server/store/local');
 var StoreS3 = require('../../lib/server/store/s3');
@@ -36,6 +37,27 @@ describe('Superstatic server', function() {
   
   it('sets the current working directory on the instance', function () {
     expect(this.server._cwd).to.be(process.cwd() + '/');
+  });
+  
+  it('sets the services list', function () {
+    expect(Object.keys(this.server._services)).to.eql(['service1']);
+  });
+  
+  it('sets the service list to empty if no service list or provided', function () {
+    var server = new Server();
+    expect(server._services).to.eql(serverDefaults.SERVICES);
+  });
+  
+  it('sets the service route prefix', function () {
+    var server = new Server({
+      servicesRoutePrefix: '--'
+    });
+    expect(server._servicesRoutePrefix).to.equal('--');
+  });
+  
+  it('sets the default services route prefix if none is given', function () {
+    var server = new Server();
+    expect(server._servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
   describe('#createServer()', function() {
@@ -274,7 +296,12 @@ function localServer () {
     store: localStore(),
     error_page: 'error.html',
     not_found_page: 'not_found.html',
-    cwd: process.cwd() + '/'
+    cwd: process.cwd() + '/',
+    services: {
+      service1: function (req, res, next) {
+        next();
+      }
+    }
   });
 }
 

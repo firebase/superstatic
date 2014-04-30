@@ -41,6 +41,8 @@ describe('services middleware', function () {
         .end(done);
     });
     
+    it('skips services if there is no app configuration');
+    
   });
   
   describe('running services', function () {
@@ -75,18 +77,16 @@ describe('services middleware', function () {
         .end(done);
     });
     
+    it('runs the service if the service provides and passes a request matcher method');
+    it('matching service name is case insensitive'); // via #serviceConfigured() in lib/server/middleware/services.js
+    
     function setConfig (req, res, next) {
       req.config = {
-        services: {
-          // noService: {},
-          // service1: {
-          //   test1: {}
-          // },
-          service2: {
-            test2: {}
-          }
+        service2: {
+          test2: {}
         }
       };
+      
       next();
     }
     
