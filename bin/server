@@ -8,6 +8,7 @@ var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
 var jsun = require('jsun');
 var fs = require('fs');
+var _ = require('lodash');
 var feedback = require('feedback');
 var server;
 
@@ -101,10 +102,8 @@ function createInstance (cwd, host, port) {
     _defaults: require('./_defaults'), // Insert defaults into settings
     
     // TODO: this list needs to be created by --services flag from CLI
-    services: {
-      proxy: require('superstatic-proxy'),
-      redirects: redirects
-    }
+    // See: https://github.com/divshot/superstatic/pull/57#issuecomment-41833999
+    services: parseServices(argv)
   };
   
   return new superstatic.Server(serverOptions);
@@ -137,4 +136,27 @@ function parseOverrideConfig (argv) {
   }
   
   return overrideConfig;
+}
+
+function parseServices (argv) {
+  var s = (argv.services) ? argv.services.split(',') : [];
+  
+  return _(s)
+    .map(function (name) {return name.toLowerCase()})
+    .map(function (name) {
+      var serviceModule = tryRequire('superstatic-' + name) || tryRequire(name);
+      if (serviceModule) return [name, serviceModule];
+    })
+    .filter(_.identity)
+    .zipObject()
+    .value();
+}
+
+function tryRequire (moduleName) {
+  var serviceModule;
+  
+  try {serviceModule = require(moduleName);}
+  catch (e) {}
+  
+  return serviceModule;
 }
