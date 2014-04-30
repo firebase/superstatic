@@ -51,34 +51,9 @@ function startServer () {
 }
 
 function createInstance (cwd) {
-  var localEnv;
+  var localEnv = tryRequire(envJSON);
   
-  try {localEnv = require(envJSON);}
-  catch (e) {}
-  
-  /////////////////////////////
-  // TODO: move redirects to own module file
-  var redirects = function (req, res, next) {
-    var globject = require('globject');
-    var slash = require('slasher');
-    var redirects = globject(slash(req.config.redirects));
-    var redirectUrl = redirects(req.url);
-    
-    if (!redirectUrl) return next();
-    
-    res.writeHead(301, {Location: redirectUrl});
-    res.end();
-  };
-  
-  redirects.matchesRequest = function (req, done) {
-    var slash = require('slasher');
-    var redirects = slash(req.config.redirects || {});
-    
-    done(redirects.hasOwnProperty(req.url));
-  };
-  /////////////////////
-  
-  var serverOptions = {
+  return superstatic.createServer({
     port: port,
     host: host,
     environment: localEnv,
@@ -87,9 +62,7 @@ function createInstance (cwd) {
     debug: debug,
     _defaults: require('./_defaults'), // Insert defaults into settings
     services: services
-  };
-  
-  return new superstatic.Server(serverOptions);
+  });
 };
 
 function configFileChanged () {
