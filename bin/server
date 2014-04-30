@@ -16,14 +16,13 @@ var ERROR_PAGE = __dirname + '/not_found.html';
 var NOT_FOUND_PAGE = __dirname + '/not_found.html';
 
 // app working directory
+var cwd = argv._[0] ? path.resolve(process.cwd(), argv._[0]) : defaults.DIRECTORY;
 var port = argv.port || argv.p || defaults.PORT;
 var host = argv.host || argv.h || defaults.HOST;
-var debug = (argv.quiet || argv.q) ? false : defaults.DEBUG;
 var overrideConfig =  parseOverrideConfig(argv);
-var cwd = argv._[0]
- ? path.resolve(process.cwd(), argv._[0])
- : defaults.DIRECTORY;
 var envJSON = path.join(cwd, "./.env.json");
+var debug = (argv.quiet || argv.q) ? false : defaults.DEBUG;
+var services = parseServices(argv);
 
 //
 startServer();
@@ -37,34 +36,21 @@ process.nextTick(function () {
   catch (e) {}
 });
 
-function configFileChanged () {
-  console.log('Configuration file changed. Restarting...');
-  server.stop(startServer);
-}
-
 function startServer () {
   var domain = require('domain');
   var d = domain.create();
   
   d.run(function () {
-    server = createInstance(cwd, host, port);
+    server = createInstance(cwd);
     server.start(function () {
-      preamble(host, port);
+      console.log('\nServer started on port ' + port);
     });
   });
   
   d.on('error', serverErrorHandler);
 }
 
-function serverErrorHandler (err) {
-  var msg = err.message;
-  
-  if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
-  
-  feedback.error(msg);
-}
-
-function createInstance (cwd, host, port) {
+function createInstance (cwd) {
   var localEnv;
   
   try {localEnv = require(envJSON);}
@@ -100,29 +86,23 @@ function createInstance (cwd, host, port) {
     config: overrideConfig || argv.c || argv.config || 'superstatic.json',
     debug: debug,
     _defaults: require('./_defaults'), // Insert defaults into settings
-    
-    // TODO: this list needs to be created by --services flag from CLI
-    // See: https://github.com/divshot/superstatic/pull/57#issuecomment-41833999
-    services: parseServices(argv)
+    services: services
   };
   
   return new superstatic.Server(serverOptions);
 };
 
-function preamble (host, port) {
-  console.log('Server started on port ' + port.toString());
-  console.log('');
+function configFileChanged () {
+  console.log('Configuration file changed. Restarting...');
+  server.stop(startServer);
 }
 
-function postamble (evt, filePath) {
-  console.log('');
-  console.log(evt.green + ': ' + filePath);
-  process.stdout.write('Reconfiguring server ... '.yellow);
-}
-
-function doneabmle () {
-  process.stdout.write('done'.blue);
-  console.log('\n\nListening for changes...');
+function serverErrorHandler (err) {
+  var msg = err.message;
+  
+  if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
+  
+  feedback.error(msg);
 }
 
 function parseOverrideConfig (argv) {
