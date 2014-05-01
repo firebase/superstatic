@@ -1,88 +1,9 @@
 #!/usr/bin/env node
 
-var path       = require('path'),
-    fs         = require('fs'),
-    domain     = require('domain'),
-    chokidar   = require('chokidar'),
-    minimist   = require('minimist'),
-    feedback   = require('feedback'),
-    Server     = require('../lib/superstatic').Server,
-    defaults   = require('../lib/defaults'),
-    ConfigFile = require('../lib/server/settings/file'),
-    server;
+require('colors')
+var cli = require('../lib/cli');
 
-var argv = minimist(process.argv.slice(2), {
-  alias: { p: 'port', h: 'host', q: 'quiet', c: 'config' },
-  boolean: 'debug',
-  default: { port: defaults.PORT, host: defaults.HOST }
-});
+cli.on('data', console.log);
+cli.on('error', function(e){ console.error(e.red) });
 
-var port    = argv.port,
-    host    = argv.host,
-    debug   = argv.quiet,
-    config  = parseOverrideConfig(argv.config) || 'superstatic.json',
-    cwd     = argv._[0] ? path.resolve(argv._[0]) : defaults.DIRECTORY,
-    envJSON = path.join(cwd, '.env.json');
-
-startServer(function(){
-  chokidar.watch(server.settings.getConfigFileName())
-    .on('change', configFileChanged);
-});
-
-// 
-// @private
-// 
-
-function parseOverrideConfig (config) {
-  if (!config) return;
-  try { var parsed = JSON.parse(config); } catch { return }
-  return parsed
-}
-
-function startServer (cb) {
-  var d = domain.create();
-  
-  d.run(function () {
-    server = createInstance(cwd, host, port);
-    server.start(function () {
-      feedback.info('Server started on port ' + port.toString() + '\n');
-      cb();
-    });
-  });
-  
-  d.on('error', serverErrorHandler);
-}
-
-function createInstance (cwd, host, port) {
-  var localEnv;
-  
-  try { localEnv = require(envJSON); }
-  
-  return new Server({
-    port: port,
-    host: host,
-    environment: localEnv,
-    cwd: cwd,
-    config: config,
-    debug: debug,
-    _defaults: {
-      root: './',
-      error_page: path.join(__dirname, '../lib/browser/not_found.html')
-    }
-  });
-}
-
-function serverErrorHandler (err) {
-  var msg = err.message;
-  
-  if (err.message.indexOf('EADDRINUSE') > -1) {
-    msg = 'That port is already being used by another program.';
-  }
-  
-  feedback.error(msg);
-}
-
-function configFileChanged () {
-  feedback.info('Configuration file changed. Restarting...');
-  server.stop(startServer);
-}
+cli.run(process.argv.slice(2));

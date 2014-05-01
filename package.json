@@ -35,7 +35,7 @@
     "is-url": "~1.0.0",
     "mix-into": "~0.1.1",
     "minimist": "0.0.8",
-    "feedback": "^0.3.2"
+    "colors": "^0.6.2"
   },
   "preferGlobal": "true",
   "bin": {
