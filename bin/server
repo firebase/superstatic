@@ -18,14 +18,13 @@ var argv = minimist(process.argv.slice(2), {
   default: {
     port: defaults.PORT,
     host: defaults.HOST,
-    config: 'superstatic.json'
   }
 });
 
 var port = argv.port;
 var host = argv.host;
 var debug = argv.quiet;
-var overrideConfig = parseOverrideConfig(argv);
+var config = parseOverrideConfig(argv.config) || 'superstatic.json';
 var cwd = argv._[0] ? path.resolve(argv._[0]) : defaults.DIRECTORY;
 var envJSON = path.join(cwd, "./.env.json");
 
@@ -73,7 +72,7 @@ function createInstance (cwd, host, port) {
     host: host,
     environment: localEnv,
     cwd: cwd,
-    config: overrideConfig || argv.config,
+    config: config,
     debug: debug,
     _defaults: require('./_defaults') // Insert defaults into settings
   };
@@ -81,15 +80,9 @@ function createInstance (cwd, host, port) {
   return new superstatic.Server(serverOptions);
 };
 
-function parseOverrideConfig (argv) {
-  var overrideConfig = argv.config;
-  
-  if (overrideConfig) {
-    var parsed = jsun.parse(overrideConfig);
-    if (parsed.err) return overrideConfig = undefined;
-    
-    overrideConfig = parsed.json;
-  }
-  
-  return overrideConfig;
+function parseOverrideConfig (config) {
+  if (!config) return;
+  var parsed = jsun.parse(config);
+  if (parsed.err) return undefined;
+  return parsed
 }
