@@ -41,7 +41,8 @@ function startServer () {
   d.run(function () {
     server = createInstance(cwd, host, port);
     server.start(function () {
-      preamble(host, port);
+      console.log('Server started on port ' + port.toString());
+      console.log('');
     });
   });
   
@@ -73,11 +74,6 @@ function createInstance (cwd, host, port) {
   
   return new superstatic.Server(serverOptions);
 };
-
-function preamble (host, port) {
-  console.log('Server started on port ' + port.toString());
-  console.log('');
-}
 
 function parseOverrideConfig (argv) {
   var overrideConfig = argv.config || argv.c || undefined;
