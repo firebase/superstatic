@@ -81,9 +81,7 @@ describe('services middleware', function () {
         res.end('triggered');
       };
       
-      testService.matchesRequest = function (req, done) {
-        done(true);
-      };
+      testService.matchesRequest = doesMatchRequest;
       
       var app = connect()
         .use(function (req, res, next) {
@@ -104,9 +102,8 @@ describe('services middleware', function () {
         res.writeHead(200);
         res.end('case sensitive');
       };
-      casesensitive.matchesRequest = function (req, done) {
-        done(true);
-      };
+      casesensitive.matchesRequest = doesMatchRequest;
+      
       var app = connect()
         .use(function (req, res, next) {
           req.config = {CaseSensitive: true};
@@ -119,18 +116,69 @@ describe('services middleware', function () {
         .expect(200)
         .expect('case sensitive')
         .end(done);
-    }); // via #serviceConfigured() in lib/server/middleware/services.js
+    });
     
-    function setConfig (req, res, next) {
-      req.config = {
-        service2: {
-          test2: {}
-        }
-      };
+    it('passes the specific configuration to each service in the request stack', function (done) {
+      var service1Config = {};
+      var service2Config = {};
       
-      next();
-    }
+      var service1 = function (req, res, next) {
+        service1Config = req.service;
+        next();
+      };
+      service1.matchesRequest = doesMatchRequest;
+      
+      var service2 = function (req, res, next) {
+        service2Config = req.service;
+        next();
+      };
+      service2.matchesRequest = doesMatchRequest;
+      
+      var app = connect()
+        .use(function (req, res, next) {
+          req.config = {
+            service1: 'service1',
+            service2: 'service2'
+          };
+          next();
+        })
+        .use(services({
+          service1: service1,
+          service2: service2
+        }, '__'));
+      
+      request(app)
+        .get('/__/test')
+        .expect(function () {
+          expect(service1Config).to.eql({
+            name: 'service1',
+            config: 'service1',
+            path: '/test'
+          });
+          
+          expect(service2Config).to.eql({
+            name: 'service2',
+            config: 'service2',
+            path: '/test'
+          });
+        })
+        .end(done);
+    });
     
   });
+  
+  function setConfig (req, res, next) {
+    req.config = {
+      service2: {
+        test2: {}
+      }
+    };
+    
+    next();
+  }
+  
+  function doesMatchRequest (req, done) {
+    done(true);
+  }
   
 });

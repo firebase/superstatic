@@ -36,10 +36,9 @@
     "is-url": "~1.0.0",
     "mix-into": "~0.1.1",
     "minimist": "0.0.8",
-    "feedback": "^0.3.2",
-    "qmap": "^0.2.3",
-    "superstatic-proxy": "~0.1.0",
-    "drainer": "^0.2.1"
+    "feedback": "~0.3.2",
+    "qmap": "~0.2.3",
+    "drainer": "~0.2.1"
   },
   "preferGlobal": "true",
   "bin": {
@@ -60,7 +59,7 @@
     "clone": "0.1.x",
     "jshint": "2.4.x",
     "pre-commit": "0.0.4",
-    "request": "^2.34.0"
+    "request": "~2.34.0"
   },
   "jshintConfig": {
     "expr": true,
