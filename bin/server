@@ -98,7 +98,7 @@ function parseServices (argv) {
     .map(function (name) {return name.toLowerCase()})
     .map(function (name) {
       var serviceModule = tryRequire('superstatic-' + name) || tryRequire(name);
-      if (serviceModule) return [name, serviceModule];
+      if (serviceModule) return [name, serviceModule()];
     })
     .filter(_.identity)
     .zipObject()
