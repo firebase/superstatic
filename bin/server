@@ -32,9 +32,10 @@ startServer(function(){
     .on('change', configFileChanged);
 });
 
-function configFileChanged () {
-  feedback.info('Configuration file changed. Restarting...');
-  server.stop(startServer);
+function parseOverrideConfig (config) {
+  if (!config) return;
+  try { var parsed = JSON.parse(config); } catch { return }
+  return parsed
 }
 
 function startServer (cb) {
@@ -49,16 +50,6 @@ function startServer (cb) {
   });
   
   d.on('error', serverErrorHandler);
-}
-
-function serverErrorHandler (err) {
-  var msg = err.message;
-  
-  if (err.message.indexOf('EADDRINUSE') > -1) {
-    msg = 'That port is already being used by another program.';
-  }
-  
-  feedback.error(msg);
 }
 
 function createInstance (cwd, host, port) {
@@ -82,8 +73,17 @@ function createInstance (cwd, host, port) {
   return new Server(serverOptions);
 }
 
-function parseOverrideConfig (config) {
-  if (!config) return;
-  try { var parsed = JSON.parse(config); } catch { return }
-  return parsed
+function serverErrorHandler (err) {
+  var msg = err.message;
+  
+  if (err.message.indexOf('EADDRINUSE') > -1) {
+    msg = 'That port is already being used by another program.';
+  }
+  
+  feedback.error(msg);
+}
+
+function configFileChanged () {
+  feedback.info('Configuration file changed. Restarting...');
+  server.stop(startServer);
 }
