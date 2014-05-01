@@ -80,7 +80,7 @@ function createInstance (cwd, host, port) {
   };
   
   return new Server(serverOptions);
-};
+}
 
 function parseOverrideConfig (config) {
   if (!config) return;
