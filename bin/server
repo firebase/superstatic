@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 var path       = require('path'),
-    chokidar   = require('chokidar'),
+    fs         = require('fs'),
     domain     = require('domain'),
+    chokidar   = require('chokidar'),
     minimist   = require('minimist'),
+    feedback   = require('feedback'),
     Server     = require('../lib/superstatic').Server,
     defaults   = require('../lib/defaults'),
     ConfigFile = require('../lib/server/settings/file'),
-    fs         = require('fs'),
-    feedback   = require('feedback'),
     server;
 
 var argv = minimist(process.argv.slice(2), {
