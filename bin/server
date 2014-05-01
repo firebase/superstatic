@@ -20,10 +20,8 @@ var cwd = argv._[0]
  : defaults.DIRECTORY;
 var envJSON = path.join(cwd, "./.env.json");
 
-startServer();
-
-process.nextTick(function () {
-  try{
+startServer(function(){
+  try {
     chokidar.watch(server.settings.getConfigFileName())
       .on('change', configFileChanged);
   }
@@ -34,7 +32,7 @@ function configFileChanged () {
   server.stop(startServer);
 }
 
-function startServer () {
+function startServer (cb) {
   var domain = require('domain');
   var d = domain.create();
   
@@ -42,6 +40,7 @@ function startServer () {
     server = createInstance(cwd, host, port);
     server.start(function () {
       console.log('Server started on port ' + port.toString() + '\n');
+      cb();
     });
   });
   
@@ -51,7 +50,9 @@ function startServer () {
 function serverErrorHandler (err) {
   var msg = err.message;
   
-  if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
+  if (err.message.indexOf('EADDRINUSE') > -1) {
+    msg = 'That port is already being used by another program.';
+  }
   
   feedback.error(msg);
 }
