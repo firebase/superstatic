@@ -21,10 +21,8 @@ var cwd = argv._[0]
 var envJSON = path.join(cwd, "./.env.json");
 
 startServer(function(){
-  try {
-    chokidar.watch(server.settings.getConfigFileName())
-      .on('change', configFileChanged);
-  }
+  chokidar.watch(server.settings.getConfigFileName())
+    .on('change', configFileChanged);
 });
 
 function configFileChanged () {
