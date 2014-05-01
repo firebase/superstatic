@@ -30,7 +30,6 @@ process.nextTick(function () {
     chokidar.watch(server.settings.getConfigFileName())
       .on('change', configFileChanged);
   }
-  catch (e) {}
 });
 
 function configFileChanged () {
@@ -63,8 +62,7 @@ function serverErrorHandler (err) {
 function createInstance (cwd, host, port) {
   var localEnv;
   
-  try {localEnv = require(envJSON);}
-  catch (e) {}
+  try { localEnv = require(envJSON); }
   
   var serverOptions = {
     port: port,
