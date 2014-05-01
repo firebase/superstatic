@@ -11,9 +11,6 @@ var fs = require('fs');
 var feedback = require('feedback');
 var server;
 
-var ERROR_PAGE = __dirname + '/not_found.html';
-var NOT_FOUND_PAGE = __dirname + '/not_found.html';
-
 // app working directory
 var port = argv.port || argv.p || defaults.PORT;
 var host = argv.host || argv.h || defaults.HOST;
