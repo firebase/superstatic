@@ -12,12 +12,9 @@ var path       = require('path'),
     server;
 
 var argv = minimist(process.argv.slice(2), {
-  alias: { p: 'port', h: 'host', q: 'quiet', c: 'config' }
-  boolean: 'debug'
-  default: {
-    port: defaults.PORT,
-    host: defaults.HOST,
-  }
+  alias: { p: 'port', h: 'host', q: 'quiet', c: 'config' },
+  boolean: 'debug',
+  default: { port: defaults.PORT, host: defaults.HOST }
 });
 
 var port    = argv.port,
