@@ -1,5 +1,5 @@
 var expect = require('expect.js');
-var superstatic = require('../lib/superstatic');
+var superstatic = require('../lib');
 var SuperstaticServer = require('../lib/server');
 var defaultSettings = require('../lib/server/settings/default');
 
