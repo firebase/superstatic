@@ -32,6 +32,10 @@ startServer(function(){
     .on('change', configFileChanged);
 });
 
+// 
+// @private
+// 
+
 function parseOverrideConfig (config) {
   if (!config) return;
   try { var parsed = JSON.parse(config); } catch { return }
