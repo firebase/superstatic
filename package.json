@@ -36,9 +36,10 @@
     "is-url": "~1.0.0",
     "mix-into": "~0.1.1",
     "minimist": "0.0.8",
-    "feedback": "~0.3.2",
     "qmap": "~0.2.3",
-    "drainer": "~0.2.1"
+    "drainer": "~0.2.1",
+    "nash": "~0.4.0",
+    "chalk": "~0.4.0"
   },
   "preferGlobal": "true",
   "bin": {

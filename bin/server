@@ -5,69 +5,91 @@ var chokidar = require('chokidar');
 var argv = require('minimist')(process.argv.slice(2));
 var superstatic = require('../lib');
 var defaults = require('../lib/defaults');
-var ConfigFile = require('../lib/server/settings/file');
 var jsun = require('jsun');
-var fs = require('fs');
 var _ = require('lodash');
-var feedback = require('feedback');
-var server;
+var Nash = require('nash');
+var format = require('chalk');
+var ERROR_PAGE = path.join(__dirname, 'not_found.html');
+var NOT_FOUND_PAGE = path.join(__dirname, 'not_found.html');
 
-var ERROR_PAGE = __dirname + '/not_found.html';
-var NOT_FOUND_PAGE = __dirname + '/not_found.html';
-
-// app working directory
-var cwd = argv._[0] ? path.resolve(process.cwd(), argv._[0]) : defaults.DIRECTORY;
-var port = argv.port || argv.p || defaults.PORT;
-var host = argv.host || argv.h || defaults.HOST;
-var overrideConfig =  parseOverrideConfig(argv);
-var envJSON = path.join(cwd, "./.env.json");
-var debug = (argv.quiet || argv.q) ? false : defaults.DEBUG;
-var services = parseServices(argv);
-
-//
-startServer();
-
-// Watch config file for changes
-process.nextTick(function () {
-  try{
-    chokidar.watch(server.settings.getConfigFileName())
-      .on('change', configFileChanged);
-  }
-  catch (e) {}
+var cli = Nash.createCli({
+  title: format.bold('Superstatic:') + ' A static file server for fancy apps',
+  commandName: 'superstatic',
+  port: defaults.PORT,
+  host: defaults.HOST,
+  quiet: defaults.DEBUG,
+  services: parseServices(argv),
+  cwd: argv._[0] ? path.resolve(process.cwd(), argv._[0]) : defaults.DIRECTORY
 });
 
-function startServer () {
+cli.usage('superstatic <root directory> <options>');
+
+cli.flag('-p', '--port')
+  .description('server port')
+  .handler(function (port) {
+    cli.port = port;
+  });
+
+cli.flag('--host')
+  .description('server host')
+  .handler(function (host) {
+    cli.host = host;
+  });
+
+cli.flag('-q', '--quiet')
+  .description('mute the network traffic output')
+  .handler(function () {
+    cli.quiet = false;
+  });
+
+cli.flag('-c', '--config')
+  .description('set a custom app config file or object')
+  .handler(function (config) {
+    cli.config = parseOverrideConfig(cli.args.args) || config;
+  });
+
+cli.catchAll(function (type, attemptedCommand) {
+  startServer(function () {
+    try{
+      chokidar.watch(cli.server.settings.getConfigFileName())
+        .on('change', configFileChanged);
+    }
+    catch (e) {}
+  });
+});
+
+cli.run(process.argv);
+
+function startServer (done) {
   var domain = require('domain');
   var d = domain.create();
   
   d.run(function () {
-    server = createInstance(cwd);
-    server.start(function () {
-      feedback.info('\nServer started on port ' + port);
+    var localEnv = tryRequire(path.join(cli.cwd, "./.env.json"));
+    
+    cli.server = cli.server || superstatic.createServer({
+      port: cli.port,
+      host: cli.host,
+      environment: localEnv,
+      cwd: cli.cwd,
+      config: cli.config,
+      debug: cli.quiet,
+      _defaults: require('./_defaults'), // Insert defaults into settings
+      services: cli.services
+    });
+    
+    cli.server.start(function () {
+      cli.log('\nServer started on port ' + cli.port);
+      done && done();
     });
   });
   
   d.on('error', serverErrorHandler);
 }
 
-function createInstance (cwd) {
-  var localEnv = tryRequire(envJSON);
-  
-  return superstatic.createServer({
-    port: port,
-    host: host,
-    environment: localEnv,
-    cwd: cwd,
-    config: overrideConfig || argv.c || argv.config || 'superstatic.json',
-    debug: debug,
-    _defaults: require('./_defaults'), // Insert defaults into settings
-    services: services
-  });
-};
-
 function configFileChanged () {
-  feedback.info('Configuration file changed. Restarting...');
-  server.stop(startServer);
+  cli.log('Configuration file changed. Restarting...');
+  cli.server.stop(startServer);
 }
 
 function serverErrorHandler (err) {
@@ -75,7 +97,7 @@ function serverErrorHandler (err) {
   
   if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
   
-  feedback.error(msg);
+  cli.error(msg);
 }
 
 function parseOverrideConfig (argv) {
