@@ -32,4 +32,12 @@ describe('command line interface', function(){
 
   });
 
+  it('starts a server in a directory if passed a positional arg')
+  it('starts a server on a different port if --port is passed')
+  it('starts a server at a different host if --host is passed')
+  it('quiets logs if --quiet is passed')
+  it('uses custom config if --config passed')
+  it('restarts the server if the config file is changed')
+  it('errors if two servers are started on the same port')
+
 });
