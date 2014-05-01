@@ -57,7 +57,7 @@ function createInstance (cwd, host, port) {
   
   try { localEnv = require(envJSON); }
   
-  var serverOptions = {
+  return new Server({
     port: port,
     host: host,
     environment: localEnv,
@@ -68,9 +68,7 @@ function createInstance (cwd, host, port) {
       root: './',
       error_page: path.join(__dirname, '../lib/browser/not_found.html')
     }
-  };
-  
-  return new Server(serverOptions);
+  });
 }
 
 function serverErrorHandler (err) {
