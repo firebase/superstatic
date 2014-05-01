@@ -43,7 +43,7 @@ function startServer () {
   d.run(function () {
     server = createInstance(cwd);
     server.start(function () {
-      console.log('\nServer started on port ' + port);
+      feedback.info('\nServer started on port ' + port);
     });
   });
   
@@ -66,7 +66,7 @@ function createInstance (cwd) {
 };
 
 function configFileChanged () {
-  console.log('Configuration file changed. Restarting...');
+  feedback.info('Configuration file changed. Restarting...');
   server.stop(startServer);
 }
 

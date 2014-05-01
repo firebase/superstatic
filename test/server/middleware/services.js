@@ -41,8 +41,6 @@ describe('services middleware', function () {
         .end(done);
     });
     
-    it('skips services if there is no app configuration');
-    
   });
   
   describe('running services', function () {
@@ -77,7 +75,36 @@ describe('services middleware', function () {
         .end(done);
     });
     
-    it('runs the service if the service provides and passes a request matcher method');
+    it('runs the service if the service provides and passes a request matcher method', function (done) {
+      var ranService = false;
+      var testService = function (req, res, next) {
+        ranService = true;
+        next();
+      };
+      
+      testService.matchesRequest = function (req, done) {
+        done(true);
+      };
+      
+      var app = connect()
+        .use(function (req, res, next) {
+          req.config = {
+            testService: true
+          };
+          next();
+        })
+        .use(services({
+          testService: testService
+        }, '__'));
+      
+      request(app)
+        .get('/__/triggering')
+        .expect(function () {
+          expect(ranService).to.equal(true);
+        })
+        .end(done);
+    });
+    
     it('matching service name is case insensitive'); // via #serviceConfigured() in lib/server/middleware/services.js
     
     function setConfig (req, res, next) {
