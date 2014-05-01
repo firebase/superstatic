@@ -73,7 +73,10 @@ function createInstance (cwd, host, port) {
     cwd: cwd,
     config: config,
     debug: debug,
-    _defaults: require('./_defaults') // Insert defaults into settings
+    _defaults: {
+      root: './',
+      error_page: path.join(__dirname, '/not_found.html')
+    }
   };
   
   return new Server(serverOptions);
