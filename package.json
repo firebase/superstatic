@@ -2,7 +2,7 @@
   "name": "superstatic",
   "version": "0.9.1",
   "description": "Superstatic: a static file server for fancy apps",
-  "main": "lib/superstatic.js",
+  "main": "lib",
   "scripts": {
     "test": "npm run lint && node_modules/.bin/mocha --recursive --reporter spec ./test",
     "lint": "node_modules/.bin/jshint ./lib"
