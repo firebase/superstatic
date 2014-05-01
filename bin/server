@@ -26,9 +26,7 @@ var port = argv.port;
 var host = argv.host;
 var debug = argv.quiet;
 var overrideConfig = parseOverrideConfig(argv);
-var cwd = argv._[0]
- ? path.resolve(process.cwd(), argv._[0])
- : defaults.DIRECTORY;
+var cwd = argv._[0] ? path.resolve(argv._[0]) : defaults.DIRECTORY;
 var envJSON = path.join(cwd, "./.env.json");
 
 startServer(function(){
