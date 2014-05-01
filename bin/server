@@ -79,17 +79,6 @@ function preamble (host, port) {
   console.log('');
 }
 
-function postamble (evt, filePath) {
-  console.log('');
-  console.log(evt.green + ': ' + filePath);
-  process.stdout.write('Reconfiguring server ... '.yellow);
-}
-
-function doneabmle () {
-  process.stdout.write('done'.blue);
-  console.log('\n\nListening for changes...');
-}
-
 function parseOverrideConfig (argv) {
   var overrideConfig = argv.config || argv.c || undefined;
   
