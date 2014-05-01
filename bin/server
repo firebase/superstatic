@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var path = require('path');
-var chokidar = require('chokidar');
-var domain = require('domain');
-var minimist = require('minimist');
-var Server = require('../lib/superstatic').Server;
-var defaults = require('../lib/defaults');
+var path       = require('path');
+var chokidar   = require('chokidar');
+var domain     = require('domain');
+var minimist   = require('minimist');
+var Server     = require('../lib/superstatic').Server;
+var defaults   = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
-var fs = require('fs');
-var feedback = require('feedback');
+var fs         = require('fs');
+var feedback   = require('feedback');
 var server;
 
 var argv = minimist(process.argv.slice(2), {
@@ -20,11 +20,11 @@ var argv = minimist(process.argv.slice(2), {
   }
 });
 
-var port = argv.port;
-var host = argv.host;
-var debug = argv.quiet;
-var config = parseOverrideConfig(argv.config) || 'superstatic.json';
-var cwd = argv._[0] ? path.resolve(argv._[0]) : defaults.DIRECTORY;
+var port    = argv.port;
+var host    = argv.host;
+var debug   = argv.quiet;
+var config  = parseOverrideConfig(argv.config) || 'superstatic.json';
+var cwd     = argv._[0] ? path.resolve(argv._[0]) : defaults.DIRECTORY;
 var envJSON = path.join(cwd, '.env.json');
 
 startServer(function(){
