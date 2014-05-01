@@ -99,7 +99,27 @@ describe('services middleware', function () {
         .end(done);
     });
     
-    it('matching service name is case insensitive'); // via #serviceConfigured() in lib/server/middleware/services.js
+    it('matching service name is case insensitive', function (done) {
+      var casesensitive = function (req, res, next) {
+        res.writeHead(200);
+        res.end('case sensitive');
+      };
+      casesensitive.matchesRequest = function (req, done) {
+        done(true);
+      };
+      var app = connect()
+        .use(function (req, res, next) {
+          req.config = {CaseSensitive: true};
+          next();
+        })
+        .use(services({casesensitive: casesensitive}, '__'))
+      
+      request(app)
+        .get('/__/case/sensitive')
+        .expect(200)
+        .expect('case sensitive')
+        .end(done);
+    }); // via #serviceConfigured() in lib/server/middleware/services.js
     
     function setConfig (req, res, next) {
       req.config = {
