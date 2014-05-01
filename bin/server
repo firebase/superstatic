@@ -41,8 +41,7 @@ function startServer () {
   d.run(function () {
     server = createInstance(cwd, host, port);
     server.start(function () {
-      console.log('Server started on port ' + port.toString());
-      console.log('');
+      console.log('Server started on port ' + port.toString() + '\n');
     });
   });
   
