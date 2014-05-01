@@ -76,10 +76,9 @@ describe('services middleware', function () {
     });
     
     it('runs the service if the service provides and passes a request matcher method', function (done) {
-      var ranService = false;
       var testService = function (req, res, next) {
-        ranService = true;
-        next();
+        res.writeHead(200);
+        res.end('triggered');
       };
       
       testService.matchesRequest = function (req, done) {
@@ -88,20 +87,15 @@ describe('services middleware', function () {
       
       var app = connect()
         .use(function (req, res, next) {
-          req.config = {
-            testService: true
-          };
+          req.config = {testService: true};
           next();
         })
-        .use(services({
-          testService: testService
-        }, '__'));
+        .use(services({testService: testService}, '__'));
       
       request(app)
         .get('/__/triggering')
-        .expect(function () {
-          expect(ranService).to.equal(true);
-        })
+        .expect(200)
+        .expect('triggered')
         .end(done);
     });
     
