@@ -2,6 +2,7 @@
 
 var path = require('path');
 var chokidar = require('chokidar');
+var domain = require('domain');
 var argv = require('minimist')(process.argv.slice(2));
 var superstatic = require('../lib/superstatic');
 var defaults = require('../lib/defaults');
@@ -31,7 +32,6 @@ function configFileChanged () {
 }
 
 function startServer (cb) {
-  var domain = require('domain');
   var d = domain.create();
   
   d.run(function () {
