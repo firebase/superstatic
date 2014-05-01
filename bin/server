@@ -7,7 +7,6 @@ var minimist = require('minimist');
 var superstatic = require('../lib/superstatic');
 var defaults = require('../lib/defaults');
 var ConfigFile = require('../lib/server/settings/file');
-var jsun = require('jsun');
 var fs = require('fs');
 var feedback = require('feedback');
 var server;
@@ -82,7 +81,6 @@ function createInstance (cwd, host, port) {
 
 function parseOverrideConfig (config) {
   if (!config) return;
-  var parsed = jsun.parse(config);
-  if (parsed.err) return undefined;
+  try { var parsed = JSON.parse(config); } catch { return }
   return parsed
 }

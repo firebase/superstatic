@@ -29,7 +29,6 @@
     "async": "0.4.x",
     "lodash": "2.4.x",
     "chokidar": "~0.7.1",
-    "jsun": "0.1.x",
     "deliver": "~0.2.0",
     "slasher": "0.1.x",
     "globject": "0.1.x",
