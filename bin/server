@@ -11,7 +11,6 @@ var fs = require('fs');
 var feedback = require('feedback');
 var server;
 
-// app working directory
 var port = argv.port || argv.p || defaults.PORT;
 var host = argv.host || argv.h || defaults.HOST;
 var debug = (argv.quiet || argv.q) ? false : defaults.DEBUG;
@@ -21,10 +20,8 @@ var cwd = argv._[0]
  : defaults.DIRECTORY;
 var envJSON = path.join(cwd, "./.env.json");
 
-//
 startServer();
 
-// Watch config file for changes
 process.nextTick(function () {
   try{
     chokidar.watch(server.settings.getConfigFileName())
