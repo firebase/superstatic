@@ -3,6 +3,7 @@ var http = require('http');
 var connect = require('connect');
 var expect = require('expect.js');
 var sinon = require('sinon');
+var request = require('request');
 var Server = require('../../lib/server');
 var ConfigFile = require('../../lib/server/settings/file');
 var StoreLocal = require('../../lib/server/store/local');
@@ -216,28 +217,66 @@ describe('Superstatic server', function() {
     it('uses the not found middleware', function () {
       expect(this.stackHandleStr(14)).to.equal(middleware.notFound().toString());
     });
-    
-    it('lets you inject custom middleware into the chain', function (done) {
-      var request = require('request');
-      var middlewareExecuted = false;
-      var server = new Server({
-        port: PORT,
-        cwd: CWD,
-        debug: false
-      });
-      
-      server.use(function (req, res, next) {
-        middlewareExecuted = true;
-        next();
-      });
-      
+
+
+    describe('custom middleware', function () {
       // FIXME: this test runs slow
-      
-      server.start(function () {
-        request('http://localhost:' + PORT, function (err, response) {
-          expect(middlewareExecuted).to.equal(true);
-          server.stop(done);
+
+      beforeEach(function () {
+        this.middlewareExecuted = false;
+
+        this.customMiddleware = function (req, res, next) {
+          this.middlewareExecuted = true;
+          next();
+        }.bind(this);
+
+        this.middlewareRequest = function (route, cb) {
+          _this = this
+          this.server.start(function () {
+            request('http://localhost:' + PORT + route, function (err, response) {
+              cb.call(_this)
+            });
+          });
+        }.bind(this);
+
+        this.server = new Server({
+          port: PORT,
+          cwd: CWD,
+          debug: false
         });
+      });
+
+      it('is injected into the chain', function (done) {
+        this.server.use(this.customMiddleware);
+
+        this.middlewareRequest('/', function () {
+          expect(this.middlewareExecuted).to.equal(true);
+          done();
+        });
+      });
+
+      describe('mounted on a specific route', function () {
+        beforeEach(function() {
+          this.server.use('/mounted', this.customMiddleware);
+        });
+
+        it('is executed on requests to the mounted route', function (done) {
+          this.middlewareRequest('/mounted', function () {
+            expect(this.middlewareExecuted).to.equal(true);
+            done();
+          });
+        });
+
+        it('is not executed on requests outside of the mounted route', function (done) {
+          this.middlewareRequest('/', function () {
+            expect(this.middlewareExecuted).to.equal(false);
+            done();
+          });
+        });
+      });
+
+      afterEach(function (done) {
+        this.server.stop(done)
       });
     });
   });
