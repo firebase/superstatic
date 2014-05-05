@@ -75,4 +75,14 @@ describe('remove trailing slash middleware', function() {
       .expect('Location', '/contact?query=param')
       .end(done);
   });
+  
+  it('fails fast if no application config is available', function (done) {
+    var app = connect()
+      .use(removeTrailingSlash(settings))
+      
+    request(app)
+      .get('/')
+      .expect(404)
+      .end(done);
+  });
 });
