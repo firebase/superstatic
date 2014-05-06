@@ -56,6 +56,31 @@ apps. An example:
 }
 ```
 
+**redirects** you can specify to have certain url paths be redirected (specifying a custom http status code, or which defaults to 301) to other url paths by supplying an object to the `redirects` key. Route path matching is similar to using custom routes. For example:
+
+Default 301 redirect
+
+```json
+{
+  "redirects": {
+    "/some/old/path": "/some/new/path"
+  }
+}
+```
+
+Custom http status code
+
+```json
+{
+  "redirects": {
+    "/some/old/path": {
+      "statusCode": 302,
+      "url": "/some/new/path"
+    }
+  }
+}
+```
+
 **error_page:** the path to the page that you want to render 404 errors if an unrecognized
 URL is supplied. For example, `error.html`.
 
