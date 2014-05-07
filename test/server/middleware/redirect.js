@@ -97,7 +97,7 @@ describe('redirect middleware', function () {
       .end(done);
   });
   
-  it('redirects using wildcard values in the url path', function (done) {
+  it('redirects using segements in the url path', function (done) {
     var app = connect()
       .use(function (req, res, next) {
         req.config = {
@@ -115,5 +115,7 @@ describe('redirect middleware', function () {
       .expect('location', '/new/redirect/path/there')
       .end(done);
   });
+  
+  it('redirects using segements with a custom status code');
   
 });
