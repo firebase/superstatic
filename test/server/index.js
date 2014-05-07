@@ -4,6 +4,7 @@ var connect = require('connect');
 var expect = require('expect.js');
 var sinon = require('sinon');
 var Server = require('../../lib/server');
+var serverDefaults = require('../../lib/defaults');
 var ConfigFile = require('../../lib/server/settings/file');
 var StoreLocal = require('../../lib/server/store/local');
 var StoreS3 = require('../../lib/server/store/s3');
@@ -36,6 +37,27 @@ describe('Superstatic server', function() {
   
   it('sets the current working directory on the instance', function () {
     expect(this.server._cwd).to.be(process.cwd() + '/');
+  });
+  
+  it('sets the services list', function () {
+    expect(Object.keys(this.server._services)).to.eql(['service1']);
+  });
+  
+  it('sets the service list to empty if no service list or provided', function () {
+    var server = new Server();
+    expect(server._services).to.eql(serverDefaults.SERVICES);
+  });
+  
+  it('sets the service route prefix', function () {
+    var server = new Server({
+      servicesRoutePrefix: '--'
+    });
+    expect(server._servicesRoutePrefix).to.equal('--');
+  });
+  
+  it('sets the default services route prefix if none is given', function () {
+    var server = new Server();
+    expect(server._servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
   describe('#createServer()', function() {
@@ -178,43 +200,43 @@ describe('Superstatic server', function() {
     });
     
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(5)).to.equal(middleware.removeTrailingSlash().toString());
+      expect(this.stackHandleStr(6)).to.equal(middleware.removeTrailingSlash().toString());
     });
     
     it('uses the basic auth protect middlware', function () {
-      expect(this.stackHandleStr(6)).to.equal(middleware.protect().toString());
+      expect(this.stackHandleStr(7)).to.equal(middleware.protect().toString());
     });
     
     it('uses the basic auth sender middlware', function () {
-      expect(this.stackHandleStr(7)).to.equal(middleware.sender().toString());
+      expect(this.stackHandleStr(8)).to.equal(middleware.sender().toString());
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(8)).to.equal(middleware.cacheControl().toString());
+      expect(this.stackHandleStr(9)).to.equal(middleware.cacheControl().toString());
     });
     
     it('users the env middleware', function () {
-      expect(this.stackHandleStr(9)).to.equal(middleware.env().toString());
+      expect(this.stackHandleStr(10)).to.equal(middleware.env().toString());
     });
     
     it('uses the clean urls middleware', function () {
-      expect(this.stackHandleStr(10)).to.equal(middleware.cleanUrls().toString());
+      expect(this.stackHandleStr(11)).to.equal(middleware.cleanUrls().toString());
     });
     
     it('uses the static middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(middleware.static().toString());
+      expect(this.stackHandleStr(12)).to.equal(middleware.static().toString());
     });
     
     it('uses the custom route middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.customRoute().toString());
+      expect(this.stackHandleStr(13)).to.equal(middleware.customRoute().toString());
     });
     
     it('uses the default favicon middleware', function () {
-      expect(this.stackHandleStr(13)).to.eql(connect.favicon().toString());
+      expect(this.stackHandleStr(14)).to.eql(connect.favicon().toString());
     });
     
     it('uses the not found middleware', function () {
-      expect(this.stackHandleStr(14)).to.equal(middleware.notFound().toString());
+      expect(this.stackHandleStr(15)).to.equal(middleware.notFound().toString());
     });
     
     it('lets you inject custom middleware into the chain', function (done) {
@@ -226,17 +248,15 @@ describe('Superstatic server', function() {
         debug: false
       });
       
-      server.use(function (req, res, next) {
+      server.use(function customMiddlewareTest (req, res, next) {
         middlewareExecuted = true;
         next();
       });
       
-      // FIXME: this test runs slow
-      
-      server.start(function () {
+      startServer(server, function (finished) {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
-          server.stop(done);
+          finished(done);
         });
       });
     });
@@ -276,7 +296,12 @@ function localServer () {
     store: localStore(),
     error_page: 'error.html',
     not_found_page: 'not_found.html',
-    cwd: process.cwd() + '/'
+    cwd: process.cwd() + '/',
+    services: {
+      service1: function (req, res, next) {
+        next();
+      }
+    }
   });
 }
 
