@@ -81,17 +81,17 @@ Custom http status code
 }
 ```
 
-Route segements are also supported in the redirects configuration:
+Route segments are also supported in the redirects configuration. Segmented redirects also support custom status codes (see above):
 
 ```json
 {
   "redirects": {
-    "/old/:segement/path": "/new/path/:segement"
+    "/old/:segment/path": "/new/path/:segment"
   }
 }
 ```
 
-In this example, `/old/custom-segment/path` redirect to `/new/path/custom-segement`
+In this example, `/old/custom-segment/path` redirect to `/new/path/custom-segment`
 
 **error_page:** the path to the page that you want to render 404 errors if an unrecognized
 URL is supplied. For example, `error.html`.

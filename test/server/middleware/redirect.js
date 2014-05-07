@@ -102,7 +102,7 @@ describe('redirect middleware', function () {
       .use(function (req, res, next) {
         req.config = {
           redirects: {
-            '/old/:value/path/:loc': '/new/:value/path/:loc' // No slash
+            '/old/:value/path/:loc': '/new/:value/path/:loc'
           }
         };
         next();
@@ -116,6 +116,26 @@ describe('redirect middleware', function () {
       .end(done);
   });
   
-  it('redirects using segements with a custom status code');
+  it('redirects using segements with a custom status code', function (done) {
+    var app = connect()
+      .use(function (req, res, next) {
+        req.config = {
+          redirects: {
+            '/old/:value/path/:loc': {
+              status: 302,
+              url: '/new/:value/path/:loc'
+            }
+          }
+        };
+        next();
+      })
+      .use(redirect());
+    
+    request(app)
+      .get('/old/redirect/path/there')
+      .expect(302)
+      .expect('location', '/new/redirect/path/there')
+      .end(done);
+  });
   
 });
