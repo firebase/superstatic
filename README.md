@@ -74,7 +74,7 @@ Custom http status code
 {
   "redirects": {
     "/some/old/path": {
-      "statusCode": 302,
+      "status": 302,
       "url": "/some/new/path"
     }
   }

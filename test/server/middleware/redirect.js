@@ -62,7 +62,7 @@ describe('redirect middleware', function () {
         req.config = {
           redirects: {
             '/source': {
-              statusCode: 302,
+              status: 302,
               url: '/redirect'
             }
           }
@@ -94,6 +94,25 @@ describe('redirect middleware', function () {
       .get('/source')
       .expect(301)
       .expect('location', '/redirect')
+      .end(done);
+  });
+  
+  it('redirects using wildcard values in the url path', function (done) {
+    var app = connect()
+      .use(function (req, res, next) {
+        req.config = {
+          redirects: {
+            '/old/:value/path/:loc': '/new/:value/path/:loc' // No slash
+          }
+        };
+        next();
+      })
+      .use(redirect());
+    
+    request(app)
+      .get('/old/redirect/path/there')
+      .expect(301)
+      .expect('location', '/new/redirect/path/there')
       .end(done);
   });
   
