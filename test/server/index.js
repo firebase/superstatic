@@ -199,44 +199,52 @@ describe('Superstatic server', function() {
       expect(this.stackHandleStr(4)).to.equal(middleware.configure().toString());
     });
     
+    it('uses the services middleware', function () {
+      expect(this.stackHandleStr(5)).to.equal(middleware.services().toString());
+    });
+    
+    it('uses the reirect middleware', function () {
+      expect(this.stackHandleStr(6)).to.equal(middleware.redirect().toString());
+    });
+    
     it('uses the trailing slash remover middleware', function () {
-      expect(this.stackHandleStr(6)).to.equal(middleware.removeTrailingSlash().toString());
+      expect(this.stackHandleStr(7)).to.equal(middleware.removeTrailingSlash().toString());
     });
     
     it('uses the basic auth protect middlware', function () {
-      expect(this.stackHandleStr(7)).to.equal(middleware.protect().toString());
+      expect(this.stackHandleStr(8)).to.equal(middleware.protect().toString());
     });
     
     it('uses the basic auth sender middlware', function () {
-      expect(this.stackHandleStr(8)).to.equal(middleware.sender().toString());
+      expect(this.stackHandleStr(9)).to.equal(middleware.sender().toString());
     });
     
     it('uses the cache control middleware', function () {
-      expect(this.stackHandleStr(9)).to.equal(middleware.cacheControl().toString());
+      expect(this.stackHandleStr(10)).to.equal(middleware.cacheControl().toString());
     });
     
     it('users the env middleware', function () {
-      expect(this.stackHandleStr(10)).to.equal(middleware.env().toString());
+      expect(this.stackHandleStr(11)).to.equal(middleware.env().toString());
     });
     
     it('uses the clean urls middleware', function () {
-      expect(this.stackHandleStr(11)).to.equal(middleware.cleanUrls().toString());
+      expect(this.stackHandleStr(12)).to.equal(middleware.cleanUrls().toString());
     });
     
     it('uses the static middleware', function () {
-      expect(this.stackHandleStr(12)).to.equal(middleware.static().toString());
+      expect(this.stackHandleStr(13)).to.equal(middleware.static().toString());
     });
     
     it('uses the custom route middleware', function () {
-      expect(this.stackHandleStr(13)).to.equal(middleware.customRoute().toString());
+      expect(this.stackHandleStr(14)).to.equal(middleware.customRoute().toString());
     });
     
     it('uses the default favicon middleware', function () {
-      expect(this.stackHandleStr(14)).to.eql(connect.favicon().toString());
+      expect(this.stackHandleStr(15)).to.eql(connect.favicon().toString());
     });
     
     it('uses the not found middleware', function () {
-      expect(this.stackHandleStr(15)).to.equal(middleware.notFound().toString());
+      expect(this.stackHandleStr(16)).to.equal(middleware.notFound().toString());
     });
     
     it('lets you inject custom middleware into the chain', function (done) {
