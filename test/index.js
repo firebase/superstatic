@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var superstatic = require('../lib');
 var SuperstaticServer = require('../lib/server');
 var defaultSettings = require('../lib/server/settings/default');

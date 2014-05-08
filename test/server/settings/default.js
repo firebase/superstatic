@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var defaultSettings = require('../../../lib/server/settings/default');
 
 

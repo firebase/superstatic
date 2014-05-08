@@ -1,6 +1,6 @@
 var connect = require('connect');
 var request = require('supertest');
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var sinon = require('sinon');
 var configure = require('../../../lib/server/middleware/configure');
 var defaultSettings = require('../../../lib/server/settings/default');
@@ -40,7 +40,7 @@ describe('configure middleware', function() {
     sinon.spy(settings, "load");
     app.use(configure(settings));
     app.use(function (req, res, next) {
-      expect(settings.load.args[0][0]).to.be('foobar');
+      expect(settings.load.args[0][0]).to.equal('foobar');
       settings.load.restore();
       next();
     });

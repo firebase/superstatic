@@ -1,5 +1,5 @@
 var path = require('path');
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var sinon = require('sinon');
 var File = require('../../../lib/server/settings/file');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
@@ -23,11 +23,11 @@ describe('File - local settings', function() {
   });
   
   it('adds the custom config file to the beginning of the config file list', function () {
-    expect(this.file._configFileNames[0]).to.be('custom.json');
+    expect(this.file._configFileNames[0]).to.equal('custom.json');
   });
   
   it('loads the config file on instantiation', function () {
-    expect(this.file.configuration).to.have.keys(['name', 'root']);
+    expect(this.file.configuration).to.contain.keys(['name', 'root']);
   });
   
   describe('loading configuration file', function() {
@@ -57,14 +57,14 @@ describe('File - local settings', function() {
   });
   
   it('determines of a given file path is a file', function () {
-    expect(this.file.isFile('/index.html')).to.be(true);
-    expect(this.file.isFile('/dir')).to.be(false);
-    expect(this.file.isFile('/file.html')).to.be(false);
+    expect(this.file.isFile('/index.html')).to.equal(true);
+    expect(this.file.isFile('/dir')).to.equal(false);
+    expect(this.file.isFile('/file.html')).to.equal(false);
   });
   
   it('loads a server config object', function (done) {
     this.file.load(null, function (err, config) {
-      expect(config).to.have.keys(['root', 'cwd', 'config']);
+      expect(config).to.contain.keys(['root', 'cwd', 'config']);
       done();
     });
   });

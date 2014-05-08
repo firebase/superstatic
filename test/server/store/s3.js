@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var sinon = require('sinon');
 var Mocksy = require('mocksy');
 var knox = require('knox');
@@ -23,14 +23,14 @@ describe('File store - s3', function() {
   });
   
   it('creates a knox s3 client', function () {
-    expect(this.client._client).to.not.be(undefined);
+    expect(this.client._client).to.not.equal(undefined);
   });
   
   it('generates signed urls', function () {
     var filePath = '/index.html';
     this.client._client.signedUrl = sinon.spy();
     var signedUrl = this.client._generateSignedUrl(filePath);
-    expect(this.client._client.signedUrl.calledWith(filePath)).to.be(true);
+    expect(this.client._client.signedUrl.calledWith(filePath)).to.equal(true);
   });
   
   it('returns the the url path', function () {
