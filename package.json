@@ -4,8 +4,12 @@
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
-    "test": "npm run lint && node_modules/.bin/mocha --recursive --reporter spec ./test",
-    "lint": "node_modules/.bin/jshint ./lib"
+    "test": "npm run lint && mocha ./test",
+    "lint": "jshint ./lib"
+  },
+  "bin": {
+    "superstatic": "bin/server",
+    "ss": "bin/server"
   },
   "repository": {
     "type": "git",
@@ -42,11 +46,6 @@
     "pathematics": "~0.1.1",
     "qmap": "~0.2.3",
     "slasher": "0.1.x"
-  },
-  "preferGlobal": "true",
-  "bin": {
-    "superstatic": "bin/server",
-    "ss": "bin/server"
   },
   "devDependencies": {
     "chai": "~1.9.1",
