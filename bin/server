@@ -1,137 +1,17 @@
 #!/usr/bin/env node
 
-var path = require('path');
-var chokidar = require('chokidar');
-var argv = require('minimist')(process.argv.slice(2));
-var superstatic = require('../lib');
-var defaults = require('../lib/defaults');
-var jsun = require('jsun');
-var _ = require('lodash');
-var Nash = require('nash');
-var format = require('chalk');
+var cli = require('../lib/cli');
+var feedback = require('feedback');
+var print = require('pretty-print');
 
-var cli = Nash.createCli({
-  title: format.bold('Superstatic:') + ' A static file server for fancy apps',
-  commandName: 'superstatic',
-  port: defaults.PORT,
-  host: defaults.HOST,
-  quiet: defaults.DEBUG,
-  services: parseServices(argv),
-  cwd: argv._[0] ? path.resolve(process.cwd(), argv._[0]) : defaults.DIRECTORY
+cli.on('data', function (data) {
+  if (typeof data === 'object') print(data, {});
+  else feedback.info(data);
 });
 
-cli.usage('superstatic <root directory> <options>');
-
-cli.flag('-p', '--port')
-  .description('server port')
-  .handler(function (port) {
-    cli.port = port;
-  });
-
-cli.flag('--host')
-  .description('server host')
-  .handler(function (host) {
-    cli.host = host;
-  });
-
-cli.flag('-q', '--quiet')
-  .description('mute the network traffic output')
-  .handler(function () {
-    cli.quiet = false;
-  });
-
-cli.flag('-c', '--config')
-  .description('set a custom app config file or object')
-  .handler(function (config) {
-    cli.config = parseOverrideConfig(cli.args.args) || config;
-  });
-
-cli.catchAll(function (type, attemptedCommand) {
-  startServer(function () {
-    try{
-      chokidar.watch(cli.server.settings.getConfigFileName())
-        .on('change', configFileChanged);
-    }
-    catch (e) {}
-  });
+cli.on('error', function (err) {
+  feedback.error(err);
+  process.exit(1);
 });
 
 cli.run(process.argv);
-
-function startServer (done) {
-  var domain = require('domain');
-  var d = domain.create();
-  
-  d.run(function () {
-    var localEnv = tryRequire(path.join(cli.cwd, "./.env.json"));
-    
-    cli.server = cli.server || superstatic.createServer({
-      port: cli.port,
-      host: cli.host,
-      environment: localEnv,
-      cwd: cli.cwd,
-      config: cli.config,
-      debug: cli.quiet,
-      _defaults: {
-        root: './'
-      }, // Insert defaults into settings
-      services: cli.services
-    });
-    
-    cli.server.start(function () {
-      cli.log('\nServer started on port ' + cli.port);
-      done && done();
-    });
-  });
-  
-  d.on('error', serverErrorHandler);
-}
-
-function configFileChanged () {
-  cli.log('Configuration file changed. Restarting...');
-  cli.server.stop(startServer);
-}
-
-function serverErrorHandler (err) {
-  var msg = err.message;
-  
-  if (err.message.indexOf('EADDRINUSE') > -1) msg = 'That port is already being used by another program.';
-  
-  cli.error(msg);
-}
-
-function parseOverrideConfig (argv) {
-  var overrideConfig = argv.config || argv.c || undefined;
-  
-  if (overrideConfig) {
-    var parsed = jsun.parse(overrideConfig);
-    if (parsed.err) return overrideConfig = undefined;
-    
-    overrideConfig = parsed.json;
-  }
-  
-  return overrideConfig;
-}
-
-function parseServices (argv) {
-  var s = (argv.services) ? argv.services.split(',') : [];
-  
-  return _(s)
-    .map(function (name) {return name.toLowerCase()})
-    .map(function (name) {
-      var serviceModule = tryRequire('superstatic-' + name) || tryRequire(name);
-      if (serviceModule) return [name, serviceModule()];
-    })
-    .filter(_.identity)
-    .zipObject()
-    .value();
-}
-
-function tryRequire (moduleName) {
-  var serviceModule;
-  
-  try {serviceModule = require(moduleName);}
-  catch (e) {}
-  
-  return serviceModule;
-}
