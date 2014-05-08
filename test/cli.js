@@ -66,12 +66,12 @@ describe('command line interface', function () {
   
   it('starts a server on a different port if --port is passed', function (done) {
     cli.cwd = process.cwd();
-    cli.run(['', '', '--port', '5432']);
+    cli.run(['', '', '--port', '3475']);
     
     fs.writeFileSync('index.html', 'basic');
     
     cli.on('started', function () {
-      request('http://localhost:5432')
+      request('http://localhost:3475')
         .get('/')
         .expect(200)
         .expect('basic')
