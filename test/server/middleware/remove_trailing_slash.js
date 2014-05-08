@@ -1,5 +1,5 @@
 var connect = require('connect');
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var request = require('supertest');
 var removeTrailingSlash = require('../../../lib/server/middleware/remove_trailing_slash');
 var defaultSettings = require('../../../lib/server/settings/default');

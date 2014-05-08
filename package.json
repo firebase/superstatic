@@ -48,8 +48,8 @@
     "ss": "bin/server"
   },
   "devDependencies": {
+    "chai": "~1.9.1",
     "mocha": "~1.13.0",
-    "expect.js": "~0.2.0",
     "sinon": "~1.7.3",
     "through": "~2.3.4",
     "mocksy": "~0.1.4",

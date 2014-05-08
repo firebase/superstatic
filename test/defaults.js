@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var defaults = require('../lib/defaults');
 var minimatch = require('minimatch');
 var _ = require('lodash');

@@ -1,7 +1,7 @@
 var path = require('path');
 var http = require('http');
 var connect = require('connect');
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var sinon = require('sinon');
 var Server = require('../../lib/server');
 var serverDefaults = require('../../lib/defaults');
@@ -20,23 +20,23 @@ describe('Superstatic server', function() {
   });
   
   it('sets the settings object on the instance', function () {
-    expect(this.server.settings).to.not.be(undefined);
+    expect(this.server.settings).to.not.equal(undefined);
   });
   
   it('sets the store object on the instance', function () {
-    expect(this.server.settings).to.not.be(undefined);
+    expect(this.server.settings).to.not.equal(undefined);
   });
   
   it('sets the routes list on the instance', function () {
-    expect(this.server.settings).to.not.be(undefined);
+    expect(this.server.settings).to.not.equal(undefined);
   });
   
   it('sets the port on the instance', function () {
-    expect(this.server._port).to.be(PORT);
+    expect(this.server._port).to.equal(PORT);
   });
   
   it('sets the current working directory on the instance', function () {
-    expect(this.server._cwd).to.be(process.cwd() + '/');
+    expect(this.server._cwd).to.equal(process.cwd() + '/');
   });
   
   it('sets the services list', function () {
@@ -62,7 +62,7 @@ describe('Superstatic server', function() {
   
   describe('#createServer()', function() {
     it('create and instance of SuperstaticServer', function () {
-      expect(this.server instanceof Server).to.be(true);
+      expect(this.server instanceof Server).to.equal(true);
     });
     
     describe('local options', function() {
@@ -71,15 +71,15 @@ describe('Superstatic server', function() {
       });
       
       it('configures a localEnv', function () {
-        expect(this.server.localEnv).to.not.be(undefined);
+        expect(this.server.localEnv).to.not.equal(undefined);
       });
 
       it('configures the settings object as a file', function () {
-        expect(this.server.settings).to.not.be(undefined);
+        expect(this.server.settings).to.not.equal(undefined);
       });
       
       it('configures the file store as a file system store', function () {
-        expect(this.server.store instanceof StoreLocal).to.be(true);
+        expect(this.server.store instanceof StoreLocal).to.equal(true);
       });
       
       it('turns debug output off', function (done) {
@@ -102,7 +102,7 @@ describe('Superstatic server', function() {
       });
       
       it('configures the file store as an s3 bucket', function () {
-        expect(this.server.store instanceof StoreS3).to.be(true);
+        expect(this.server.store instanceof StoreS3).to.equal(true);
       });
     })
   });
@@ -111,7 +111,7 @@ describe('Superstatic server', function() {
     var self = this;
     
     startServer(this.server, function (finished) {
-      expect(self.server._client).to.not.be(undefined);
+      expect(self.server._client).to.not.equal(undefined);
       finished(done);
     });
   });
@@ -138,7 +138,7 @@ describe('Superstatic server', function() {
         destroy: destroySpy
       };
       self.server.stop(function () {
-        expect(destroySpy.called).to.be(true);
+        expect(destroySpy.called).to.equal(true);
         done();
       });
     });
@@ -151,7 +151,7 @@ describe('Superstatic server', function() {
     startServer(this.server, function (finsished) {
       self.server._openServer.removeAllListeners = removeSpy;
       self.server.stop(function () {
-        expect(removeSpy.called).to.be(true);
+        expect(removeSpy.called).to.equal(true);
         done();
       });
     });

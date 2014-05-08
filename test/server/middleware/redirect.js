@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var expect = require('chai').expect;
 var connect = require('connect');
 var request = require('supertest');
 var redirect = require('../../../lib/server/middleware/redirect');
