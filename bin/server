@@ -9,8 +9,6 @@ var jsun = require('jsun');
 var _ = require('lodash');
 var Nash = require('nash');
 var format = require('chalk');
-var ERROR_PAGE = path.join(__dirname, 'not_found.html');
-var NOT_FOUND_PAGE = path.join(__dirname, 'not_found.html');
 
 var cli = Nash.createCli({
   title: format.bold('Superstatic:') + ' A static file server for fancy apps',

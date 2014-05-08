@@ -8,7 +8,7 @@ var rmdir = require('rmdir');
 var notFound = require('../../../lib/server/middleware/not_found');
 var sender = require('../../../lib/server/middleware/sender');
 var defaultFileStore = require('../../../lib/server/store/default');
-var notFoundTplPath = path.resolve(__dirname, '../../../lib/browser/not_found.html');
+var notFoundTplPath = path.resolve(__dirname, '../../../lib/templates/not_found.html');
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
 var defaultSettings = require('../../../lib/server/settings/default');
 

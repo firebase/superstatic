@@ -1,3 +1,4 @@
+var fs = require('fs');
 var path = require('path');
 var http = require('http');
 var connect = require('connect');
@@ -9,6 +10,8 @@ var ConfigFile = require('../../lib/server/settings/file');
 var StoreLocal = require('../../lib/server/store/local');
 var StoreS3 = require('../../lib/server/store/s3');
 var middleware = require('../../lib/server/middleware');
+var request = require('request');
+var mkdirp = require('mkdirp');
 
 var PORT = 4000;
 var HOST = '127.0.0.1';
@@ -248,7 +251,6 @@ describe('Superstatic server', function() {
     });
     
     it('lets you inject custom middleware into the chain', function (done) {
-      var request = require('request');
       var middlewareExecuted = false;
       var server = new Server({
         port: PORT,
@@ -265,6 +267,31 @@ describe('Superstatic server', function() {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
           finished(done);
+        });
+      });
+    });
+    
+    it('injects custom middleware with all arguments', function (done) {
+      var middlewareExecuted = false;
+      var server = new Server({
+        port: PORT,
+        cwd: __dirname,
+        debug: false
+      });
+      
+      mkdirp.sync(__dirname + '/__testing');
+      fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
+      
+      server.use('/public', connect.static(__dirname + '/__testing'));
+      
+      server.start(function () {
+        request('http://localhost:' + PORT + '/public/index.html', function (err, response) {
+          expect(response.statusCode).to.equal(200);
+          expect(response.body).to.equal('testing index.html');
+          
+          fs.unlink(__dirname + '/__testing/index.html');
+          fs.rmdirSync(__dirname + '/__testing');
+          server.stop(done);
         });
       });
     });
