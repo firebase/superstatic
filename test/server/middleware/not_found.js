@@ -8,7 +8,7 @@ var rmdir = require('rmdir');
 var notFound = require('../../../lib/server/middleware/not_found');
 var sender = require('../../../lib/server/middleware/sender');
 var defaultFileStore = require('../../../lib/server/store/default');
-var notFoundTplPath = path.resolve(__dirname, '../../../bin/not_found.html');
+var notFoundTplPath = path.resolve(__dirname, '../../../lib/browser/not_found.html');
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
 var defaultSettings = require('../../../lib/server/settings/default');
 
@@ -26,9 +26,7 @@ describe('not found middleware', function() {
     // When in production, it looks for the file relative
     // to the root directory
     settings._rootCwd = process.cwd();
-    settings._defaults = {
-      error_page: notFoundTplPath
-    };
+    settings._defaults = {};
     
     app.use(sender(store));
     app.use(function (req, res, next) {
@@ -44,6 +42,7 @@ describe('not found middleware', function() {
   it('serves the default 404 page', function (done) {
     app.use(function (req, res, next) {
       delete req.config.error_page;
+      delete settings._defaults.error_page;
       next();
     });
     app.use(notFound(settings));
@@ -53,6 +52,25 @@ describe('not found middleware', function() {
       .expect(404)
       .expect(notFoundTpl)
       .end(done)
+  });
+  
+  it('serves the error page when it is passed in with the _defaults', function (done) {
+    app.use(function (req, res, next) {
+      delete req.config.error_page;
+      fs.writeFileSync('default_not_found.txt', 'not found');
+      settings._defaults.error_page = 'default_not_found.txt';
+      next();
+    });
+    app.use(notFound(settings));
+    
+    request(app)
+      .get('/not-found')
+      .expect(404)
+      .expect('not found')
+      .end(function (err) {
+        fs.unlinkSync('default_not_found.txt');
+        done(err);
+      })
   });
   
   it('serves a custom 404 page', function (done) {

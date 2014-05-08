@@ -74,7 +74,9 @@ function startServer (done) {
       cwd: cli.cwd,
       config: cli.config,
       debug: cli.quiet,
-      _defaults: require('./_defaults'), // Insert defaults into settings
+      _defaults: {
+        root: './'
+      }, // Insert defaults into settings
       services: cli.services
     });
     
