@@ -19,7 +19,7 @@ describe('clean urls middleware', function () {
       res.send = function (pathname) {
         res.writeHead(200);
         res.end(pathname);
-      }
+      };
       req.config = settings.configuration;
       
       next();
@@ -54,6 +54,24 @@ describe('clean urls middleware', function () {
       .get('/superstatic')
       .expect(200)
       .expect('/superstatic.html')
+      .end(done);
+  });
+  
+  it('sets default root if no root is defined in config', function (done) {
+    var app = connect()
+      .use(function (req, res, next) {
+        res.send = function (pathname) {
+          res.writeHead(200);
+          res.end(pathname);
+        };
+        req.config = {};
+        next();
+      })
+      .use(cleanUrls(settings));
+      
+    request(app)
+      .get('/')
+      .expect(404)
       .end(done);
   });
   
