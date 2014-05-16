@@ -14,4 +14,8 @@ cli.on('error', function (err) {
   process.exit(1);
 });
 
+cli.on('warn', function (msg) {
+  feedback.warn(msg);
+});
+
 cli.run(process.argv);

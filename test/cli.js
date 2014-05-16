@@ -120,5 +120,6 @@ describe('command line interface', function () {
   
   it('restarts the server if the config file is changed');
   it('errors if two servers are started on the same port');
+  it('loads a list of services on server start');
   
 });
