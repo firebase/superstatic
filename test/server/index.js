@@ -15,6 +15,8 @@ var mkdirp = require('mkdirp');
 var query = require('connect-query');
 var compress = require('compression');
 var logger = require('morgan');
+var favicon = require('serve-favicon');
+var static = require('serve-static');
 
 var PORT = 4000;
 var HOST = '127.0.0.1';
@@ -246,7 +248,7 @@ describe('Superstatic server', function() {
     });
     
     it('uses the default favicon middleware', function () {
-      expect(this.stackHandleStr(15)).to.eql(connect.favicon().toString());
+      expect(this.stackHandleStr(15)).to.eql(favicon(path.resolve(__dirname, '../../lib/server/templates/favicon.ico')).toString());
     });
     
     it('uses the not found middleware', function () {
@@ -285,7 +287,7 @@ describe('Superstatic server', function() {
       mkdirp.sync(__dirname + '/__testing');
       fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
       
-      server.use('/public', connect.static(__dirname + '/__testing'));
+      server.use('/public', static(__dirname + '/__testing'));
       
       server.start(function () {
         request('http://localhost:' + PORT + '/public/index.html', function (err, response) {
@@ -303,7 +305,7 @@ describe('Superstatic server', function() {
 
 function startServer (server, callback) {
   server.start(function () {
-    // Suppress all connect.logger output
+    // Suppress all logger output
     if (server._client.stack[0].handle.toString() === logger().toString()) {
       server._client.stack[0].handle = function (req, res, next) {next();};
     }
