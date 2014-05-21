@@ -14,6 +14,7 @@ var request = require('request');
 var mkdirp = require('mkdirp');
 var query = require('connect-query');
 var compress = require('compression');
+var logger = require('morgan');
 
 var PORT = 4000;
 var HOST = '127.0.0.1';
@@ -185,7 +186,7 @@ describe('Superstatic server', function() {
     });
     
     it('uses the logger middleware', function () {
-      expect(this.stackHandleStr(0)).to.equal(connect.logger('short').toString());
+      expect(this.stackHandleStr(0)).to.equal(logger('short').toString());
     });
     
     it('uses the query middleware', function () {
@@ -303,7 +304,7 @@ describe('Superstatic server', function() {
 function startServer (server, callback) {
   server.start(function () {
     // Suppress all connect.logger output
-    if (server._client.stack[0].handle.toString() === connect.logger().toString()) {
+    if (server._client.stack[0].handle.toString() === logger().toString()) {
       server._client.stack[0].handle = function (req, res, next) {next();};
     }
     
