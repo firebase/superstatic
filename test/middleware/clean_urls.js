@@ -2,7 +2,7 @@ var connect = require('connect');
 var http = require('http');
 var request = require('supertest');
 var cleanUrls = require('../../lib/middleware/clean_urls');
-var defaultSettings = require('../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 var query = require('connect-query');
 var PORT = '7777';
 

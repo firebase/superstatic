@@ -6,9 +6,9 @@ var expect = require('chai').expect;
 var sinon = require('sinon');
 var superstatic = require('../lib');
 var serverDefaults = require('../lib/defaults');
-var ConfigFile = require('../lib/server/settings/file');
-var StoreLocal = require('../lib/server/store/local');
-var StoreS3 = require('../lib/server/store/s3');
+var ConfigFile = require('../lib/settings/file');
+var StoreLocal = require('../lib/store/local');
+var StoreS3 = require('../lib/store/s3');
 var middleware = require('../lib/middleware');
 var request = require('request');
 var mkdirp = require('mkdirp');
@@ -189,6 +189,10 @@ describe('Superstatic server', function() {
       });
       
       mkdirp.sync(__dirname + '/__testing');
+      
+      // Guard against file not getting deleted at some point
+      if (fs.exists(__dirname + '/__testing/index.html')) fs.unlink(__dirname + '/__testing/index.html');
+      
       fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
       
       server.use('/public', static(__dirname + '/__testing'));

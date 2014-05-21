@@ -17,3 +17,5 @@ node_modules
 .tmp_root
 
 spikes
+
+test/__testing

@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var defaultFileStore = require('../../../lib/server/store/default');
+var defaultFileStore = require('../../lib/store/default');
 
 
 describe('default file store', function() {

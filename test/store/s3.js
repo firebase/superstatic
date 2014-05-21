@@ -3,7 +3,7 @@ var sinon = require('sinon');
 var Mocksy = require('mocksy');
 var knox = require('knox');
 var mocksy = new Mocksy({port:8765});
-var S3 = require('../../../lib/server/store/s3');
+var S3 = require('../../lib/store/s3');
 
 describe('File store - s3', function() {
   beforeEach(function (done) {

@@ -2,7 +2,7 @@ var path = require('path');
 var connect = require('connect');
 var request = require('supertest');
 var customRoute = require('../../lib/middleware/custom_route');
-var defaultSettings = require('../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 var defaultRoutes = {
   '/test1': '/index.html',
   '/test3': '/test/dir'

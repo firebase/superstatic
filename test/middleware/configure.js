@@ -3,7 +3,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var configure = require('../../lib/middleware/configure');
-var defaultSettings = require('../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 var _ = require('lodash');
 var connect = require('connect');
 

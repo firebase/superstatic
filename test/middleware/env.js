@@ -1,7 +1,7 @@
 var connect = require('connect');
 var request = require('supertest');
 var env = require('../../lib/middleware/env');
-var defaultSettings = require('../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 var util = require('util');
 var clone = require('clone');
 

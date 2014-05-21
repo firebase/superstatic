@@ -7,10 +7,10 @@ var mkdirp = require('mkdirp');
 var rmdir = require('rmdir');
 var notFound = require('../../lib/middleware/not_found');
 var sender = require('../../lib/middleware/sender');
-var defaultFileStore = require('../../lib/server/store/default');
+var defaultFileStore = require('../../lib/store/default');
 var notFoundTplPath = path.resolve(__dirname, '../../lib/templates/not_found.html');
 var notFoundTpl = fs.readFileSync(notFoundTplPath).toString();
-var defaultSettings = require('../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 
 describe('not found middleware', function() {
   var app;
