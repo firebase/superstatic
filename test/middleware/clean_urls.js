@@ -1,8 +1,8 @@
 var connect = require('connect');
 var http = require('http');
 var request = require('supertest');
-var cleanUrls = require('../../../lib/server/middleware/clean_urls');
-var defaultSettings = require('../../../lib/server/settings/default');
+var cleanUrls = require('../../lib/middleware/clean_urls');
+var defaultSettings = require('../../lib/server/settings/default');
 var query = require('connect-query');
 var PORT = '7777';
 

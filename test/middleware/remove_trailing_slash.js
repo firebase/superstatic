@@ -2,8 +2,8 @@ var connect = require('connect');
 var expect = require('chai').expect;
 var request = require('supertest');
 var query = require('connect-query');
-var removeTrailingSlash = require('../../../lib/server/middleware/remove_trailing_slash');
-var defaultSettings = require('../../../lib/server/settings/default');
+var removeTrailingSlash = require('../../lib/middleware/remove_trailing_slash');
+var defaultSettings = require('../../lib/server/settings/default');
 
 describe('remove trailing slash middleware', function() {
   var app;

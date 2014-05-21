@@ -1,8 +1,8 @@
 var expect = require('chai').expect;
 var connect = require('connect')
 var request = require('supertest');
-var sender = require('../../../lib/server/middleware/sender');
-var defaultFileStore = require('../../../lib/server/store/default');
+var sender = require('../../lib/middleware/sender');
+var defaultFileStore = require('../../lib/server/store/default');
 var through = require('through');
 
 describe('sender middleware', function() {

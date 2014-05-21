@@ -1,8 +1,8 @@
 var path = require('path');
 var connect = require('connect');
 var request = require('supertest');
-var static = require('../../../lib/server/middleware/static');
-var defaultSettings = require('../../../lib/server/settings/default');
+var static = require('../../lib/middleware/static');
+var defaultSettings = require('../../lib/server/settings/default');
 
 describe('static middleware', function() {
   var app;

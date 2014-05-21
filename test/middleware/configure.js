@@ -2,8 +2,8 @@ var connect = require('connect');
 var request = require('supertest');
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var configure = require('../../../lib/server/middleware/configure');
-var defaultSettings = require('../../../lib/server/settings/default');
+var configure = require('../../lib/middleware/configure');
+var defaultSettings = require('../../lib/server/settings/default');
 var _ = require('lodash');
 var connect = require('connect');
 

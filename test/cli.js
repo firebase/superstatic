@@ -86,7 +86,7 @@ describe('command line interface', function () {
     cli.run(['', '', '--host', '0.0.0.0']);
     
     cli.on('started', function () {
-      expect(cli.server._host).to.equal('0.0.0.0');
+      expect(cli.server.host).to.equal('0.0.0.0');
       done();
     });
   });
