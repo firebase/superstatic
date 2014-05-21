@@ -32,7 +32,7 @@
     "chalk": "~0.4.0",
     "chokidar": "~0.7.1",
     "compression": "~1.0.2",
-    "connect": "2.9.x",
+    "connect": "3.x",
     "connect-query": "~0.1.0",
     "deliver": "~0.2.0",
     "drainer": "~0.2.1",
@@ -56,7 +56,7 @@
   "devDependencies": {
     "chai": "~1.9.1",
     "clone": "0.1.x",
-    "connect": "~2.9.2",
+    "connect": "3.x",
     "jshint": "2.4.x",
     "knox": "~0.8.6",
     "mkdirp": "0.3.x",
