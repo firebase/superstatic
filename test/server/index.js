@@ -13,6 +13,7 @@ var middleware = require('../../lib/server/middleware');
 var request = require('request');
 var mkdirp = require('mkdirp');
 var query = require('connect-query');
+var compress = require('compression');
 
 var PORT = 4000;
 var HOST = '127.0.0.1';
@@ -192,7 +193,7 @@ describe('Superstatic server', function() {
     });
     
     it('uses the connect gzip middleware', function () {
-      expect(this.stackHandleStr(2)).to.equal(connect.compress().toString());
+      expect(this.stackHandleStr(2)).to.equal(compress().toString());
     });
     
     it('uses the restful middleware', function () {
