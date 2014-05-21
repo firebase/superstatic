@@ -1,12 +1,8 @@
-# Superstatic
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat)](https://travis-ci.org/divshot/superstatic) [![Code Climate](http://img.shields.io/codeclimate/github/divshot/superstatic.svg?style=flat)](https://codeclimate.com/github/divshot/superstatic)
 
 Superstatic is an enhanced static web server that was built to power
 [Divshot.io](http://www.divshot.io). It has fantastic support for HTML5
 pushState applications as well as clean URLs and other goodies.
-
-[![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat)](https://npmjs.org/package/superstatic)
-[![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat)](https://travis-ci.org/divshot/superstatic)
-[![Code Climate](http://img.shields.io/codeclimate/divshot/superstatic/flow.svg?style=flat)](https://codeclimate.com/github/divshot/superstatic)
 
 ## Installation
 
