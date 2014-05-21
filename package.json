@@ -32,6 +32,7 @@
     "chalk": "~0.4.0",
     "chokidar": "~0.7.1",
     "connect": "2.9.x",
+    "connect-query": "~0.1.0",
     "deliver": "~0.2.0",
     "drainer": "~0.2.1",
     "feedback": "~0.3.2",
@@ -46,6 +47,7 @@
     "pathematics": "~0.1.1",
     "pretty-print": "~0.4.1",
     "qmap": "~0.2.3",
+    "qs": "~0.6.6",
     "slasher": "0.1.x"
   },
   "devDependencies": {

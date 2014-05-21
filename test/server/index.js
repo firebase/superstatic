@@ -12,6 +12,7 @@ var StoreS3 = require('../../lib/server/store/s3');
 var middleware = require('../../lib/server/middleware');
 var request = require('request');
 var mkdirp = require('mkdirp');
+var query = require('connect-query');
 
 var PORT = 4000;
 var HOST = '127.0.0.1';
@@ -187,7 +188,7 @@ describe('Superstatic server', function() {
     });
     
     it('uses the query middleware', function () {
-      expect(this.stackHandleStr(1)).to.eql(connect.query().toString());
+      expect(this.stackHandleStr(1)).to.eql(query().toString());
     });
     
     it('uses the connect gzip middleware', function () {
