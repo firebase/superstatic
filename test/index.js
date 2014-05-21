@@ -191,7 +191,7 @@ describe('Superstatic server', function() {
       mkdirp.sync(__dirname + '/__testing');
       
       // Guard against file not getting deleted at some point
-      if (fs.exists(__dirname + '/__testing/index.html')) fs.unlink(__dirname + '/__testing/index.html');
+      if (fs.existsSync(__dirname + '/__testing/index.html')) fs.unlinkSync(__dirname + '/__testing/index.html');
       
       fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
       
