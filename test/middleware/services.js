@@ -46,17 +46,27 @@ describe('services middleware', function () {
   describe('running services', function () {
     var service1Ran = false;
     var service2Ran = false;
+    var service3Ran = false;
     
     beforeEach(function () {
       service1Ran = false;
       service2Ran = false;
+      service3Ran = false;
       
       var serviceList = {
+        service1: function (req, res, next) {
+          service2Ran = true;
+          next();
+        },
         service2: function (req, res, next) {
           service2Ran = true;
           res.writeHead(200);
           res.write('service2');
           res.end();
+        },
+        service3: function (req, res, next) {
+          service3Ran = true;
+          next();
         }
       };
       
