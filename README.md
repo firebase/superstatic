@@ -16,6 +16,12 @@ By default, Superstatic will simply serve the current directory on port
 3474. This works just like any other static server:
 
     superstatic
+
+or
+
+```
+ss
+```
     
 You can optionally specify the directory, port and hostname of the server:
 
