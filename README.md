@@ -12,18 +12,18 @@ pushState applications as well as clean URLs and other goodies.
 Superstatic should be installed globally using npm:
 
     npm install -g superstatic
-    
+
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
 3474. This works just like any other static server:
 
     superstatic
-    
+
 You can optionally specify the directory, port and hostname of the server:
 
     superstatic public --port 8080 --host 127.0.0.1
-    
+
 Where it gets interesting is with Superstatic's JSON configuration file.
 
 ## Configuration
@@ -38,6 +38,9 @@ This configuration key specifies a directory *relative to the configuration file
 should be served. For example, if serving a Jekyll app, this might be set to `"_site"`.
 A directory passed as an argument into the command line app supercedes this configuration
 directive.
+
+**spa:** if `true`, `clean_urls` is forced to `true` (see below) and all requests without
+extensions are routed to `index.html`, as are requests with an `.html` extension.
 
 **clean_urls:** if `true`, all `.html` files will automatically have their extensions
 dropped. If `.html` is used at the end of a filename, it will perform a 301 redirect
@@ -167,7 +170,7 @@ var server = new Server({
 
 **environment:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
 
-**debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
+**debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true`
 
 ## Instance methods
 
