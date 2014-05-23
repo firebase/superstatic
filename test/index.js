@@ -189,12 +189,7 @@ describe('Superstatic server', function() {
       });
       
       mkdirp.sync(__dirname + '/__testing');
-      
-      // Guard against file not getting deleted at some point
-      if (fs.existsSync(__dirname + '/__testing/index.html')) fs.unlinkSync(__dirname + '/__testing/index.html');
-      
       fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
-      
       server.use('/public', static(__dirname + '/__testing'));
       
       server.start(function () {
@@ -202,7 +197,7 @@ describe('Superstatic server', function() {
           expect(response.statusCode).to.equal(200);
           expect(response.body).to.equal('testing index.html');
           
-          fs.unlink(__dirname + '/__testing/index.html');
+          fs.unlinkSync(__dirname + '/__testing/index.html');
           fs.rmdirSync(__dirname + '/__testing');
           server.stop(done);
         });
