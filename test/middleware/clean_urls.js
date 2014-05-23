@@ -1,9 +1,10 @@
 var connect = require('connect');
 var http = require('http');
 var request = require('supertest');
-var cleanUrls = require('../../../lib/server/middleware/clean_urls');
-var defaultSettings = require('../../../lib/server/settings/default');
-var PORT = '7777'
+var cleanUrls = require('../../lib/middleware/clean_urls');
+var defaultSettings = require('../../lib/settings/default');
+var query = require('connect-query');
+var PORT = '7777';
 
 describe('clean urls middleware', function () {
   var settings;
@@ -37,7 +38,7 @@ describe('clean urls middleware', function () {
   });
   
   it('it redirects and keeps the query string', function (done) {
-    app.use(connect.query());
+    app.use(query());
     app.use(cleanUrls(settings));
     
     request(app)

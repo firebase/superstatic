@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var connect = require('connect');
 var request = require('supertest');
-var redirect = require('../../../lib/server/middleware/redirect');
+var redirect = require('../../lib/middleware/redirect');
 
 describe('redirect middleware', function () {
   

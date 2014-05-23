@@ -1,6 +1,6 @@
 var connect = require('connect');
 var request = require('supertest');
-var cacheControl = require('../../../lib/server/middleware/cache_control');
+var cacheControl = require('../../lib/middleware/cache_control');
 var caches = {
   'index.html': 1000,
   'none.html': false,

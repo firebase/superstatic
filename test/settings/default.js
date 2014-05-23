@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var defaultSettings = require('../../../lib/server/settings/default');
+var defaultSettings = require('../../lib/settings/default');
 
 
 describe('default settings', function() {

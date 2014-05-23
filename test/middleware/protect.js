@@ -1,7 +1,7 @@
 var connect = require('connect');
 var request = require('supertest');
-var protect = require('../../../lib/server/middleware/protect');
-var defaultSettings = require('../../../lib/server/settings/default');
+var protect = require('../../lib/middleware/protect');
+var defaultSettings = require('../../lib/settings/default');
 
 describe('protect middleware', function() {
   var app;

@@ -1,6 +1,6 @@
 var path = require('path');
 var expect = require('chai').expect;
-var Local = require('../../../lib/server/store/local');
+var Local = require('../../lib/store/local');
 var CWD = path.resolve(__dirname, '../../fixtures/sample_app');
 
 describe('File store - local', function() {

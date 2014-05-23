@@ -1,7 +1,7 @@
 var connect = require('connect');
 var request = require('supertest');
 var expect = require('chai').expect;
-var restful = require('../../../lib/server/middleware/restful');
+var restful = require('../../lib/middleware/restful');
 var defaultRoutes =  [
   {
     path: '/router',
