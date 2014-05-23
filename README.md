@@ -130,14 +130,13 @@ var Server = superstatic.Server;
 
 var server = superstatic.createServer(/* Server Options */);
 // OR
-var sever = new Server(/* Server Options */);
+var server = new Server(/* Server Options */);
 
 server.start(function () {
+  // Server started
 
-	// Server started
-
-	server.stop(function () {
-  	// Server started
+  server.stop(function () {
+    // Server stopped
   });
 });
 ```
