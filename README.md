@@ -119,15 +119,14 @@ on each request.
 
 ## API
 
+The Superstatic server is just an extended version of the [Connect](http://www.npmjs.org/package/connect) server. This means you can use any custom middlewares you like that work with Connect.
+
 ### Server(options)
 
 ```js
 var superstatic = require('superstatic');
-var Server = superstatic.Server;
 
-var server = superstatic.createServer(/* Server Options */);
-// OR
-var server = new Server(/* Server Options */);
+var server = superstatic(/* server options */);
 
 server.start(function () {
   // Server started
@@ -146,22 +145,22 @@ server.start(function () {
 
 **config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
 ```js
-var Server = require('superstatic').Server;
+var Server = require('superstatic');
 
-var server = new Server({
+var server = superstatic({
   config: require('config_file.json')
 });
 
 // OR
 
-var server = new Server({
+var server = superstatic({
   config: 'config_file.json'
 });
 ```
 
 **cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
 
-**environment:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+**localEnv:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
 
 **debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
 
