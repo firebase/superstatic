@@ -53,7 +53,7 @@
     "serve-favicon": "~2.0.0",
     "slasher": "0.1.x",
     "update-notifier": "~0.1.8",
-    "van": "0.0.1"
+    "van": "0.0.2"
   },
   "devDependencies": {
     "chai": "~1.9.1",
@@ -64,12 +64,12 @@
     "mkdirp": "0.5.x",
     "mocha": "~1.19.0",
     "mocksy": "~0.1.4",
-    "pre-commit": "0.0.4",
+    "pre-commit": "0.0.7",
     "request": "~2.36.0",
     "rmdir": "1.0.x",
     "serve-static": "~1.1.0",
     "sinon": "~1.10.0",
-    "supertest": "~0.12.0"
+    "supertest": "~0.13.0"
   },
   "jshintConfig": {
     "expr": true,
