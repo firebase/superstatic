@@ -79,4 +79,13 @@ describe('File - local settings', function() {
     
     expect(file.configuration).to.eql(config);
   });
+  
+  it('throws an error if config file is invalid', function () {
+    expect(function testLoadConfigurationFile () {
+      var file = new File({
+        config: 'invalid-config.json',
+        cwd: CWD
+      });
+    }).to.throw(Error);
+  });
 });
