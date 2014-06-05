@@ -69,7 +69,27 @@ describe('clean urls middleware', function () {
         next();
       })
       .use(cleanUrls(settings));
-      
+     
+    request(app)
+      .get('/')
+      .expect(404)
+      .end(done);
+  });
+  
+  it('sets the default root if no root in config and no root in settings', function (done) {
+    delete settings.configuration;
+    
+    var app = connect()
+      .use(function (req, res, next) {
+        res.send = function (pathname) {
+          res.writeHead(200);
+          res.end(pathname);
+        };
+        req.config = {};
+        next();
+      })
+      .use(cleanUrls(settings));
+     
     request(app)
       .get('/')
       .expect(404)
@@ -77,12 +97,14 @@ describe('clean urls middleware', function () {
   });
   
   describe('skips middleware', function() {
+    
     beforeEach(function () {
       app.use(function (req, res, next) {
         req.config.clean_urls = false;
         next();
       });
     });
+    
     it('skips the middleware if clean_urls are turned off', function (done) {
       app.use(cleanUrls(settings));
       
