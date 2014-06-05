@@ -73,13 +73,6 @@ describe('Superstatic server', function() {
     expect(server.servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
-  // it('lets you start and stop the server', function (done) {
-  //   var server = this.server;
-  //   server.start(function () {
-  //     server.close(done);
-  //   });
-  // });
-  
   it('listens on the default port', function (done) {
     var app = superstatic();
     app.listen(function () {
@@ -124,8 +117,15 @@ describe('Superstatic server', function() {
     });
   });
   
-  it('fires a callback when the server starts');
-  it('the #listen() method returns the https server');
+  it('the #listen() method returns the http server object', function (done) {
+    var app = superstatic();
+    var server = app.listen(function () {
+      var http = require('http');
+      expect(server).to.be.an.instanceOf(http.Server);
+      app.close(done);
+    });
+  });
+  
   it('can be used as the callback function in #http.createServer()');
   
   it.skip('turns debug output off', function (done) {
@@ -134,7 +134,7 @@ describe('Superstatic server', function() {
       debug: false
     });
     
-    server.start(function () {
+    server.listen(function () {
       expect(server.debug).to.equal(false);
       // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
       server.close(done);
@@ -200,7 +200,7 @@ describe('Superstatic server', function() {
     function expectMiddleware (fn, idx, done) {
       return function (done) {
         var server = superstatic();
-        server.start(function () {
+        server.listen(function () {
           expect(server.stack[idx].handle.toString()).to.equal(fn.toString());
           server.close(done);
         });
@@ -220,7 +220,7 @@ describe('Superstatic server', function() {
         next();
       });
       
-      server.start(function () {
+      server.listen(function () {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
           server.close(done);
@@ -240,7 +240,7 @@ describe('Superstatic server', function() {
       fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
       server.use('/public', static(__dirname + '/__testing'));
       
-      server.start(function () {
+      server.listen(function () {
         request('http://localhost:' + PORT + '/public/index.html', function (err, response) {
           expect(response.statusCode).to.equal(200);
           expect(response.body).to.equal('testing index.html');
