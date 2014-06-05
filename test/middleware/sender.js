@@ -21,7 +21,26 @@ describe('sender middleware', function() {
       next();
     });
     
-    request(app).get('/').end(done);
+    request(app)
+      .get('/')
+      .end(done);
+  });
+  
+  it('provides default cwd when config is missing', function (done) {
+    app
+      .use(function (req, res, next) {
+        req.config = {};
+        next();
+      })
+      .use(sender(fileStore))
+      .use(function (req, res, next) {
+        res.send('/', false, 404);
+      });
+    
+    request(app)
+      .get('/')
+      .expect(404)
+      .end(done);
   });
     
   it('sends a file with no relative path', function (done) {
