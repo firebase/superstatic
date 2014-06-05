@@ -80,6 +80,14 @@ describe('Superstatic server', function() {
   //   });
   // });
   
+  it('listens on the default port', function (done) {
+    var app = superstatic();
+    app.listen(function () {
+      expect(app.port).to.equal(3474);
+      app.close(done);
+    });
+  });
+  
   it('listens on the port given to the #listen() function', function (done) {
     var app = superstatic();
     app.listen(5432, function () {
