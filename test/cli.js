@@ -20,7 +20,7 @@ describe('command line interface', function () {
     delete require.cache[require.resolve('../lib/cli')];
     
     try {
-      cli.server.stop(done);
+      cli.server.close(done);
     }
     catch (e) {
       done();

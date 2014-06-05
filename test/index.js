@@ -73,12 +73,52 @@ describe('Superstatic server', function() {
     expect(server.servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
-  it('lets you start and stop the server', function (done) {
-    var server = this.server;
-    server.start(function () {
-      server.stop(done);
+  // it('lets you start and stop the server', function (done) {
+  //   var server = this.server;
+  //   server.start(function () {
+  //     server.close(done);
+  //   });
+  // });
+  
+  it('listens on the port given to the #listen() function', function (done) {
+    var app = superstatic();
+    app.listen(5432, function () {
+      expect(app.port).to.equal(5432);
+      app.close(done);
     });
   });
+  
+  it('listens on the host given to the #listen() function', function (done) {
+    var app = superstatic();
+    app.listen(5432, '0.0.0.0', function () {
+      expect(app.host).to.equal('0.0.0.0');
+      app.close(done);
+    });
+  });
+  
+  it('listens on the port passed as an option to the #listen() function', function (done) {
+    var app = superstatic({
+      port: 7654
+    });
+    app.listen(5432, function () {
+      expect(app.port).to.equal(7654);
+      app.close(done);
+    });
+  });
+  
+  it('listens on the host passed as an option to the #listen() function', function (done) {
+    var app = superstatic({
+      host: '0.0.0.0'
+    });
+    app.listen(5432, '1.1.1.1', function () {
+      expect(app.host).to.equal('0.0.0.0');
+      app.close(done);
+    });
+  });
+  
+  it('fires a callback when the server starts');
+  it('the #listen() method returns the https server');
+  it('can be used as the callback function in #http.createServer()');
   
   it.skip('turns debug output off', function (done) {
     var server = superstatic({
@@ -89,7 +129,7 @@ describe('Superstatic server', function() {
     server.start(function () {
       expect(server.debug).to.equal(false);
       // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
-      server.stop(done);
+      server.close(done);
     });
   });
   
@@ -154,7 +194,7 @@ describe('Superstatic server', function() {
         var server = superstatic();
         server.start(function () {
           expect(server.stack[idx].handle.toString()).to.equal(fn.toString());
-          server.stop(done);
+          server.close(done);
         });
       };
     }
@@ -175,7 +215,7 @@ describe('Superstatic server', function() {
       server.start(function () {
         request('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
-          server.stop(done);
+          server.close(done);
         });
       });
     });
@@ -199,7 +239,7 @@ describe('Superstatic server', function() {
           
           fs.unlinkSync(__dirname + '/__testing/index.html');
           fs.rmdirSync(__dirname + '/__testing');
-          server.stop(done);
+          server.close(done);
         });
       });
     });
