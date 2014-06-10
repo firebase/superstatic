@@ -146,4 +146,20 @@ describe('logger middleware', function () {
       .end(done);
   });
   
+  it('skips logging if function is not defined on logger object', function (done) {
+    var app = connect()
+      .use(logger(true, {}))
+      .use(function (req, res, next) {
+        req.log
+          .info('info')
+          .warn('warn')
+          .error('error')
+        next();
+      });
+    
+    request(app)
+      .get('/')
+      .end(done);
+  });
+  
 });
