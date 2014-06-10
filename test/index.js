@@ -180,22 +180,23 @@ describe('Superstatic server', function() {
   describe('middleware', function() {
     
     it('uses the logger middleware', expectMiddleware(logger(), 0));
-    it('uses the query middleware', expectMiddleware(query(), 1));
-    it('uses the connect gzip middleware', expectMiddleware(compress(), 2));
-    it('uses the restful middleware', expectMiddleware(middleware.restful(), 3));
-    it('uses the configure middleware', expectMiddleware(middleware.configure(), 4));
-    it('uses the services middleware', expectMiddleware(middleware.services(), 5));
-    it('uses the reirect middleware', expectMiddleware(middleware.redirect(), 6));
-    it('uses the trailing slash remover middleware', expectMiddleware(middleware.removeTrailingSlash(), 7));
-    it('uses the basic auth protect middlware', expectMiddleware(middleware.protect(), 8));
-    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 9));
-    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 10));
-    it('uses the env middleware', expectMiddleware(middleware.env(), 11));
-    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 12));
-    it('uses the static middleware', expectMiddleware(middleware.static(), 13));
-    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 14));
-    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 15));
-    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 16));
+    it('uses the logger middleware', expectMiddleware(middleware.logger(), 1));
+    it('uses the query middleware', expectMiddleware(query(), 2));
+    it('uses the connect gzip middleware', expectMiddleware(compress(), 3));
+    it('uses the restful middleware', expectMiddleware(middleware.restful(), 4));
+    it('uses the configure middleware', expectMiddleware(middleware.configure(), 5));
+    it('uses the services middleware', expectMiddleware(middleware.services(), 6));
+    it('uses the reirect middleware', expectMiddleware(middleware.redirect(), 7));
+    it('uses the trailing slash remover middleware', expectMiddleware(middleware.removeTrailingSlash(), 8));
+    it('uses the basic auth protect middlware', expectMiddleware(middleware.protect(), 9));
+    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 10));
+    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 11));
+    it('uses the env middleware', expectMiddleware(middleware.env(), 12));
+    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 13));
+    it('uses the static middleware', expectMiddleware(middleware.static(), 14));
+    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 15));
+    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 16));
+    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 17));
     
     function expectMiddleware (fn, idx, done) {
       return function (done) {
