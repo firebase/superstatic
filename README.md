@@ -8,24 +8,30 @@ pushState applications as well as clean URLs and other goodies.
 
 Superstatic should be installed globally using npm:
 
-    npm install -g superstatic
+```
+$ npm install -g superstatic
+```
     
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
 3474. This works just like any other static server:
 
-    superstatic
+```
+$ superstatic
+```
 
-or
+or aliased as
 
 ```
-ss
+$ ss
 ```
     
 You can optionally specify the directory, port and hostname of the server:
 
-    superstatic public --port 8080 --host 127.0.0.1
+```
+$ superstatic public --port 8080 --host 127.0.0.1
+```
     
 Where it gets interesting is with Superstatic's JSON configuration file.
 
@@ -127,29 +133,40 @@ on each request.
 
 The Superstatic server is just an extended version of the [Connect](http://www.npmjs.org/package/connect) server. This means you can use any custom middlewares you like that work with Connect.
 
-### Server(options)
+### superstatic([options])
 
 ```js
 var superstatic = require('superstatic');
 
-var server = superstatic(/* server options */);
+var app = superstatic(/* server options */);
 
-server.start(function () {
+app.listen(function (err) {
   // Server started
-
-  server.stop(function () {
-    // Server stopped
-  });
 });
 ```
 
-**Server Options** *(all values are optional)*
+#### Server Options *(all values are optional)*
 
-**port:** Port to run the server on. Defaults to `3474`
+* **port:** Port to run the server on. Defaults to `3474`
+* **host:** Host to run the server on. Defaults to `127.0.0.1` (localhost)
+* **logger:** Provide custom logging functions. The three logging functions used are `info`, `warn`, and `error`. By default, these are printed to *stdout*. You can provide custom functions to log to 3rd party log services such as [Papertrail](https://papertrailapp.com/) use the NPM module [Winston](https://github.com/kenperkins/winston-papertrail). For example:
 
-**host:** Host to run the server on. Defaults to `127.0.0.1` (localhost)
+```js
+var superstatic = require('superstatic');
+var app = superstatic({
+  logger: {
+    info: function (msg) {
+      console.log('Info:', msg);
+    },
+    error: function (msg) {
+      console.error('Error:', msg);
+    }
+  }
+});
+```
 
-**config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file.
+* **config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file. For example:
+
 ```js
 var Server = require('superstatic');
 
@@ -164,25 +181,27 @@ var server = superstatic({
 });
 ```
 
-**cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
+* **cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
+* **localEnv:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+* **debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
 
-**localEnv:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
+## Server Instance methods
 
-**debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
+### listen([port, host, callback])
 
-## Instance methods
+Start the server. Returns and instance of [`http.createServer`](http://nodejs.org/api/http.html#http_http_createserver_requestlistener). All arguments are optional
 
-### start(callback)
+* **port:** port for server to listen on. Defaults to `3474` and is overridden by the port in server options
+* **host:** server host Defaults to `127.0.0.1` and is overridden by the host in server options
+* **callback:** gets called once the server starts. Gets passed an error argument if there is an error.
 
-Start the server
+### close(callback)
 
-**callback:** gets called once the server starts. Gets passed an error argument if there is an error.
+Stops the server and close all connections
 
-### stop(callback)
+* **callback:** gets called once the server stops. Gets passed an error argument if there is an error.
 
-Stops the server
-
-**callback:** gets caleld once the server stops. Gets passed an error argument if there is an error.
+**Note:** Since Superstatic uses Connect, any instance methods availble on a Connect instance are available on the Superstatic instance.
 
 ## Run Tests
 
