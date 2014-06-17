@@ -125,6 +125,21 @@ Note that you can pass the `--no-cache` option when you run the server to serve 
 without caching. This is good to use during development when you want fresh content served
 on each request.
 
+**Headers:** Superstatic allows you to set the response headers for the given routing configuration.
+
+```json
+{
+  "headers": {
+    "/cors-stuff/**": {
+      "Access-Control-Allow-Origin": "*"
+    },
+    "/scripts/**": {
+      "content-type": "text/javascript"
+    }
+  }
+}
+```
+
 ## Services
 
 **Services** are extensions that provide additional functionality. More TBD.
