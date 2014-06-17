@@ -14,7 +14,7 @@ describe('custom route middleware', function() {
   beforeEach(function () {
     app = connect();
     settings = defaultSettings.create();
-    settings.configuration.routes = defaultRoutes
+    settings.configuration.routes = defaultRoutes;
     
     app.use(function (req, res, next) {
       res.send = function (pathname) {

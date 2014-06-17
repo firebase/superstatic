@@ -189,15 +189,16 @@ describe('Superstatic server', function() {
     it('uses the reirect middleware', expectMiddleware(middleware.redirect(), 7));
     it('uses the trailing slash remover middleware', expectMiddleware(middleware.removeTrailingSlash(), 8));
     it('uses the basic auth protect middlware', expectMiddleware(middleware.protect(), 9));
-    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 10));
-    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 11));
-    it('uses the env middleware', expectMiddleware(middleware.env(), 12));
-    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 13));
-    it('uses the static middleware', expectMiddleware(middleware.static(), 14));
-    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 15));
-    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 16));
-    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 17));
-    
+    it('uses the custom headers middleware', expectMiddleware(middleware.headers(), 10))
+    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 11));
+    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 12));
+    it('uses the env middleware', expectMiddleware(middleware.env(), 13));
+    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 14));
+    it('uses the static middleware', expectMiddleware(middleware.static(), 15));
+    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 16));
+    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 17));
+    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 18));
+
     function expectMiddleware (fn, idx, done) {
       return function (done) {
         var server = superstatic();
