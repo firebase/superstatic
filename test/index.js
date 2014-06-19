@@ -10,7 +10,8 @@ var ConfigFile = require('../lib/settings/file');
 var StoreLocal = require('../lib/store/local');
 var StoreS3 = require('../lib/store/s3');
 var middleware = require('../lib/middleware');
-var request = require('request');
+var get = require('request');
+var request = require('supertest');
 var mkdirp = require('mkdirp');
 var query = require('connect-query');
 var compress = require('compression');
@@ -222,6 +223,14 @@ describe('Superstatic server', function() {
       };
     }
     
+    it('passes option to toggle gzip compression', function () {
+      var app = superstatic({
+        gzip: false
+      });
+      
+      expect(app.stack.length).to.equal(5);
+    });
+    
     it('lets you inject custom middleware into the chain', function (done) {
       var middlewareExecuted = false;
       var server = superstatic({
@@ -236,7 +245,7 @@ describe('Superstatic server', function() {
       });
       
       server.listen(function () {
-        request('http://localhost:' + PORT, function (err, response) {
+        get('http://localhost:' + PORT, function (err, response) {
           expect(middlewareExecuted).to.equal(true);
           server.close(done);
         });
@@ -256,7 +265,7 @@ describe('Superstatic server', function() {
       server.use('/public', static(__dirname + '/__testing'));
       
       server.listen(function () {
-        request('http://localhost:' + PORT + '/public/index.html', function (err, response) {
+        get('http://localhost:' + PORT + '/public/index.html', function (err, response) {
           expect(response.statusCode).to.equal(200);
           expect(response.body).to.equal('testing index.html');
           

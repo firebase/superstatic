@@ -72,7 +72,7 @@
     "rmdir": "1.0.x",
     "serve-static": "~1.1.0",
     "sinon": "~1.10.0",
-    "supertest": "~0.13.0"
+    "supertest": "^0.13.0"
   },
   "jshintConfig": {
     "expr": true,
