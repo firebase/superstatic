@@ -1,11 +1,12 @@
 {
   "name": "superstatic",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
     "test": "npm run lint && mocha ./test",
-    "lint": "jshint ./lib"
+    "lint": "jshint ./lib",
+    "bench": "wrk -t1 -c400 -d15s http://localhost:3474"
   },
   "bin": {
     "superstatic": "bin/server",

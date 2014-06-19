@@ -114,6 +114,20 @@ describe('clean urls middleware', function () {
         .end(done);
     });
     
+    it('skips the middleware if the clean_urls value is a stringed version of false', function (done) {
+      app
+        .use(function (req, res, next) {
+          req.config.clean_urls = 'false';
+          next();
+        })
+        .use(cleanUrls(settings));
+      
+      request(app)
+        .get('/superstatic.html')
+        .expect(404)
+        .end(done);
+    });
+    
     it('skips the middleware if it is the root path', function (done) {
       app.use(cleanUrls(settings));
       
