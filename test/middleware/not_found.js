@@ -97,27 +97,27 @@ describe('not found middleware', function() {
   it('serves a custom 404 page when the root is set to a sub-directory, relative to the root directory', function (done) {
     var rootDir = '.tmp';
     
-    settings.configuration.root = rootDir;
-    
     app.use(function (req, res, next) {
       req.config.root = rootDir;
-      req.config.cwd = path.join(process.cwd(), rootDir);
+      req.config.cwd = process.cwd();
       req.config.error_page = 'error.html';
       next();
     });
     app.use(notFound(settings, store));
     
     mkdirp.sync(rootDir);
-    fs.writeFileSync(rootDir + '/error.html', 'error');
+    fs.writeFileSync(rootDir + '/error.html', 'error page');
     
     request(app)
-      .get('/not-found')
-      .expect('error')
+      .get('/')
       .expect(404)
+      .expect(function (data) {
+        expect(data.res.statusCode).to.equal(404);
+        expect(data.res.text).to.equal('error page');
+      })
       .end(function (err) {
-        rmdir(rootDir, function () {
-          if (err) throw err;
-          done();
+        rmdir(rootDir, function (errOnRemove) {
+          done(err || errOnRemove);
         });
       });
   });
