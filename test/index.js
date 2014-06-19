@@ -74,36 +74,47 @@ describe('Superstatic server', function() {
   });
   
   it('listens on the default port', function (done) {
-    var app = superstatic();
+    var app = superstatic({
+      testMode: true
+    });
+    
     app.listen(function () {
       expect(app.port).to.equal(3474);
-      app.close(done);
+      done();
     });
   });
   
   it('listens on the port given to the #listen() function', function (done) {
-    var app = superstatic();
+    var app = superstatic({
+      testMode: true
+    });
+    
     app.listen(5432, function () {
       expect(app.port).to.equal(5432);
-      app.close(done);
+      done();
     });
   });
   
   it('listens on the host given to the #listen() function', function (done) {
-    var app = superstatic();
+    var app = superstatic({
+      testMode: true
+    });
+    
     app.listen(5432, '0.0.0.0', function () {
       expect(app.host).to.equal('0.0.0.0');
-      app.close(done);
+      done();
     });
   });
   
   it('listens on the port passed as an option to the #listen() function', function (done) {
     var app = superstatic({
-      port: 7654
+      port: 7654,
+      testMode: true
     });
+    
     app.listen(5432, function () {
       expect(app.port).to.equal(7654);
-      app.close(done);
+      done();
     });
   });
   
