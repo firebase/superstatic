@@ -120,11 +120,13 @@ describe('Superstatic server', function() {
   
   it('listens on the host passed as an option to the #listen() function', function (done) {
     var app = superstatic({
-      host: '0.0.0.0'
+      host: '0.0.0.0',
+      testMode: true
     });
+    
     app.listen(5432, '1.1.1.1', function () {
       expect(app.host).to.equal('0.0.0.0');
-      app.close(done);
+      done();
     });
   });
   
