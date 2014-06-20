@@ -191,88 +191,55 @@ describe('Superstatic server', function() {
     expect(this.server.routes).to.eql([routeDef]);
   });
   
-  describe.skip('middleware', function() {
-    
-    it('uses the logger middleware', expectMiddleware(logger(), 0));
-    it('uses the logger middleware', expectMiddleware(middleware.logger(), 1));
-    it('uses the query middleware', expectMiddleware(query(), 2));
-    it('uses the connect gzip middleware', expectMiddleware(compress(), 3));
-    it('uses the restful middleware', expectMiddleware(middleware.restful(), 4));
-    it('uses the configure middleware', expectMiddleware(middleware.configure(), 5));
-    it('uses the services middleware', expectMiddleware(middleware.services(), 6));
-    it('uses the reirect middleware', expectMiddleware(middleware.redirect(), 7));
-    it('uses the trailing slash remover middleware', expectMiddleware(middleware.removeTrailingSlash(), 8));
-    it('uses the basic auth protect middlware', expectMiddleware(middleware.protect(), 9));
-    it('uses the custom headers middleware', expectMiddleware(middleware.headers(), 10))
-    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 11));
-    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 12));
-    it('uses the env middleware', expectMiddleware(middleware.env(), 13));
-    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 14));
-    it('uses the static middleware', expectMiddleware(middleware.static(), 15));
-    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 16));
-    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 17));
-    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 18));
-
-    function expectMiddleware (fn, idx, done) {
-      return function (done) {
-        var server = superstatic();
-        server.listen(function () {
-          expect(server.stack[idx].handle.toString()).to.equal(fn.toString());
-          server.close(done);
-        });
-      };
-    }
-    
-    it('passes option to toggle gzip compression', function () {
-      var app = superstatic({
-        gzip: false
-      });
-      
-      expect(app.stack.length).to.equal(5);
+  it('passes option to toggle gzip compression', function () {
+    var app = superstatic({
+      gzip: false
     });
     
-    it('lets you inject custom middleware into the chain', function (done) {
-      var middlewareExecuted = false;
-      var server = superstatic({
-        port: PORT,
-        cwd: CWD,
-        debug: false
-      });
-      
-      server.use(function customMiddlewareTest (req, res, next) {
-        middlewareExecuted = true;
-        next();
-      });
-      
-      server.listen(function () {
-        get('http://localhost:' + PORT, function (err, response) {
-          expect(middlewareExecuted).to.equal(true);
-          server.close(done);
-        });
-      });
+    expect(app.stack.length).to.equal(5);
+  });
+  
+  it('lets you inject custom middleware into the chain', function (done) {
+    var middlewareExecuted = false;
+    var server = superstatic({
+      port: PORT,
+      cwd: CWD,
+      debug: false
     });
     
-    it('injects custom middleware with all arguments', function (done) {
-      var middlewareExecuted = false;
-      var server = superstatic({
-        port: PORT,
-        cwd: __dirname,
-        debug: false
+    server.use(function customMiddlewareTest (req, res, next) {
+      middlewareExecuted = true;
+      next();
+    });
+    
+    server.listen(function () {
+      get('http://localhost:' + PORT, function (err, response) {
+        expect(middlewareExecuted).to.equal(true);
+        server.close(done);
       });
-      
-      mkdirp.sync(__dirname + '/__testing');
-      fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
-      server.use('/public', static(__dirname + '/__testing'));
-      
-      server.listen(function () {
-        get('http://localhost:' + PORT + '/public/index.html', function (err, response) {
-          expect(response.statusCode).to.equal(200);
-          expect(response.body).to.equal('testing index.html');
-          
-          fs.unlinkSync(__dirname + '/__testing/index.html');
-          fs.rmdirSync(__dirname + '/__testing');
-          server.close(done);
-        });
+    });
+  });
+  
+  it('injects custom middleware with all arguments', function (done) {
+    var middlewareExecuted = false;
+    var server = superstatic({
+      port: PORT,
+      cwd: __dirname,
+      debug: false
+    });
+    
+    mkdirp.sync(__dirname + '/__testing');
+    fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
+    server.use('/public', static(__dirname + '/__testing'));
+    
+    server.listen(function () {
+      get('http://localhost:' + PORT + '/public/index.html', function (err, response) {
+        expect(response.statusCode).to.equal(200);
+        expect(response.body).to.equal('testing index.html');
+        
+        fs.unlinkSync(__dirname + '/__testing/index.html');
+        fs.rmdirSync(__dirname + '/__testing');
+        server.close(done);
       });
     });
   });
