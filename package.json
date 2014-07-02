@@ -56,8 +56,7 @@
     "update-notifier": "~0.1.8",
     "van": "0.0.4",
     "is-json": "^1.1.3",
-    "fast-url-parser": "^1.0.6-0",
-    "stacked": "^1.0.1"
+    "fast-url-parser": "^1.0.6-0"
   },
   "devDependencies": {
     "chai": "~1.9.1",
@@ -68,7 +67,6 @@
     "mkdirp": "0.5.x",
     "mocha": "~1.19.0",
     "mocksy": "~0.1.4",
-    "pre-commit": "0.0.7",
     "request": "~2.36.0",
     "rmdir": "1.0.x",
     "serve-static": "~1.1.0",
