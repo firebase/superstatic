@@ -20,6 +20,6 @@ describe('default file store', function() {
   });
   
   it('gets the path', function () {
-    expect(obj.getPath('/path')).to.equal('/path');
+    expect(obj.getPath(null, '/path')).to.equal('/path');
   });
 });

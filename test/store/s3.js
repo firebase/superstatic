@@ -35,7 +35,7 @@ describe('File store - s3', function() {
   
   it('returns the the url path', function () {
     var filePath = '/index.html';
-    expect(this.client.getPath(filePath)).to.equal(this.client._generateSignedUrl(filePath));
+    expect(this.client.getPath(null, filePath)).to.equal(this.client._generateSignedUrl(filePath));
   });
 });
 

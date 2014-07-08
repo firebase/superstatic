@@ -15,6 +15,6 @@ describe('File store - local', function() {
   });
   
   it('returns the file path', function () {
-    expect(this.local.getPath('/path')).to.equal('/path');
+    expect(this.local.getPath(null, '/path')).to.equal('/path');
   });
 });
