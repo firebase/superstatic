@@ -9,4 +9,3 @@ deploy:
   on:
     tags: true
     repo: divshot/superstatic
-    branch: master

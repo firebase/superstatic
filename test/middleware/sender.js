@@ -14,7 +14,7 @@ describe('sender middleware', function() {
   });
   
   it('puts a #send() method on the response object', function (done) {
-    app.use(sender(fileStore));
+    app.use(sender(null, fileStore));
     
     app.use(function (req, res, next) {
       expect(res.send).to.not.equal(undefined);
@@ -32,7 +32,7 @@ describe('sender middleware', function() {
         req.config = {};
         next();
       })
-      .use(sender(fileStore))
+      .use(sender(null, fileStore))
       .use(function (req, res, next) {
         res.send('/', false, 404);
       });
