@@ -1,3 +1,11 @@
 language: node_js
 node_js:
-- 0.10.1
+- '0.10'
+deploy:
+  provider: npm
+  email: scottcorgan@gmail.com
+  api_key:
+    secure: Ma2K+4fPyghJ61VOjuNL/Hk6n36eGrrC8/yzZtgArQkzpxDzEJ3CzMHqARehSC2VmA+ldVw1BMePWg9ZiirT36BhnHVsJ2rtfoW4OSI1zPnbUrfEzIl0PtfOx6BK+SdOkrh+ymahoQHl+3+qtuJumfOKRsCs6DN/0DvedYsPQ6w=
+  on:
+    tags: true
+    repo: divshot/superstatic

@@ -1,2 +1,2 @@
 --recursive
---reporter spec
+--reporter dot

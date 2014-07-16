@@ -6,7 +6,7 @@ var argsList = require('args-list');
 var middleware = require('../lib/middleware');
 var favicon = require('serve-favicon');
 
-describe.only('stacker', function () {
+describe('stacker', function () {
   
   it('builds a stack of middleware and returns a single middleware function', function () {
     var app = createServer();
@@ -82,7 +82,6 @@ describe.only('stacker', function () {
       
       // TODO: write function that auto tests that middleware gets left out of stack
       
-      
       var stack;
       var packs;
       var app = createServerWithout('redirects');
@@ -104,6 +103,11 @@ describe.only('stacker', function () {
         .end(done);
     });
   });
+  
+  
+  // function expectMiddlewareToBeToggled (configName, middlewareName, done) {
+    
+  // }
   
   function expectMiddlewareToNotExist (name, middlware, stack) {
     var atIndex = -1;
