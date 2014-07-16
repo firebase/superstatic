@@ -35,7 +35,7 @@ describe('stacker', function () {
       
       app.use(function (req, res, next) {
         packs = middelwareStack(req, res);
-        stack = packs.stack;
+        stack = packs.layers;
         next();
       });
       
@@ -91,7 +91,7 @@ describe('stacker', function () {
       
       app.use(function (req, res, next) {
         packs = middelwareStack(req, res);
-        stack = packs.stack;
+        stack = packs.layers;
         next();
       });
       

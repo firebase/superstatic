@@ -37,6 +37,7 @@
     "connect-query": "~0.1.0",
     "deliver": "~0.2.0",
     "drainer": "~0.2.1",
+    "fast-url-parser": "^1.0.6-0",
     "feedback": "~0.3.2",
     "globject": "0.1.x",
     "is-url": "~1.1.0",
@@ -53,9 +54,9 @@
     "qs": "~0.6.6",
     "serve-favicon": "~2.0.0",
     "slasher": "0.1.x",
+    "stacked": "^1.1.0",
     "update-notifier": "~0.2.0",
-    "van": "0.0.4",
-    "fast-url-parser": "^1.0.6-0"
+    "van": "0.0.4"
   },
   "devDependencies": {
     "chai": "~1.9.1",
