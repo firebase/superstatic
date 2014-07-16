@@ -5,10 +5,10 @@ var expect = require('chai').expect;
 describe('named middleware override', function() {
   it('overrides the named middleware', function (done) {
     var server = superstatic({
+      debug: false,
       middleware: {
         notFound: function(settings, store) {
           return function(req, res, next) {
-            console.log(req.constructor, res.constructor);
             res.writeHead('200');
             res.done();
           }
