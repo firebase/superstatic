@@ -55,6 +55,7 @@
     "serve-favicon": "~2.0.0",
     "slasher": "0.1.x",
     "stacked": "^1.1.0",
+    "superstatic-redirects": "^0.1.0",
     "update-notifier": "~0.2.0",
     "van": "0.0.4"
   },

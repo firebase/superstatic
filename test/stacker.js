@@ -43,7 +43,7 @@ describe('stacker', function () {
     });
     
     expectMiddlewareToMatchAtIndex('services', 0, middleware.services());
-    expectMiddlewareToMatchAtIndex('redirect', 1, middleware.redirect());
+    expectMiddlewareToMatchAtIndex('redirect', 1, require('superstatic-redirects')());
     expectMiddlewareToMatchAtIndex('remove trailing slash', 2, middleware.removeTrailingSlash());
     expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
     expectMiddlewareToMatchAtIndex('headers', 4, middleware.headers());
@@ -78,13 +78,13 @@ describe('stacker', function () {
   });
 
   describe('optional stack items', function () {
-    expectMiddlewareToBeConditional('redirects', 'redirect');
-    expectMiddlewareToBeConditional('headers', 'headers');
-    expectMiddlewareToBeConditional('cache_control', 'cacheControl');
-    expectMiddlewareToBeConditional('clean_urls', 'cleanUrls');
-    expectMiddlewareToBeConditional('routes', 'customRoute');
+    expectMiddlewareToBeConditional('redirects', require('superstatic-redirects'));
+    expectMiddlewareToBeConditional('headers', middleware.headers);
+    expectMiddlewareToBeConditional('cache_control', middleware.cacheControl);
+    expectMiddlewareToBeConditional('clean_urls', middleware.cleanUrls);
+    expectMiddlewareToBeConditional('routes', middleware.customRoute);
     
-    function expectMiddlewareToBeConditional (configName, middlewareMethodName) {
+    function expectMiddlewareToBeConditional (configName, middlewareMethod) {
       it('includes ' + configName + ' middleware', function (done) {
         var stack;
         var packs;
@@ -102,7 +102,7 @@ describe('stacker', function () {
         request(app)
           .get('/')
           .expect(function () {
-            expectMiddlewareToNotExist(middlewareMethodName, middleware[middlewareMethodName](), stack);
+            expectMiddlewareToNotExist(configName, middlewareMethod(), stack);
           })
           .end(done);
       });
