@@ -77,37 +77,37 @@ describe('stacker', function () {
     }
   });
 
-  describe('optionally stacks middleware', function () {
-    it('without redirects', function (done) {
-      
-      // TODO: write function that auto tests that middleware gets left out of stack
-      
-      var stack;
-      var packs;
-      var app = createServerWithout('redirects');
-      var middelwareStack = stacker(app, {
-        testMode: true
-      });
-      
-      app.use(function (req, res, next) {
-        packs = middelwareStack(req, res);
-        stack = packs.layers;
-        next();
-      });
-      
-      request(app)
-        .get('/')
-        .expect(function () {
-          expectMiddlewareToNotExist('redirect', middleware.redirect(), stack);
-        })
-        .end(done);
-    });
-  });
-  
-  
-  // function expectMiddlewareToBeToggled (configName, middlewareName, done) {
+  describe('optional stack items', function () {
+    expectMiddlewareToBeConditional('redirects', 'redirect');
+    expectMiddlewareToBeConditional('headers', 'headers');
+    expectMiddlewareToBeConditional('cache_control', 'cacheControl');
+    expectMiddlewareToBeConditional('clean_urls', 'cleanUrls');
+    expectMiddlewareToBeConditional('routes', 'customRoute');
     
-  // }
+    function expectMiddlewareToBeConditional (configName, middlewareMethodName) {
+      it('includes ' + configName + ' middleware', function (done) {
+        var stack;
+        var packs;
+        var app = createServerWithout(configName);
+        var middelwareStack = stacker(app, {
+          testMode: true
+        });
+        
+        app.use(function (req, res, next) {
+          packs = middelwareStack(req, res);
+          stack = packs.layers;
+          next();
+        });
+        
+        request(app)
+          .get('/')
+          .expect(function () {
+            expectMiddlewareToNotExist(middlewareMethodName, middleware[middlewareMethodName](), stack);
+          })
+          .end(done);
+      });
+    }
+  });
   
   function expectMiddlewareToNotExist (name, middlware, stack) {
     var atIndex = -1;
