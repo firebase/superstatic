@@ -52,7 +52,7 @@ describe('stacker', function () {
     expectMiddlewareToMatchAtIndex('environment variables', 7, middleware.env());
     expectMiddlewareToMatchAtIndex('clean urls', 8, middleware.cleanUrls());
     expectMiddlewareToMatchAtIndex('static', 9, middleware.static());
-    expectMiddlewareToMatchAtIndex('custom route', 10, require('superstatic-routes')());
+    expectMiddlewareToMatchAtIndex('custom route', 10, require('static-router')());
     expectMiddlewareToMatchAtIndex('favicon', 11, favicon(__dirname + '/fixtures/favicon.ico'));
     expectMiddlewareToMatchAtIndex('not found', 12, middleware.notFound());
     
@@ -81,8 +81,8 @@ describe('stacker', function () {
     expectMiddlewareToBeConditional('redirects', require('superstatic-redirects'));
     expectMiddlewareToBeConditional('headers', middleware.headers);
     expectMiddlewareToBeConditional('cache_control', require('cache-control'));
-    expectMiddlewareToBeConditional('clean_urls', middleware.cleanUrls);
-    expectMiddlewareToBeConditional('routes', require('superstatic-routes'));
+    // expectMiddlewareToBeConditional('clean_urls', middleware.cleanUrls);
+    expectMiddlewareToBeConditional('routes', require('static-router'));
     
     function expectMiddlewareToBeConditional (configName, middlewareMethod) {
       it('includes ' + configName + ' middleware', function (done) {
