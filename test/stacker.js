@@ -43,7 +43,7 @@ describe('stacker', function () {
     });
     
     expectMiddlewareToMatchAtIndex('services', 0, middleware.services());
-    expectMiddlewareToMatchAtIndex('redirect', 1, require('superstatic-redirects')());
+    expectMiddlewareToMatchAtIndex('redirect', 1, require('redirects')());
     expectMiddlewareToMatchAtIndex('remove trailing slash', 2, middleware.removeTrailingSlash());
     expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
     expectMiddlewareToMatchAtIndex('headers', 4, middleware.headers());
@@ -78,7 +78,7 @@ describe('stacker', function () {
   });
 
   describe('optional stack items', function () {
-    expectMiddlewareToBeConditional('redirects', require('superstatic-redirects'));
+    expectMiddlewareToBeConditional('redirects', require('redirects'));
     expectMiddlewareToBeConditional('headers', middleware.headers);
     expectMiddlewareToBeConditional('cache_control', require('cache-control'));
     // expectMiddlewareToBeConditional('clean_urls', middleware.cleanUrls);
