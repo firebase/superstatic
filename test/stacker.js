@@ -46,7 +46,7 @@ describe('stacker', function () {
     expectMiddlewareToMatchAtIndex('redirect', 1, require('redirects')());
     expectMiddlewareToMatchAtIndex('remove trailing slash', 2, middleware.removeTrailingSlash());
     expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
-    expectMiddlewareToMatchAtIndex('headers', 4, middleware.headers());
+    expectMiddlewareToMatchAtIndex('headers', 4, require('set-headers')());
     expectMiddlewareToMatchAtIndex('sender', 5, middleware.sender());
     expectMiddlewareToMatchAtIndex('cache control', 6, require('cache-control')());
     expectMiddlewareToMatchAtIndex('environment variables', 7, middleware.env());
@@ -79,7 +79,7 @@ describe('stacker', function () {
 
   describe('optional stack items', function () {
     expectMiddlewareToBeConditional('redirects', require('redirects'));
-    expectMiddlewareToBeConditional('headers', middleware.headers);
+    expectMiddlewareToBeConditional('headers', require('set-headers'));
     expectMiddlewareToBeConditional('cache_control', require('cache-control'));
     expectMiddlewareToBeConditional('clean_urls', require('clean-urls'));
     expectMiddlewareToBeConditional('routes', require('static-router'));
