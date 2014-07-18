@@ -30,6 +30,7 @@
   "dependencies": {
     "as-array": "^0.1.2",
     "async": "~0.9.0",
+    "cache-control": "^0.1.0",
     "chalk": "~0.4.0",
     "chokidar": "~0.8.0",
     "compression": "~1.0.2",
