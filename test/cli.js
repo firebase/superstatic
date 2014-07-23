@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 var request = require('supertest');
-var fs = require('fs');
+// var fs = require('fs');
+var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var cli = require('../lib/cli');
 
@@ -111,9 +112,21 @@ describe('command line interface', function () {
   
   it('uses custom config object if --config passed', function (done) {
     cli.run(['', '', '--config', '{"name": "test"}']);
-    
     cli.on('started', function () {
       expect(cli.server.settings.configuration.name).to.equal('test');
+      done();
+    });
+  });
+  
+  it('overrides the config file with config parameters passed in from the command line', function (done) {
+    fs.writeFileSync('divshot.json', '{"name":"test", "root": "./"}');
+    
+    cli.run(['', '', '--config', '{"root": "new-root"}']);
+    cli.on('started', function () {
+      expect(cli.server.settings.configuration.name).to.equal('test');
+      expect(cli.server.settings.configuration.root).to.equal('new-root');
+      
+      fs.unlinkSync('divshot.json');
       done();
     });
   });

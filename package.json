@@ -72,6 +72,7 @@
     "chai": "~1.9.1",
     "clone": "0.1.x",
     "connect": "3.x",
+    "fs-extra": "^0.10.0",
     "jshint": "2.5.x",
     "knox": "~0.8.6",
     "mkdirp": "0.5.x",
