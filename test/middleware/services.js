@@ -169,7 +169,11 @@ describe('services middleware', function () {
             service1: service1,
             service2: service2
           },
-          prefix: '__'
+          prefix: '__',
+          config: {
+            'service1': 'service1',
+            'service2': 'service2'
+          }
         }));
       
       request(app)
