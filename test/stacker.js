@@ -47,14 +47,13 @@ describe('stacker', function () {
     expectMiddlewareToMatchAtIndex('remove trailing slash', 2, require('slashify')());
     expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
     expectMiddlewareToMatchAtIndex('headers', 4, require('set-headers')());
-    expectMiddlewareToMatchAtIndex('sender', 5, middleware.sender());
-    expectMiddlewareToMatchAtIndex('cache control', 6, require('cache-control')());
-    expectMiddlewareToMatchAtIndex('environment variables', 7, middleware.env());
-    expectMiddlewareToMatchAtIndex('clean urls', 8, require('clean-urls')());
-    expectMiddlewareToMatchAtIndex('static', 9, require('settle')());
-    expectMiddlewareToMatchAtIndex('custom route', 10, require('static-router')());
-    expectMiddlewareToMatchAtIndex('favicon', 11, favicon(__dirname + '/fixtures/favicon.ico'));
-    expectMiddlewareToMatchAtIndex('not found', 12, require('not-found')());
+    expectMiddlewareToMatchAtIndex('cache control', 5, require('cache-control')());
+    expectMiddlewareToMatchAtIndex('environment variables', 6, middleware.env());
+    expectMiddlewareToMatchAtIndex('clean urls', 7, require('clean-urls')());
+    expectMiddlewareToMatchAtIndex('static', 8, require('settle')());
+    expectMiddlewareToMatchAtIndex('custom route', 9, require('static-router')());
+    expectMiddlewareToMatchAtIndex('favicon', 10, favicon(__dirname + '/fixtures/favicon.ico'));
+    expectMiddlewareToMatchAtIndex('not found', 11, require('not-found')());
     
     function expectMiddlewareToMatchAtIndex (description, idx, fn) {
       it(description, function () {
