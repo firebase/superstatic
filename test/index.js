@@ -9,7 +9,6 @@ var serverDefaults = require('../lib/defaults');
 var ConfigFile = require('../lib/settings/file');
 var StoreLocal = require('../lib/store/local');
 var StoreS3 = require('../lib/store/s3');
-var middleware = require('../lib/middleware');
 var get = require('request');
 var request = require('supertest');
 var mkdirp = require('mkdirp');

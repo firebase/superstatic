@@ -3,7 +3,6 @@ var expect = require('chai').expect;
 var request = require('supertest');
 var connect = require('connect');
 var argsList = require('args-list');
-var middleware = require('../lib/middleware');
 var favicon = require('serve-favicon');
 
 describe('stacker', function () {
@@ -42,13 +41,13 @@ describe('stacker', function () {
       request(app).get('/').end(done);
     });
     
-    expectMiddlewareToMatchAtIndex('services', 0, middleware.services());
+    expectMiddlewareToMatchAtIndex('services', 0, require('../lib/middleware/services')());
     expectMiddlewareToMatchAtIndex('redirect', 1, require('redirects')());
     expectMiddlewareToMatchAtIndex('remove trailing slash', 2, require('slashify')());
-    expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
+    expectMiddlewareToMatchAtIndex('protect', 3, require('../lib/middleware/protect')());
     expectMiddlewareToMatchAtIndex('headers', 4, require('set-headers')());
     expectMiddlewareToMatchAtIndex('cache control', 5, require('cache-control')());
-    expectMiddlewareToMatchAtIndex('environment variables', 6, middleware.env());
+    expectMiddlewareToMatchAtIndex('environment variables', 6, require('../lib/middleware/env')());
     expectMiddlewareToMatchAtIndex('clean urls', 7, require('clean-urls')());
     expectMiddlewareToMatchAtIndex('static', 8, require('settle')());
     expectMiddlewareToMatchAtIndex('custom route', 9, require('static-router')());
