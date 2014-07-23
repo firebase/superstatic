@@ -44,7 +44,7 @@ describe('stacker', function () {
     
     expectMiddlewareToMatchAtIndex('services', 0, middleware.services());
     expectMiddlewareToMatchAtIndex('redirect', 1, require('redirects')());
-    expectMiddlewareToMatchAtIndex('remove trailing slash', 2, middleware.removeTrailingSlash());
+    expectMiddlewareToMatchAtIndex('remove trailing slash', 2, require('slashify')());
     expectMiddlewareToMatchAtIndex('protect', 3, middleware.protect());
     expectMiddlewareToMatchAtIndex('headers', 4, require('set-headers')());
     expectMiddlewareToMatchAtIndex('sender', 5, middleware.sender());
