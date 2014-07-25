@@ -1,9 +1,9 @@
 var connect = require('connect');
 var expect = require('chai').expect;
 var request = require('supertest');
-var services = require('../../lib/middleware/services');
+var services = require('../../../lib/middleware/services');
 
-describe('services middleware', function () {
+describe.only('services middleware', function () {
   var app;
   
   beforeEach(function () {
