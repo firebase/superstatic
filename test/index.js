@@ -73,6 +73,20 @@ describe('Superstatic server', function() {
     expect(server.servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
+  describe('tracking', function () {
+    it('tracks nothing by default', function () {
+      var server = superstatic();
+      expect(server.track).to.eql([]);
+    });
+    
+    it('sets the app to track service usage', function () {
+      var server = superstatic({
+        track: ['services']
+      });
+      expect(server.track).to.eql(['services']);
+    });
+  });
+  
   it('listens on the default port', function (done) {
     var app = superstatic({
       testMode: true
