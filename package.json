@@ -52,7 +52,7 @@
     "mix-into": "~0.4.0",
     "morgan": "~1.1.1",
     "nash": "~0.5.0",
-    "not-found": "^0.1.0",
+    "not-found": "^0.2.0",
     "pathematics": "~0.1.1",
     "pretty-print": "~0.4.1",
     "qmap": "~0.2.3",

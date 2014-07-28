@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var request = require('supertest');
 var services = require('../../../lib/middleware/services');
 
-describe.only('services middleware', function () {
+describe.skip('services middleware', function () {
   var app;
   
   beforeEach(function () {

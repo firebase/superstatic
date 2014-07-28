@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 describe('defaults', function() {
   it('has a default port', function () {
-    expect(defaults.PORT).to.equal(3474);
+    expect(defaults.PORT).to.equal(process.env.PORT || 3474);
   });
   
   it('has a default host', function () {

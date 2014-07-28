@@ -79,7 +79,7 @@ describe('Superstatic server', function() {
     });
     
     app.listen(function () {
-      expect(app.port).to.equal(3474);
+      expect(app.port).to.equal(process.env.PORT || 3474);
       done();
     });
   });
