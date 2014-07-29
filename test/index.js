@@ -87,6 +87,47 @@ describe('Superstatic server', function() {
     });
   });
   
+  describe('secure server', function () {
+    it('started', function (done) {
+      var server = superstatic({
+        secure: {
+          key: fs.readFileSync(path.join(__dirname, 'fixtures/key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem'))
+        }
+      });
+      
+      server.listen(function (err) {
+        expect(err).to.equal(undefined);
+        expect(server.server).to.contain.keys(['key', 'cert']);
+        server.close(done);
+      });
+    });
+    
+    it('requires a key', function () {
+      var server = superstatic({
+        secure: {
+          cert: 'a'
+        }
+      });
+      
+      expect(function () {
+        server.listen();
+      }).to.throw(Error);
+    });
+    
+    it('requires a cert', function () {
+      var server = superstatic({
+        secure: {
+          key: 'a'
+        }
+      });
+      
+      expect(function () {
+        server.listen();
+      }).to.throw(Error);
+    });
+  });
+  
   it('listens on the default port', function (done) {
     var app = superstatic({
       testMode: true
