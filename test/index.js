@@ -228,7 +228,7 @@ describe('Superstatic server', function() {
         gzip: false
       });
       
-      expect(app.stack.length).to.equal(4);
+      expect(app.stack.length).to.equal(5);
     });
     
     it('lets you inject custom middleware into the chain', function (done) {
