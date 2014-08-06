@@ -227,8 +227,16 @@ describe('Superstatic server', function() {
       expect(superstatic().store instanceof StoreLocal).to.equal(true);
     });
     
-    it('configures the file store as an s3 bucket', function () {
-      expect(superstatic({store: {type: 's3'}}).store instanceof StoreS3).to.equal(true);
+    it('overwrites the file store default', function () {
+      var server = superstatic({
+        store: {
+          _legacyClient: {},
+          _hashedClient: {}
+        }
+      });
+      
+      expect(server.store._legacyClient).to.not.equal(undefined);
+      expect(server.store._hashedClient).to.not.equal(undefined);
     });
     
   });

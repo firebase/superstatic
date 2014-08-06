@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.12.11",
+  "version": "0.13.0",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
@@ -37,7 +37,7 @@
     "client-ip": "^0.1.0",
     "compression": "~1.0.2",
     "connect": "3.x",
-    "connect-query": "~0.1.0",
+    "connect-query": "~0.2.0",
     "deliver": "~0.4.0",
     "drainer": "~0.2.1",
     "fast-url-parser": "^1.0.6-0",
