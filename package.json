@@ -33,7 +33,7 @@
     "caseless": "^0.3.0",
     "chalk": "~0.4.0",
     "chokidar": "~0.8.0",
-    "clean-urls": "^0.1.0",
+    "clean-urls": "^0.2.0",
     "client-ip": "^0.1.0",
     "compression": "~1.0.2",
     "connect": "3.x",
