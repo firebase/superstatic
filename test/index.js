@@ -196,18 +196,18 @@ describe('Superstatic server', function() {
   
   it('can be used as the callback function in #http.createServer()');
   
-  it.skip('turns debug output off', function (done) {
-    var server = superstatic({
-      port: PORT,
-      debug: false
-    });
+  // it.skip('turns debug output off', function (done) {
+  //   var server = superstatic({
+  //     port: PORT,
+  //     debug: false
+  //   });
     
-    server.listen(function () {
-      expect(server.debug).to.equal(false);
-      // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
-      server.close(done);
-    });
-  });
+  //   server.listen(function () {
+  //     expect(server.debug).to.equal(false);
+  //     // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
+  //     server.close(done);
+  //   });
+  // });
   
   describe('local or remote options', function() {
     

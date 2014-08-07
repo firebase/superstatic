@@ -137,25 +137,25 @@ describe('command line interface', function () {
   
 });
 
-describe.skip('concurrent tasks', function () {
+// describe.skip('concurrent tasks', function () {
   
-  it('runs tasks concurrently', function (done) {
-    fs.writeFileSync(__dirname + '/superstatic.json', JSON.stringify({
-      scripts: {
-        testing: ''
-      }
-    }, null, 2));
+//   it('runs tasks concurrently', function (done) {
+//     fs.writeFileSync(__dirname + '/superstatic.json', JSON.stringify({
+//       scripts: {
+//         testing: ''
+//       }
+//     }, null, 2));
     
-    process.cwd = function () {
-      return __dirname;
-    };
+//     process.cwd = function () {
+//       return __dirname;
+//     };
     
-    cli.debug = false;
-    cli.run(['', '', '--with', 'testing']);
+//     cli.debug = false;
+//     cli.run(['', '', '--with', 'testing']);
     
-    cli.on('started', function () {
-      done();
-    });
-  });
+//     cli.on('started', function () {
+//       done();
+//     });
+//   });
   
-});
+// });
