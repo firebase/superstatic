@@ -241,6 +241,24 @@ describe('Superstatic server', function() {
     
   });
   
+  it('prepends middleware to the beginning of the middleware stack', function (done) {
+    var prependCalled = false;
+    var app = superstatic({
+      debug: false,
+      _prepend: function (req, res, next) {
+        prependCalled = true;
+        next();
+      }
+    });
+    
+    request(app)
+      .get('/')
+      .expect(function () {
+        expect(prependCalled).to.equal(true);
+      })
+      .end(done);
+  });
+  
   it('adds a route to the server', function () {
     var routeDef = {
       path: '/route',
