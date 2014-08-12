@@ -241,7 +241,7 @@ describe('Superstatic server', function() {
     
   });
   
-  it('prepends middleware to the beginning of the middleware stack', function (done) {
+  it('can prepend middleware to the beginning of the middleware stack', function (done) {
     var prependCalled = false;
     var app = superstatic({
       debug: false,
