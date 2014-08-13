@@ -79,7 +79,6 @@
     "knox": "~0.8.6",
     "mkdirp": "0.5.x",
     "mocha": "~1.19.0",
-    "mockgoose": "^1.10.2",
     "mocksy": "~0.1.4",
     "request": "~2.36.0",
     "rmdir": "1.0.x",
