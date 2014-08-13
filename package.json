@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "0.13.0-rc3",
+  "version": "0.13.0-rc4",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
@@ -36,7 +36,6 @@
     "chalk": "~0.4.0",
     "chokidar": "~0.8.0",
     "clean-urls": "^0.2.0",
-    "client-ip": "^0.1.0",
     "compression": "~1.0.2",
     "connect": "3.x",
     "connect-query": "~0.2.0",
@@ -52,7 +51,6 @@
     "minimatch": "0.3.x",
     "minimist": "~0.1.0",
     "mix-into": "~0.4.0",
-    "mongoose": "^3.8.14",
     "morgan": "~1.1.1",
     "nash": "~0.5.0",
     "not-found": "^0.2.0",
