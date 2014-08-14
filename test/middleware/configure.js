@@ -44,6 +44,10 @@ describe('configure middleware', function() {
       settings.load.restore();
       next();
     });
-    request(app).get('/').set('host', 'foobar').end(done);
+    
+    request(app)
+    .get('/')
+    .set('host', 'foobar')
+    .end(done);
   });
 });
