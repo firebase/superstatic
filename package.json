@@ -8,7 +8,7 @@
     "test-unit": "mocha test",
     "lint": "jshint ./lib",
     "outdated": "npm outdated --depth 0",
-    "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true"
+    "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json"
   },
   "bin": {
     "superstatic": "bin/server",
