@@ -6,9 +6,7 @@
   "scripts": {
     "test": "npm run lint && npm run test-unit",
     "test-unit": "mocha test",
-    "test-integration": "mocha test/integration",
-    "lint": "jshint ./lib",
-    "bench": "wrk -t1 -c400 -d15s http://localhost:3474"
+    "lint": "jshint ./lib"
   },
   "bin": {
     "superstatic": "bin/server",
