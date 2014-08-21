@@ -8,7 +8,7 @@ var S3 = require('../../lib/store/s3');
 describe('File store - s3', function() {
   beforeEach(function (done) {
     this.client = new S3({
-      _hashedClient: knox.createClient({
+      client: knox.createClient({
         key: 'key',
         secret: 'secret',
         bucket: 'bucket'
@@ -23,17 +23,19 @@ describe('File store - s3', function() {
   });
   
   it('creates a knox s3 client', function () {
-    expect(this.client._hashedClient).to.not.equal(undefined);
+    expect(this.client._client).to.not.equal(undefined);
   });
   
-  it.skip('returns the hashed the url path', function () {
+  it('generates signed urls', function () {
     var filePath = '/index.html';
-    console.log(this.client.getPath({
-      build: {
-        id: 1
-      }
-    }, filePath));
-    // expect(this.client.getPath(null, filePath)).to.equal(this.client._generateSignedUrl(filePath));
+    this.client._client.signedUrl = sinon.spy();
+    var signedUrl = this.client._generateSignedUrl(filePath);
+    expect(this.client._client.signedUrl.calledWith(filePath)).to.equal(true);
+  });
+  
+  it('returns the the url path', function () {
+    var filePath = '/index.html';
+    expect(this.client.getPath(null, filePath)).to.equal(this.client._generateSignedUrl(filePath));
   });
 });
 

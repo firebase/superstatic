@@ -9,6 +9,7 @@ var serverDefaults = require('../lib/defaults');
 var ConfigFile = require('../lib/settings/file');
 var StoreLocal = require('../lib/store/local');
 var StoreS3 = require('../lib/store/s3');
+var middleware = require('../lib/middleware');
 var get = require('request');
 var request = require('supertest');
 var mkdirp = require('mkdirp');
@@ -73,68 +74,13 @@ describe('Superstatic server', function() {
     expect(server.servicesRoutePrefix).to.equal(serverDefaults.SERVICES_ROUTE_PREFIX);
   });
   
-  describe('tracking', function () {
-    it('tracks nothing by default', function () {
-      var server = superstatic();
-      expect(server.track).to.eql([]);
-    });
-    
-    it('sets the app to track service usage', function () {
-      var server = superstatic({
-        track: ['services']
-      });
-      expect(server.track).to.eql(['services']);
-    });
-  });
-  
-  describe('secure server', function () {
-    it('started', function (done) {
-      var server = superstatic({
-        secure: {
-          key: fs.readFileSync(path.join(__dirname, 'fixtures/key.pem')),
-          cert: fs.readFileSync(path.join(__dirname, 'fixtures/cert.pem'))
-        }
-      });
-      
-      server.listen(function (err) {
-        expect(err).to.equal(undefined);
-        expect(server.server).to.contain.keys(['key', 'cert']);
-        server.close(done);
-      });
-    });
-    
-    it('requires a key', function () {
-      var server = superstatic({
-        secure: {
-          cert: 'a'
-        }
-      });
-      
-      expect(function () {
-        server.listen();
-      }).to.throw(Error);
-    });
-    
-    it('requires a cert', function () {
-      var server = superstatic({
-        secure: {
-          key: 'a'
-        }
-      });
-      
-      expect(function () {
-        server.listen();
-      }).to.throw(Error);
-    });
-  });
-  
   it('listens on the default port', function (done) {
     var app = superstatic({
       testMode: true
     });
     
     app.listen(function () {
-      expect(app.port).to.equal(process.env.PORT || 3474);
+      expect(app.port).to.equal(3474);
       done();
     });
   });
@@ -196,18 +142,18 @@ describe('Superstatic server', function() {
   
   it('can be used as the callback function in #http.createServer()');
   
-  // it.skip('turns debug output off', function (done) {
-  //   var server = superstatic({
-  //     port: PORT,
-  //     debug: false
-  //   });
+  it.skip('turns debug output off', function (done) {
+    var server = superstatic({
+      port: PORT,
+      debug: false
+    });
     
-  //   server.listen(function () {
-  //     expect(server.debug).to.equal(false);
-  //     // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
-  //     server.close(done);
-  //   });
-  // });
+    server.listen(function () {
+      expect(server.debug).to.equal(false);
+      // expect(server.logger().toString()).to.equal(Server.middlewareNoop.toString());
+      server.close(done);
+    });
+  });
   
   describe('local or remote options', function() {
     
@@ -227,36 +173,10 @@ describe('Superstatic server', function() {
       expect(superstatic().store instanceof StoreLocal).to.equal(true);
     });
     
-    it('overwrites the file store default', function () {
-      var server = superstatic({
-        store: {
-          _legacyClient: {},
-          _hashedClient: {}
-        }
-      });
-      
-      expect(server.store._legacyClient).to.not.equal(undefined);
-      expect(server.store._hashedClient).to.not.equal(undefined);
+    it('configures the file store as an s3 bucket', function () {
+      expect(superstatic({store: {type: 's3'}}).store instanceof StoreS3).to.equal(true);
     });
     
-  });
-  
-  it('can prepend middleware to the beginning of the middleware stack', function (done) {
-    var prependCalled = false;
-    var app = superstatic({
-      debug: false,
-      _prepend: function (req, res, next) {
-        prependCalled = true;
-        next();
-      }
-    });
-    
-    request(app)
-      .get('/')
-      .expect(function () {
-        expect(prependCalled).to.equal(true);
-      })
-      .end(done);
   });
   
   it('adds a route to the server', function () {
@@ -271,55 +191,88 @@ describe('Superstatic server', function() {
     expect(this.server.routes).to.eql([routeDef]);
   });
   
-  it('passes option to toggle gzip compression', function () {
-    var app = superstatic({
-      gzip: false
+  describe('middleware', function() {
+    
+    it('uses the logger middleware', expectMiddleware(logger(), 0));
+    it('uses the logger middleware', expectMiddleware(middleware.logger(), 1));
+    it('uses the query middleware', expectMiddleware(query(), 2));
+    it('uses the connect gzip middleware', expectMiddleware(compress(), 3));
+    it('uses the restful middleware', expectMiddleware(middleware.restful(), 4));
+    it('uses the configure middleware', expectMiddleware(middleware.configure(), 5));
+    it('uses the services middleware', expectMiddleware(middleware.services(), 6));
+    it('uses the reirect middleware', expectMiddleware(middleware.redirect(), 7));
+    it('uses the trailing slash remover middleware', expectMiddleware(middleware.removeTrailingSlash(), 8));
+    it('uses the basic auth protect middlware', expectMiddleware(middleware.protect(), 9));
+    it('uses the custom headers middleware', expectMiddleware(middleware.headers(), 10))
+    it('uses the basic auth sender middlware', expectMiddleware(middleware.sender(), 11));
+    it('uses the cache control middleware', expectMiddleware(middleware.cacheControl(), 12));
+    it('uses the env middleware', expectMiddleware(middleware.env(), 13));
+    it('uses the clean urls middleware', expectMiddleware(middleware.cleanUrls(), 14));
+    it('uses the static middleware', expectMiddleware(middleware.static(), 15));
+    it('uses the custom route middleware', expectMiddleware(middleware.customRoute(), 16));
+    it('uses the default favicon middleware', expectMiddleware(favicon(path.resolve(__dirname, '../lib/templates/favicon.ico')), 17));
+    it('uses the not found middleware', expectMiddleware(middleware.notFound(), 18));
+
+    function expectMiddleware (fn, idx, done) {
+      return function (done) {
+        var server = superstatic();
+        server.listen(function () {
+          expect(server.stack[idx].handle.toString()).to.equal(fn.toString());
+          server.close(done);
+        });
+      };
+    }
+    
+    it('passes option to toggle gzip compression', function () {
+      var app = superstatic({
+        gzip: false
+      });
+      
+      expect(app.stack.length).to.equal(5);
     });
     
-    expect(app.stack.length).to.equal(5);
-  });
-  
-  it('lets you inject custom middleware into the chain', function (done) {
-    var middlewareExecuted = false;
-    var server = superstatic({
-      port: PORT,
-      cwd: CWD,
-      debug: false
-    });
-    
-    server.use(function customMiddlewareTest (req, res, next) {
-      middlewareExecuted = true;
-      next();
-    });
-    
-    server.listen(function () {
-      get('http://localhost:' + PORT, function (err, response) {
-        expect(middlewareExecuted).to.equal(true);
-        server.close(done);
+    it('lets you inject custom middleware into the chain', function (done) {
+      var middlewareExecuted = false;
+      var server = superstatic({
+        port: PORT,
+        cwd: CWD,
+        debug: false
+      });
+      
+      server.use(function customMiddlewareTest (req, res, next) {
+        middlewareExecuted = true;
+        next();
+      });
+      
+      server.listen(function () {
+        get('http://localhost:' + PORT, function (err, response) {
+          expect(middlewareExecuted).to.equal(true);
+          server.close(done);
+        });
       });
     });
-  });
-  
-  it('injects custom middleware with all arguments', function (done) {
-    var middlewareExecuted = false;
-    var server = superstatic({
-      port: PORT,
-      cwd: __dirname,
-      debug: false
-    });
     
-    mkdirp.sync(__dirname + '/__testing');
-    fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
-    server.use('/public', static(__dirname + '/__testing'));
-    
-    server.listen(function () {
-      get('http://localhost:' + PORT + '/public/index.html', function (err, response) {
-        expect(response.statusCode).to.equal(200);
-        expect(response.body).to.equal('testing index.html');
-        
-        fs.unlinkSync(__dirname + '/__testing/index.html');
-        fs.rmdirSync(__dirname + '/__testing');
-        server.close(done);
+    it('injects custom middleware with all arguments', function (done) {
+      var middlewareExecuted = false;
+      var server = superstatic({
+        port: PORT,
+        cwd: __dirname,
+        debug: false
+      });
+      
+      mkdirp.sync(__dirname + '/__testing');
+      fs.writeFileSync(__dirname + '/__testing/index.html', 'testing index.html');
+      server.use('/public', static(__dirname + '/__testing'));
+      
+      server.listen(function () {
+        get('http://localhost:' + PORT + '/public/index.html', function (err, response) {
+          expect(response.statusCode).to.equal(200);
+          expect(response.body).to.equal('testing index.html');
+          
+          fs.unlinkSync(__dirname + '/__testing/index.html');
+          fs.rmdirSync(__dirname + '/__testing');
+          server.close(done);
+        });
       });
     });
   });

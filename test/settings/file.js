@@ -6,7 +6,7 @@ var CWD = path.resolve(__dirname, '../fixtures/sample_app');
 var CWD_DIO = path.resolve(__dirname, '../fixtures/sample_app_dio');
 var CWD_CUSTOM = path.resolve(__dirname, '../fixtures/sample_app_custom');
 
-describe('settings', function() {
+describe('File - local settings', function() {
   beforeEach(function () {
     this.file = new File({
       config: 'custom.json', 
