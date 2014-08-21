@@ -202,17 +202,32 @@ describe('serving requests', function () {
       });
     });
     
-    it('serves an error page', function (done) {
-      serverWithConfig({
-        error_page: 'error.html'
-      }, function (err, app) {
-        request(app)
-          .get('/asdfasdf')
-          .expect('error.html')
-          .expect(404)
-          .end(endApp(app, done));
+    describe('serving eror pages', function () {
+      it('serves an error page based on the config file', function (done) {
+        serverWithConfig({
+          error_page: 'error.html'
+        }, function (err, app) {
+          request(app)
+            .get('/asdfasdf')
+            .expect('error.html')
+            .expect(404)
+            .end(endApp(app, done));
+        });
+      });
+      
+      it('serves a default error page described in settings', function (done) {
+        serverWithConfig({}, function (err, app) {
+          app.settings._defaults.error_page = ROOT_DIR + '/error.html';
+          
+          request(app)
+            .get('/asdfasdf')
+            .expect('error.html')
+            .expect(404)
+            .end(endApp(app, done));
+        });
       });
     });
+    
     
     function serverWithConfig(config, done) {
       var app = superstatic({
