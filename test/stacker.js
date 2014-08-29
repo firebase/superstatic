@@ -49,7 +49,7 @@ describe('stacker', function () {
     expectMiddlewareToMatchAtIndex('cache control', 5, require('cache-control')());
     expectMiddlewareToMatchAtIndex('environment variables', 6, require('../lib/middleware/env')());
     expectMiddlewareToMatchAtIndex('clean urls', 7, require('clean-urls')());
-    expectMiddlewareToMatchAtIndex('static', 8, require('settle')());
+    expectMiddlewareToMatchAtIndex('static', 8, require('broker')());
     expectMiddlewareToMatchAtIndex('custom route', 9, require('static-router')());
     expectMiddlewareToMatchAtIndex('favicon', 10, favicon(__dirname + '/fixtures/favicon.ico'));
     expectMiddlewareToMatchAtIndex('not found', 11, require('not-found')());
