@@ -133,6 +133,15 @@ describe('serving requests', function () {
       });
     });
     
+    it('sets the default cache time in response', function (done) {
+      serverWithConfig({}, function (err, app) {
+        request(app)
+          .get('/test')
+          .expect('Cache-Control', 'public, max-age=300')
+          .end(endApp(app, done));
+      });
+    });
+    
     describe('environment variables', function () {
       // TODO: test this
     });

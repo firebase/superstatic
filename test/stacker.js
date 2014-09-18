@@ -78,15 +78,15 @@ describe('stacker', function () {
   describe('optional stack items', function () {
     expectMiddlewareToBeConditional('redirects', require('redirects'));
     expectMiddlewareToBeConditional('headers', require('set-headers'));
-    expectMiddlewareToBeConditional('cache_control', require('cache-control'));
+    expectMiddlewareToBeConditional('cache_control', require('cache-control'), true);
     expectMiddlewareToBeConditional('clean_urls', require('clean-urls'));
     expectMiddlewareToBeConditional('routes', require('static-router'));
     
-    function expectMiddlewareToBeConditional (configName, middlewareMethod) {
+    function expectMiddlewareToBeConditional (configName, middlewareMethod, setToFalse) {
       it('includes ' + configName + ' middleware', function (done) {
         var stack;
         var packs;
-        var app = createServerWithout(configName);
+        var app = createServerWithout(configName, setToFalse)
         var middelwareStack = stacker(app, {
           testMode: true
         });
@@ -117,7 +117,7 @@ describe('stacker', function () {
     if (atIndex > -1) throw new Error('Expected ' + name + ' to not exist in the middleware stack');
   }
   
-  function createServerWithout (middleware) {
+  function createServerWithout (middleware, setToFalse) {
     var config = {
       redirects: {},
       headers: {},
@@ -126,7 +126,7 @@ describe('stacker', function () {
       routes: {}
     };
     
-    delete config[middleware];
+    setToFalse ? config[middleware] = false : delete config[middleware];
     
     return createServer(config);
   }
