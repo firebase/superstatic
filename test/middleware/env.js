@@ -48,7 +48,7 @@ describe('env middleware', function() {
     it('intercepts the request for the environment javascript file', function (done) {
       request(app)
         .get('/__/env.js')
-        .expect('Content-Type', 'application/javascript')
+        .expect('Content-Type', 'text/javascript')
         .expect(200)
         .expect(/return {"key1":"value1","key2":"value2"};/)
         .end(done);

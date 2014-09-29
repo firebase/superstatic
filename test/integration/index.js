@@ -167,6 +167,7 @@ describe('serving requests', function () {
             .get('/about')
             .expect(200)
             .expect('about.html')
+            .expect('content-type', 'text/html; charset=UTF-8')
             .end(endApp(app, done));
         });
       });
