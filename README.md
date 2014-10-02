@@ -63,6 +63,22 @@ directive.
 dropped. If `.html` is used at the end of a filename, it will perform a 301 redirect
 to the same path with `.html` dropped.
 
+All paths have clean urls
+
+```json
+{
+  "clean_urls": true
+}
+```
+
+Only specific paths get clean urls
+
+```json
+{
+  "clean_urls": ["/app**", "!/components**"]
+}
+```
+
 **routes:** you can specify custom route recognition for your application by supplying
 an object to the routes key. Use a single star `*` to replace one URL segment or a
 double star to replace an arbitrary piece of URLs. This works great for single page
