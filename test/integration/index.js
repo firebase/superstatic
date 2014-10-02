@@ -147,6 +147,16 @@ describe('serving requests', function () {
     });
     
     describe('clean urls', function () {
+      
+      it('does not redirect if clean urls are not configured', function (done) {
+        serverWithConfig({}, function (err, app) {
+          request(app)
+            .get('/about')
+            .expect(404)
+            .end(endApp(app, done));
+        });
+      });
+      
       it('redirects to a clean url when it is an html file', function (done) {
         serverWithConfig({
           clean_urls: true
@@ -162,6 +172,32 @@ describe('serving requests', function () {
       it('serves the html file', function (done) {
         serverWithConfig({
           clean_urls: true
+        }, function (err, app) {
+          request(app)
+            .get('/about')
+            .expect(200)
+            .expect('about.html')
+            .expect('content-type', 'text/html; charset=UTF-8')
+            .end(endApp(app, done));
+        });
+      });
+      
+      it('redirects with an array of glob-like rules', function (done) {
+        serverWithConfig({
+          clean_urls: ['/about**']
+        }, function (err, app) {
+          request(app)
+            .get('/about')
+            .expect(200)
+            .expect('about.html')
+            .expect('content-type', 'text/html; charset=UTF-8')
+            .end(endApp(app, done));
+        });
+      });
+      
+      it('serves the html file from glob-like rules', function (done) {
+        serverWithConfig({
+          clean_urls: ['/about.html']
         }, function (err, app) {
           request(app)
             .get('/about')

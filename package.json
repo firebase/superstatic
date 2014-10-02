@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
@@ -35,7 +35,7 @@
     "cache-control": "1.0.0",
     "caseless": "0.6.0",
     "chalk": "0.5.1",
-    "clean-urls": "1.0.6",
+    "clean-urls": "1.1.2",
     "compression": "1.1.0",
     "connect": "3.2.0",
     "connect-query": "0.2.0",
