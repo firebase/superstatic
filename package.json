@@ -35,7 +35,7 @@
     "cache-control": "1.0.0",
     "caseless": "0.6.0",
     "chalk": "0.5.1",
-    "clean-urls": "1.1.4",
+    "clean-urls": "1.1.5",
     "compression": "1.1.0",
     "connect": "3.2.0",
     "connect-query": "0.2.0",
