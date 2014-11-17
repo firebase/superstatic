@@ -210,6 +210,7 @@ describe('serving requests', function () {
     });
     
     describe('custom routes', function () {
+      
       it('serves custom route', function (done) {
         serverWithConfig({
           routes: {
@@ -234,6 +235,21 @@ describe('serving requests', function () {
             .get('/about.html')
             .expect(200)
             .expect('about.html')
+            .end(endApp(app, done));
+        });
+      });
+      
+      it('serves custom route with negation', function (done) {
+        serverWithConfig({
+          routes: {
+            '!/ignore': 'index.html'
+          }
+        }, function (err, app) {
+          
+          request(app)
+            .get('/route')
+            .expect(200)
+            .expect('index.html')
             .end(endApp(app, done));
         });
       });
