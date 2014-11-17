@@ -132,30 +132,5 @@ describe('command line interface', function () {
   });
   
   it('restarts the server if the config file is changed');
-  it('errors if two servers are started on the same port');
   it('loads a list of services on server start');
-  
 });
-
-// describe.skip('concurrent tasks', function () {
-  
-//   it('runs tasks concurrently', function (done) {
-//     fs.writeFileSync(__dirname + '/superstatic.json', JSON.stringify({
-//       scripts: {
-//         testing: ''
-//       }
-//     }, null, 2));
-    
-//     process.cwd = function () {
-//       return __dirname;
-//     };
-    
-//     cli.debug = false;
-//     cli.run(['', '', '--with', 'testing']);
-    
-//     cli.on('started', function () {
-//       done();
-//     });
-//   });
-  
-// });

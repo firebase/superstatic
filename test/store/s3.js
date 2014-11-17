@@ -1,5 +1,4 @@
 var expect = require('chai').expect;
-var sinon = require('sinon');
 var Mocksy = require('mocksy');
 var knox = require('knox');
 var mocksy = new Mocksy({port:8765});

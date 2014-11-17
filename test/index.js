@@ -3,7 +3,6 @@ var path = require('path');
 var http = require('http');
 var connect = require('connect');
 var expect = require('chai').expect;
-var sinon = require('sinon');
 var superstatic = require('../lib');
 var serverDefaults = require('../lib/defaults');
 var ConfigFile = require('../lib/settings/file');

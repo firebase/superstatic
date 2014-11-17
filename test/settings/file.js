@@ -1,6 +1,5 @@
 var path = require('path');
 var expect = require('chai').expect;
-var sinon = require('sinon');
 var File = require('../../lib/settings/file');
 var CWD = path.resolve(__dirname, '../fixtures/sample_app');
 var CWD_DIO = path.resolve(__dirname, '../fixtures/sample_app_dio');
