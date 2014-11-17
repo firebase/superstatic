@@ -110,6 +110,22 @@ describe('command line interface', function () {
     });
   });
   
+  it.skip('uses config data form package.json', function (done) {
+    
+    mkdirp.sync('.tmp');
+    fs.writeFileSync('.tmp/package.json', '{"superstatic": {"name": "test"}}');
+    
+    cli.run(['', '', '.tmp']);
+    
+    cli.on('started', function () {
+      
+      expect(cli.server.settings.configuration.name).to.equal('test');
+      fs.removeSync('.tmp');
+      
+      done();
+    });
+  });
+  
   it('uses custom config object if --config passed', function (done) {
     cli.run(['', '', '--config', '{"name": "test"}']);
     cli.on('started', function () {

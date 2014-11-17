@@ -77,7 +77,7 @@
     "jshint": "2.5.x",
     "knox": "^0.9.1",
     "minimatch": "^1.0.0",
-    "mkdirp": "0.5.x",
+    "mkdirp": "^0.5.0",
     "mocha": "^2.0.1",
     "mocksy": "^0.1.4",
     "nsp": "^0.4.1",
