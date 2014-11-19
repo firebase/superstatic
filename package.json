@@ -39,7 +39,7 @@
   "dependencies": {
     "async": "0.9.0",
     "broker": "1.0.1",
-    "cache-control": "1.0.2",
+    "cache-control": "1.0.3",
     "caseless": "0.7.0",
     "chalk": "0.5.1",
     "clean-urls": "1.1.5",
