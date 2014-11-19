@@ -9,7 +9,7 @@
     "lint": "jshint ./lib",
     "outdated": "npm outdated --depth 0",
     "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json",
-    "bench": "wrk -t1 -c400 -d15s http://localhost:3474"
+    "bench": "wrk -t1 -c400 -d30s http://localhost:3474"
   },
   "bin": {
     "superstatic": "bin/server",
