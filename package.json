@@ -8,7 +8,8 @@
     "test-unit": "mocha test",
     "lint": "jshint ./lib",
     "outdated": "npm outdated --depth 0",
-    "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json"
+    "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json",
+    "bench": "wrk -t1 -c400 -d15s http://localhost:3474"
   },
   "bin": {
     "superstatic": "bin/server",
@@ -49,7 +50,7 @@
     "fast-url-parser": "^1.0.6-0",
     "feedback": "0.3.2",
     "file-exists": "0.1.1",
-    "lodash": "2.4.1",
+    "lodash": "^2.4.1",
     "mime-types": "2.0.3",
     "minimist": "1.1.0",
     "mix-into": "0.4.0",
