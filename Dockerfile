@@ -1,4 +1,4 @@
-FROM dockerfile/nodejs
+FROM node:0.10
 ADD ./package.json /superstatic/package.json
 WORKDIR /superstatic
 RUN npm install
