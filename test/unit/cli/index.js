@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var fs = require('fs-extra');
 var request = require('request');
 var expect = require('chai').expect;
@@ -147,7 +148,21 @@ describe('cli', function () {
     });
   });
   
-  it('disables log output');
+  it('enables log output', function (done) {
+    
+    cli.run(['', '', '--debug'], function (err) {
+      
+      var app = cli.get('app');
+      var hasLogger = _.find(app.stack, function (layer) {
+        
+        return layer.handle && layer.handle.name === 'logger';
+      });
+      
+      expect(cli.get('debug')).to.equal(true);
+      expect(!!hasLogger).to.equal(true);
+      cli.get('server').close(done);
+    });
+  });
   
   describe('uses custom config', function () {
     
