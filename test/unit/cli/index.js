@@ -164,6 +164,22 @@ describe('cli', function () {
     });
   });
   
+  it.skip('enables gzipping', function (done) {
+    
+    cli.run(['', '', '--gzip'], function (err) {
+      
+      var app = cli.get('app');
+      var hasCompression = _.find(app.stack, function (layer) {
+        
+        return layer.handle && layer.handle.name === 'compression';
+      });
+      
+      expect(cli.get('gzip')).to.equal(true);
+      expect(!!hasCompression).to.equal(true);
+      cli.get('server').close(done);
+    });
+  });
+  
   describe('uses custom config', function () {
     
     beforeEach(function () {
@@ -224,6 +240,26 @@ describe('cli', function () {
           cli.get('server').close(done);
         });
       });
+    });
+  });
+
+  // NOTE: can't test flags that exit
+  // This should be fixe din Nash 2.0
+  it.skip('version flag', function (done) {
+    
+    var logCalled = false;
+    var log = console.log.bind(console);
+    
+    console.log = function (data) {
+      
+      logCalled = true;
+    };
+    
+    cli.run(['', '', '-v'], function (err) {
+      
+      expect(logCalled).to.equal(true);
+      console.log = log;
+      done();
     });
   });
   
