@@ -2,7 +2,7 @@
   "name": "superstatic",
   "version": "2.0.0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "lib/superstatic.js",
   "scripts": {
     "test": "npm run lint && npm run test-unit && npm run test-integration",
     "test-unit": "mocha test/unit/**",
