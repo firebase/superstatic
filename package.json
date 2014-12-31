@@ -39,11 +39,13 @@
   ],
   "dependencies": {
     "as-array": "^1.0.0",
+    "async": "^0.9.0",
     "basic-auth-connect": "^1.0.0",
     "booly": "^1.0.2",
     "bundles": "^2.0.0",
     "cache-control": "^1.0.3",
     "cache-header": "^1.0.3",
+    "caseless": "^0.8.0",
     "compression": "^1.2.2",
     "connect": "^3.3.3",
     "connect-query": "^0.2.0",
