@@ -282,6 +282,7 @@ describe('responder', function () {
         .get('/')
         .expect(301)
         .expect('Location', '/test')
+        .expect('Content-Type', 'text/html; charset=utf-8')
         .expect('Redirecting to /test ...')
         .end(done);
     });
