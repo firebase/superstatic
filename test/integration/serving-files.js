@@ -20,11 +20,12 @@ describe('serves', function () {
   
   beforeEach(function () {
     
-    fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
-    fs.outputFileSync('.tmp/test.html', 'test', 'utf8');
-    fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf8');
-    fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf8');
-    fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf8');
+    fs.outputFileSync('.tmp/index.html', 'index', 'utf-8');
+    fs.outputFileSync('.tmp/test.html', 'test', 'utf-8');
+    fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf-8');
+    fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf-8');
+    fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf-8');
+    // fs.outputFileSync('.tmp/favicon.ico', '');
   });
   
   afterEach(function () {
