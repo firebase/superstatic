@@ -46,6 +46,8 @@
     "cache-control": "^1.0.3",
     "cache-header": "^1.0.3",
     "caseless": "^0.8.0",
+    "chalk": "^0.5.1",
+    "compare-semver": "^1.0.0",
     "compression": "^1.2.2",
     "connect": "^3.3.3",
     "connect-query": "^0.2.0",
@@ -68,8 +70,10 @@
     "send": "^0.10.1",
     "serve-favicon": "^2.1.7",
     "set-headers": "^1.0.0",
+    "string-length": "^1.0.0",
     "strip-extension": "^1.0.1",
-    "through2": "^0.6.3"
+    "through2": "^0.6.3",
+    "update-notifier": "^0.2.2"
   },
   "devDependencies": {
     "chai": "^1.10.0",
