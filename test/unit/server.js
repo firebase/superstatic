@@ -1,3 +1,5 @@
+var path = require('path');
+
 var fs = require('fs-extra');
 var request = require('supertest');
 var expect = require('chai').expect;
@@ -124,4 +126,34 @@ describe('server', function () {
   // NOTE: see commands.js line 24-25 TODO note
   it('with env object');
   
+  it('default error page', function (done) {
+    
+    var notFoundContent = fs.readFileSync(path.resolve(__dirname, '../../lib/assets/not_found.html')).toString();
+    
+    var app = server();
+    
+    request(app)
+      .get('/nope')
+      .expect(404)
+      .expect(notFoundContent)
+      .end(done);
+  });
+  
+  it('overriden default error page', function (done) {
+    
+    fs.outputFileSync('.tmp/error.html', 'error page');
+    
+    var app = server({
+      errorPage: '.tmp/error.html',
+      config: {
+        root: '.tmp'
+      }
+    });
+    
+    request(app)
+      .get('/nope')
+      .expect(404)
+      .expect('error page')
+      .end(done);
+  });
 });
