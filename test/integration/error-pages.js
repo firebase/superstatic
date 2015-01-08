@@ -15,7 +15,7 @@ var options = function () {
   };
 };
 
-describe('error pages', function () {
+describe('error page', function () {
   
   beforeEach(function () {
     
@@ -26,36 +26,6 @@ describe('error pages', function () {
   afterEach(function () {
     
     fs.removeSync('.tmp');
-  });
-  
-  it('default', function (done) {
-    
-    var opts = options();
-    var app = connect()
-      .use(superstatic(opts));
-    
-    request(app)
-      .get('/does-not-exist')
-      .expect(404)
-      .expect('Content-Type', 'text/html; charset=UTF-8')
-      .end(done);
-  });
-  
-  it('override', function (done) {
-    
-    var opts = options();
-    
-    opts.errorPage = '.tmp/override-error.html';
-    
-    var app = connect()
-      .use(superstatic(opts));
-    
-    request(app)
-      .get('/does-not-exist')
-      .expect(404)
-      .expect('override error')
-      .expect('Content-Type', 'text/html; charset=UTF-8')
-      .end(done);
   });
   
   it('from config', function (done) {
@@ -75,7 +45,7 @@ describe('error pages', function () {
       .end(done);
   });
   
-  it('falls back to default when overriden page does not exist', function (done) {
+  it('falls back to default when configured error page does not exist', function (done) {
     
     var opts = options();
     
@@ -87,7 +57,7 @@ describe('error pages', function () {
     request(app)
       .get('/does-not-exist')
       .expect(404)
-      .expect('Content-Type', 'text/html; charset=UTF-8')
+      .expect('Content-Type', 'text/html; charset=utf-8')
       .end(done);
   });
 });
