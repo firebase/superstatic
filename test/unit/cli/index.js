@@ -164,7 +164,7 @@ describe('cli', function () {
     });
   });
   
-  it.skip('enables gzipping', function (done) {
+  it('enables gzipping', function (done) {
     
     cli.run(['', '', '--gzip'], function (err) {
       
@@ -174,7 +174,7 @@ describe('cli', function () {
         return layer.handle && layer.handle.name === 'compression';
       });
       
-      // expect(cli.get('gzip')).to.equal(true);
+      expect(cli.get('gzip')).to.equal(true);
       expect(!!hasCompression).to.equal(true);
       cli.get('server').close(done);
     });
