@@ -58,6 +58,7 @@
     "glob-slasher": "^1.0.1",
     "globject": "^1.0.0",
     "install": "^0.1.8",
+    "jfig": "^1.0.0",
     "join-path": "^1.0.0",
     "lodash": "^2.4.1",
     "mime-types": "^2.0.4",
