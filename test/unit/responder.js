@@ -175,6 +175,36 @@ describe('responder', function () {
         .end(done);
     });
     
+    it('ensure "/" is always "/index.html"', function (done) {
+      
+      var provider = dfs({
+        root: './'
+      });
+      
+      app = connect()
+        .use(function (req, res, next) {
+          
+          responder({
+            res: res,
+            provider: provider
+          });
+          next();
+        })
+        .use(function (req, res, next) {
+          
+          res.sendFile('/')
+            .on('error', function () {
+              
+              next();
+            });
+        });
+      
+      request(app)
+        .get('/')
+        .expect(404)
+        .end(done);
+    });
+    
     it('emits error event', function (done) {
       
       var errorCalled = false;

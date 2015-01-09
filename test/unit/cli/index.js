@@ -2,6 +2,7 @@ var _ = require('lodash');
 var fs = require('fs-extra');
 var request = require('request');
 var expect = require('chai').expect;
+var stdMocks = require('std-mocks');
 
 var Cli = require('../../../lib/cli');
 
@@ -244,30 +245,25 @@ describe('cli', function () {
   });
 
   // NOTE: can't test flags that exit
-  // This should be fixe din Nash 2.0
+  // This should be fixed in Nash 2.0
   it.skip('version flag', function (done) {
     
-    var logCalled = false;
-    var log = console.log.bind(console);
-    
-    console.log = function (data) {
-      
-      logCalled = true;
-    };
+    // stdMocks.use();
     
     cli.run(['', '', '-v'], function (err) {
       
-      expect(logCalled).to.equal(true);
-      console.log = log;
+      // stdMocks.restore();
+      // var output = stdMocks.flush();
+      
       done();
     });
   });
   
   it('restarts the server if the config file is changed');
   
-  describe.skip('installing services', function () {
+  // describe.skip('installing services', function () {
     
-    it('locally');
-    it('globally');
-  });
+  //   it('locally');
+  //   it('globally');
+  // });
 });
