@@ -123,8 +123,24 @@ describe('server', function () {
       .end(done);
   });
   
-  // NOTE: see commands.js line 24-25 TODO note
-  it('with env object');
+  it('with env object', function (done) {
+    
+    var app = server({
+      env: {
+        type: 'object'
+      },
+      config: {
+        root: '.tmp'
+      }
+    });
+    
+    request(app)
+      .get('/__/env.json')
+      .expect({
+        type: 'object'
+      })
+      .end(done);
+  });
   
   it('default error page', function (done) {
     
