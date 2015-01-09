@@ -53,7 +53,7 @@ describe('not found', function () {
       }))
       .use(function (err, req, res, next) {
         
-        res.status(err.status).send('error reading file');
+        res.__.status(err.status).__.send('error reading file');
       });
     
     request(app)

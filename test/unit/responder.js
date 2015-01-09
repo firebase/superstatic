@@ -59,7 +59,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.send('some text');
+        res.__.send('some text');
       });
       
       request(app)
@@ -72,7 +72,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.send('some text');
+        res.__.send('some text');
       });
       
       request(app)
@@ -85,7 +85,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.send({
+        res.__.send({
           key: 'value',
           key2: function () {}
         });
@@ -104,7 +104,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.sendFile(req.url);
+        res.__.sendFile(req.url);
       });
       
       request(app)
@@ -119,7 +119,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.sendFile(req.url);
+        res.__.sendFile(req.url);
       });
       
       request(app)
@@ -134,7 +134,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.sendFile(req.url);
+        res.__.sendFile(req.url);
       });
       
       request(app)
@@ -162,7 +162,7 @@ describe('responder', function () {
         })
         .use(function (req, res, next) {
           
-          res.sendFile(req.url)
+          res.__.sendFile(req.url)
             .on('error', function () {
               
               next();
@@ -192,7 +192,7 @@ describe('responder', function () {
         })
         .use(function (req, res, next) {
           
-          res.sendFile('/')
+          res.__.sendFile('/')
             .on('error', function () {
               
               next();
@@ -211,7 +211,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.sendFile(req.url)
+        res.__.sendFile(req.url)
           .on('error', function (err) {
             
             errorCalled = true;
@@ -234,7 +234,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.sendFile(req.url)
+        res.__.sendFile(req.url)
           .on('headers', function (err) {
             
             headersEventCalled = true;
@@ -258,8 +258,8 @@ describe('responder', function () {
       app.use(function (req, res) {
         
         res
-          .ext('js')
-          .send('console.log("js")');
+          .__.ext('js')
+          .__.send('console.log("js")');
       });
       
       request(app)
@@ -273,8 +273,8 @@ describe('responder', function () {
       app.use(function (req, res) {
         
         res
-          .send('console.log("js")')
-          .ext('app.js');
+          .__.send('console.log("js")')
+          .__.ext('app.js');
       });
       
       request(app)
@@ -289,7 +289,7 @@ describe('responder', function () {
     app.use(function (req, res) {
       
       res
-        .status(301)
+        .__.status(301)
         .end();
     });
     
@@ -305,7 +305,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.redirect('/test');
+        res.__.redirect('/test');
       });
       
       request(app)
@@ -321,7 +321,7 @@ describe('responder', function () {
       
       app.use(function (req, res) {
         
-        res.redirect('/test', 302);
+        res.__.redirect('/test', 302);
       });
       
       request(app)

@@ -61,7 +61,7 @@ describe('custom not found', function () {
       }))
       .use(function (req, res, next) {
         
-        res.send('does not exist');
+        res.__.send('does not exist');
       });
     
     request(app)
