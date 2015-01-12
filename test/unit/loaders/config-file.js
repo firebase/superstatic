@@ -8,6 +8,11 @@ describe('loading config files', function () {
   beforeEach(function () {
     
     fs.outputFileSync('.tmp/file.json', '{"key": "value"}', 'utf-8');
+    fs.outputFileSync('.tmp/package.json', JSON.stringify({
+      superstatic: {
+        key: 'value'
+      }
+    }));
   });
   
   afterEach(function () {
@@ -21,6 +26,32 @@ describe('loading config files', function () {
     
     expect(data).to.eql({
       key: 'value'
+    });
+    done();
+  });
+  
+  it.skip('from package.json - superstatic', function (done) {
+    
+    var data = loadConfigFile('.tmp/package.json');
+    
+    expect(data).to.eql({
+      key: 'value'
+    });
+    done();
+  });
+  
+  it.skip('from package.json - divshot', function (done) {
+    
+    fs.outputFileSync('.tmp/package.json', JSON.stringify({
+      divshot: {
+        key1: 'value1'
+      }
+    }));
+    
+    var data = loadConfigFile('.tmp/package.json');
+    
+    expect(data).to.eql({
+      key1: 'value1'
     });
     done();
   });
