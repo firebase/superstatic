@@ -70,7 +70,7 @@
     "on-headers": "^1.0.0",
     "qs": "^2.3.3",
     "redirects": "^1.0.0",
-    "router": "^1.0.0-beta.2",
+    "router": "^1.0.0-beta.3",
     "send": "^0.11.0",
     "serve-favicon": "^2.1.7",
     "set-headers": "^1.0.0",
