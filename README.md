@@ -1,4 +1,4 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/divshot/superstatic) [![Code Climate](http://img.shields.io/codeclimate/github/divshot/superstatic.svg?style=flat-square)](https://codeclimate.com/github/divshot/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/divshot/superstatic)
 
 Superstatic is an enhanced static web server that was built to power
 [Divshot](http://www.divshot.io). It has fantastic support for HTML5
@@ -11,22 +11,34 @@ pushState applications, clean URLs, caching, and MANY other goodies.
 * [Configuration](#configuration)
 * [Services](#services)
 * [API](#api)
+  * [Middleware]()
+  * [Server]()
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/divshot/superstatic/releases)
+* [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
+
+
 
 ## Installation
 
 Superstatic should be installed globally using npm:
 
+For use via CLI
+
 ```
 $ npm install -g superstatic
+```
+
+For use via API
+
+```
+npm install superstatic --save
 ```
     
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
-3474. This works just like any other static server:
+`3474`. This works just like any other static server:
 
 ```
 $ superstatic
@@ -167,83 +179,61 @@ on each request.
 }
 ```
 
-## Services
+# API
 
-**Services** are extensions that provide additional functionality. More TBD.
+Superstatic is available as a middleware and a standalone [Connect](http://www.npmjs.org/package/connect) server. This means you can plug this into your current server or run your own static server using Superstatic's server.
 
-## API
 
-The Superstatic server is just an extended version of the [Connect](http://www.npmjs.org/package/connect) server. This means you can use any custom middlewares you like that work with Connect.
-
-### superstatic([options])
+## Middleware
 
 ```js
-var superstatic = require('superstatic');
+var superstatic = require('superstatic')
+var connect = require('connect');
 
-var app = superstatic(/* server options */);
+var app = connect()
+	.use(superstatic(/* options */));
 
-app.listen(function (err) {
-  // Server started
+app.listen(3000, function () {
+
+});
+
+```
+
+### `superstatic([options])`
+
+Insantiates middleware. See an [example]() for detail on real world use.
+
+* `options` - Optional configuration:
+  * `config` - A file path to your application's configuration file (see [Configuration]()) or an object containing your application's configuration.
+  * `protect` - Adds HTTP basic auth. Example:  `username:password`
+  * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.divshot.com/guides/environment-variables)
+  * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
+  * `services` - An object containing various Superstatic services.
+
+## Server
+
+```js
+var superstatic = require('superstatic/lib/server');
+
+var app = superstatic(/* options */);
+
+var server = app.listen(function () {
+
 });
 ```
 
-#### Server Options *(all values are optional)*
+Since Superstatic's server is a barebones Connect server using the Superstatic middleware, see the [Connect documentation](https://github.com/senchalabs/connect) on how to correctly instantiate, start, and stop the server.
 
-* **port:** Port to run the server on. Defaults to `3474`
-* **host:** Host to run the server on. Defaults to `127.0.0.1` (localhost)
-* **logger:** Provide custom logging functions. The three logging functions used are `info`, `warn`, and `error`. By default, these are printed to *stdout*. You can provide custom functions to log to 3rd party log services such as [Papertrail](https://papertrailapp.com/) use the NPM module [Winston](https://github.com/kenperkins/winston-papertrail). For example:
+### `superstatic([options])`
 
-```js
-var superstatic = require('superstatic');
-var app = superstatic({
-  logger: {
-    info: function (msg) {
-      console.log('Info:', msg);
-    },
-    error: function (msg) {
-      console.error('Error:', msg);
-    }
-  }
-});
-```
+Instantiates a Connect server, setting up Superstatic middleware, port, host, debugging, compression, etc.
 
-* **config:** override defaults in the [configuration file](#configuration). This can either be a string with the name of the config file (e.g. `superstatic.json`), or it can be an object containing the values that would normally be in a config file. If an object is passed, it will override any values in the config file. For example:
-
-```js
-var Server = require('superstatic');
-
-var server = superstatic({
-  config: require('config_file.json')
-});
-
-// OR
-
-var server = superstatic({
-  config: 'config_file.json'
-});
-```
-
-* **cwd:** the current working directly that you want to serve files from. Defaults to the current directory via `process.cwd()`
-* **localEnv:** an object containing values that are available to your app with when you add the script `<script src="/__/env.js"></script>` to your app. See [Using Environment Varaiables in Your App](http://docs.divshot.com/guides/environment-variables)
-* **debug:** `true` or `false`. Enable or disable the output to the console for network requests. Defaults to `true` 
-
-## Server Instance methods
-
-### listen([port, host, callback])
-
-Start the server. Returns and instance of [`http.createServer`](http://nodejs.org/api/http.html#http_http_createserver_requestlistener). All arguments are optional
-
-* **port:** port for server to listen on. Defaults to `3474` and is overridden by the port in server options
-* **host:** server host Defaults to `127.0.0.1` and is overridden by the host in server options
-* **callback:** gets called once the server starts. Gets passed an error argument if there is an error.
-
-### close(callback)
-
-Stops the server and close all connections
-
-* **callback:** gets called once the server stops. Gets passed an error argument if there is an error.
-
-**Note:** Since Superstatic uses Connect, any instance methods availble on a Connect instance are available on the Superstatic instance.
+* `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
+  * `port` - The port of the server. Defaults to `3474`.
+  * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page]().
+  * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
+  * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
 
 ## Run Tests
 

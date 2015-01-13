@@ -1,33 +1,28 @@
 #!/usr/bin/env node
 
-var cli = require('../lib/cli');
-var feedback = require('feedback');
-var print = require('pretty-print');
 var updateNotifier = require('update-notifier');
+
+var Cli = require('../lib/cli');
 var pkg = require('../package.json');
+var notify = require('./update-notifier');
+
 var updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 
-// Check for update
 var notifier = updateNotifier({
   packageName: pkg.name,
   packageVersion: pkg.version,
   updateCheckInterval: updateCheckInterval
 });
 
-if (notifier.update) notifier.notify();
+if (notifier.update) {
+  // NOTE: Custom notify function because update-notifier runs in
+  // a child process, and we block this when running the server
+  notify(notifier.update);
+}
 
-cli.on('data', function (data) {
-  if (typeof data === 'object') print(data, {});
-  else feedback.info(data);
+var cli = Cli();
+
+cli.run(process.argv, function () {
+  
+  console.log('\nSuperstatic started on port ' + cli.get('port'));
 });
-
-cli.on('error', function (err) {
-  feedback.error(err);
-  process.exit(1);
-});
-
-cli.on('warn', function (msg) {
-  feedback.warn(msg);
-});
-
-cli.run(process.argv);
