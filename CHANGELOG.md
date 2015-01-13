@@ -16,7 +16,7 @@
   * Since Superstatic gets required as a middleware by default now, this means that if you want Superstatic as a standalone server via the API, then you need to require the server via `var server = require('superstatic/lib/server');`. See the [API docs]() for options when instantiating the server.
   * `logger` options on server is no longer available. Since Superstatic can be required as a middleware and debug is off by default, you can inject your own logger.
   * `localEnv` is now `env` in middleware/server options
-  * Server methods `listen()` and `close()` now behanve like the bare/default Node http server methods.
+  * Server methods `listen()` and `close()` now behave like the bare/default Node http server methods.
 
 
 * * *
