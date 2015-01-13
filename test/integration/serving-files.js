@@ -97,7 +97,7 @@ describe('serves', function () {
     
     var opts = options();
     
-    opts.config.cwd = join(process.cwd(), '.tmp');
+    opts.cwd = join(process.cwd(), '.tmp');
     opts.config.root = './dir';
     
     var app = connect()
