@@ -6,7 +6,9 @@ var spec = {
     root: './app'
   },
   cwd: __dirname,
-  errorPage: __dirname + '/error.html'
+  errorPage: __dirname + '/error.html',
+  gzip: true,
+  debug: true
 };
 
 var app = superstatic(spec);
