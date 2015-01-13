@@ -12,21 +12,31 @@ pushState applications, clean URLs, caching, and MANY other goodies.
 * [Services](#services)
 * [API](#api)
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/divshot/superstatic/releases)
+* [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
+
+
 
 ## Installation
 
 Superstatic should be installed globally using npm:
 
+For use via CLI
+
 ```
 $ npm install -g superstatic
+```
+
+For use via API
+
+```
+npm install superstatic --save
 ```
     
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
-3474. This works just like any other static server:
+`3474`. This works just like any other static server:
 
 ```
 $ superstatic
@@ -166,10 +176,6 @@ on each request.
   }
 }
 ```
-
-## Services
-
-**Services** are extensions that provide additional functionality. More TBD.
 
 ## API
 
