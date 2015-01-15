@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "2.0.0-rc1",
+  "version": "2.0.0-rc2",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -56,6 +56,7 @@
     "fast-url-parser": "^1.1.0-0",
     "finalhandler": "^0.3.2",
     "firstkey": "^0.1.0",
+    "fs-extra": "^0.14.0",
     "glob-slasher": "^1.0.1",
     "globject": "^1.0.0",
     "install": "^0.1.8",
@@ -83,7 +84,6 @@
     "chai": "^1.10.0",
     "clear-require": "^1.0.1",
     "concat-stream": "^1.4.7",
-    "fs-extra": "^0.14.0",
     "jshint": "^2.5.11",
     "jshint-stylish": "^1.0.0",
     "mocha": "^2.0.1",
