@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "2.0.0-rc2",
+  "version": "2.0.0-rc3",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib/superstatic.js",
   "scripts": {
@@ -47,6 +47,7 @@
     "cache-header": "^1.0.3",
     "caseless": "^0.9.0",
     "chalk": "^0.5.1",
+    "clear-require": "^1.0.1",
     "compare-semver": "^1.0.0",
     "compression": "^1.2.2",
     "connect": "^3.3.3",
@@ -82,7 +83,6 @@
   },
   "devDependencies": {
     "chai": "^1.10.0",
-    "clear-require": "^1.0.1",
     "concat-stream": "^1.4.7",
     "jshint": "^2.5.11",
     "jshint-stylish": "^1.0.0",
