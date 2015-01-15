@@ -346,6 +346,24 @@ describe('serves', function () {
         .expect(404)
         .end(done);
     });
+    
+    it('serves file if url matches exact file path', function (done) {
+      
+      var opts = options();
+      
+      opts.config.routes = {
+        '**': 'index.html'
+      };
+      
+      var app = connect()
+        .use(superstatic(opts));
+        
+      request(app)
+        .get('/test.html')
+        .expect(200)
+        .expect('test')
+        .end(done);
+    });
   });
 
   it('default favicon', function (done) {
