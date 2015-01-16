@@ -204,7 +204,7 @@ app.listen(3000, function () {
 Insantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
-  * `config` - A file path to your application's configuration file (see [Configuration]()) or an object containing your application's configuration.
+  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
   * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.divshot.com/guides/environment-variables)
   * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
