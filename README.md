@@ -201,7 +201,7 @@ app.listen(3000, function () {
 
 ### `superstatic([options])`
 
-Insantiates middleware. See an [example]() for detail on real world use.
+Insantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
   * `config` - A file path to your application's configuration file (see [Configuration]()) or an object containing your application's configuration.
