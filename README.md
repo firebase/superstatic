@@ -11,8 +11,8 @@ pushState applications, clean URLs, caching, and MANY other goodies.
 * [Configuration](#configuration)
 * [Services](#services)
 * [API](#api)
-  * [Middleware]()
-  * [Server]()
+  * [Middleware](#middleware)
+  * [Server](#server)
 * [Run Tests](#run-tests)
 * [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
@@ -231,7 +231,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page]().
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/divshot/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
 
