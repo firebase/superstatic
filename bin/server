@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var updateNotifier = require('update-notifier');
+var format = require('chalk');
 
 var Cli = require('../lib/cli');
 var pkg = require('../package.json');
@@ -24,5 +25,5 @@ var cli = Cli();
 
 cli.run(process.argv, function () {
   
-  console.log('\nSuperstatic started on port ' + cli.get('port'));
+  console.log('\nSuperstatic started.\nVisit ' + format.underline('http://' + cli.get('hostname') + ':' + cli.get('port')) + ' to view your app.');
 });
