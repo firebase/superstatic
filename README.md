@@ -11,8 +11,8 @@ pushState applications, clean URLs, caching, and MANY other goodies.
 * [Configuration](#configuration)
 * [Services](#services)
 * [API](#api)
-  * [Middleware]()
-  * [Server]()
+  * [Middleware](#middleware)
+  * [Server](#server)
 * [Run Tests](#run-tests)
 * [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
@@ -204,7 +204,7 @@ app.listen(3000, function () {
 Insantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
-  * `config` - A file path to your application's configuration file (see [Configuration]()) or an object containing your application's configuration.
+  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
   * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.divshot.com/guides/environment-variables)
   * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
@@ -231,7 +231,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page]().
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/divshot/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
 
