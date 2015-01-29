@@ -60,6 +60,7 @@
     "firstkey": "^0.1.0",
     "fs-extra": "^0.15.0",
     "glob-slasher": "^1.0.1",
+    "globby": "^1.1.0",
     "globject": "^1.0.0",
     "install": "^0.1.8",
     "jfig": "^1.2.0",
