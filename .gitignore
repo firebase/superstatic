@@ -23,3 +23,7 @@ test/__testing
 *.0
 asdf.txt
 todo.txt
+
+# Errors from testing
+divshot.json
+superstatic.json

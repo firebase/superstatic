@@ -266,4 +266,9 @@ describe('cli', function () {
   //   it('locally');
   //   it('globally');
   // });
+
+  describe.skip('services', function () {
+    
+    
+  });
 });
