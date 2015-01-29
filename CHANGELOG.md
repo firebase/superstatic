@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.1](https://github.com/divshot/superstatic/issues?q=is%3Aissue+milestone%3A2.0.1+is%3Aclosed)
+
+* **[#137](https://github.com/divshot/superstatic/issues/137)** - default environment variables file to .env.json
+* **[#138](https://github.com/divshot/superstatic/issues/138)** - fix serving static files with query parameters
+
 ## [2.0.0](https://github.com/divshot/superstatic/issues?q=is%3Aopen+is%3Aissue+milestone%3A2.0)
 
 * **[#125](https://github.com/divshot/superstatic/issues/127)** - Middleware-ize Superstatic
