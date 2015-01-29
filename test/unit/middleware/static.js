@@ -72,4 +72,17 @@ describe('static files', function () {
       .expect('content-type', 'text/html; charset=utf-8')
       .end(done);
   });
+  
+  it('serves a file with query parameters', function (done) {
+    
+    fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
+    
+    app.use(static());
+    
+    request(app)
+      .get('/superstatic.html?key=value')
+      .expect(200)
+      .expect('test')
+      .end(done);
+  });
 });
