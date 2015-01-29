@@ -47,6 +47,7 @@
     "cache-header": "^1.0.3",
     "caseless": "^0.9.0",
     "chalk": "^0.5.1",
+    "char-spinner": "^1.0.1",
     "clear-require": "^1.0.1",
     "compare-semver": "^1.0.0",
     "compression": "^1.2.2",
