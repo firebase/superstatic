@@ -25,7 +25,6 @@ describe('serves', function () {
     fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf-8');
     fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf-8');
     fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf-8');
-    // fs.outputFileSync('.tmp/favicon.ico', '');
   });
   
   afterEach(function () {
@@ -268,6 +267,23 @@ describe('serves', function () {
         .expect(200)
         .expect('Content-Type', 'application/javascript; charset=utf-8')
         .end(done);
+    });
+    
+    it('defaults to .env.json', function (done) {
+      
+      fs.outputFileSync('.env.json', '{"key":"value"}');
+      
+      var app = connect()
+        .use(superstatic());
+      
+      request(app)
+        .get('/__/env.json')
+        .expect({key: 'value'})
+        .end(function (err) {
+          
+          fs.remove('.env.json');
+          done(err);
+        });
     });
   });
   
