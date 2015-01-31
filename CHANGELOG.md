@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+* Fixes bug that ignored divshot.json configuration files
+
 ## [2.0.1](https://github.com/divshot/superstatic/issues?q=is%3Aissue+milestone%3A2.0.1+is%3Aclosed)
 
 * **[#137](https://github.com/divshot/superstatic/issues/137)** - default environment variables file to .env.json
