@@ -85,20 +85,44 @@ describe('loading config files', function () {
     done();
   });
   
-  it('extends the file config with the object passed', function (done) {
+  describe('extends the file config with the object passed', function () {
     
-    fs.outputFileSync('superstatic.json', '{"name": "superstatic"}', 'utf-8');
-    
-    var config = loadConfigFile({
-      override: 'test'
+    it('superstatic.json', function (done) {
+      
+      fs.outputFileSync('superstatic.json', '{"name": "superstatic", "root": "./"}', 'utf-8');
+      
+      var config = loadConfigFile({
+        override: 'test',
+        root: 'app'
+      });
+      
+      expect(config).to.eql({
+        name: 'superstatic',
+        override: 'test',
+        root: 'app'
+      });
+      
+      fs.removeSync('superstatic.json');
+      done();
     });
     
-    expect(config).to.eql({
-      name: 'superstatic',
-      override: 'test'
+    it('superstatic.json', function (done) {
+      
+      fs.outputFileSync('divshot.json', '{"name": "divshot", "root": "./"}', 'utf-8');
+      
+      var config = loadConfigFile({
+        override: 'test',
+        root: 'app'
+      });
+      
+      expect(config).to.eql({
+        name: 'divshot',
+        override: 'test',
+        root: 'app'
+      });
+      
+      fs.removeSync('divshot.json');
+      done();
     });
-    
-    fs.removeSync('superstatic.json');
-    done();
   });
 });
