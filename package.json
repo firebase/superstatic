@@ -52,6 +52,7 @@
     "compare-semver": "^1.0.0",
     "compression": "^1.2.2",
     "connect": "^3.3.3",
+    "connect-livereload": "^0.5.2",
     "connect-query": "^0.2.0",
     "cross-spawn": "^0.2.3",
     "destroy": "^1.0.3",
@@ -60,6 +61,7 @@
     "finalhandler": "^0.3.2",
     "firstkey": "^0.1.0",
     "fs-extra": "^0.15.0",
+    "gaze": "^0.4.3",
     "glob": "^4.3.5",
     "glob-slasher": "^1.0.1",
     "globject": "^1.0.0",
@@ -85,6 +87,7 @@
     "string-length": "^1.0.0",
     "strip-extension": "^1.0.1",
     "through2": "^0.6.3",
+    "tiny-lr": "^0.1.5",
     "try-require": "^1.0.0",
     "update-notifier": "^0.3.0"
   },
