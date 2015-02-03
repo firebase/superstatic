@@ -85,7 +85,6 @@
     "serve-favicon": "^2.1.7",
     "set-headers": "^1.0.0",
     "string-length": "^1.0.0",
-    "strip-extension": "^1.0.1",
     "through2": "^0.6.3",
     "tiny-lr": "^0.1.5",
     "try-require": "^1.0.0",
