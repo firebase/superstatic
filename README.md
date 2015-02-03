@@ -213,7 +213,7 @@ Insantiates middleware. See an [example](https://github.com/divshot/superstatic/
 ## Server
 
 ```js
-var superstatic = require('superstatic/lib/server');
+var superstatic = require('superstatic').server;
 
 var app = superstatic(/* options */);
 
