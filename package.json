@@ -60,7 +60,7 @@
     "fast-url-parser": "^1.1.0-0",
     "finalhandler": "^0.3.2",
     "firstkey": "^0.1.0",
-    "fs-extra": "^0.15.0",
+    "fs-extra": "^0.16.3",
     "gaze": "^0.4.3",
     "glob": "^4.3.5",
     "glob-slasher": "^1.0.1",
