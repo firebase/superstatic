@@ -23,6 +23,7 @@ describe('responder', function () {
       .use(function (req, res, next) {
         
         responder({
+          req: req,
           res: res,
           provider: provider
         });
@@ -95,6 +96,65 @@ describe('responder', function () {
         .get('/')
         .expect('Content-Type', 'application/json; charset=utf-8')
         .end(done);
+    });
+    
+    describe('etag', function () {
+      
+      it('on matching', function (done) {
+        
+        var etag = 'my-etag';
+        
+        app.use(function (req, res) {
+          
+          res.setHeader('ETag', etag);
+          
+          res.__.send('some text');
+        });
+        
+        request(app)
+          .get('/')
+          .set('if-none-match', etag)
+          .expect(304)
+          .expect(function (data) {
+            
+            var headers = data.res.headers;
+            
+            expect(headers['content-type']).to.equal(undefined);
+            expect(headers['content-length']).to.equal(undefined);
+            expect(headers['transfer-encoding']).to.equal(undefined);
+          })
+          .end(done);
+      });
+      
+      it('on not matching', function (done) {
+        
+        app.use(function (req, res) {
+          
+          res.__.send('some text');
+        });
+        
+        request(app)
+          .get('/')
+          .set('if-none-match', 'old-etag')
+          .expect(200)
+          .expect('some text')
+          .expect('ETag', '"VS4hzUzZkYZ448Gg30kbww=="')
+          .end(done);
+      });
+      
+      it('on HEAD request', function (done) {
+        
+        app.use(function (req, res) {
+          
+          res.__.send('some text');
+        });
+        
+        request(app)
+          .head('/')
+          .expect(200)
+          .expect('ETag', '"VS4hzUzZkYZ448Gg30kbww=="')
+          .end(done);
+      });
     });
   });
   

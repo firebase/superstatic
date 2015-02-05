@@ -19,6 +19,7 @@ describe('static files', function () {
       .use(function (req, res, next) {
         
         responder({
+          req: req,
           res: res,
           provider: provider
         });
