@@ -9,7 +9,6 @@ pushState applications, clean URLs, caching, and MANY other goodies.
 * [Installation](#installation)
 * [Usage](#usage)
 * [Configuration](#configuration)
-* [Services](#services)
 * [API](#api)
   * [Middleware](#middleware)
   * [Server](#server)
