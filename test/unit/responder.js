@@ -100,7 +100,7 @@ describe('responder', function () {
     
     describe('etag', function () {
       
-      it('on matching', function (done) {
+      it('matches', function (done) {
         
         var etag = 'my-etag';
         
@@ -126,7 +126,7 @@ describe('responder', function () {
           .end(done);
       });
       
-      it('on not matching', function (done) {
+      it('not matching', function (done) {
         
         app.use(function (req, res) {
           
