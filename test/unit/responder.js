@@ -160,6 +160,64 @@ describe('responder', function () {
   
   describe('sendFile()', function () {
     
+    describe('etag', function () {
+      
+      it('matches', function (done) {
+        
+        var etag = 'my-etag';
+        
+        app.use(function (req, res) {
+          
+          res.setHeader('ETag', etag);
+          res.__.sendFile('/index.html');
+        });
+        
+        request(app)
+          .get('/')
+          .set('if-none-match', etag)
+          .expect(304)
+          .expect(function (data) {
+            
+            var headers = data.res.headers;
+            
+            expect(headers['content-type']).to.equal(undefined);
+            expect(headers['content-length']).to.equal(undefined);
+            expect(headers['transfer-encoding']).to.equal(undefined);
+          })
+          .end(done);
+      });
+      
+      it('not matching', function (done) {
+        
+        app.use(function (req, res) {
+          
+          res.__.sendFile('/index.html');
+        });
+        
+        request(app)
+          .get('/')
+          .set('if-none-match', 'old-etag')
+          .expect(200)
+          .expect('index file content')
+          .expect('ETag', '"1B2M2Y8AsgTpgAmY7PhCfg=="')
+          .end(done);
+      });
+      
+      it('on HEAD request', function (done) {
+        
+        app.use(function (req, res) {
+          
+          res.__.sendFile('/index.html');
+        });
+        
+        request(app)
+          .head('/')
+          .expect(200)
+          .expect('ETag', '"1B2M2Y8AsgTpgAmY7PhCfg=="')
+          .end(done);
+      });
+    });
+    
     it('html', function (done) {
       
       app.use(function (req, res) {
