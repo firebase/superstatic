@@ -116,4 +116,21 @@ describe('default provider', function () {
         done();
       }));
   });
+  
+  it('generateEtag() with content', function (done) {
+    
+    var etag = provider.generateEtag('testing');
+    
+    expect(etag).to.equal('"risfylFZSeXVT7IrjtlVdQ=="');
+    done();
+  });
+  
+  it('generateEtag() with fs.Stats', function (done) {
+    
+    var stat = fs.statSync('.tmp/index.html');
+    var etag = provider.generateEtag(stat);
+    
+    expect(etag).to.equal('"1B2M2Y8AsgTpgAmY7PhCfg=="');
+    done();
+  });
 });
