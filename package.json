@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "lib",
   "scripts": {
@@ -65,7 +65,7 @@
     "slasher": "^1.1.0",
     "slashify": "0.1.0",
     "stacked": "1.1.1",
-    "static-router": "1.0.4",
+    "static-router": "1.1.0",
     "update-notifier": "0.2.2",
     "van": "0.0.4"
   },
