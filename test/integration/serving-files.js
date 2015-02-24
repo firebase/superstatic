@@ -119,7 +119,8 @@ describe('serves', function () {
       '/fromCustom': {
         status: 302,
         url: '/toCustom'
-      }
+      },
+      '/external': 'http://redirect.com'
     };
     
     var app = connect()
@@ -140,6 +141,15 @@ describe('serves', function () {
         .get('/fromCustom')
         .expect(302)
         .expect('Location', '/toCustom')
+        .end(done);
+    });
+    
+    it('external urls', function (done) {
+      
+      request(app)
+        .get('/external')
+        .expect(301)
+        .expect('Location', 'http://redirect.com')
         .end(done);
     });
   });
