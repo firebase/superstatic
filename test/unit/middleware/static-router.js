@@ -7,7 +7,7 @@ var staticRouter = require('../../../lib/middleware/static-router');
 var dfs = require('../../../lib/dfs');
 var responder = require('../../../lib/responder');
 
-describe('static router', function () {
+describe.only('static router', function () {
   
   var provider = dfs({
     root: '.tmp'
@@ -96,5 +96,47 @@ describe('static router', function () {
       .get('/hi')
       .expect(404)
       .end(done);
+  });
+  
+  describe('uses first match', function () {
+    
+    beforeEach(function () {
+      
+      fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
+      
+      app.use(staticRouter({
+        routes: {
+          "/admin/**": "/admin/index.html",
+          "**": "index.html"
+        }
+      }));
+    });
+    
+    it('first route with 1 depth route', function (done) {
+      
+      request(app)
+        .get('/admin/anything')
+        .expect(200)
+        .expect('admin index')
+        .end(done);
+    });
+    
+    it('first route with 2 depth route', function (done) {
+      
+      request(app)
+        .get('/admin/anything/else')
+        .expect(200)
+        .expect('admin index')
+        .end(done);
+    });
+    
+    it('second route', function (done) {
+      
+      request(app)
+        .get('/anything')
+        .expect(200)
+        .expect('index')
+        .end(done);
+    });
   });
 });
