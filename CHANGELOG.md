@@ -2,17 +2,21 @@
 
 ## [2.1.0](https://github.com/divshot/superstatic/issues?q=is%3Aissue+milestone%3A2.1+is%3Aclosed)
 
-**Released on 2-4-2015**
+**Released on 2-24-2015**
 
-* **[#41](https://github.com/divshot/superstatic/issues/41)** - etag support
-* **[#123](https://github.com/divshot/superstatic/issues/123)** - Support for live reload
-* **[#132](https://github.com/divshot/superstatic/issues/132)** - Using services in local development
-* **[#134](https://github.com/divshot/superstatic/issues/134)** - lodash 3.x.x
-* **[#135](https://github.com/divshot/superstatic/issues/135)** - export Server as a value not a path
+* **[#41](https://github.com/divshot/superstatic/issues/41)** - NEW - etag support
+* **[#123](https://github.com/divshot/superstatic/issues/123)** - NEW - Support for live reload
+* **[#132](https://github.com/divshot/superstatic/issues/132)** - NEW - Using services in local development
+* **[#134](https://github.com/divshot/superstatic/issues/134)** - PERF - lodash 3.x.x
+* **[#135](https://github.com/divshot/superstatic/issues/135)** - Export Server as a value not a path
+* **[#141](https://github.com/divshot/superstatic/issues/141)** - Test on Node 0.12 and io.js
+* **[#146](https://github.com/divshot/superstatic/issues/146)** - FIXED - External Redirects
+* **[#147](https://github.com/divshot/superstatic/issues/147)** - FIXED - Routes are not being used/get overwritten
+* **[#150](https://github.com/divshot/superstatic/issues/150)** - NEW - Ensure order of routes
 
 ### Breaking Changes
 
-* The server is now available as a properting on the Superstatic object (instead of through a require path). See [#135](https://github.com/divshot/superstatic/issues/135).
+* The server is now available as a property on the Superstatic object (instead of through a require path). See [#135](https://github.com/divshot/superstatic/issues/135).
 * You no longer need to use the `--services` flag to use services locally. Superstatic checks your local and global modules for the Superstatic services and installs them automatically if they are missing.
 
 ## 2.0.2
