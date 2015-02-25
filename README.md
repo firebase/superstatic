@@ -104,6 +104,20 @@ apps. An example:
 }
 ```
 
+Note: There is no guarantee of the order that your routes will be parsed when using only an object. If you need to ensure that your routes are parsed in order, please wrap them in an array. An example:
+
+```json
+{
+  "routes": [
+    {
+     "app/**": "application.html",
+     "profile/**": "profile.html"
+    },
+    {"**": "index.html"}
+  ]
+}
+```
+
 **redirects:** you can specify to have certain url paths be redirected (specifying a custom HTTP status code, or which defaults to 301) to other url paths by supplying an object to the `redirects` key. Route path matching is similar to using custom routes. For example:
 
 Default 301 redirect
