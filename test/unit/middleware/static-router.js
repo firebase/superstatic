@@ -7,7 +7,7 @@ var staticRouter = require('../../../lib/middleware/static-router');
 var dfs = require('../../../lib/dfs');
 var responder = require('../../../lib/responder');
 
-describe.only('static router', function () {
+describe('static router', function () {
   
   var provider = dfs({
     root: '.tmp'
@@ -34,7 +34,6 @@ describe.only('static router', function () {
     
     fs.removeSync('.tmp');
   });
-  
   
   it('serves a route', function (done) {
     
@@ -105,10 +104,13 @@ describe.only('static router', function () {
       fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
       
       app.use(staticRouter({
-        routes: {
-          "/admin/**": "/admin/index.html",
-          "**": "index.html"
-        }
+        routes: [
+          {
+            "/admin/**": "/admin/index.html",
+            "/something/**": "/something/indexf.html"
+          },
+          {"**": "index.html"}
+        ]
       }));
     });
     
