@@ -40,6 +40,21 @@ describe('default provider', function () {
     done();
   });
   
+  it('isFile()', function (done) {
+    
+    provider.isFile('/index.html', function (isFile) {
+      
+      expect(isFile).to.equal(true);
+      done();
+    });
+  });
+  
+  it('isFileSync()', function (done) {
+    
+    expect(provider.isFileSync('/index.html')).to.equal(true);
+    done();
+  });
+  
   it('isDirectory()', function (done) {
     
     provider.isDirectory('/dir', function (isDir) {

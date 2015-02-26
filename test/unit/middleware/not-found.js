@@ -50,6 +50,7 @@ describe('not found', function () {
     
     app
       .use(notFound({
+        
         file: join(process.cwd(), '.tmp/does-not-exist.html')
       }))
       .use(function (err, req, res, next) {
