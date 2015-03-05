@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.2
+
+**Released on 3-5-2015**
+
+* Fix rogue 404 when trying to serve directories
+* Ensure compiled config object gets passed to middlewares instead of config file names
+
 ## [2.1.0](https://github.com/divshot/superstatic/issues?q=is%3Aissue+milestone%3A2.1+is%3Aclosed)
 
 **Released on 2-24-2015**
