@@ -96,6 +96,20 @@ describe('static router', function () {
       .expect(404)
       .end(done);
   });
+
+  it('ensures matching file extension', function (done) {
+    
+    app.use(staticRouter({
+      routes: {
+        '**': "/index.html"
+      }
+    }));
+    
+    request(app)
+      .get('/index.js')
+      .expect(404)
+      .end(done);
+  });
   
   describe('uses first match', function () {
     
