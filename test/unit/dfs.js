@@ -3,6 +3,7 @@ var join = require('join-path');
 var expect = require('chai').expect;
 var request = require('supertest');
 var concat = require('concat-stream');
+var etag = require('etag');
 
 var dfs = require('../../lib/dfs');
 
@@ -143,9 +144,10 @@ describe('default provider', function () {
   it('generateEtag() with fs.Stats', function (done) {
     
     var stat = fs.statSync('.tmp/index.html');
-    var etag = provider.generateEtag(stat);
+    var providerTag = provider.generateEtag(stat);
+    var statTag = etag(stat, {weak: false});
     
-    expect(etag).to.equal('"1B2M2Y8AsgTpgAmY7PhCfg=="');
+    expect(providerTag).to.equal(statTag);
     done();
   });
 });

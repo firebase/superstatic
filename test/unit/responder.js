@@ -2,6 +2,7 @@ var fs = require('fs-extra');
 var expect = require('chai').expect;
 var request = require('supertest');
 var connect = require('connect');
+var etag = require('etag');
 
 var dfs = require('../../lib/dfs');
 var responder = require('../../lib/responder');
@@ -138,7 +139,7 @@ describe('responder', function () {
           .set('if-none-match', 'old-etag')
           .expect(200)
           .expect('some text')
-          .expect('ETag', '"VS4hzUzZkYZ448Gg30kbww=="')
+          .expect('ETag', etag('some text', {weak: false}))
           .end(done);
       });
       
@@ -189,6 +190,8 @@ describe('responder', function () {
       
       it('not matching', function (done) {
         
+        var stat = fs.statSync('.tmp/index.html');
+        
         app.use(function (req, res) {
           
           res.__.sendFile('/index.html');
@@ -199,11 +202,13 @@ describe('responder', function () {
           .set('if-none-match', 'old-etag')
           .expect(200)
           .expect('index file content')
-          .expect('ETag', '"1B2M2Y8AsgTpgAmY7PhCfg=="')
+          .expect('ETag', etag(stat, {weak: false}))
           .end(done);
       });
       
       it('on HEAD request', function (done) {
+        
+        var stat = fs.statSync('.tmp/index.html');
         
         app.use(function (req, res) {
           
@@ -213,7 +218,7 @@ describe('responder', function () {
         request(app)
           .head('/')
           .expect(200)
-          .expect('ETag', '"1B2M2Y8AsgTpgAmY7PhCfg=="')
+          .expect('ETag', etag(stat, {weak: false}))
           .end(done);
       });
     });
