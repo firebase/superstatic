@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.3
+
+**Released on 3-16-2015**
+
+* **[#151](https://github.com/divshot/superstatic/issues/151)** - Fix flawed ETag when generating with fs.Stats instance
+
 ## 2.1.2
 
 **Released on 3-5-2015**
