@@ -105,4 +105,19 @@ describe('trailing slashes', function () {
       .expect('Location', '/contact?query=param')
       .end(done);
   });
+  
+  it('preserves query parameters and slash on subdirectory directory index redirect', function (done) {
+    
+    app.use(slashify({
+      provider: provider
+    }));
+    
+    request(app)
+      .get('/about?query=params')
+      .expect(function (req) {
+        expect(req.headers.location).to.equal('/about/?query=params');
+      })
+      .expect(301)
+      .end(done);
+  });
 });
