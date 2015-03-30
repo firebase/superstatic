@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Superstatic: a static file server for fancy apps",
   "main": "./lib",
   "scripts": {
@@ -62,7 +62,7 @@
     "finalhandler": "^0.3.2",
     "firstkey": "^0.1.0",
     "flatten-to-object": "^1.0.0",
-    "fs-extra": "^0.16.3",
+    "fs-extra": "^0.17.0",
     "gaze": "^0.5.1",
     "glob": "^5.0.3",
     "glob-slasher": "^1.0.1",
