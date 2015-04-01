@@ -195,7 +195,7 @@ describe('clean urls', function () {
         
         app
           .use(cleanUrls({
-            rules: ["/app**", "/!(components|bower_components)/**"]
+            rules: ["/app**", "/!(components|bower_components)/**"],
             provider: provider
           }))
           .use(function (req, res) {
