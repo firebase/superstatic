@@ -134,6 +134,7 @@ describe('clean urls', function () {
       request(app)
         .get('/superstatic.html')
         .expect(301)
+        .expect('Location', '/superstatic')
         .end(done);
     });
     

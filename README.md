@@ -192,6 +192,14 @@ on each request.
 }
 ```
 
+**trailing_slash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
+
+```json
+{
+  "trailing_slash": true
+}
+```
+
 ## API
 
 Superstatic is available as a middleware and a standalone [Connect](http://www.npmjs.org/package/connect) server. This means you can plug this into your current server or run your own static server using Superstatic's server.

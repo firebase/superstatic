@@ -18,6 +18,7 @@ describe('trailing slashes', function () {
   beforeEach(function () {
     
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
+    fs.outputFileSync('.tmp/me.html', 'testing', 'utf8');
     fs.outputFileSync('.tmp/about/index.html', 'about index', 'utf8');
     
     app = connect()
@@ -120,4 +121,95 @@ describe('trailing slashes', function () {
       .expect(301)
       .end(done);
   });
+  
+  describe('force trailing slash', function () {
+    
+    it('adds slash to url with no extension', function (done) {
+      
+      app.use(slashify({
+        provider: provider,
+        config: {
+          trailing_slash: true
+        }
+      }));
+      
+      request(app)
+        .get('/testing')
+        .expect(301)
+        .expect('Location', '/testing/')
+        .end(done);
+    });
+    
+    it('does not add slash to url with file extensions', function (done) {
+      
+      app
+        .use(slashify({
+          provider: provider,
+          config: {
+            trailing_slash: true
+          }
+        }))
+        .use(function (req, res) {
+          
+          res.end('pass through');
+        });
+      
+      request(app)
+        .get('/me.html')
+        .expect('pass through')
+        .end(done);
+    });
+  });
+  
+  describe('force remove trailing slash', function () {
+    
+    it('removes trailing slash on urls with no file extension', function (done) {
+      
+      app.use(slashify({
+        provider: provider,
+        config: {
+          trailing_slash: false
+        }
+      }));
+      
+      request(app)
+        .get('/testing/')
+        .expect(301)
+        .expect('Location', '/testing')
+        .end(done);
+    });
+  
+    it('removes trailing slash on urls with file extension', function (done) {
+      
+      app.use(slashify({
+        provider: provider,
+        config: {
+          trailing_slash: false
+        }
+      }));
+      
+      request(app)
+        .get('/me.html/')
+        .expect(301)
+        .expect('Location', '/me.html')
+        .end(done);
+    });
+    
+    it('removes trailing slash on directory index urls', function (done) {
+      
+      app.use(slashify({
+        provider: provider,
+        config: {
+          trailing_slash: false
+        }
+      }));
+      
+      request(app)
+        .get('/about/')
+        .expect(301)
+        .expect('Location', '/about')
+        .end(done);
+    });
+  });
+  
 });
