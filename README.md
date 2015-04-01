@@ -86,7 +86,7 @@ Only specific paths get clean urls
 
 ```json
 {
-  "clean_urls": ["/app**", "/!components**"]
+  "clean_urls": ["/app/**", "/!components/**"]
 }
 ```
 
