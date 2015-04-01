@@ -150,7 +150,7 @@ describe('clean urls', function () {
       request(app)
         .get('/superstatic')
         .expect(200)
-        .end(done)
+        .end(done);
     });
     
     it('redirects with an array of globs', function (done) {
@@ -165,7 +165,50 @@ describe('clean urls', function () {
       request(app)
         .get('/yes/superstatic.html')
         .expect(301)
-        .end(done)
+        .expect('Location', '/yes/superstatic')
+        .end(done);
+    });
+    
+    describe('combined globs with negation', function () {
+      
+      it('cleans all in a givent directory', function (done) {
+        
+        fs.outputFileSync('.tmp/app/test.html', 'test', 'utf8');
+        fs.outputFileSync('.tmp/components/test.html', 'test', 'utf8');
+        
+        app.use(cleanUrls({
+          rules: ["/app**", "!/components**"],
+          provider: provider
+        }));
+        
+        request(app)
+          .get('/app/test.html')
+          .expect(301)
+          .expect('Location', '/app/test')
+          .end(done);
+      });
+      
+      it('ignores all in a given directory', function (done) {
+        
+        fs.outputFileSync('.tmp/app/test.html', 'test', 'utf8');
+        fs.outputFileSync('.tmp/components/test.html', 'test', 'utf8');
+        
+        app
+          .use(cleanUrls({
+            rules: ["/app**", "/!(components|bower_components)/**"]
+            provider: provider
+          }))
+          .use(function (req, res) {
+            
+            res.end('fall through');
+          });
+          
+        request(app)
+          .get('/components/test.html')
+          .expect(200)
+          .expect('fall through')
+          .end(done);
+      });
     });
     
     it('serves the clean url from an array of globs', function (done) {
@@ -180,7 +223,7 @@ describe('clean urls', function () {
       request(app)
         .get('/yes/superstatic')
         .expect(200)
-        .end(done)
+        .end(done);
     });
     
     it('redirects with an arguments-like object of globs', function (done) {
@@ -195,7 +238,7 @@ describe('clean urls', function () {
       request(app)
         .get('/yes/superstatic.html')
         .expect(301)
-        .end(done)
+        .end(done);
     });
   });
 
