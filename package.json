@@ -48,7 +48,7 @@
     "caseless": "^0.10.0",
     "chalk": "^1.0.0",
     "char-spinner": "^1.0.1",
-    "chokidar": "^1.0.0-rc5",
+    "chokidar": "^1.0.0",
     "clear-require": "^1.0.1",
     "compare-semver": "^1.0.0",
     "compression": "^1.2.2",
