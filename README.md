@@ -1,4 +1,4 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/divshot/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/divshot/superstatic)
 
 Superstatic is an enhanced static web server that was built to power
 [Divshot](http://www.divshot.io). It has fantastic support for HTML5
@@ -86,7 +86,7 @@ Only specific paths get clean urls
 
 ```json
 {
-  "clean_urls": ["/app**", "!/components**"]
+  "clean_urls": ["/app/**", "/!components/**"]
 }
 ```
 
@@ -189,6 +189,14 @@ on each request.
       "content-type": "text/javascript"
     }
   }
+}
+```
+
+**trailing_slash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
+
+```json
+{
+  "trailing_slash": true
 }
 ```
 

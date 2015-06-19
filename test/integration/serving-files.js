@@ -295,6 +295,28 @@ describe('serves', function () {
           done(err);
         });
     });
+    
+    it('serves env file, overriding static routing', function (done) {
+      
+      var opts = options();
+            
+      opts.env = {
+        key: 'value'
+      };
+      
+      opts.config.routes = {
+        '**': 'index.html'
+      };
+      
+      var app = connect()
+        .use(superstatic(opts));
+      
+      request(app)
+        .get('/__/env.json')
+        .expect({key: 'value'})
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end(done);
+    });
   });
   
   describe('custom routes', function () {

@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0](https://github.com/divshot/superstatic/issues?q=milestone%3A2.2+is%3Aclosed)
+
+**Released on 4-1-2015**
+
+* **[#131](https://github.com/divshot/superstatic/issues/131)** - NEW - Configuration option to disable/enable trailing slashes
+* **[#156](https://github.com/divshot/superstatic/issues/156)** - FIXED - High CPU usage with LiveReload enabled
+* **[#159](https://github.com/divshot/superstatic/issues/159)**  - Update Nash to 2.x
+* **[#162](https://github.com/divshot/superstatic/issues/162)** - FIXED - Automatic install of services doesn't try to instantiate missing service
+
+
+## 2.1.3
+
+**Released on 3-16-2015**
+
+* **[#151](https://github.com/divshot/superstatic/issues/151)** - Fix flawed ETag when generating with fs.Stats instance
+
 ## 2.1.2
 
 **Released on 3-5-2015**
