@@ -35,12 +35,6 @@ describe('default provider', function () {
     });
   });
 
-  it('existsSync()', function (done) {
-
-    expect(provider.existsSync('/index.html')).to.equal(true);
-    done();
-  });
-
   it('isFile()', function (done) {
 
     provider.isFile('/index.html', function (isFile) {
@@ -48,12 +42,6 @@ describe('default provider', function () {
       expect(isFile).to.equal(true);
       done();
     });
-  });
-
-  it('isFileSync()', function (done) {
-
-    expect(provider.isFileSync('/index.html')).to.equal(true);
-    done();
   });
 
   it('isDirectory()', function (done) {
@@ -65,11 +53,6 @@ describe('default provider', function () {
     });
   });
 
-  it('isDirectorySync()', function (done) {
-
-    expect(provider.isDirectorySync('/dir')).to.equal(true);
-    done();
-  });
 
   it('isDirectoryIndex()', function (done) {
 
@@ -80,11 +63,6 @@ describe('default provider', function () {
     });
   });
 
-  it('isDirectoryIndexSync()', function (done) {
-
-    expect(provider.isDirectoryIndexSync('/dir')).to.equal(true);
-    done();
-  });
 
   it('asDirectoryIndex()', function (done) {
 
@@ -111,13 +89,7 @@ describe('default provider', function () {
       done();
     });
   });
-
-  it('statSync()', function (done) {
-
-    expect(provider.statSync('/index.html').isFile()).to.equal(true);
-    done();
-  });
-
+  
   it('custom current working directory', function (done) {
 
     var provider = dfs({
