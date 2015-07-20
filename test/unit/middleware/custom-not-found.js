@@ -40,9 +40,7 @@ describe('custom not found', function () {
 
     app
       .use(customNotFound({
-        config: {
           error_page: '/not-found.html'
-        }
       }));
 
     request(app)
@@ -56,9 +54,7 @@ describe('custom not found', function () {
 
     app
       .use(customNotFound({
-        config: {
           error_page: '/does-not-exist.html'
-        }
       }))
       .use(function (req, res, next) {
 
@@ -68,22 +64,6 @@ describe('custom not found', function () {
     request(app)
       .get('/anything')
       .expect('does not exist')
-      .end(done);
-  });
-
-  it('caches for 6 months', function (done) {
-
-    app
-      .use(customNotFound({
-        config: {
-          error_page: '/not-found.html'
-        }
-      }));
-
-    request(app)
-      .get('/anything')
-      .expect(404)
-      .expect('Cache-Control', 'public, max-age=' + (60 * 60 * 24 * 30 * 6))
       .end(done);
   });
 });

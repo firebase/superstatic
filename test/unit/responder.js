@@ -7,6 +7,8 @@ var etag = require('etag');
 var dfs = require('../../lib/dfs');
 var responder = require('../../lib/responder');
 
+var INDEX_HTML_MD5 = 'eca7c31f0d0a3715a19d384323c93a9d';
+
 describe('responder', function () {
 
   var provider = dfs({
@@ -168,7 +170,7 @@ describe('responder', function () {
 
       it('matches', function (done) {
 
-        var etag = 'my-etag';
+        var etag = INDEX_HTML_MD5;
 
         app.use(function (req, res) {
 
@@ -205,7 +207,7 @@ describe('responder', function () {
           .set('if-none-match', 'old-etag')
           .expect(200)
           .expect('index file content')
-          .expect('ETag', etag(stat, {weak: false}))
+          .expect('ETag', INDEX_HTML_MD5)
           .end(done);
       });
 
@@ -221,7 +223,7 @@ describe('responder', function () {
         request(app)
           .head('/')
           .expect(200)
-          .expect('ETag', etag(stat, {weak: false}))
+          .expect('ETag', INDEX_HTML_MD5)
           .end(done);
       });
     });
