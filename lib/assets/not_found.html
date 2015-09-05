@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Superstatic default 404 page. Replace this by adding an "error_page" to your superstatic.json -->
+  <!--
+    This is the Superstatic default 404 page.
+    If you're seeing it, that means you haven't configured a custom error page.
+    See https://github.com/firebase/superstatic for more info.
+  -->
   <meta charset=utf-8 />
   <title>Page Not Found</title>
   <style>
     body {
-      background: #f5f5f5;
-      font-family: Helvetica, Open Sans, sans-serif;
-      padding: 0 5%;
-    }
-    
-    #message {
+      font-family: Roboto, Arial, sans-serif;
       background: white;
-      max-width: 600px;
-      text-align: center;
-      padding: 1.5em;
-      margin: 3em auto 1em;
-      border-top: 5px solid #ccc;
-      box-shadow: 1px 1px 5px rgba(0,0,0,0.15);
     }
-    
+
+    #message {
+      margin: 100px auto;
+      text-align: center;
+      padding: 20px;
+    }
+
     #message h1 {
-      color: #666;
+      font-size: 60px;
       font-weight: normal;
-      margin: 0 0 0.25em;
+      letter-spacing: -0.03em;
+      margin: 0 0 10px;
     }
-    
+
     #message p {
-      margin: 0;
-      color: #444;
+      margin: 10px 0 0;
+      color: #aaa;
     }
-    
+
     #footer {
-      font-size: 11px;
-      color: #999;
       text-align: center;
-      margin: 0 0 4em;
+      margin-top: 100px;
+      font-size: 12px;
+      color: #aaa;
     }
-    
     #footer a {
-      color: #999;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <div id="message">
-    <h1>404 Not Found</h1>
-    <p>Sorry, we were unable to locate anything at this address.</p>
+    <h1>Page Not Found</h1>
+    <p>Sorry, we were unable to find anything at this location.</p>
   </div>
-  <p id="footer">This page was served by <a href="https://github.com/divshot/superstatic" target="_blank">superstatic</a>.</p>
 </body>
 </html>

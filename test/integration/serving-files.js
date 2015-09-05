@@ -413,15 +413,4 @@ describe('serves', function () {
         .end(done);
     });
   });
-
-  it('default favicon', function (done) {
-
-    var app = connect()
-      .use(superstatic(options()));
-
-    request(app)
-      .get('/favicon.ico')
-      .expect(200)
-      .end(done);
-  });
 });
