@@ -1,8 +1,8 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/divshot/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic)
 
-Superstatic is an enhanced static web server that was built to power
-[Divshot](http://www.divshot.io). It has fantastic support for HTML5
-pushState applications, clean URLs, caching, and MANY other goodies.
+Superstatic is an enhanced static web server that was built to power.
+It has fantastic support for HTML5 pushState applications, clean URLs,
+caching, and many other goodies.
 
 ## Documentation
 
@@ -33,7 +33,7 @@ For use via API
 ```
 npm install superstatic --save
 ```
-    
+
 ## Usage
 
 By default, Superstatic will simply serve the current directory on port
@@ -43,19 +43,11 @@ By default, Superstatic will simply serve the current directory on port
 $ superstatic
 ```
 
-or aliased as
-
-```
-$ ss
-```
-    
 You can optionally specify the directory, port and hostname of the server:
 
 ```
 $ superstatic public --port 8080 --host 127.0.0.1
 ```
-    
-Where it gets interesting is with Superstatic's JSON configuration file.
 
 ## Configuration
 
@@ -63,7 +55,7 @@ Superstatic reads special configuration from a JSON file (either `superstatic.js
 or `divshot.json` by default, configurable with `-c`). This JSON file enables
 enhanced static server functionality beyond simply serving files.
 
-**root:** by default, Superstatic will serve the current working directory (or the
+**public:** by default, Superstatic will serve the current working directory (or the
 ancestor of the current directory that contains the configuration json being used).
 This configuration key specifies a directory *relative to the configuration file* that
 should be served. For example, if serving a Jekyll app, this might be set to `"_site"`.
@@ -90,56 +82,28 @@ Only specific paths get clean urls
 }
 ```
 
-**routes:** you can specify custom route recognition for your application by supplying
+**rewrites:** you can specify custom route recognition for your application by supplying
 an object to the routes key. Use a single star `*` to replace one URL segment or a
 double star to replace an arbitrary piece of URLs. This works great for single page
 apps. An example:
 
 ```json
 {
-  "routes": {
-    "app/**":"application.html",
-    "projects/*/edit":"projects.html"
-  }
-}
-```
-
-Note: There is no guarantee of the order that your routes will be parsed when using only an object. If you need to ensure that your routes are parsed in order, please wrap them in an array. An example:
-
-```json
-{
-  "routes": [
-    {
-     "app/**": "application.html",
-     "profile/**": "profile.html"
-    },
-    {"**": "index.html"}
+  "rewrites": [
+    {"source":"app/**","destination":"/application.html"},
+    {"source":"projects/*/edit","destination":"/projects.html"}
   ]
 }
 ```
 
-**redirects:** you can specify to have certain url paths be redirected (specifying a custom HTTP status code, or which defaults to 301) to other url paths by supplying an object to the `redirects` key. Route path matching is similar to using custom routes. For example:
-
-Default 301 redirect
+**redirects:** you can specify certain url paths to be redirected to another url by supplying configuration to the `redirects` key. Path matching is similar to using custom routes. Redirects use the `301` HTTP status code by default, but this can be overridden by configuration.
 
 ```json
 {
-  "redirects": {
-    "/some/old/path": "/some/new/path"
-  }
-}
-```
-
-Custom HTTP status code
-
-```json
-{
-  "redirects": {
-    "/some/old/path": {
-      "status": 302,
-      "url": "/some/new/path"
-    }
-  }
+  "redirects": [
+    {"source":"/some/old/path", "destination":"/some/new/path"},
+    {"source":"/firebase/*", "destination":"https://www.firebase.com", "type": 302}
+  ]
 }
 ```
 
@@ -147,47 +111,38 @@ Route segments are also supported in the redirects configuration. Segmented redi
 
 ```json
 {
-  "redirects": {
-    "/old/:segment/path": "/new/path/:segment"
-  }
+  "redirects": [
+    {"source":"/old/:segment/path", "destination":"/new/path/:segment"}
+  ]
 }
 ```
 
-In this example, `/old/custom-segment/path` redirect to `/new/path/custom-segment`
+In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segment`
 
-**error_page:** the path to the page that you want to render 404 errors if an unrecognized
-URL is supplied. For example, `error.html`.
-
-**cache_control:** by default, all pages served by superstatic have cache control headers set at
-1 hour. To change them, you can supply an object containing file globs and ages (in seconds).
-You can also specify `false` to indicate that no caching should be performed, and a string to
-manually set the cache control header. An example:
+**headers:** Superstatic allows you to set the response headers for certain paths as well:
 
 ```json
 {
-  "cache_control": {
-    "nocache/**": false,
-    "**/*.html": 600,
-    "private/**": "private, max-age=1200"
-  }
-}
-```
-
-Note that you can pass the `--no-cache` option when you run the server to serve all content
-without caching. This is good to use during development when you want fresh content served
-on each request.
-
-**Headers:** Superstatic allows you to set the response headers for the given routing configuration.
-
-```json
-{
-  "headers": {
-    "/cors-stuff/**": {
-      "Access-Control-Allow-Origin": "*"
-    },
-    "/scripts/**": {
-      "content-type": "text/javascript"
-    }
+  "headers": [
+    {
+      "source" : "**/*.@(eot|otf|ttf|ttc|woff|font.css)",
+      "headers" : [{
+        "key" : "Access-Control-Allow-Origin",
+        "value" : "*"
+      }]
+    }, {
+      "source" : "**/*.@(jpg|jpeg|gif|png)",
+      "headers" : [{
+        "key" : "Cache-Control",
+        "value" : "max-age=7200"
+      }]
+    }, {
+      "source" : "404.html",
+      "headers" : [{
+        "key" : "Cache-Control",
+        "value" : "max-age=300"
+      }]
+    }]
   }
 }
 ```

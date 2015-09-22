@@ -15,8 +15,7 @@
   "author": "Divshot",
   "license": "MIT",
   "bin": {
-    "superstatic": "bin/server",
-    "ss": "bin/server"
+    "superstatic": "bin/server"
   },
   "repository": {
     "type": "git",
