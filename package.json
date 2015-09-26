@@ -73,6 +73,7 @@
     "join-path": "^1.0.0",
     "lodash": "^3.1.0",
     "mime-types": "^2.0.4",
+    "mini-lr": "^0.1.8",
     "minimatch": "^2.0.1",
     "morgan": "^1.5.0",
     "nash": "^2.0.0",
@@ -88,7 +89,6 @@
     "set-headers": "^1.0.0",
     "string-length": "^1.0.0",
     "through2": "^2.0.0",
-    "tiny-lr": "^0.1.5",
     "try-require": "^1.0.0",
     "update-notifier": "0.3.2"
   },
