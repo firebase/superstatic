@@ -55,7 +55,6 @@
     "connect": "^3.3.3",
     "connect-livereload": "^0.5.2",
     "connect-query": "^0.2.0",
-    "cross-spawn": "^2.0.0",
     "destroy": "^1.0.3",
     "etag": "^1.5.1",
     "express": "^4.10.6",

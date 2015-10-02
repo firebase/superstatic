@@ -1,12 +1,11 @@
+#!/usr/bin/env node
+
 /**
  * Copyright 2015 Google Inc. All Rights Reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
-
-#!/usr/bin/env node
 
 var updateNotifier = require('update-notifier');
 var format = require('chalk');
@@ -32,6 +31,6 @@ if (notifier.update) {
 var cli = Cli();
 
 cli.run(process.argv, function () {
-  
+
   console.log('\nSuperstatic started.\nVisit ' + format.underline('http://' + cli.get('hostname') + ':' + cli.get('port')) + ' to view your app.');
 });
