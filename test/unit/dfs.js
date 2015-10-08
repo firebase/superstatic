@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var fs = require('fs-extra');
 var join = require('join-path');
 var expect = require('chai').expect;
@@ -150,5 +151,14 @@ describe('default provider', function () {
 
     expect(providerTag).to.equal(statTag);
     done();
+  });
+
+  it('generateEtag() with stats-like object', function () {
+
+    var stat = _.cloneDeep(fs.statSync('.tmp/index.html'));
+    var providerTag = provider.generateEtag(stat);
+    var statTag = etag(stat, {weak: false});
+
+    expect(providerTag).to.equal(statTag);
   });
 });
