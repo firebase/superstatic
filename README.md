@@ -177,7 +177,7 @@ app.listen(3000, function () {
 
 ### `superstatic([options])`
 
-Insantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
+Instantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
   * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
@@ -222,4 +222,4 @@ npm test
 
 ## Contributing
 
-We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/divshot/superstatic/blob/master/CONTRIBUTING.md) before your jump in and get your hands dirty.
+We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/divshot/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.
