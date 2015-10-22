@@ -111,6 +111,51 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
+    it('redirects a missing optional segment', function(done) {
+      var app = connect()
+        .use(redirect([{
+          source: '/old/:value?',
+          destination: '/new/:value?',
+          type: 301
+        }]));
+
+      request(app)
+        .get('/old/')
+        .expect(301)
+        .expect('location', '/new')
+        .end(done);
+    });
+
+    it('redirects a present optional segment', function(done) {
+      var app = connect()
+        .use(redirect([{
+          source: '/old/:value?',
+          destination: '/new/:value?',
+          type: 301
+        }]));
+
+      request(app)
+        .get('/old/derp')
+        .expect(301)
+        .expect('location', '/new/derp')
+        .end(done);
+    });
+
+    it('redirects a splat segment', function(done) {
+      var app = connect()
+        .use(redirect([{
+          source: '/blog/:post*',
+          destination: '/new/:post*',
+          type: 301
+        }]));
+
+      request(app)
+        .get('/blog/this/old/post')
+        .expect(301)
+        .expect('location', '/new/this/old/post')
+        .end(done);
+    });
+
     it('redirects using segments in the url path with a 302', function (done) {
       var app = connect()
         .use(redirect([{

@@ -79,7 +79,7 @@
     "npmconf": "^2.1.1",
     "on-finished": "^2.2.0",
     "on-headers": "^1.0.0",
-    "path-to-regexp": "^1.2.0",
+    "path-to-regexp": "^1.2.1",
     "pretty-print": "^1.0.0",
     "qs": "^3.1.0",
     "router": "^1.0.0",
