@@ -3,7 +3,7 @@ language: node_js
 node_js:
   - 0.10
   - 0.12
-  - iojs
+  - latest
 
 # script:
   # - npm run outdated # list outdated modules (won't fail build)
