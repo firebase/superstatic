@@ -36,37 +36,9 @@ describe('default provider', function () {
 
   it('exists()', function (done) {
 
-    provider.exists('/index.html', function (exists) {
+    provider.exists('/index.html', function (err, exists) {
 
       expect(exists).to.equal(true);
-      done();
-    });
-  });
-
-  it('isFile()', function (done) {
-
-    provider.isFile('/index.html', function (isFile) {
-
-      expect(isFile).to.equal(true);
-      done();
-    });
-  });
-
-  it('isDirectory()', function (done) {
-
-    provider.isDirectory('/dir', function (isDir) {
-
-      expect(isDir).to.equal(true);
-      done();
-    });
-  });
-
-
-  it('isDirectoryIndex()', function (done) {
-
-    provider.isDirectoryIndex('/dir', function (isIndex) {
-
-      expect(isIndex).to.equal(true);
       done();
     });
   });
@@ -97,7 +69,7 @@ describe('default provider', function () {
       done();
     });
   });
-  
+
   it('custom current working directory', function (done) {
 
     var provider = dfs({

@@ -5,10 +5,6 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+ 'use strict';
 
-module.exports = function (config) {
-  config = config || {};
-  return function (req, res, next) {
-    return res.responder.handle(req._parsedUrl.pathname, next);
-  };
-};
+ 
