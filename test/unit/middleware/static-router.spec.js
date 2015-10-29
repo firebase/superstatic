@@ -12,13 +12,13 @@ var connect = require('connect');
 var query = require('connect-query');
 
 var staticRouter = require('../../../lib/middleware/static-router');
-var dfs = require('../../../lib/dfs');
-var responder = require('../../../lib/responder');
+var fsProvider = require('../../../lib/providers/fs');
+var Responder = require('../../../lib/responder');
 
 describe('static router', function () {
 
-  var provider = dfs({
-    root: '.tmp'
+  var provider = fsProvider({
+    public: '.tmp'
   });
   var app;
 
@@ -29,13 +29,11 @@ describe('static router', function () {
     app = connect()
       .use(function (req, res, next) {
 
-        responder({
-          req: req,
-          res: res,
+        res._responder = new Responder(req, res, {
           provider: provider
         });
         next();
-      })
+      });
   });
 
   afterEach(function () {

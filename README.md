@@ -62,7 +62,7 @@ should be served. For example, if serving a Jekyll app, this might be set to `"_
 A directory passed as an argument into the command line app supercedes this configuration
 directive.
 
-**clean_urls:** if `true`, all `.html` files will automatically have their extensions
+**cleanUrls:** if `true`, all `.html` files will automatically have their extensions
 dropped. If `.html` is used at the end of a filename, it will perform a 301 redirect
 to the same path with `.html` dropped.
 
@@ -70,7 +70,7 @@ All paths have clean urls
 
 ```json
 {
-  "clean_urls": true
+  "cleanUrls": true
 }
 ```
 
@@ -78,7 +78,7 @@ Only specific paths get clean urls
 
 ```json
 {
-  "clean_urls": ["/app/**", "/!components/**"]
+  "cleanUrls": ["/app/**", "/!components/**"]
 }
 ```
 
@@ -147,11 +147,11 @@ In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segme
 }
 ```
 
-**trailing_slash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
+**trailingSlash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
 
 ```json
 {
-  "trailing_slash": true
+  "trailingSlash": true
 }
 ```
 

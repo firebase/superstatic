@@ -17,8 +17,9 @@ var superstatic = require('../../');
 
 var options = function () {
   return {
+    fallthrough: false,
     config: {
-      root: '.tmp'
+      public: '.tmp'
     }
   };
 };
@@ -26,21 +27,32 @@ var options = function () {
 describe('error page', function () {
 
   beforeEach(function () {
-
-    fs.outputFileSync('.tmp/override-error.html', 'override error', 'utf8');
+    fs.outputFileSync('.tmp/default-error.html', 'default error', 'utf8');
     fs.outputFileSync('.tmp/error.html', 'config error', 'utf8');
   });
 
   afterEach(function () {
-
     fs.removeSync('.tmp');
   });
 
-  it('from config', function (done) {
-
+  it('from 404.html', function (done) {
+    fs.outputFileSync('.tmp/404.html', '404.html error', 'utf8');
     var opts = options();
 
-    opts.config.error_page = '/error.html';
+    var app = connect()
+      .use(superstatic(opts));
+
+    request(app)
+      .get('/does-not-exist')
+      .expect(404)
+      .expect('404.html error')
+      .expect('Content-Type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
+  it('from custom error page', function (done) {
+    var opts = options();
+    opts.config.errorPage = '/error.html';
 
     var app = connect()
       .use(superstatic(opts));
@@ -57,7 +69,7 @@ describe('error page', function () {
 
     var opts = options();
 
-    opts.errorPage = '.tmp/does-not-exist.html';
+    opts.errorPage = '.tmp/default-error.html';
 
     var app = connect()
       .use(superstatic(opts));
@@ -65,6 +77,7 @@ describe('error page', function () {
     request(app)
       .get('/does-not-exist')
       .expect(404)
+      .expect('default error')
       .expect('Content-Type', 'text/html; charset=utf-8')
       .end(done);
   });

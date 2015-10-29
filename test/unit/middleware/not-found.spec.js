@@ -11,9 +11,10 @@ var request = require('supertest');
 var connect = require('connect');
 var query = require('connect-query');
 var join = require('join-path');
+var expect = require('chai').expect;
 
 var notFound = require('../../../lib/middleware/not-found');
-var responder = require('../../../lib/responder');
+var Responder = require('../../../lib/responder');
 
 describe('not found', function () {
 
@@ -26,13 +27,11 @@ describe('not found', function () {
     app = connect()
       .use(function (req, res, next) {
 
-        responder({
-          req: req,
-          res: res,
+        res._responder = new Responder(req, res, {
           provider: {}
         });
         next();
-      })
+      });
   });
 
   afterEach(function () {
@@ -44,7 +43,7 @@ describe('not found', function () {
 
     app
       .use(notFound({
-        file: join(process.cwd(), '.tmp/not-found.html')
+        file: '.tmp/not-found.html'
       }));
 
     request(app)
@@ -54,26 +53,15 @@ describe('not found', function () {
       .end(done);
   });
 
-  it('exits middleware with 404 error on file read error', function (done) {
-
-    app
-      .use(notFound({
-
-        file: join(process.cwd(), '.tmp/does-not-exist.html')
-      }))
-      .use(function (err, req, res, next) {
-
-        res.__.status(err.status).__.send('error reading file');
+  it('throws on file read error', function () {
+    expect(function() {
+      notFound({
+        file: '.tmp/does-not-exist.html'
       });
-
-    request(app)
-      .get('/anything')
-      .expect(404)
-      .expect('error reading file')
-      .end(done);
+    }).to.throw('ENOENT');
   });
 
-  it('caches for 6 months', function (done) {
+  it('caches for one hour', function (done) {
 
     app
     .use(notFound({
@@ -83,7 +71,7 @@ describe('not found', function () {
     request(app)
       .get('/anything')
       .expect(404)
-      .expect('Cache-Control', 'public, max-age=' + (60 * 60 * 24 * 30 * 6))
+      .expect('Cache-Control', 'public, max-age=3600')
       .end(done);
   });
 });

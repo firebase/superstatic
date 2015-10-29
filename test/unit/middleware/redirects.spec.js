@@ -9,6 +9,11 @@
 var redirect = require('../../../lib/middleware/redirects');
 var connect = require('connect');
 var request = require('supertest');
+var Responder = require('../../../lib/responder');
+var setup = function(req, res, next) {
+  res._responder = new Responder(req, res, {provider: {}});
+  next();
+};
 
 describe('redirect middleware', function () {
   describe('array input format', function() {
@@ -24,6 +29,7 @@ describe('redirect middleware', function () {
 
     it('skips middleware when there are no matching redirects', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/source',
           destination: '/redirect',
@@ -38,6 +44,7 @@ describe('redirect middleware', function () {
 
     it('redirects to a configured path', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/source',
           destination: '/redirect',
@@ -53,6 +60,7 @@ describe('redirect middleware', function () {
 
     it('redirects to a configured path with a custom status code', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/source',
           destination: '/redirect',
@@ -68,6 +76,7 @@ describe('redirect middleware', function () {
 
     it('adds leading slash to all redirect paths', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: 'source',
           destination: '/redirect',
@@ -83,6 +92,7 @@ describe('redirect middleware', function () {
 
     it('redirects using glob negation', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '!source',
           destination: '/redirect',
@@ -98,6 +108,7 @@ describe('redirect middleware', function () {
 
     it('redirects using segements in the url path', function (done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/old/:value/path/:loc',
           destination: '/new/:value/path/:loc',
@@ -113,6 +124,7 @@ describe('redirect middleware', function () {
 
     it('redirects a missing optional segment', function(done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/old/:value?',
           destination: '/new/:value?',
@@ -128,6 +140,7 @@ describe('redirect middleware', function () {
 
     it('redirects a present optional segment', function(done) {
       var app = connect()
+        .use(setup)
         .use(redirect([{
           source: '/old/:value?',
           destination: '/new/:value?',
@@ -143,7 +156,7 @@ describe('redirect middleware', function () {
 
     it('redirects a splat segment', function(done) {
       var app = connect()
-        .use(redirect([{
+        .use(setup).use(redirect([{
           source: '/blog/:post*',
           destination: '/new/:post*',
           type: 301
@@ -158,7 +171,7 @@ describe('redirect middleware', function () {
 
     it('redirects using segments in the url path with a 302', function (done) {
       var app = connect()
-        .use(redirect([{
+        .use(setup).use(redirect([{
           source: '/old/:value/path/:loc',
           destination: '/new/:value/path/:loc',
           type: 302
@@ -173,7 +186,7 @@ describe('redirect middleware', function () {
 
     it('redirects to external http url', function (done) {
       var app = connect()
-        .use(redirect([{
+        .use(setup).use(redirect([{
           source: '/source',
           destination: 'http://redirectedto.com',
           type: 301
@@ -188,7 +201,7 @@ describe('redirect middleware', function () {
 
     it('redirects to external https url', function (done) {
       var app = connect()
-        .use(redirect([{
+        .use(setup).use(redirect([{
           source: '/source',
           destination: 'https://redirectedto.com',
           type: 301
@@ -205,7 +218,7 @@ describe('redirect middleware', function () {
   describe('object input format', function() {
     it('skips the middleware if there are no redirects configured', function (done) {
       var app = connect()
-        .use(redirect({}));
+        .use(setup).use(redirect({}));
 
       request(app)
         .get('/')
@@ -215,7 +228,7 @@ describe('redirect middleware', function () {
 
     it('skips middleware when there are no matching redirects', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/source': '/redirect'
         }));
 
@@ -227,7 +240,7 @@ describe('redirect middleware', function () {
 
     it('redirects to a configured redirects object with a default status code of 301', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/source': '/redirect'
         }));
 
@@ -240,7 +253,7 @@ describe('redirect middleware', function () {
 
     it('redirects to a configured path with a custom status code', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/source': {
             status: 302,
             url: '/redirect'
@@ -256,7 +269,7 @@ describe('redirect middleware', function () {
 
     it('adds leading slash to all redirect paths', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           'source': '/redirect' // No slash
         }));
 
@@ -269,7 +282,7 @@ describe('redirect middleware', function () {
 
     it('redirects using glob negation', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '!source': '/redirect' // No slash
         }));
 
@@ -282,7 +295,7 @@ describe('redirect middleware', function () {
 
     it('redirects using segements in the url path', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/old/:value/path/:loc': '/new/:value/path/:loc'
         }));
 
@@ -295,7 +308,7 @@ describe('redirect middleware', function () {
 
     it('redirects using segements with a custom status code', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/old/:value/path/:loc': {
             status: 302,
             url: '/new/:value/path/:loc'
@@ -311,7 +324,7 @@ describe('redirect middleware', function () {
 
     it('redirects to external url', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/source': 'http://redirectedto.com'
         }));
 
@@ -324,7 +337,7 @@ describe('redirect middleware', function () {
 
     it('redirects to external url over https', function (done) {
       var app = connect()
-        .use(redirect({
+        .use(setup).use(redirect({
           '/source': 'https://redirectedto.com'
         }));
 

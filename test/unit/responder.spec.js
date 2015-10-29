@@ -57,9 +57,15 @@ describe('Responder', function() {
       responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
     });
+  });
+
+  describe('#_handle', function() {
+    beforeEach(function() {
+      responder = new Responder({}, {setHeader: _.noop, end: _.noop}, {});
+    });
 
     it('should reject with an unrecognized payload', function() {
-      return expect(responder.handle({foo: 'bar'})).to.be.rejectedWith('is not a recognized responder directive');
+      return expect(responder._handle({foo: 'bar'})).to.be.rejectedWith('is not a recognized responder directive');
     });
   });
 
@@ -75,10 +81,10 @@ describe('Responder', function() {
       });
     });
 
-    it('should call through to provider#get', function() {
+    it('should call through to provider', function() {
       stub.returns(RSVP.resolve({}));
       responder.handleFile({file: 'abc/def.html'});
-      expect(stub).to.have.been.calledWith(req, res, 'abc/def.html');
+      expect(stub).to.have.been.calledWith(req, 'abc/def.html');
     });
   });
 

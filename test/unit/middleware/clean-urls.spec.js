@@ -26,7 +26,7 @@ describe('clean urls', function () {
 
     app = connect()
       .use(function (req, res, next) {
-        res.responder = new Responder(req, res, {
+        res._responder = new Responder(req, res, {
           provider: provider
         });
         next();
@@ -67,7 +67,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('serves the .html version of the clean url if clean_urls are on', function (done) {
+  it('serves the .html version of the clean url if cleanUrls are on', function (done) {
 
     fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 

@@ -20,8 +20,8 @@ describe('cli', function () {
   var cli;
 
   var config = {
-    name: 'app',
-    root: './'
+    firebase: 'app',
+    public: './'
   };
 
   beforeEach(function () {
@@ -48,7 +48,6 @@ describe('cli', function () {
       var port = cli.get('port');
 
       request('http://localhost:' + port, function (err, response, body) {
-        console.log(body);
         expect(err).to.equal(null);
         expect(response.statusCode).to.equal(200);
         expect(body).to.equal('index');
@@ -73,11 +72,11 @@ describe('cli', function () {
     });
   });
 
-  it('loads divshot.json config file', function (done) {
+  it('loads firebase.json config file', function (done) {
 
     fs.unlinkSync('superstatic.json');
-    fs.writeFileSync('divshot.json', JSON.stringify({
-      root: '.tmp'
+    fs.writeFileSync('firebase.json', JSON.stringify({
+      public: '.tmp'
     }), 'utf-8');
 
     cli.run(['', ''], function (err) {
@@ -89,7 +88,7 @@ describe('cli', function () {
 
         expect(body).to.equal('.tmp/index.html');
 
-        fs.unlinkSync('divshot.json');
+        fs.unlinkSync('firebase.json');
         server.close(done);
       });
     });
@@ -194,7 +193,7 @@ describe('cli', function () {
     beforeEach(function () {
 
       fs.writeFileSync('custom.json', JSON.stringify({
-        root: './',
+        public: './',
         routes: {
           '**': 'index.html'
         }
@@ -209,9 +208,7 @@ describe('cli', function () {
     it('--config', function (done) {
 
       cli.run(['', '', '--config', 'custom.json'], function () {
-
         request('http://localhost:3474/anything.html', function (err, response, body) {
-
           expect(body).to.equal('index');
           expect(cli.get('config')).to.equal('custom.json');
 

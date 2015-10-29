@@ -12,7 +12,7 @@ var query = require('connect-query');
 var Router = require('router');
 
 var env = require('../../../lib/middleware/env');
-var responder = require('../../../lib/responder');
+var Responder = require('../../../lib/responder');
 
 describe('env', function () {
 
@@ -23,9 +23,7 @@ describe('env', function () {
     app = connect()
       .use(function (req, res, next) {
 
-        responder({
-          req: req,
-          res: res,
+        res._responder = new Responder(req, res, {
           provider: {}
         });
         next();

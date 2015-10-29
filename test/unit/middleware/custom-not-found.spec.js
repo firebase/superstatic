@@ -13,30 +13,24 @@ var query = require('connect-query');
 var join = require('join-path');
 
 var customNotFound = require('../../../lib/middleware/custom-not-found');
-var dfs = require('../../../lib/dfs');
-var responder = require('../../../lib/responder');
+var fsProvider = require('../../../lib/providers/fs');
+var Responder = require('../../../lib/responder');
 
 describe('custom not found', function () {
 
-  var provider = dfs({
-    root: '.tmp'
+  var provider = fsProvider({
+    public: '.tmp'
   });
   var app;
 
   beforeEach(function () {
-
     fs.outputFileSync('.tmp/not-found.html', 'custom not found file', 'utf8');
 
     app = connect()
       .use(function (req, res, next) {
-
-        responder({
-          req: req,
-          res: res,
-          provider: provider
-        });
+        res._responder = new Responder(req, res, {provider: provider});
         next();
-      })
+      });
   });
 
   afterEach(function () {
@@ -48,7 +42,7 @@ describe('custom not found', function () {
 
     app
       .use(customNotFound({
-          error_page: '/not-found.html'
+          errorPage: '/not-found.html'
       }));
 
     request(app)
@@ -62,11 +56,11 @@ describe('custom not found', function () {
 
     app
       .use(customNotFound({
-          error_page: '/does-not-exist.html'
+          errorPage: '/does-not-exist.html'
       }))
       .use(function (req, res, next) {
 
-        res.__.send('does not exist');
+        res.end('does not exist');
       });
 
     request(app)

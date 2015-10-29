@@ -19,7 +19,7 @@ var superstatic = require('../../');
 var options = function () {
   return {
     config: {
-      root: '.tmp'
+      public: '.tmp'
     }
   };
 };
@@ -74,7 +74,7 @@ describe('serves', function () {
 
     var opts = options();
 
-    opts.config.root = './';
+    opts.config.public = './';
 
     var app = connect()
       .use(superstatic(opts));
@@ -105,7 +105,7 @@ describe('serves', function () {
     var opts = options();
 
     opts.cwd = join(process.cwd(), '.tmp');
-    opts.config.root = './dir';
+    opts.config.public = './dir';
 
     var app = connect()
       .use(superstatic(opts));
@@ -352,7 +352,7 @@ describe('serves', function () {
 
       var opts = options();
 
-      opts.config.clean_urls = true;
+      opts.config.cleanUrls = true;
       opts.config.routes = {
         '/testing': '/index.html'
       };
