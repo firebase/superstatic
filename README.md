@@ -1,4 +1,4 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/firebase/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic)
 
 Superstatic is an enhanced static web server that was built to power.
 It has fantastic support for HTML5 pushState applications, clean URLs,
@@ -13,7 +13,7 @@ caching, and many other goodies.
   * [Middleware](#middleware)
   * [Server](#server)
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
+* [Changelog](https://github.com/firebase/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
 
 
@@ -52,7 +52,7 @@ $ superstatic public --port 8080 --host 127.0.0.1
 ## Configuration
 
 Superstatic reads special configuration from a JSON file (either `superstatic.json`
-or `divshot.json` by default, configurable with `-c`). This JSON file enables
+or `firebase.json` by default, configurable with `-c`). This JSON file enables
 enhanced static server functionality beyond simply serving files.
 
 **public:** by default, Superstatic will serve the current working directory (or the
@@ -177,12 +177,12 @@ app.listen(3000, function () {
 
 ### `superstatic([options])`
 
-Instantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
+Instantiates middleware. See an [example](https://github.com/firebase/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
   * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
-  * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.divshot.com/guides/environment-variables).
+  * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
   * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
   * `services` - An object containing various Superstatic services.
 
@@ -207,7 +207,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/divshot/superstatic/blob/master/lib/assets/not_found.html).
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
 
@@ -222,4 +222,4 @@ npm test
 
 ## Contributing
 
-We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/divshot/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.
+We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/firebase/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.

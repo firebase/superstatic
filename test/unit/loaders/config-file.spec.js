@@ -48,10 +48,10 @@ describe('loading config files', function () {
     done();
   });
 
-  it.skip('from package.json - divshot', function (done) {
+  it.skip('from package.json - firebase', function (done) {
 
     fs.outputFileSync('.tmp/package.json', JSON.stringify({
-      divshot: {
+      firebase: {
         key1: 'value1'
       }
     }));

@@ -1,7 +1,7 @@
 {
   "name": "superstatic",
-  "version": "3.0.0",
-  "description": "Superstatic: a static file server for fancy apps",
+  "version": "4.0.0",
+  "description": "A static file server for fancy apps",
   "main": "./lib",
   "scripts": {
     "test": "npm run lint && npm run test-unit && npm run test-integration",
@@ -12,22 +12,22 @@
     "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json",
     "watch": "mocha -w test/unit/** test/integration/**"
   },
-  "author": "Divshot",
+  "author": "Firebase (https://www.firebase.com/)",
   "license": "MIT",
   "bin": {
     "superstatic": "bin/server"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/divshot/superstatic.git"
+    "url": "https://github.com/firebase/superstatic.git"
   },
   "bugs": {
-    "url": "https://github.com/divshot/superstatic/issues"
+    "url": "https://github.com/firebase/superstatic/issues"
   },
   "keywords": [
     "static",
     "server",
-    "divshot",
+    "firebase",
     "hosting",
     "pushstate",
     "html5",
