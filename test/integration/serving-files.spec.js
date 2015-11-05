@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var _ = require('lodash');
@@ -16,7 +16,7 @@ var query = require('connect-query');
 
 var superstatic = require('../../');
 
-var options = function () {
+var options = function() {
   return {
     config: {
       public: '.tmp'
@@ -24,9 +24,9 @@ var options = function () {
   };
 };
 
-describe('serves', function () {
+describe('serves', function() {
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     fs.outputFileSync('.tmp/index.html', 'index', 'utf-8');
     fs.outputFileSync('.tmp/test.html', 'test', 'utf-8');
@@ -35,12 +35,12 @@ describe('serves', function () {
     fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf-8');
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('static file', function (done) {
+  it('static file', function(done) {
 
     var opts = options();
 
@@ -55,7 +55,7 @@ describe('serves', function () {
       .end(done);
   });
 
-  it('directory index file', function (done) {
+  it('directory index file', function(done) {
 
     var opts = options();
 
@@ -70,7 +70,7 @@ describe('serves', function () {
       .end(done);
   });
 
-  it('missing directory index', function (done) {
+  it('missing directory index', function(done) {
 
     var opts = options();
 
@@ -85,7 +85,7 @@ describe('serves', function () {
       .end(done);
   });
 
-  it('javascript file', function (done) {
+  it('javascript file', function(done) {
 
     var opts = options();
 
@@ -100,7 +100,7 @@ describe('serves', function () {
       .end(done);
   });
 
-  it('from custom current working directory', function (done) {
+  it('from custom current working directory', function(done) {
 
     var opts = options();
 
@@ -118,11 +118,11 @@ describe('serves', function () {
       .end(done);
   });
 
-  describe('redirects', function () {
+  describe('function()', function() {
 
     var opts = options();
 
-    opts.config.redirects = {
+    opts.config.function() = {
       '/from': '/to',
       '/fromCustom': {
         status: 302,
@@ -134,7 +134,7 @@ describe('serves', function () {
     var app = connect()
       .use(superstatic(opts));
 
-    it('301', function (done) {
+    it('301', function(done) {
 
       request(app)
         .get('/from')
@@ -143,7 +143,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('custom', function (done) {
+    it('custom', function(done) {
 
       request(app)
         .get('/fromCustom')
@@ -152,7 +152,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('external urls', function (done) {
+    it('external urls', function(done) {
 
       request(app)
         .get('/external')
@@ -162,9 +162,9 @@ describe('serves', function () {
     });
   });
 
-  describe('trailing slash', function () {
+  describe('trailing slash', function() {
 
-    xit('removes trailling slash for file', function (done) {
+    xit('removes trailling slash for file', function(done) {
 
       var app = connect()
         .use(superstatic(options()));
@@ -176,7 +176,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('add trailing slash with a directory index file', function (done) {
+    it('add trailing slash with a directory index file', function(done) {
 
       var app = connect()
         .use(superstatic(options()));
@@ -189,9 +189,9 @@ describe('serves', function () {
     });
   });
 
-  describe('basic auth', function (done) {
+  describe('basic auth', function(done) {
 
-    it('protects', function (done) {
+    it('protects', function(done) {
 
       var opts = options();
 
@@ -208,9 +208,9 @@ describe('serves', function () {
     });
   });
 
-  describe('custom headers', function () {
+  describe('custom headers', function() {
 
-    it('with globs', function (done) {
+    it('with globs', function(done) {
 
       var opts = options();
 
@@ -229,7 +229,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('exact', function (done) {
+    it('exact', function(done) {
 
       var opts = options();
 
@@ -249,9 +249,9 @@ describe('serves', function () {
     });
   });
 
-  xdescribe('environment variables', function () {
+  xdescribe('environment variables', function() {
 
-    it('json', function (done) {
+    it('json', function(done) {
 
       var opts = options();
 
@@ -269,7 +269,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('js', function (done) {
+    it('js', function(done) {
 
       var opts = options();
 
@@ -287,7 +287,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('defaults to .env.json', function (done) {
+    it('defaults to .env.json', function(done) {
 
       fs.outputFileSync('.env.json', '{"key":"value"}');
 
@@ -297,14 +297,14 @@ describe('serves', function () {
       request(app)
         .get('/__/env.json')
         .expect({key: 'value'})
-        .end(function (err) {
+        .end(function(err) {
 
           fs.remove('.env.json');
           done(err);
         });
     });
 
-    it('serves env file, overriding static routing', function (done) {
+    it('serves env file, overriding static routing', function(done) {
 
       var opts = options();
 
@@ -328,9 +328,9 @@ describe('serves', function () {
     });
   });
 
-  describe('custom routes', function () {
+  describe('custom routes', function() {
 
-    it('serves file', function (done) {
+    it('serves file', function(done) {
 
       var opts = options();
 
@@ -350,7 +350,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('serves file from custom route when clean urls are on and route matches an html as a clean url', function (done) {
+    it('serves file from custom route when clean urls are on and route matches an html as a clean url', function(done) {
 
       var opts = options();
 
@@ -371,7 +371,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('serves static file when no matching route', function (done) {
+    it('serves static file when no matching route', function(done) {
 
       var opts = options();
 
@@ -390,7 +390,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('serves with negation', function (done) {
+    it('serves with negation', function(done) {
 
       var opts = options();
 
@@ -408,7 +408,7 @@ describe('serves', function () {
         .end(done);
     });
 
-    it('serves file if url matches exact file path', function (done) {
+    it('serves file if url matches exact file path', function(done) {
 
       var opts = options();
 

@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var headers = require('../../../lib/middleware/set-headers');
 var connect = require('connect');
@@ -24,7 +24,7 @@ var defaultHeaders = {
 
 describe('cors middleware', function() {
 
-  it('serves custom content types', function (done) {
+  it('serves custom content types', function(done) {
 
     var app = connect()
       .use(headers(defaultHeaders))
@@ -37,7 +37,7 @@ describe('cors middleware', function() {
       .end(done);
   });
 
-  it('serves custom access control headers', function (done) {
+  it('serves custom access control headers', function(done) {
 
     var app = connect()
       .use(headers(defaultHeaders))
@@ -50,7 +50,7 @@ describe('cors middleware', function() {
       .end(done);
   });
 
-  it('uses routing rules', function (done) {
+  it('uses routing rules', function(done) {
 
     var app = connect()
       .use(headers(defaultHeaders))
@@ -63,7 +63,7 @@ describe('cors middleware', function() {
       .end(done);
   });
 
-  it('uses glob negation to set headers' , function (done) {
+  it('uses glob negation to set headers' , function(done) {
 
     var app = connect()
       .use(headers({

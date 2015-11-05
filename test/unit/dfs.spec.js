@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var join = require('join-path');
@@ -15,11 +15,11 @@ var etag = require('etag');
 
 var dfs = require('../../lib/dfs');
 
-describe('default provider', function () {
+describe('default provider', function() {
 
   var provider;
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     fs.outputFileSync('.tmp/index.html', 'index file content', 'utf8');
     fs.outputFileSync('.tmp/dir/index.html', 'dir index file content', 'utf8');
@@ -29,14 +29,14 @@ describe('default provider', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('exists()', function (done) {
+  it('exists()', function(done) {
 
-    provider.exists('/index.html', function (err, exists) {
+    provider.exists('/index.html', function(err, exists) {
 
       expect(exists).to.equal(true);
       done();
@@ -44,25 +44,25 @@ describe('default provider', function () {
   });
 
 
-  it('asDirectoryIndex()', function (done) {
+  it('asDirectoryIndex()', function(done) {
 
     expect(provider.asDirectoryIndex('/dir')).to.equal('/dir/index.html');
     done();
   });
 
-  it('createReadStream()', function (done) {
+  it('createReadStream()', function(done) {
 
     provider.createReadStream('/index.html')
-      .pipe(concat(function (data) {
+      .pipe(concat(function(data) {
 
         expect(data.toString()).to.equal('index file content');
         done();
       }));
   });
 
-  it('stat()', function (done) {
+  it('stat()', function(done) {
 
-    provider.stat('/index.html', function (err, stats) {
+    provider.stat('/index.html', function(err, stats) {
 
       expect(stats.isDirectory()).to.equal(false);
       expect(stats.isFile()).to.equal(true);
@@ -70,7 +70,7 @@ describe('default provider', function () {
     });
   });
 
-  it('custom current working directory', function (done) {
+  it('custom current working directory', function(done) {
 
     var provider = dfs({
       cwd: join(process.cwd(), '.tmp'),
@@ -78,14 +78,14 @@ describe('default provider', function () {
     });
 
     provider.createReadStream('/index.html')
-      .pipe(concat(function (data) {
+      .pipe(concat(function(data) {
 
         expect(data.toString()).to.equal('dir index file content');
         done();
       }));
   });
 
-  it('generateEtag() with content', function (done) {
+  it('generateEtag() with content', function(done) {
 
     var etag = provider.generateEtag('testing');
 
@@ -94,7 +94,7 @@ describe('default provider', function () {
     done();
   });
 
-  it('generateEtag() with fs.Stats', function (done) {
+  it('generateEtag() with fs.Stats', function(done) {
 
     var stat = fs.statSync('.tmp/index.html');
     var providerTag = provider.generateEtag(stat);

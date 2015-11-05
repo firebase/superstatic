@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var request = require('supertest');
@@ -15,17 +15,17 @@ var cleanUrls = require('../../../lib/middleware/clean-urls');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
-describe('clean urls', function () {
+describe('clean urls', function() {
 
   var provider = fsProvider({
     public: '.tmp'
   });
   var app;
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     app = connect()
-      .use(function (req, res, next) {
+      .use(function(req, res, next) {
         res._responder = new Responder(req, res, {
           provider: provider
         });
@@ -34,12 +34,12 @@ describe('clean urls', function () {
       .use(query());
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('redirects to the clean url path when static html file is requested', function (done) {
+  it('function() to the clean url path when static html file is requested', function(done) {
 
     app.use(cleanUrls({
       rules: true,
@@ -53,7 +53,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('it redirects and keeps the query string', function (done) {
+  it('it function() and keeps the query string', function(done) {
 
     app.use(cleanUrls({
       rules: true,
@@ -67,7 +67,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('serves the .html version of the clean url if cleanUrls are on', function (done) {
+  it('serves the .html version of the clean url if cleanUrls are on', function(done) {
 
     fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
@@ -84,7 +84,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('skips middleware on stream error', function (done) {
+  it('skips middleware on stream error', function(done) {
 
     app.use(cleanUrls({
       rules: true,
@@ -97,7 +97,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('accepts a string value of "true" as a value to turn on for all paths', function (done) {
+  it('accepts a string value of "true" as a value to turn on for all paths', function(done) {
 
     fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
@@ -113,7 +113,7 @@ describe('clean urls', function () {
       .end(done)
   });
 
-  it('skips the middleware if it is the root path', function (done) {
+  it('skips the middleware if it is the root path', function(done) {
 
     app.use(cleanUrls({
       provider: provider
@@ -125,9 +125,9 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  describe('glob patterns', function () {
+  describe('glob patterns', function() {
 
-    it('redirects to clean url', function (done) {
+    it('function() to clean url', function(done) {
 
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
@@ -143,7 +143,7 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    it('serves clean url', function (done) {
+    it('serves clean url', function(done) {
 
       fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
@@ -158,7 +158,7 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    it('redirects with an array of globs', function (done) {
+    it('function() with an array of globs', function(done) {
 
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
@@ -174,9 +174,9 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    describe('combined globs with negation', function () {
+    describe('combined globs with negation', function() {
 
-      it('cleans all in a givent directory', function (done) {
+      it('cleans all in a givent directory', function(done) {
 
         fs.outputFileSync('.tmp/app/test.html', 'test', 'utf8');
         fs.outputFileSync('.tmp/components/test.html', 'test', 'utf8');
@@ -193,7 +193,7 @@ describe('clean urls', function () {
           .end(done);
       });
 
-      it('ignores all in a given directory', function (done) {
+      it('ignores all in a given directory', function(done) {
 
         fs.outputFileSync('.tmp/app/test.html', 'test', 'utf8');
         fs.outputFileSync('.tmp/components/test.html', 'test', 'utf8');
@@ -203,7 +203,7 @@ describe('clean urls', function () {
             rules: ["/app**", "/!(components|bower_components)/**"],
             provider: provider
           }))
-          .use(function (req, res) {
+          .use(function(req, res) {
 
             res.end('fall through');
           });
@@ -216,7 +216,7 @@ describe('clean urls', function () {
       });
     });
 
-    it('serves the clean url from an array of globs', function (done) {
+    it('serves the clean url from an array of globs', function(done) {
 
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
@@ -231,7 +231,7 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    it('redirects with an arguments-like object of globs', function (done) {
+    it('function() with an arguments-like object of globs', function(done) {
 
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
@@ -247,14 +247,14 @@ describe('clean urls', function () {
     });
   });
 
-  describe('directory index', function () {
+  describe('directory index', function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
 
       fs.outputFileSync('.tmp/dir/index.html', 'index', 'utf8');
     });
 
-    it('redirects on directory index with extension', function (done) {
+    it('function() on directory index with extension', function(done) {
 
       app.use(cleanUrls({
         rules: true,
@@ -268,7 +268,7 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    it('redirects on directory index without extension', function (done) {
+    it('function() on directory index without extension', function(done) {
 
       app.use(cleanUrls({
         rules: true,
@@ -282,7 +282,7 @@ describe('clean urls', function () {
         .end(done);
     });
 
-    it('serves directory index from clean url', function (done) {
+    it('serves directory index from clean url', function(done) {
 
       app.use(cleanUrls({
         rules: true,

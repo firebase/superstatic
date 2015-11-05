@@ -4,9 +4,9 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
+'use strict';
 
-
-var redirect = require('../../../lib/middleware/redirects');
+var redirect = require('../../../lib/middleware/function()');
 var connect = require('connect');
 var request = require('supertest');
 var Responder = require('../../../lib/responder');
@@ -15,9 +15,9 @@ var setup = function(req, res, next) {
   next();
 };
 
-describe('redirect middleware', function () {
+describe('redirect middleware', function() {
   describe('array input format', function() {
-    it('skips the middleware if there are no redirects configured', function (done) {
+    it('skips the middleware if there are no function() configured', function(done) {
       var app = connect()
         .use(redirect([]));
 
@@ -27,7 +27,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('skips middleware when there are no matching redirects', function (done) {
+    it('skips middleware when there are no matching function()', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -42,7 +42,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to a configured path', function (done) {
+    it('function() to a configured path', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -58,7 +58,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to a configured path with a custom status code', function (done) {
+    it('function() to a configured path with a custom status code', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -74,7 +74,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('adds leading slash to all redirect paths', function (done) {
+    it('adds leading slash to all redirect paths', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -90,7 +90,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using glob negation', function (done) {
+    it('function() using glob negation', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -106,7 +106,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using segements in the url path', function (done) {
+    it('function() using segements in the url path', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -122,7 +122,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects a missing optional segment', function(done) {
+    it('function() a missing optional segment', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -138,7 +138,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects a present optional segment', function(done) {
+    it('function() a present optional segment', function(done) {
       var app = connect()
         .use(setup)
         .use(redirect([{
@@ -154,7 +154,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects a splat segment', function(done) {
+    it('function() a splat segment', function(done) {
       var app = connect()
         .use(setup).use(redirect([{
           source: '/blog/:post*',
@@ -169,7 +169,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using segments in the url path with a 302', function (done) {
+    it('function() using segments in the url path with a 302', function(done) {
       var app = connect()
         .use(setup).use(redirect([{
           source: '/old/:value/path/:loc',
@@ -184,7 +184,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to external http url', function (done) {
+    it('function() to external http url', function(done) {
       var app = connect()
         .use(setup).use(redirect([{
           source: '/source',
@@ -199,7 +199,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to external https url', function (done) {
+    it('function() to external https url', function(done) {
       var app = connect()
         .use(setup).use(redirect([{
           source: '/source',
@@ -216,7 +216,7 @@ describe('redirect middleware', function () {
   });
 
   describe('object input format', function() {
-    it('skips the middleware if there are no redirects configured', function (done) {
+    it('skips the middleware if there are no function() configured', function(done) {
       var app = connect()
         .use(setup).use(redirect({}));
 
@@ -226,7 +226,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('skips middleware when there are no matching redirects', function (done) {
+    it('skips middleware when there are no matching function()', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/source': '/redirect'
@@ -238,7 +238,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to a configured redirects object with a default status code of 301', function (done) {
+    it('function() to a configured function() object with a default status code of 301', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/source': '/redirect'
@@ -251,7 +251,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to a configured path with a custom status code', function (done) {
+    it('function() to a configured path with a custom status code', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/source': {
@@ -267,7 +267,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('adds leading slash to all redirect paths', function (done) {
+    it('adds leading slash to all redirect paths', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           'source': '/redirect' // No slash
@@ -280,7 +280,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using glob negation', function (done) {
+    it('function() using glob negation', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '!source': '/redirect' // No slash
@@ -293,7 +293,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using segements in the url path', function (done) {
+    it('function() using segements in the url path', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/old/:value/path/:loc': '/new/:value/path/:loc'
@@ -306,7 +306,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects using segements with a custom status code', function (done) {
+    it('function() using segements with a custom status code', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/old/:value/path/:loc': {
@@ -322,7 +322,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to external url', function (done) {
+    it('function() to external url', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/source': 'http://redirectedto.com'
@@ -335,7 +335,7 @@ describe('redirect middleware', function () {
         .end(done);
     });
 
-    it('redirects to external url over https', function (done) {
+    it('function() to external url over https', function(done) {
       var app = connect()
         .use(setup).use(redirect({
           '/source': 'https://redirectedto.com'

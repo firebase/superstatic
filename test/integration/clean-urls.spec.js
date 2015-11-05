@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var _ = require('lodash');
@@ -15,7 +15,7 @@ var query = require('connect-query');
 
 var superstatic = require('../../');
 
-var options = function () {
+var options = function() {
   return {
     config: {
       public: '.tmp'
@@ -23,9 +23,9 @@ var options = function () {
   };
 };
 
-describe('clean urls', function () {
+describe('clean urls', function() {
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
     fs.outputFileSync('.tmp/test.html', 'test', 'utf8');
@@ -34,12 +34,12 @@ describe('clean urls', function () {
     fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf8');
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('not configured', function (done) {
+  it('not configured', function(done) {
 
     var opts = options();
 
@@ -52,7 +52,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('redirects html file', function (done) {
+  it('function() html file', function(done) {
 
     var opts = options();
 
@@ -68,7 +68,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('serves html file', function (done) {
+  it('serves html file', function(done) {
 
     var opts = options();
 
@@ -84,7 +84,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('redirects using globs', function (done) {
+  it('function() using globs', function(done) {
 
     var opts = options();
 
@@ -100,7 +100,7 @@ describe('clean urls', function () {
       .end(done);
   });
 
-  it('serves html file using globs', function (done) {
+  it('serves html file using globs', function(done) {
 
     var opts = options();
 

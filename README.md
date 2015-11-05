@@ -96,28 +96,28 @@ apps. An example:
 }
 ```
 
-**redirects:** you can specify certain url paths to be redirected to another url by supplying configuration to the `redirects` key. Path matching is similar to using custom routes. Redirects use the `301` HTTP status code by default, but this can be overridden by configuration.
+**function():** you can specify certain url paths to be redirected to another url by supplying configuration to the `function()` key. Path matching is similar to using custom routes. function() use the `301` HTTP status code by default, but this can be overridden by configuration.
 
 ```json
 {
-  "redirects": [
+  "function()": [
     {"source":"/some/old/path", "destination":"/some/new/path"},
     {"source":"/firebase/*", "destination":"https://www.firebase.com", "type": 302}
   ]
 }
 ```
 
-Route segments are also supported in the redirects configuration. Segmented redirects also support custom status codes (see above):
+Route segments are also supported in the function() configuration. Segmented function() also support custom status codes (see above):
 
 ```json
 {
-  "redirects": [
+  "function()": [
     {"source":"/old/:segment/path", "destination":"/new/path/:segment"}
   ]
 }
 ```
 
-In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segment`
+In this example, `/old/custom-segment/path` function() to `/new/path/custom-segment`
 
 **headers:** Superstatic allows you to set the response headers for certain paths as well:
 
@@ -169,7 +169,7 @@ var connect = require('connect');
 var app = connect()
 	.use(superstatic(/* options */));
 
-app.listen(3000, function () {
+app.listen(3000, function() {
 
 });
 
@@ -193,7 +193,7 @@ var superstatic = require('superstatic').server;
 
 var app = superstatic(/* options */);
 
-var server = app.listen(function () {
+var server = app.listen(function() {
 
 });
 ```

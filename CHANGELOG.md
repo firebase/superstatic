@@ -33,7 +33,7 @@
 * **[#134](https://github.com/firebase/superstatic/issues/134)** - PERF - lodash 3.x.x
 * **[#135](https://github.com/firebase/superstatic/issues/135)** - Export Server as a value not a path
 * **[#141](https://github.com/firebase/superstatic/issues/141)** - Test on Node 0.12 and io.js
-* **[#146](https://github.com/firebase/superstatic/issues/146)** - FIXED - External Redirects
+* **[#146](https://github.com/firebase/superstatic/issues/146)** - FIXED - External function()
 * **[#147](https://github.com/firebase/superstatic/issues/147)** - FIXED - Routes are not being used/get overwritten
 * **[#150](https://github.com/firebase/superstatic/issues/150)** - NEW - Ensure order of routes
 

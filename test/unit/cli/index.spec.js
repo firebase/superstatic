@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var _ = require('lodash');
 var fs = require('fs-extra');
@@ -15,7 +15,7 @@ var stdMocks = require('std-mocks');
 var Cli = require('../../../lib/cli');
 var server;
 
-describe('cli', function () {
+describe('cli', function() {
 
   var cli;
 
@@ -23,7 +23,7 @@ describe('cli', function () {
     public: './'
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     cli = Cli();
 
@@ -33,19 +33,19 @@ describe('cli', function () {
     fs.outputFileSync('index.html', 'index', 'utf-8');
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('superstatic.json');
     fs.removeSync('index.html');
     fs.removeSync('.tmp');
   });
 
-  it('starts a server', function (done) {
-    cli.run(['', ''], function (err) {
+  it('starts a server', function(done) {
+    cli.run(['', ''], function(err) {
       server = cli.get('server');
       var port = cli.get('port');
 
-      request('http://localhost:' + port, function (err, response, body) {
+      request('http://localhost:' + port, function(err, response, body) {
         expect(err).to.equal(null);
         expect(response.statusCode).to.equal(200);
         expect(body).to.equal('index');
@@ -54,14 +54,14 @@ describe('cli', function () {
     });
   });
 
-  it('starts a server with a given directory', function (done) {
+  it('starts a server with a given directory', function(done) {
 
-    cli.run(['', '', '.tmp'], function (err) {
+    cli.run(['', '', '.tmp'], function(err) {
 
       var server = cli.get('server');
       var port = cli.get('port');
 
-      request('http://localhost:' + port, function (err, response, body) {
+      request('http://localhost:' + port, function(err, response, body) {
 
         expect(response.statusCode).to.equal(200);
         expect(body).to.equal('.tmp/index.html');
@@ -70,19 +70,19 @@ describe('cli', function () {
     });
   });
 
-  it('loads firebase.json config file', function (done) {
+  it('loads firebase.json config file', function(done) {
 
     fs.unlinkSync('superstatic.json');
     fs.writeFileSync('firebase.json', JSON.stringify({
       public: '.tmp'
     }), 'utf-8');
 
-    cli.run(['', ''], function (err) {
+    cli.run(['', ''], function(err) {
 
       var server = cli.get('server');
       var port = cli.get('port');
 
-      request('http://localhost:' + port, function (err, response, body) {
+      request('http://localhost:' + port, function(err, response, body) {
 
         expect(body).to.equal('.tmp/index.html');
 
@@ -92,16 +92,16 @@ describe('cli', function () {
     });
   });
 
-  describe('port', function () {
+  describe('port', function() {
 
-    it('--port', function (done) {
+    it('--port', function(done) {
 
-      cli.run(['', '', '--port', '4321'], function (err) {
+      cli.run(['', '', '--port', '4321'], function(err) {
 
         var server = cli.get('server');
         var port = cli.get('port');
 
-        request('http://localhost:' + port, function (err, response, body) {
+        request('http://localhost:' + port, function(err, response, body) {
 
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
@@ -110,14 +110,14 @@ describe('cli', function () {
       });
     });
 
-    it('-p', function (done) {
+    it('-p', function(done) {
 
-      cli.run(['', '', '-p', '4321'], function (err) {
+      cli.run(['', '', '-p', '4321'], function(err) {
 
         var server = cli.get('server');
         var port = cli.get('port');
 
-        request('http://localhost:' + port, function (err, response, body) {
+        request('http://localhost:' + port, function(err, response, body) {
 
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
@@ -127,11 +127,11 @@ describe('cli', function () {
     });
   });
 
-  describe('starts server on host', function () {
+  describe('starts server on host', function() {
 
-    it('--host', function (done) {
+    it('--host', function(done) {
 
-      cli.run(['', '', '--host', '0.0.0.0'], function (err) {
+      cli.run(['', '', '--host', '0.0.0.0'], function(err) {
 
         var server = cli.get('server');
         var host = cli.get('host');
@@ -141,9 +141,9 @@ describe('cli', function () {
       });
     });
 
-    it('--hostname', function (done) {
+    it('--hostname', function(done) {
 
-      cli.run(['', '', '--hostname', '0.0.0.0'], function (err) {
+      cli.run(['', '', '--hostname', '0.0.0.0'], function(err) {
 
         var server = cli.get('server');
         var host = cli.get('host');
@@ -154,12 +154,12 @@ describe('cli', function () {
     });
   });
 
-  it('enables log output', function (done) {
+  it('enables log output', function(done) {
 
-    cli.run(['', '', '--debug'], function (err) {
+    cli.run(['', '', '--debug'], function(err) {
 
       var app = cli.get('app');
-      var hasLogger = _.find(app.stack, function (layer) {
+      var hasLogger = _.find(app.stack, function(layer) {
 
         return layer.handle && layer.handle.name === 'logger';
       });
@@ -170,9 +170,9 @@ describe('cli', function () {
     });
   });
 
-  it('enables gzipping', function (done) {
+  it('enables gzipping', function(done) {
 
-    cli.run(['', '', '--gzip'], function (err) {
+    cli.run(['', '', '--gzip'], function(err) {
 
       var app = cli.get('app');
 
@@ -181,9 +181,9 @@ describe('cli', function () {
     });
   });
 
-  describe('uses custom config', function () {
+  describe('uses custom config', function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
 
       fs.writeFileSync('custom.json', JSON.stringify({
         public: './',
@@ -194,15 +194,15 @@ describe('cli', function () {
       }, null, 2), 'utf-8');
     });
 
-    afterEach(function () {
+    afterEach(function() {
 
       fs.unlinkSync('custom.json');
     });
 
-    it('--config', function (done) {
+    it('--config', function(done) {
 
-      cli.run(['', '', '--config', 'custom.json'], function () {
-        request('http://localhost:3474/anything.html', function (err, response, body) {
+      cli.run(['', '', '--config', 'custom.json'], function() {
+        request('http://localhost:3474/anything.html', function(err, response, body) {
           expect(body).to.equal('index');
           expect(cli.get('config')).to.equal('custom.json');
 
@@ -211,11 +211,11 @@ describe('cli', function () {
       });
     });
 
-    it('-c', function (done) {
+    it('-c', function(done) {
 
-      cli.run(['', '', '-c', 'custom.json'], function () {
+      cli.run(['', '', '-c', 'custom.json'], function() {
 
-        request('http://localhost:3474/anything.html', function (err, response, body) {
+        request('http://localhost:3474/anything.html', function(err, response, body) {
 
           expect(body).to.equal('index');
           expect(cli.get('config')).to.equal('custom.json');
@@ -225,16 +225,16 @@ describe('cli', function () {
       });
     });
 
-    it('uses custom config object', function (done) {
+    it('uses custom config object', function(done) {
 
       cli.run(['', '', '--config', JSON.stringify({
         rewrites: [{
           source: '**',
           destination: '/index.html'
         }]
-      })], function (err) {
+      })], function(err) {
 
-        request('http://localhost:3474/anything.html', function (err, response, body) {
+        request('http://localhost:3474/anything.html', function(err, response, body) {
 
           expect(body).to.equal('index');
 
@@ -246,11 +246,11 @@ describe('cli', function () {
 
   // NOTE: can't test flags that exit
   // This should be fixed in Nash 2.0
-  it.skip('version flag', function (done) {
+  it.skip('version flag', function(done) {
 
     // stdMocks.use();
 
-    cli.run(['', '', '-v'], function (err) {
+    cli.run(['', '', '-v'], function(err) {
 
       // stdMocks.restore();
       // var output = stdMocks.flush();
@@ -261,13 +261,13 @@ describe('cli', function () {
 
   it('restarts the server if the config file is changed');
 
-  // describe.skip('installing services', function () {
+  // describe.skip('installing services', function() {
 
   //   it('locally');
   //   it('globally');
   // });
 
-  describe.skip('services', function () {
+  describe.skip('services', function() {
 
 
   });

@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var request = require('supertest');
@@ -15,19 +15,19 @@ var staticRouter = require('../../../lib/middleware/static-router');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
-describe('static router', function () {
+describe('static router', function() {
 
   var provider = fsProvider({
     public: '.tmp'
   });
   var app;
 
-  beforeEach(function () {
+  beforeEach(function() {
 
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
 
     app = connect()
-      .use(function (req, res, next) {
+      .use(function(req, res, next) {
 
         res._responder = new Responder(req, res, {
           provider: provider
@@ -36,12 +36,12 @@ describe('static router', function () {
       });
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('serves a route', function (done) {
+  it('serves a route', function(done) {
 
     app.use(staticRouter({
       rewrites: {
@@ -57,7 +57,7 @@ describe('static router', function () {
       .end(done);
   });
 
-  it('serves a route with a glob', function (done) {
+  it('serves a route with a glob', function(done) {
 
     app.use(staticRouter({
       rewrites: {
@@ -73,7 +73,7 @@ describe('static router', function () {
       .end(done);
   });
 
-  it('serves a negated route', function (done) {
+  it('serves a negated route', function(done) {
 
     app.use(staticRouter({
       rewrites: {
@@ -89,7 +89,7 @@ describe('static router', function () {
       .end(done);
   });
 
-  it('skips if no match is found', function (done) {
+  it('skips if no match is found', function(done) {
 
     app.use(staticRouter({
       rewrites: {
@@ -103,7 +103,7 @@ describe('static router', function () {
       .end(done);
   });
 
-  it('ensures matching file extension', function (done) {
+  it('ensures matching file extension', function(done) {
 
     app.use(staticRouter({
       rewrites: {
@@ -117,9 +117,9 @@ describe('static router', function () {
       .end(done);
   });
 
-  describe('uses first match', function () {
+  describe('uses first match', function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
 
       fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
 
@@ -134,7 +134,7 @@ describe('static router', function () {
       }));
     });
 
-    it('first route with 1 depth route', function (done) {
+    it('first route with 1 depth route', function(done) {
 
       request(app)
         .get('/admin/anything')
@@ -143,7 +143,7 @@ describe('static router', function () {
         .end(done);
     });
 
-    it('first route with 2 depth route', function (done) {
+    it('first route with 2 depth route', function(done) {
 
       request(app)
         .get('/admin/anything/else')
@@ -152,7 +152,7 @@ describe('static router', function () {
         .end(done);
     });
 
-    it('second route', function (done) {
+    it('second route', function(done) {
 
       request(app)
         .get('/anything')

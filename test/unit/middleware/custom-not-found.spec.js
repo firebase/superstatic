@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var request = require('supertest');
@@ -16,29 +16,29 @@ var customNotFound = require('../../../lib/middleware/custom-not-found');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
-describe('custom not found', function () {
+describe('custom not found', function() {
 
   var provider = fsProvider({
     public: '.tmp'
   });
   var app;
 
-  beforeEach(function () {
+  beforeEach(function() {
     fs.outputFileSync('.tmp/not-found.html', 'custom not found file', 'utf8');
 
     app = connect()
-      .use(function (req, res, next) {
+      .use(function(req, res, next) {
         res._responder = new Responder(req, res, {provider: provider});
         next();
       });
   });
 
-  afterEach(function () {
+  afterEach(function() {
 
     fs.removeSync('.tmp');
   });
 
-  it('serves the file', function (done) {
+  it('serves the file', function(done) {
 
     app
       .use(customNotFound({
@@ -52,13 +52,13 @@ describe('custom not found', function () {
       .end(done);
   });
 
-  it('skips middleware on file serve error', function (done) {
+  it('skips middleware on file serve error', function(done) {
 
     app
       .use(customNotFound({
           errorPage: '/does-not-exist.html'
       }))
-      .use(function (req, res, next) {
+      .use(function(req, res, next) {
 
         res.end('does not exist');
       });

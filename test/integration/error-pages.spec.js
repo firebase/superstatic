@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var fs = require('fs-extra');
 var _ = require('lodash');
@@ -15,7 +15,7 @@ var query = require('connect-query');
 
 var superstatic = require('../../');
 
-var options = function () {
+var options = function() {
   return {
     fallthrough: false,
     config: {
@@ -24,18 +24,18 @@ var options = function () {
   };
 };
 
-describe('error page', function () {
+describe('error page', function() {
 
-  beforeEach(function () {
+  beforeEach(function() {
     fs.outputFileSync('.tmp/default-error.html', 'default error', 'utf8');
     fs.outputFileSync('.tmp/error.html', 'config error', 'utf8');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     fs.removeSync('.tmp');
   });
 
-  it('from 404.html', function (done) {
+  it('from 404.html', function(done) {
     fs.outputFileSync('.tmp/404.html', '404.html error', 'utf8');
     var opts = options();
 
@@ -50,7 +50,7 @@ describe('error page', function () {
       .end(done);
   });
 
-  it('from custom error page', function (done) {
+  it('from custom error page', function(done) {
     var opts = options();
     opts.config.errorPage = '/error.html';
 
@@ -65,7 +65,7 @@ describe('error page', function () {
       .end(done);
   });
 
-  it('falls back to default when configured error page does not exist', function (done) {
+  it('falls back to default when configured error page does not exist', function(done) {
 
     var opts = options();
 

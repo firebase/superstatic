@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var superstatic = require('../../');
 var connect = require('connect');
@@ -23,7 +23,7 @@ var spec = {
 var app = connect()
   .use(superstatic(spec));
 
-app.listen(3474, function (err) {
+app.listen(3474, function(err) {
 
   console.log('Superstatic now serving on port 3474 ...');
 });

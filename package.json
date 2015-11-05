@@ -7,7 +7,7 @@
     "test": "npm run lint && npm run test-unit && npm run test-integration",
     "test-unit": "mocha test/unit/**",
     "test-integration": "mocha test/integration/**",
-    "lint": "jshint --reporter node_modules/jshint-stylish lib",
+    "lint": "eslint .",
     "outdated": "npm outdated --depth 0",
     "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json",
     "watch": "mocha -w test/unit/** test/integration/**"
@@ -93,8 +93,7 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "concat-stream": "^1.4.7",
-    "jshint": "^2.5.11",
-    "jshint-stylish": "^2.0.0",
+    "istanbul": "^0.4.0",
     "mocha": "^2.0.1",
     "nsp": "^1.0.0",
     "request": "^2.51.0",

@@ -4,14 +4,14 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var connect = require('connect');
 var request = require('supertest');
 
 var superstatic = require('../../');
 
-var options = function () {
+var options = function() {
   return {
     config: {
       public: '.tmp'
@@ -19,9 +19,9 @@ var options = function () {
   };
 };
 
-describe('caching', function () {
+describe('caching', function() {
 
-  it('default cache control', function (done) {
+  it('default cache control', function(done) {
 
     var opts = options();
 
@@ -39,7 +39,7 @@ describe('caching', function () {
       .end(done);
   });
 
-  it('custom cache control', function (done) {
+  it('custom cache control', function(done) {
 
     var opts = options();
 

@@ -6,5 +6,3 @@
  */
 
  'use strict';
-
- 

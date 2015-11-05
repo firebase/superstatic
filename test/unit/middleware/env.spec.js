@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-
+'use strict';
 
 var request = require('supertest');
 var connect = require('connect');
@@ -14,14 +14,14 @@ var Router = require('router');
 var env = require('../../../lib/middleware/env');
 var Responder = require('../../../lib/responder');
 
-describe('env', function () {
+describe('env', function() {
 
   var app;
   var router;
 
-  beforeEach(function () {
+  beforeEach(function() {
     app = connect()
-      .use(function (req, res, next) {
+      .use(function(req, res, next) {
 
         res._responder = new Responder(req, res, {
           provider: {}
@@ -30,7 +30,7 @@ describe('env', function () {
       });
   });
 
-  it('serves json', function (done) {
+  it('serves json', function(done) {
     app.use(env({
       data: {
         key: 'value'
@@ -47,7 +47,7 @@ describe('env', function () {
       .end(done);
   });
 
-  it('serves javascript', function (done) {
+  it('serves javascript', function(done) {
     app.use(env({
       data: {
         key: 'value'
