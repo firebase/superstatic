@@ -29,37 +29,10 @@ describe('loading config files', function () {
   });
 
   it('filename', function (done) {
-
     var data = loadConfigFile('.tmp/file.json');
 
     expect(data).to.eql({
       key: 'value'
-    });
-    done();
-  });
-
-  it.skip('from package.json - superstatic', function (done) {
-
-    var data = loadConfigFile('.tmp/package.json');
-
-    expect(data).to.eql({
-      key: 'value'
-    });
-    done();
-  });
-
-  it.skip('from package.json - firebase', function (done) {
-
-    fs.outputFileSync('.tmp/package.json', JSON.stringify({
-      firebase: {
-        key1: 'value1'
-      }
-    }));
-
-    var data = loadConfigFile('.tmp/package.json');
-
-    expect(data).to.eql({
-      key1: 'value1'
     });
     done();
   });
@@ -96,37 +69,37 @@ describe('loading config files', function () {
   describe('extends the file config with the object passed', function () {
 
     it('superstatic.json', function (done) {
-
-      fs.outputFileSync('superstatic.json', '{"firebase": "superstatic", "root": "./"}', 'utf-8');
+      fs.outputFileSync('superstatic.json', '{"firebase": "superstatic", "public": "./"}', 'utf-8');
 
       var config = loadConfigFile({
         override: 'test',
-        root: 'app'
+        public: 'app'
       });
 
       expect(config).to.eql({
         firebase: 'superstatic',
         override: 'test',
-        root: 'app'
+        public: 'app'
       });
 
       fs.removeSync('superstatic.json');
       done();
     });
 
-    it('superstatic.json', function (done) {
-
-      fs.outputFileSync('firebase.json', '{"firebase": "example", "root": "./"}', 'utf-8');
+    it('firebase.json', function (done) {
+      fs.outputFileSync('firebase.json', '{"firebase": "example", "public": "./"}', 'utf-8');
 
       var config = loadConfigFile({
         override: 'test',
-        root: 'app'
+        public: 'app'
       });
+
+      console.log(config);
 
       expect(config).to.eql({
         firebase: 'example',
         override: 'test',
-        root: 'app'
+        public: 'app'
       });
 
       fs.removeSync('firebase.json');

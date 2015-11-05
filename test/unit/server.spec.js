@@ -47,7 +47,7 @@ describe.skip('server', function () {
     
     var app = server({
       config: {
-        root: '.tmp'
+        public: '.tmp'
       }
     });
     
@@ -125,7 +125,7 @@ describe.skip('server', function () {
     var app = server({
       env: '.tmp/.env.json',
       config: {
-        root: '.tmp'
+        public: '.tmp'
       }
     });
     
@@ -144,7 +144,7 @@ describe.skip('server', function () {
         type: 'object'
       },
       config: {
-        root: '.tmp'
+        public: '.tmp'
       }
     });
     
@@ -176,7 +176,7 @@ describe.skip('server', function () {
     var app = server({
       errorPage: '.tmp/error.html',
       config: {
-        root: '.tmp'
+        public: '.tmp'
       }
     });
     

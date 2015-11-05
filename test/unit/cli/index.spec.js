@@ -20,7 +20,6 @@ describe('cli', function () {
   var cli;
 
   var config = {
-    firebase: 'app',
     public: './'
   };
 
@@ -43,7 +42,6 @@ describe('cli', function () {
 
   it('starts a server', function (done) {
     cli.run(['', ''], function (err) {
-
       server = cli.get('server');
       var port = cli.get('port');
 
@@ -177,13 +175,8 @@ describe('cli', function () {
     cli.run(['', '', '--gzip'], function (err) {
 
       var app = cli.get('app');
-      var hasCompression = _.find(app.stack, function (layer) {
-
-        return layer.handle && layer.handle.name === 'compression';
-      });
 
       expect(cli.get('gzip')).to.equal(true);
-      expect(!!hasCompression).to.equal(true);
       cli.get('server').close(done);
     });
   });

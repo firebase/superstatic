@@ -25,7 +25,7 @@ describe('default provider', function () {
     fs.outputFileSync('.tmp/dir/index.html', 'dir index file content', 'utf8');
 
     provider = dfs({
-      root: '.tmp'
+      public: '.tmp'
     });
   });
 
@@ -74,7 +74,7 @@ describe('default provider', function () {
 
     var provider = dfs({
       cwd: join(process.cwd(), '.tmp'),
-      root: './dir'
+      public: './dir'
     });
 
     provider.createReadStream('/index.html')
