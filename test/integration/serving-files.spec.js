@@ -312,9 +312,10 @@ describe('serves', function () {
         key: 'value'
       };
 
-      opts.config.routes = {
-        '**': 'index.html'
-      };
+      opts.config.rewrites = [{
+        source: '**',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));
@@ -333,9 +334,10 @@ describe('serves', function () {
 
       var opts = options();
 
-      opts.config.routes = {
-        '/testing': '/index.html'
-      };
+      opts.config.rewrites = [{
+        source: '/testing',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));
@@ -353,9 +355,10 @@ describe('serves', function () {
       var opts = options();
 
       opts.config.cleanUrls = true;
-      opts.config.routes = {
-        '/testing': '/index.html'
-      };
+      opts.config.rewrites = [{
+        source: '/testing',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));
@@ -372,9 +375,10 @@ describe('serves', function () {
 
       var opts = options();
 
-      opts.config.routes = {
-        '/testing': '/index.html'
-      };
+      opts.config.rewrites = [{
+        source: '/testing',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));
@@ -390,9 +394,10 @@ describe('serves', function () {
 
       var opts = options();
 
-      opts.config.routes = {
-        '!/no': '/index.html'
-      };
+      opts.config.rewrites = [{
+        source: '!/no',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));
@@ -407,9 +412,10 @@ describe('serves', function () {
 
       var opts = options();
 
-      opts.config.routes = {
-        '**': 'index.html'
-      };
+      opts.config.rewrites = [{
+        source: '**',
+        destination: '/index.html'
+      }];
 
       var app = connect()
         .use(superstatic(opts));

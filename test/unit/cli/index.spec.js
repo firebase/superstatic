@@ -187,9 +187,10 @@ describe('cli', function () {
 
       fs.writeFileSync('custom.json', JSON.stringify({
         public: './',
-        routes: {
-          '**': 'index.html'
-        }
+        rewrites: [{
+          source: '**',
+          destination: '/index.html'
+        }]
       }, null, 2), 'utf-8');
     });
 
@@ -227,9 +228,10 @@ describe('cli', function () {
     it('uses custom config object', function (done) {
 
       cli.run(['', '', '--config', JSON.stringify({
-        routes: {
-          '**': 'index.html'
-        }
+        rewrites: [{
+          source: '**',
+          destination: '/index.html'
+        }]
       })], function (err) {
 
         request('http://localhost:3474/anything.html', function (err, response, body) {

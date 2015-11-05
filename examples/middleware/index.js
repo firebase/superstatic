@@ -12,15 +12,16 @@ var connect = require('connect');
 var spec = {
   config: {
     public: './app',
-    routes: {
-      '**': 'index.html'
-    }
+    rewrites: [{
+      source: '**',
+      destination: '/index.html'
+    }]
   },
   cwd: process.cwd()
 };
 
 var app = connect()
-  .use(superstatic(spec))
+  .use(superstatic(spec));
 
 app.listen(3474, function (err) {
 

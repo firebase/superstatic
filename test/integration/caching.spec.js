@@ -25,7 +25,7 @@ describe('caching', function () {
 
     var opts = options();
 
-    opts.config.cache_control = {
+    opts.config.cacheControl = {
       '**': true
     };
 
@@ -43,7 +43,7 @@ describe('caching', function () {
 
     var opts = options();
 
-    opts.config.cache_control = {
+    opts.config.cacheControl = {
       '**': 1234
     };
 
