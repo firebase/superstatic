@@ -9,15 +9,12 @@
 var fs = require('fs-extra');
 var request = require('supertest');
 var connect = require('connect');
-var query = require('connect-query');
-var join = require('join-path');
 
 var customNotFound = require('../../../lib/middleware/custom-not-found');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
 describe('custom not found', function() {
-
   var provider = fsProvider({
     public: '.tmp'
   });
@@ -34,15 +31,13 @@ describe('custom not found', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
   it('serves the file', function(done) {
-
     app
       .use(customNotFound({
-          errorPage: '/not-found.html'
+        errorPage: '/not-found.html'
       }));
 
     request(app)
@@ -53,13 +48,11 @@ describe('custom not found', function() {
   });
 
   it('skips middleware on file serve error', function(done) {
-
     app
       .use(customNotFound({
-          errorPage: '/does-not-exist.html'
+        errorPage: '/does-not-exist.html'
       }))
-      .use(function(req, res, next) {
-
+      .use(function(req, res) {
         res.end('does not exist');
       });
 

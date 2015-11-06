@@ -10,13 +10,11 @@ var _ = require('lodash');
 var fs = require('fs-extra');
 var request = require('request');
 var expect = require('chai').expect;
-var stdMocks = require('std-mocks');
 
-var Cli = require('../../../lib/cli');
+var makecli = require('../../../lib/cli');
 var server;
 
 describe('cli', function() {
-
   var cli;
 
   var config = {
@@ -24,8 +22,7 @@ describe('cli', function() {
   };
 
   beforeEach(function() {
-
-    cli = Cli();
+    cli = makecli();
 
     fs.outputFileSync('superstatic.json', JSON.stringify(config), 'utf-8');
     fs.outputFileSync('.tmp/superstatic.json', JSON.stringify(config), 'utf-8');
@@ -34,14 +31,13 @@ describe('cli', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('superstatic.json');
     fs.removeSync('index.html');
     fs.removeSync('.tmp');
   });
 
   it('starts a server', function(done) {
-    cli.run(['', ''], function(err) {
+    cli.run(['', ''], function() {
       server = cli.get('server');
       var port = cli.get('port');
 
@@ -55,14 +51,11 @@ describe('cli', function() {
   });
 
   it('starts a server with a given directory', function(done) {
-
-    cli.run(['', '', '.tmp'], function(err) {
-
-      var server = cli.get('server');
+    cli.run(['', '', '.tmp'], function() {
+      server = cli.get('server');
       var port = cli.get('port');
 
       request('http://localhost:' + port, function(err, response, body) {
-
         expect(response.statusCode).to.equal(200);
         expect(body).to.equal('.tmp/index.html');
         server.close(done);
@@ -71,19 +64,16 @@ describe('cli', function() {
   });
 
   it('loads firebase.json config file', function(done) {
-
     fs.unlinkSync('superstatic.json');
     fs.writeFileSync('firebase.json', JSON.stringify({
       public: '.tmp'
     }), 'utf-8');
 
-    cli.run(['', ''], function(err) {
-
-      var server = cli.get('server');
+    cli.run(['', ''], function() {
+      server = cli.get('server');
       var port = cli.get('port');
 
       request('http://localhost:' + port, function(err, response, body) {
-
         expect(body).to.equal('.tmp/index.html');
 
         fs.unlinkSync('firebase.json');
@@ -93,16 +83,12 @@ describe('cli', function() {
   });
 
   describe('port', function() {
-
     it('--port', function(done) {
-
-      cli.run(['', '', '--port', '4321'], function(err) {
-
-        var server = cli.get('server');
+      cli.run(['', '', '--port', '4321'], function() {
+        server = cli.get('server');
         var port = cli.get('port');
 
-        request('http://localhost:' + port, function(err, response, body) {
-
+        request('http://localhost:' + port, function(err) {
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
           server.close(done);
@@ -111,14 +97,11 @@ describe('cli', function() {
     });
 
     it('-p', function(done) {
-
-      cli.run(['', '', '-p', '4321'], function(err) {
-
-        var server = cli.get('server');
+      cli.run(['', '', '-p', '4321'], function() {
+        server = cli.get('server');
         var port = cli.get('port');
 
-        request('http://localhost:' + port, function(err, response, body) {
-
+        request('http://localhost:' + port, function(err) {
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
           server.close(done);
@@ -128,13 +111,9 @@ describe('cli', function() {
   });
 
   describe('starts server on host', function() {
-
     it('--host', function(done) {
-
-      cli.run(['', '', '--host', '0.0.0.0'], function(err) {
-
-        var server = cli.get('server');
-        var host = cli.get('host');
+      cli.run(['', '', '--host', '0.0.0.0'], function() {
+        server = cli.get('server');
 
         expect(server.address().address).to.equal('0.0.0.0');
         server.close(done);
@@ -142,11 +121,8 @@ describe('cli', function() {
     });
 
     it('--hostname', function(done) {
-
-      cli.run(['', '', '--hostname', '0.0.0.0'], function(err) {
-
-        var server = cli.get('server');
-        var host = cli.get('host');
+      cli.run(['', '', '--hostname', '0.0.0.0'], function() {
+        server = cli.get('server');
 
         expect(server.address().address).to.equal('0.0.0.0');
         server.close(done);
@@ -155,12 +131,9 @@ describe('cli', function() {
   });
 
   it('enables log output', function(done) {
-
-    cli.run(['', '', '--debug'], function(err) {
-
+    cli.run(['', '', '--debug'], function() {
       var app = cli.get('app');
       var hasLogger = _.find(app.stack, function(layer) {
-
         return layer.handle && layer.handle.name === 'logger';
       });
 
@@ -171,20 +144,14 @@ describe('cli', function() {
   });
 
   it('enables gzipping', function(done) {
-
-    cli.run(['', '', '--gzip'], function(err) {
-
-      var app = cli.get('app');
-
+    cli.run(['', '', '--gzip'], function() {
       expect(cli.get('gzip')).to.equal(true);
       cli.get('server').close(done);
     });
   });
 
   describe('uses custom config', function() {
-
     beforeEach(function() {
-
       fs.writeFileSync('custom.json', JSON.stringify({
         public: './',
         rewrites: [{
@@ -195,12 +162,10 @@ describe('cli', function() {
     });
 
     afterEach(function() {
-
       fs.unlinkSync('custom.json');
     });
 
     it('--config', function(done) {
-
       cli.run(['', '', '--config', 'custom.json'], function() {
         request('http://localhost:3474/anything.html', function(err, response, body) {
           expect(body).to.equal('index');
@@ -212,11 +177,8 @@ describe('cli', function() {
     });
 
     it('-c', function(done) {
-
       cli.run(['', '', '-c', 'custom.json'], function() {
-
         request('http://localhost:3474/anything.html', function(err, response, body) {
-
           expect(body).to.equal('index');
           expect(cli.get('config')).to.equal('custom.json');
 
@@ -226,18 +188,14 @@ describe('cli', function() {
     });
 
     it('uses custom config object', function(done) {
-
       cli.run(['', '', '--config', JSON.stringify({
         rewrites: [{
           source: '**',
           destination: '/index.html'
         }]
-      })], function(err) {
-
+      })], function() {
         request('http://localhost:3474/anything.html', function(err, response, body) {
-
           expect(body).to.equal('index');
-
           cli.get('server').close(done);
         });
       });
@@ -247,11 +205,9 @@ describe('cli', function() {
   // NOTE: can't test flags that exit
   // This should be fixed in Nash 2.0
   it.skip('version flag', function(done) {
-
     // stdMocks.use();
 
-    cli.run(['', '', '-v'], function(err) {
-
+    cli.run(['', '', '-v'], function() {
       // stdMocks.restore();
       // var output = stdMocks.flush();
 
@@ -268,7 +224,6 @@ describe('cli', function() {
   // });
 
   describe.skip('services', function() {
-
 
   });
 });

@@ -9,26 +9,22 @@
 var fs = require('fs-extra');
 var request = require('supertest');
 var connect = require('connect');
-var query = require('connect-query');
 
 var staticRouter = require('../../../lib/middleware/static-router');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
 describe('static router', function() {
-
   var provider = fsProvider({
     public: '.tmp'
   });
   var app;
 
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
 
     app = connect()
       .use(function(req, res, next) {
-
         res._responder = new Responder(req, res, {
           provider: provider
         });
@@ -37,12 +33,10 @@ describe('static router', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
   it('serves a route', function(done) {
-
     app.use(staticRouter({
       rewrites: {
         '/my-route': '/index.html'
@@ -58,7 +52,6 @@ describe('static router', function() {
   });
 
   it('serves a route with a glob', function(done) {
-
     app.use(staticRouter({
       rewrites: {
         '**': '/index.html'
@@ -74,7 +67,6 @@ describe('static router', function() {
   });
 
   it('serves a negated route', function(done) {
-
     app.use(staticRouter({
       rewrites: {
         '!/no': '/index.html'
@@ -90,7 +82,6 @@ describe('static router', function() {
   });
 
   it('skips if no match is found', function(done) {
-
     app.use(staticRouter({
       rewrites: {
         '/skip': '/index.html'
@@ -104,10 +95,9 @@ describe('static router', function() {
   });
 
   it('ensures matching file extension', function(done) {
-
     app.use(staticRouter({
       rewrites: {
-        '**': "/index.html"
+        '**': '/index.html'
       }
     }));
 
@@ -118,24 +108,21 @@ describe('static router', function() {
   });
 
   describe('uses first match', function() {
-
     beforeEach(function() {
-
       fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
 
       app.use(staticRouter({
         rewrites: [
           {
-            "/admin/**": "/admin/index.html",
-            "/something/**": "/something/indexf.html"
+            '/admin/**': '/admin/index.html',
+            '/something/**': '/something/indexf.html'
           },
-          {"**": "index.html"}
+          {'**': 'index.html'}
         ]
       }));
     });
 
     it('first route with 1 depth route', function(done) {
-
       request(app)
         .get('/admin/anything')
         .expect(200)
@@ -144,7 +131,6 @@ describe('static router', function() {
     });
 
     it('first route with 2 depth route', function(done) {
-
       request(app)
         .get('/admin/anything/else')
         .expect(200)
@@ -153,7 +139,6 @@ describe('static router', function() {
     });
 
     it('second route', function(done) {
-
       request(app)
         .get('/anything')
         .expect(200)

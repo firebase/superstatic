@@ -20,9 +20,7 @@ var options = function() {
 };
 
 describe('caching', function() {
-
   it('default cache control', function(done) {
-
     var opts = options();
 
     opts.config.cacheControl = {
@@ -40,7 +38,6 @@ describe('caching', function() {
   });
 
   it('custom cache control', function(done) {
-
     var opts = options();
 
     opts.config.cacheControl = {

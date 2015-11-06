@@ -22,10 +22,13 @@ var defaultHeaders = {
   }
 };
 
+function okay(req, res) {
+  res.writeHead(200);
+  res.end();
+}
+
 describe('cors middleware', function() {
-
   it('serves custom content types', function(done) {
-
     var app = connect()
       .use(headers(defaultHeaders))
       .use(okay);
@@ -38,7 +41,6 @@ describe('cors middleware', function() {
   });
 
   it('serves custom access control headers', function(done) {
-
     var app = connect()
       .use(headers(defaultHeaders))
       .use(okay);
@@ -51,7 +53,6 @@ describe('cors middleware', function() {
   });
 
   it('uses routing rules', function(done) {
-
     var app = connect()
       .use(headers(defaultHeaders))
       .use(okay);
@@ -63,8 +64,7 @@ describe('cors middleware', function() {
       .end(done);
   });
 
-  it('uses glob negation to set headers' , function(done) {
-
+  it('uses glob negation to set headers', function(done) {
     var app = connect()
       .use(headers({
         '!/anything/**': {
@@ -79,10 +79,4 @@ describe('cors middleware', function() {
       .expect('custom-header', 'for testing')
       .end(done);
   });
-
-  function okay (req, res, next) {
-
-    res.writeHead(200);
-    res.end();
-  }
 });

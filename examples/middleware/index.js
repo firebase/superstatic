@@ -24,6 +24,6 @@ var app = connect()
   .use(superstatic(spec));
 
 app.listen(3474, function(err) {
-
+  if (err) { console.log(err); }
   console.log('Superstatic now serving on port 3474 ...');
 });

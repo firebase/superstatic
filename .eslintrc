@@ -28,14 +28,14 @@
      * Node.js
      */
     "no-process-exit": 0,            // http://eslint.org/docs/rules/no-process-exit
-    "no-sync": 2,                    // http://eslint.org/docs/rules/no-sync
+    "no-sync": 0,                    // http://eslint.org/docs/rules/no-sync
 
     /**
      * Possible errors
      */
     "comma-dangle": [2, "never"],    // http://eslint.org/docs/rules/comma-dangle
     "no-cond-assign": [2, "always"], // http://eslint.org/docs/rules/no-cond-assign
-    "no-console": 1,                 // http://eslint.org/docs/rules/no-console
+    "no-console": 0,                 // http://eslint.org/docs/rules/no-console
     "no-debugger": 1,                // http://eslint.org/docs/rules/no-debugger
     "no-alert": 1,                   // http://eslint.org/docs/rules/no-alert
     "no-constant-condition": 1,      // http://eslint.org/docs/rules/no-constant-condition
@@ -66,7 +66,7 @@
       "allowKeywords": true
     }],
     "eqeqeq": 2,                     // http://eslint.org/docs/rules/eqeqeq
-    "guard-for-in": 2,               // http://eslint.org/docs/rules/guard-for-in
+    "guard-for-in": 0,               // http://eslint.org/docs/rules/guard-for-in
     "no-caller": 2,                  // http://eslint.org/docs/rules/no-caller
     "no-else-return": 2,             // http://eslint.org/docs/rules/no-else-return
     "no-eq-null": 2,                 // http://eslint.org/docs/rules/no-eq-null

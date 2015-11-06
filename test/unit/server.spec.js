@@ -22,20 +22,16 @@ var server = require('../../lib/server');
 // a bare http.createServer() method. This
 // doesn't work with how we are loading services.
 describe.skip('server', function() {
-
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/index.html', 'index file content');
     fs.outputFileSync('.tmp/.env.json', '{"key": "value"}');
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
   it('starts a server', function(done) {
-
     var app = server();
 
     request(app)
@@ -44,7 +40,6 @@ describe.skip('server', function() {
   });
 
   it('with config', function(done) {
-
     var app = server({
       config: {
         public: '.tmp'
@@ -58,13 +53,11 @@ describe.skip('server', function() {
   });
 
   it('with port', function(done) {
-
     var app = server({
-      port: 9876,
+      port: 9876
     });
 
     var s = app.listen(function() {
-
       expect(s.address().port).to.equal(9876);
 
       s.close(done);
@@ -72,13 +65,11 @@ describe.skip('server', function() {
   });
 
   it('with hostname', function(done) {
-
     var app = server({
-      hostname: '127.0.0.1',
+      hostname: '127.0.0.1'
     });
 
     var s = app.listen(function() {
-
       expect(s.address().address).to.equal('127.0.0.1');
 
       s.close(done);
@@ -86,13 +77,11 @@ describe.skip('server', function() {
   });
 
   it('with host', function(done) {
-
     var app = server({
-      host: '127.0.0.1',
+      host: '127.0.0.1'
     });
 
     var s = app.listen(function() {
-
       expect(s.address().address).to.equal('127.0.0.1');
 
       s.close(done);
@@ -100,7 +89,6 @@ describe.skip('server', function() {
   });
 
   it('with debug', function(done) {
-
     var output;
     var app = server({
       debug: true
@@ -111,9 +99,8 @@ describe.skip('server', function() {
     request(app)
       .get('/')
       .end(function() {
-
         stdMocks.restore();
-        var output = stdMocks.flush();
+        output = stdMocks.flush();
 
         expect(output.stdout.toString().indexOf('"GET / HTTP/1.1" 404')).to.be.greaterThan(-1);
         done();
@@ -121,7 +108,6 @@ describe.skip('server', function() {
   });
 
   it('with env filename', function(done) {
-
     var app = server({
       env: '.tmp/.env.json',
       config: {
@@ -138,7 +124,6 @@ describe.skip('server', function() {
   });
 
   it('with env object', function(done) {
-
     var app = server({
       env: {
         type: 'object'
@@ -157,7 +142,6 @@ describe.skip('server', function() {
   });
 
   it('default error page', function(done) {
-
     var notFoundContent = fs.readFileSync(path.resolve(__dirname, '../../lib/assets/not_found.html')).toString();
 
     var app = server();
@@ -170,7 +154,6 @@ describe.skip('server', function() {
   });
 
   it('overriden default error page', function(done) {
-
     fs.outputFileSync('.tmp/error.html', 'error page');
 
     var app = server({

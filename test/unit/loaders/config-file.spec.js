@@ -12,9 +12,7 @@ var expect = require('chai').expect;
 var loadConfigFile = require('../../../lib/loaders/config-file');
 
 describe('loading config files', function() {
-
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/file.json', '{"key": "value"}', 'utf-8');
     fs.outputFileSync('.tmp/package.json', JSON.stringify({
       superstatic: {
@@ -24,7 +22,6 @@ describe('loading config files', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
@@ -38,7 +35,6 @@ describe('loading config files', function() {
   });
 
   it('loads first existing file in array', function(done) {
-
     var data = loadConfigFile(['another.json', '.tmp/file.json']);
 
     expect(data).to.eql({
@@ -48,14 +44,12 @@ describe('loading config files', function() {
   });
 
   it('empty object for when no file', function(done) {
-
     var data = loadConfigFile('.tmp/nope.json');
     expect(data).to.eql({});
     done();
   });
 
   it('loads object as config', function(done) {
-
     var config = loadConfigFile({
       my: 'data'
     });
@@ -67,7 +61,6 @@ describe('loading config files', function() {
   });
 
   describe('extends the file config with the object passed', function() {
-
     it('superstatic.json', function(done) {
       fs.outputFileSync('superstatic.json', '{"firebase": "superstatic", "public": "./"}', 'utf-8');
 
@@ -93,8 +86,6 @@ describe('loading config files', function() {
         override: 'test',
         public: 'app'
       });
-
-      console.log(config);
 
       expect(config).to.eql({
         firebase: 'example',

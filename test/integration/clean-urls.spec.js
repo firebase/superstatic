@@ -7,11 +7,8 @@
 'use strict';
 
 var fs = require('fs-extra');
-var _ = require('lodash');
 var connect = require('connect');
 var request = require('supertest');
-var expect = require('chai').expect;
-var query = require('connect-query');
 
 var superstatic = require('../../');
 
@@ -24,9 +21,7 @@ var options = function() {
 };
 
 describe('clean urls', function() {
-
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
     fs.outputFileSync('.tmp/test.html', 'test', 'utf8');
     fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf8');
@@ -35,12 +30,10 @@ describe('clean urls', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
   it('not configured', function(done) {
-
     var opts = options();
 
     var app = connect()
@@ -53,7 +46,6 @@ describe('clean urls', function() {
   });
 
   it('function() html file', function(done) {
-
     var opts = options();
 
     opts.config.cleanUrls = true;
@@ -69,7 +61,6 @@ describe('clean urls', function() {
   });
 
   it('serves html file', function(done) {
-
     var opts = options();
 
     opts.config.cleanUrls = true;
@@ -85,7 +76,6 @@ describe('clean urls', function() {
   });
 
   it('function() using globs', function(done) {
-
     var opts = options();
 
     opts.config.cleanUrls = ['/*.html'];
@@ -101,7 +91,6 @@ describe('clean urls', function() {
   });
 
   it('serves html file using globs', function(done) {
-
     var opts = options();
 
     opts.config.cleanUrls = ['*.html'];

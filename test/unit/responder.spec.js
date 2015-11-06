@@ -89,15 +89,14 @@ describe('Responder', function() {
   });
 
   describe('#isNotModified', function() {
-    var responder;
     var result;
 
     beforeEach(function() {
       responder = new Responder({headers: {}}, {}, {});
       result = {
-       modified: Date.now(),
-       etag: 'abcdef'
-     };
+        modified: Date.now(),
+        etag: 'abcdef'
+      };
     });
 
     it('should be false if there are no if-modified-since or if-none-match headers', function() {

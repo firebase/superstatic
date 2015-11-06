@@ -8,21 +8,16 @@
 
 var request = require('supertest');
 var connect = require('connect');
-var query = require('connect-query');
-var Router = require('router');
 
 var env = require('../../../lib/middleware/env');
 var Responder = require('../../../lib/responder');
 
 describe('env', function() {
-
   var app;
-  var router;
 
   beforeEach(function() {
     app = connect()
       .use(function(req, res, next) {
-
         res._responder = new Responder(req, res, {
           provider: {}
         });

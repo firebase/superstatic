@@ -9,7 +9,6 @@
 var fs = require('fs-extra');
 var request = require('supertest');
 var connect = require('connect');
-var query = require('connect-query');
 var join = require('join-path');
 var expect = require('chai').expect;
 
@@ -17,16 +16,13 @@ var notFound = require('../../../lib/middleware/not-found');
 var Responder = require('../../../lib/responder');
 
 describe('not found', function() {
-
   var app;
 
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/not-found.html', 'not found file', 'utf8');
 
     app = connect()
       .use(function(req, res, next) {
-
         res._responder = new Responder(req, res, {
           provider: {}
         });
@@ -35,12 +31,10 @@ describe('not found', function() {
   });
 
   afterEach(function() {
-
     fs.removeSync('.tmp');
   });
 
   it('serves the file', function(done) {
-
     app
       .use(notFound({
         file: '.tmp/not-found.html'
@@ -62,7 +56,6 @@ describe('not found', function() {
   });
 
   it('caches for one hour', function(done) {
-
     app
     .use(notFound({
       file: join(process.cwd(), '.tmp/not-found.html')

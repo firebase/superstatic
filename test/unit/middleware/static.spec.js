@@ -10,9 +10,8 @@ var fs = require('fs-extra');
 var expect = require('chai').expect;
 var request = require('supertest');
 var connect = require('connect');
-var query = require('connect-query');
 
-var static = require('../../../lib/middleware/static');
+var statics = require('../../../lib/middleware/static');
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
@@ -23,7 +22,6 @@ describe('static server with trailing slash customization', function() {
   var app;
 
   beforeEach(function() {
-
     fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
     fs.outputFileSync('.tmp/me.html', 'testing', 'utf8');
     fs.outputFileSync('.tmp/about/index.html', 'about index', 'utf8');
@@ -42,10 +40,9 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('serves html file', function(done) {
-
     fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/superstatic.html')
@@ -56,10 +53,9 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('serves css file', function(done) {
-
     fs.outputFileSync('.tmp/style.css', 'body {}', 'utf8');
 
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/style.css')
@@ -70,10 +66,9 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('serves a directory index file', function(done) {
-
     fs.outputFileSync('.tmp/index.html', 'test', 'utf8');
 
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/')
@@ -84,10 +79,9 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('serves a file with query parameters', function(done) {
-
     fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/superstatic.html?key=value')
@@ -97,8 +91,7 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('does not redirect the root url because of the trailing slash', function(done) {
-
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/')
@@ -107,7 +100,7 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('does not redirect for directory index files', function(done) {
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/about/')
@@ -119,7 +112,7 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('function() directory index to have a trailing slash', function(done) {
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/about')
@@ -131,8 +124,7 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('preserves query parameters and slash on subdirectory directory index redirect', function(done) {
-
-    app.use(static());
+    app.use(statics());
 
     request(app)
       .get('/about?query=params')
@@ -144,10 +136,8 @@ describe('static server with trailing slash customization', function() {
   });
 
   describe('force trailing slash', function() {
-
     it('adds slash to url with no extension', function(done) {
-
-      app.use(static({trailingSlash: true}));
+      app.use(statics({trailingSlash: true}));
 
       request(app)
         .get('/testing')
@@ -158,10 +148,8 @@ describe('static server with trailing slash customization', function() {
   });
 
   describe('force remove trailing slash', function() {
-
     it('removes trailing slash on urls with no file extension', function(done) {
-
-      app.use(static({trailingSlash: false}));
+      app.use(statics({trailingSlash: false}));
 
       request(app)
         .get('/testing/')
@@ -171,8 +159,7 @@ describe('static server with trailing slash customization', function() {
     });
 
     it('removes trailing slash on urls with file extension', function(done) {
-
-      app.use(static({trailingSlash: false}));
+      app.use(statics({trailingSlash: false}));
 
       request(app)
         .get('/me.html/')
@@ -182,8 +169,7 @@ describe('static server with trailing slash customization', function() {
     });
 
     it('removes trailing slash on directory index urls', function(done) {
-
-      app.use(static({trailingSlash: false}));
+      app.use(statics({trailingSlash: false}));
 
       request(app)
         .get('/about/')
@@ -192,5 +178,4 @@ describe('static server with trailing slash customization', function() {
         .end(done);
     });
   });
-
 });

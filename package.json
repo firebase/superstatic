@@ -4,10 +4,11 @@
   "description": "A static file server for fancy apps",
   "main": "./lib",
   "scripts": {
-    "test": "npm run lint && npm run test-unit && npm run test-integration",
+    "test": "npm run lint && npm run coverage",
     "test-unit": "mocha test/unit/**",
     "test-integration": "mocha test/integration/**",
     "lint": "eslint .",
+    "coverage": "istanbul cover --print detail ./node_modules/.bin/_mocha -- test/unit/** test/integration/**",
     "outdated": "npm outdated --depth 0",
     "audit": "npm shrinkwrap --dev && nsp audit-shrinkwrap || true && rm npm-shrinkwrap.json",
     "watch": "mocha -w test/unit/** test/integration/**"

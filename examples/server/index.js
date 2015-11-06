@@ -20,7 +20,7 @@ var spec = {
 };
 
 var app = superstatic(spec);
-var server = app.listen(function(err) {
-
+app.listen(function(err) {
+  if (err) { console.log(err); }
   console.log('Superstatic now serving on port 3474 ...');
 });

@@ -11,7 +11,6 @@ var format = require('chalk');
 var stringLength = require('string-length');
 
 module.exports = function(pkg) {
-
   if (compare.gt(pkg.current, [pkg.latest])) {
     return;
   }
@@ -22,22 +21,20 @@ module.exports = function(pkg) {
     'Your current version is ' + format.green.bold(pkg.current) + '.',
     'The latest version is ' + format.green.bold(pkg.latest) + '.',
     '',
-    'Run ' + format.bold.yellow('npm install superstatic -g') + ' to update.',
+    'Run ' + format.bold.yellow('npm install superstatic -g') + ' to update.'
   ];
 
   var contentWidth = 0;
   msg = msg
     .map(function(line) {
-
       return '  ' + line;// + format.yellow('│');
     });
 
   msg.forEach(function(line) {
-
-      if (stringLength(line) > contentWidth) {
-        contentWidth = stringLength(line);
-      }
-    });
+    if (stringLength(line) > contentWidth) {
+      contentWidth = stringLength(line);
+    }
+  });
 
   var fill = function(str, count) {
     return Array(count + 1).join(str);

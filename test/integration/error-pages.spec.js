@@ -7,11 +7,8 @@
 'use strict';
 
 var fs = require('fs-extra');
-var _ = require('lodash');
 var connect = require('connect');
 var request = require('supertest');
-var expect = require('chai').expect;
-var query = require('connect-query');
 
 var superstatic = require('../../');
 
@@ -25,7 +22,6 @@ var options = function() {
 };
 
 describe('error page', function() {
-
   beforeEach(function() {
     fs.outputFileSync('.tmp/default-error.html', 'default error', 'utf8');
     fs.outputFileSync('.tmp/error.html', 'config error', 'utf8');
@@ -66,7 +62,6 @@ describe('error page', function() {
   });
 
   it('falls back to default when configured error page does not exist', function(done) {
-
     var opts = options();
 
     opts.errorPage = '.tmp/default-error.html';
