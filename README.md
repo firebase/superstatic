@@ -96,7 +96,7 @@ apps. An example:
 }
 ```
 
-**function():** you can specify certain url paths to be redirected to another url by supplying configuration to the `function()` key. Path matching is similar to using custom routes. function() use the `301` HTTP status code by default, but this can be overridden by configuration.
+**redirects:** you can specify certain url paths to be redirected to another url by supplying configuration to the `function()` key. Path matching is similar to using custom routes. function() use the `301` HTTP status code by default, but this can be overridden by configuration.
 
 ```json
 {
