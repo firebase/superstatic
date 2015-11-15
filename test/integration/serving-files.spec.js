@@ -110,14 +110,11 @@ describe('serves', function() {
   describe('redirects', function() {
     var opts = options();
 
-    opts.config.redirects = {
-      '/from': '/to',
-      '/fromCustom': {
-        status: 302,
-        url: '/toCustom'
-      },
-      '/external': 'http://redirect.com'
-    };
+    opts.config.redirects = [
+      {source: '/from', destination: '/to'},
+      {source: '/fromCustom', destination: '/toCustom', type: 302},
+      {source: '/external', destination: 'http://redirect.com'}
+    ];
 
     var app = connect()
       .use(superstatic(opts));

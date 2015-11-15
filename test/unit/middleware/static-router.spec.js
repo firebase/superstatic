@@ -38,9 +38,9 @@ describe('static router', function() {
 
   it('serves a route', function(done) {
     app.use(staticRouter({
-      rewrites: {
-        '/my-route': '/index.html'
-      }
+      rewrites: [{
+        source: '/my-route', destination: '/index.html'
+      }]
     }));
 
     request(app)
@@ -53,9 +53,9 @@ describe('static router', function() {
 
   it('serves a route with a glob', function(done) {
     app.use(staticRouter({
-      rewrites: {
-        '**': '/index.html'
-      }
+      rewrites: [{
+        source: '**', destination: '/index.html'
+      }]
     }));
 
     request(app)
@@ -68,9 +68,9 @@ describe('static router', function() {
 
   it('serves a negated route', function(done) {
     app.use(staticRouter({
-      rewrites: {
-        '!/no': '/index.html'
-      }
+      rewrites: [{
+        source: '!/no', destination: '/index.html'
+      }]
     }));
 
     request(app)
@@ -83,9 +83,9 @@ describe('static router', function() {
 
   it('skips if no match is found', function(done) {
     app.use(staticRouter({
-      rewrites: {
-        '/skip': '/index.html'
-      }
+      rewrites: [{
+        source: '/skip', destination: '/index.html'
+      }]
     }));
 
     request(app)
@@ -96,9 +96,9 @@ describe('static router', function() {
 
   it('ensures matching file extension', function(done) {
     app.use(staticRouter({
-      rewrites: {
-        '**': '/index.html'
-      }
+      rewrites: [{
+        source: '**', destination: '/index.html'
+      }]
     }));
 
     request(app)
@@ -113,11 +113,9 @@ describe('static router', function() {
 
       app.use(staticRouter({
         rewrites: [
-          {
-            '/admin/**': '/admin/index.html',
-            '/something/**': '/something/indexf.html'
-          },
-          {'**': 'index.html'}
+          {source: '/admin/**', destination: '/admin/index.html'},
+          {source: '/something/**', destination: '/something/indexf.html'},
+          {source: '**', destination: 'index.html'}
         ]
       }));
     });
