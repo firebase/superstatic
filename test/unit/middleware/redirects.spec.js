@@ -6,7 +6,8 @@
  */
 'use strict';
 
-var redirect = require('../../../lib/middleware/redirects');
+var helpers = require('../../helpers');
+var redirect = helpers.decorator(require('../../../lib/middleware/redirects'));
 var connect = require('connect');
 var request = require('supertest');
 var Responder = require('../../../lib/responder');
@@ -18,7 +19,7 @@ var setup = function(req, res, next) {
 describe('redirect middleware', function() {
   it('skips the middleware if there are no redirects configured', function(done) {
     var app = connect()
-      .use(redirect([]));
+      .use(redirect({redirects: []}));
 
     request(app)
       .get('/')
@@ -29,11 +30,11 @@ describe('redirect middleware', function() {
   it('skips middleware when there are no matching redirects', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/source',
         destination: '/redirect',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/none')
@@ -44,11 +45,11 @@ describe('redirect middleware', function() {
   it('redirects to a configured path', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/source',
         destination: '/redirect',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/source')
@@ -60,11 +61,11 @@ describe('redirect middleware', function() {
   it('redirects to a configured path with a custom status code', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/source',
         destination: '/redirect',
         type: 302
-      }]));
+      }]}));
 
     request(app)
       .get('/source')
@@ -76,11 +77,11 @@ describe('redirect middleware', function() {
   it('adds leading slash to all redirect paths', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: 'source',
         destination: '/redirect',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/source')
@@ -92,11 +93,11 @@ describe('redirect middleware', function() {
   it('redirects using glob negation', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '!source',
         destination: '/redirect',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/anthing')
@@ -108,11 +109,11 @@ describe('redirect middleware', function() {
   it('redirects using segements in the url path', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/old/:value/path/:loc',
         destination: '/new/:value/path/:loc',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/old/redirect/path/there')
@@ -124,11 +125,11 @@ describe('redirect middleware', function() {
   it('redirects a missing optional segment', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/old/:value?',
         destination: '/new/:value?',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/old/')
@@ -140,11 +141,11 @@ describe('redirect middleware', function() {
   it('redirects a present optional segment', function(done) {
     var app = connect()
       .use(setup)
-      .use(redirect([{
+      .use(redirect({redirects: [{
         source: '/old/:value?',
         destination: '/new/:value?',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/old/derp')
@@ -155,11 +156,11 @@ describe('redirect middleware', function() {
 
   it('redirects a splat segment', function(done) {
     var app = connect()
-      .use(setup).use(redirect([{
+      .use(setup).use(redirect({redirects: [{
         source: '/blog/:post*',
         destination: '/new/:post*',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/blog/this/old/post')
@@ -170,11 +171,11 @@ describe('redirect middleware', function() {
 
   it('redirects using segments in the url path with a 302', function(done) {
     var app = connect()
-      .use(setup).use(redirect([{
+      .use(setup).use(redirect({redirects: [{
         source: '/old/:value/path/:loc',
         destination: '/new/:value/path/:loc',
         type: 302
-      }]));
+      }]}));
 
     request(app)
       .get('/old/redirect/path/there')
@@ -185,11 +186,11 @@ describe('redirect middleware', function() {
 
   it('redirects to external http url', function(done) {
     var app = connect()
-      .use(setup).use(redirect([{
+      .use(setup).use(redirect({redirects: [{
         source: '/source',
         destination: 'http://redirectedto.com',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/source')
@@ -200,11 +201,11 @@ describe('redirect middleware', function() {
 
   it('redirects to external https url', function(done) {
     var app = connect()
-      .use(setup).use(redirect([{
+      .use(setup).use(redirect({redirects: [{
         source: '/source',
         destination: 'https://redirectedto.com',
         type: 301
-      }]));
+      }]}));
 
     request(app)
       .get('/source')

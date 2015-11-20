@@ -10,7 +10,8 @@ var fs = require('fs-extra');
 var request = require('supertest');
 var connect = require('connect');
 
-var customNotFound = require('../../../lib/middleware/custom-not-found');
+var helpers = require('../../helpers');
+var missing = helpers.decorator(require('../../../lib/middleware/missing'));
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
@@ -27,7 +28,7 @@ describe('custom not found', function() {
       .use(function(req, res, next) {
         res._responder = new Responder(req, res, {provider: provider});
         next();
-      });
+      }, {provider: provider});
   });
 
   afterEach(function() {
@@ -36,9 +37,9 @@ describe('custom not found', function() {
 
   it('serves the file', function(done) {
     app
-      .use(customNotFound({
+      .use(missing({
         errorPage: '/not-found.html'
-      }));
+      }, {provider: provider}));
 
     request(app)
       .get('/anything')
@@ -49,9 +50,9 @@ describe('custom not found', function() {
 
   it('skips middleware on file serve error', function(done) {
     app
-      .use(customNotFound({
+      .use(missing({
         errorPage: '/does-not-exist.html'
-      }))
+      }, {provider: provider}))
       .use(function(req, res) {
         res.end('does not exist');
       });

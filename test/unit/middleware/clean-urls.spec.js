@@ -11,7 +11,8 @@ var request = require('supertest');
 var connect = require('connect');
 var query = require('connect-query');
 
-var cleanUrls = require('../../../lib/middleware/clean-urls');
+var helpers = require('../../helpers');
+var cleanUrls = helpers.decorator(require('../../../lib/middleware/clean-urls'));
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
@@ -38,8 +39,7 @@ describe('clean urls', function() {
 
   it('function() to the clean url path when static html file is requested', function(done) {
     app.use(cleanUrls({
-      rules: true,
-      provider: provider
+      cleanUrls: true
     }));
 
     request(app)
@@ -51,8 +51,7 @@ describe('clean urls', function() {
 
   it('it function() and keeps the query string', function(done) {
     app.use(cleanUrls({
-      rules: true,
-      provider: provider
+      cleanUrls: true
     }));
 
     request(app)
@@ -66,8 +65,7 @@ describe('clean urls', function() {
     fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
     app.use(cleanUrls({
-      rules: true,
-      provider: provider
+      cleanUrls: true
     }));
 
     request(app)
@@ -80,8 +78,7 @@ describe('clean urls', function() {
 
   it('skips middleware on stream error', function(done) {
     app.use(cleanUrls({
-      rules: true,
-      provider: provider
+      cleanUrls: true
     }));
 
     request(app)
@@ -94,8 +91,7 @@ describe('clean urls', function() {
     fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
     app.use(cleanUrls({
-      rules: 'true',
-      provider: provider
+      cleanUrls: 'true'
     }));
 
     request(app)
@@ -106,9 +102,7 @@ describe('clean urls', function() {
   });
 
   it('skips the middleware if it is the root path', function(done) {
-    app.use(cleanUrls({
-      provider: provider
-    }));
+    app.use(cleanUrls({}));
 
     request(app)
       .get('/')
@@ -121,8 +115,7 @@ describe('clean urls', function() {
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
       app.use(cleanUrls({
-        rules: '**/*.html',
-        provider: provider
+        cleanUrls: '**/*.html'
       }));
 
       request(app)
@@ -136,8 +129,7 @@ describe('clean urls', function() {
       fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
 
       app.use(cleanUrls({
-        rules: '/superstatic.html',
-        provider: provider
+        cleanUrls: '/superstatic.html'
       }));
 
       request(app)
@@ -150,8 +142,7 @@ describe('clean urls', function() {
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
       app.use(cleanUrls({
-        rules: ['**/*.html', 'yes/**/*.html'],
-        provider: provider
+        cleanUrls: ['**/*.html', 'yes/**/*.html']
       }));
 
       request(app)
@@ -167,8 +158,7 @@ describe('clean urls', function() {
         fs.outputFileSync('.tmp/components/test.html', 'test', 'utf8');
 
         app.use(cleanUrls({
-          rules: ['/app**', '!/components**'],
-          provider: provider
+          cleanUrls: ['/app**', '!/components**']
         }));
 
         request(app)
@@ -184,8 +174,7 @@ describe('clean urls', function() {
 
         app
           .use(cleanUrls({
-            rules: ['/app**', '/!(components|bower_components)/**'],
-            provider: provider
+            cleanUrls: ['/app**', '/!(components|bower_components)/**']
           }))
           .use(function(req, res) {
             res.end('fall through');
@@ -203,8 +192,7 @@ describe('clean urls', function() {
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
       app.use(cleanUrls({
-        rules: ['**/*.html', 'yes/**/*.html'],
-        provider: provider
+        cleanUrls: ['**/*.html', 'yes/**/*.html']
       }));
 
       request(app)
@@ -217,8 +205,7 @@ describe('clean urls', function() {
       fs.outputFileSync('.tmp/yes/superstatic.html', 'test', 'utf8');
 
       app.use(cleanUrls({
-        rules: {'0': '**/*.html', '2': 'yes/**/*.html'},
-        provider: provider
+        cleanUrls: {'0': '**/*.html', '2': 'yes/**/*.html'}
       }));
 
       request(app)
@@ -235,8 +222,7 @@ describe('clean urls', function() {
 
     it('function() on directory index with extension', function(done) {
       app.use(cleanUrls({
-        rules: true,
-        provider: provider
+        cleanUrls: true
       }));
 
       request(app)
@@ -248,8 +234,7 @@ describe('clean urls', function() {
 
     it('function() on directory index without extension', function(done) {
       app.use(cleanUrls({
-        rules: true,
-        provider: provider
+        cleanUrls: true
       }));
 
       request(app)
@@ -261,8 +246,7 @@ describe('clean urls', function() {
 
     it('serves directory index from clean url', function(done) {
       app.use(cleanUrls({
-        rules: true,
-        provider: provider
+        cleanUrls: true
       }));
 
       request(app)

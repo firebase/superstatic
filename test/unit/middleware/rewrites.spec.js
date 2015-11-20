@@ -9,8 +9,8 @@
 var fs = require('fs-extra');
 var request = require('supertest');
 var connect = require('connect');
-
-var staticRouter = require('../../../lib/middleware/static-router');
+var helpers = require('../../helpers');
+var rewrites = helpers.decorator(require('../../../lib/middleware/rewrites'));
 var fsProvider = require('../../../lib/providers/fs');
 var Responder = require('../../../lib/responder');
 
@@ -37,7 +37,7 @@ describe('static router', function() {
   });
 
   it('serves a route', function(done) {
-    app.use(staticRouter({
+    app.use(rewrites({
       rewrites: [{
         source: '/my-route', destination: '/index.html'
       }]
@@ -52,7 +52,7 @@ describe('static router', function() {
   });
 
   it('serves a route with a glob', function(done) {
-    app.use(staticRouter({
+    app.use(rewrites({
       rewrites: [{
         source: '**', destination: '/index.html'
       }]
@@ -67,7 +67,7 @@ describe('static router', function() {
   });
 
   it('serves a negated route', function(done) {
-    app.use(staticRouter({
+    app.use(rewrites({
       rewrites: [{
         source: '!/no', destination: '/index.html'
       }]
@@ -82,7 +82,7 @@ describe('static router', function() {
   });
 
   it('skips if no match is found', function(done) {
-    app.use(staticRouter({
+    app.use(rewrites({
       rewrites: [{
         source: '/skip', destination: '/index.html'
       }]
@@ -95,7 +95,7 @@ describe('static router', function() {
   });
 
   it('ensures matching file extension', function(done) {
-    app.use(staticRouter({
+    app.use(rewrites({
       rewrites: [{
         source: '**', destination: '/index.html'
       }]
@@ -111,7 +111,7 @@ describe('static router', function() {
     beforeEach(function() {
       fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
 
-      app.use(staticRouter({
+      app.use(rewrites({
         rewrites: [
           {source: '/admin/**', destination: '/admin/index.html'},
           {source: '/something/**', destination: '/something/indexf.html'},

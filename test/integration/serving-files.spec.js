@@ -189,11 +189,12 @@ describe('serves', function() {
     it('with globs', function(done) {
       var opts = options();
 
-      opts.config.headers = {
-        '/**/*.html': {
-          'x-custom': 'testing'
-        }
-      };
+      opts.config.headers = [
+        {source: '/**/*.html', headers: [{
+          key: 'x-custom',
+          value: 'testing'
+        }]}
+      ];
 
       var app = connect()
         .use(superstatic(opts));
@@ -207,11 +208,11 @@ describe('serves', function() {
     it('exact', function(done) {
       var opts = options();
 
-      opts.config.headers = {
-        '/app.js': {
-          'x-custom': 'testing'
-        }
-      };
+      opts.config.headers = [{
+        source: '/app.js', headers: [{
+          key: 'x-custom', value: 'testing'
+        }]
+      }];
 
       var app = connect()
         .use(superstatic(opts));
