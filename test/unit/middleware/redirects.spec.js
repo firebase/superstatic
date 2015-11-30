@@ -12,7 +12,7 @@ var connect = require('connect');
 var request = require('supertest');
 var Responder = require('../../../lib/responder');
 var setup = function(req, res, next) {
-  res._responder = new Responder(req, res, {provider: {}});
+  res.superstatic = new Responder(req, res, {provider: {}});
   next();
 };
 

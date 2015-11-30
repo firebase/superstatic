@@ -29,7 +29,7 @@ describe('static server with trailing slash customization', function() {
 
     app = connect()
       .use(function(req, res, next) {
-        res._responder = new Responder(req, res, {
+        res.superstatic = new Responder(req, res, {
           provider: provider
         });
         next();

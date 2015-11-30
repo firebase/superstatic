@@ -26,7 +26,7 @@ describe('custom not found', function() {
 
     app = connect()
       .use(function(req, res, next) {
-        res._responder = new Responder(req, res, {provider: provider});
+        res.superstatic = new Responder(req, res, {provider: provider});
         next();
       }, {provider: provider});
   });

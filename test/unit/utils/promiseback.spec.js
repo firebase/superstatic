@@ -9,32 +9,32 @@ var promiseback = require('../../../lib/utils/promiseback');
 
 describe('promiseback', function() {
   it('should resolve a promise if one is returned', function() {
-    return expect(promiseback('foo', 'bar', function(a1, a2) {
+    return expect(promiseback(function(a1, a2) {
       return RSVP.resolve({
         a: a1,
         b: a2
       });
-    })).to.eventually.deep.eq({
+    }, 2)('foo', 'bar')).to.eventually.deep.eq({
       a: 'foo',
       b: 'bar'
     });
   });
 
   it('should reject a promise if one is rejected', function() {
-    return expect(promiseback('foo', 'bar', function() {
+    return expect(promiseback(function() {
       return RSVP.reject('broken');
-    })).to.be.rejectedWith('broken');
+    }, 2)('foo', 'bar')).to.be.rejectedWith('broken');
   });
 
   it('should reject an errback if one is used and errors', function() {
-    return expect(promiseback('foo', 'bar', function(a1, a2, cb) {
+    return expect(promiseback(function(a1, a2, cb) {
       cb(a2);
-    })).to.be.rejectedWith('bar');
+    }, 2)('foo', 'bar')).to.be.rejectedWith('bar');
   });
 
   it('should resolve an errback if one is used and resolves', function() {
-    return expect(promiseback('foo', 'bar', function(a1, a2, cb) {
+    return expect(promiseback(function(a1, a2, cb) {
       cb(null, a2);
-    }));
+    }, 2)('foo', 'bar'));
   });
 });
