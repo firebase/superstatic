@@ -45,7 +45,7 @@ describe('clean urls', function() {
       .end(done);
   });
 
-  it('function() html file', function(done) {
+  it('redirects html file', function(done) {
     var opts = options();
 
     opts.config.cleanUrls = true;
@@ -75,7 +75,7 @@ describe('clean urls', function() {
       .end(done);
   });
 
-  it('function() using globs', function(done) {
+  it('redirects using globs', function(done) {
     var opts = options();
 
     opts.config.cleanUrls = ['/*.html'];

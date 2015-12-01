@@ -6,21 +6,16 @@
  */
 'use strict';
 
-var headers = require('../../../lib/middleware/set-headers');
+var helpers = require('../../helpers');
+var headers = helpers.decorator(require('../../../lib/middleware/headers'));
 var connect = require('connect');
 var request = require('supertest');
 
-var defaultHeaders = {
-  '/test1': {
-    'Content-Type': 'mime/type'
-  },
-  '/test3': {
-    'Access-Control-Allow-Origin': 'https://www.example.net'
-  },
-  '/api/**': {
-    'Access-Control-Allow-Origin': '*'
-  }
-};
+var defaultHeaders = [
+  {source: '/test1', headers: [{key: 'Content-Type', value: 'mime/type'}]},
+  {source: '/test3', headers: [{key: 'Access-Control-Allow-Origin', value: 'https://www.example.net'}]},
+  {source: '/api/**', headers: [{key: 'Access-Control-Allow-Origin', value: '*'}]}
+];
 
 function okay(req, res) {
   res.writeHead(200);
@@ -30,7 +25,7 @@ function okay(req, res) {
 describe('cors middleware', function() {
   it('serves custom content types', function(done) {
     var app = connect()
-      .use(headers(defaultHeaders))
+      .use(headers({headers: defaultHeaders}))
       .use(okay);
 
     request(app)
@@ -42,7 +37,7 @@ describe('cors middleware', function() {
 
   it('serves custom access control headers', function(done) {
     var app = connect()
-      .use(headers(defaultHeaders))
+      .use(headers({headers: defaultHeaders}))
       .use(okay);
 
     request(app)
@@ -54,7 +49,7 @@ describe('cors middleware', function() {
 
   it('uses routing rules', function(done) {
     var app = connect()
-      .use(headers(defaultHeaders))
+      .use(headers({headers: defaultHeaders}))
       .use(okay);
 
     request(app)
@@ -67,9 +62,11 @@ describe('cors middleware', function() {
   it('uses glob negation to set headers', function(done) {
     var app = connect()
       .use(headers({
-        '!/anything/**': {
-          'custom-header': 'for testing'
-        }
+        headers: [
+          {source: '!/anything/**', headers: [
+            {key: 'custom-header', value: 'for testing'}
+          ]}
+        ]
       }))
       .use(okay);
 

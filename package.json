@@ -42,7 +42,6 @@
     "as-array": "^1.0.0",
     "async": "^1.2.1",
     "basic-auth-connect": "^1.0.0",
-    "booly": "^1.0.2",
     "cache-control": "^1.0.3",
     "chalk": "^1.0.0",
     "char-spinner": "^1.0.1",
