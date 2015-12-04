@@ -210,6 +210,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
   * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/divshot/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
+  * `live` - A boolean value or string. If set to `true`, Superstatic will watch all served files for changes – and reload open pages when a change occurs. If set to a [glob](https://github.com/isaacs/minimatch) string, it will only watch files matching the glob. Defaults to `false`.
 
 ## Run Tests
 
