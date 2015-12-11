@@ -211,6 +211,39 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
 
+## Providers
+
+Superstatic reads content from **providers**. The default provider for Superstatic
+reads from the local filesystem. Other providers can be substituted when initializing
+Superstatic:
+
+```js
+superstatic({
+  provider: require('superstatic-someprovider')({
+    provider: 'options'
+  })
+});
+```
+
+### Authoring Providers
+
+Implementing a new provider is quite simple. You simply need to create a function
+that returns a Promise. The Promise should:
+
+1. Resolve `null` when content isn't found (i.e. a 404 response).
+2. Resolve with a metadata object as described below when content is found.
+3. Reject when an error occurs in the content-fetching process.
+
+The metadata object returned by a provider needs the following properties:
+
+* **stream:** A readable stream for the content.
+* **size:** The length of the content.
+* **etag:** (optional) a content-unique string such as an MD5 hash computed from the content
+* **modified:** (optional) a Date object for when the content was last modified
+
+A simple in-memory store provider can be found at `lib/providers/memory.js` in
+this repo as a simple reference example of a provider.
+
 ## Run Tests
 
 In superstatic module directory:
