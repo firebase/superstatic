@@ -110,14 +110,11 @@ describe('serves', function() {
   describe('redirects', function() {
     var opts = options();
 
-    opts.config.redirects = {
-      '/from': '/to',
-      '/fromCustom': {
-        status: 302,
-        url: '/toCustom'
-      },
-      '/external': 'http://redirect.com'
-    };
+    opts.config.redirects = [
+      {source: '/from', destination: '/to'},
+      {source: '/fromCustom', destination: '/toCustom', type: 302},
+      {source: '/external', destination: 'http://redirect.com'}
+    ];
 
     var app = connect()
       .use(superstatic(opts));
@@ -192,11 +189,12 @@ describe('serves', function() {
     it('with globs', function(done) {
       var opts = options();
 
-      opts.config.headers = {
-        '/**/*.html': {
-          'x-custom': 'testing'
-        }
-      };
+      opts.config.headers = [
+        {source: '/**/*.html', headers: [{
+          key: 'x-custom',
+          value: 'testing'
+        }]}
+      ];
 
       var app = connect()
         .use(superstatic(opts));
@@ -210,11 +208,11 @@ describe('serves', function() {
     it('exact', function(done) {
       var opts = options();
 
-      opts.config.headers = {
-        '/app.js': {
-          'x-custom': 'testing'
-        }
-      };
+      opts.config.headers = [{
+        source: '/app.js', headers: [{
+          key: 'x-custom', value: 'testing'
+        }]
+      }];
 
       var app = connect()
         .use(superstatic(opts));

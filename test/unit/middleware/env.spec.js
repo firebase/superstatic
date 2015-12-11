@@ -9,7 +9,8 @@
 var request = require('supertest');
 var connect = require('connect');
 
-var env = require('../../../lib/middleware/env');
+var helpers = require('../../helpers');
+var env = helpers.decorator(require('../../../lib/middleware/env'));
 var Responder = require('../../../lib/responder');
 
 describe('env', function() {
@@ -18,7 +19,7 @@ describe('env', function() {
   beforeEach(function() {
     app = connect()
       .use(function(req, res, next) {
-        res._responder = new Responder(req, res, {
+        res.superstatic = new Responder(req, res, {
           provider: {}
         });
         next();
@@ -27,7 +28,7 @@ describe('env', function() {
 
   it('serves json', function(done) {
     app.use(env({
-      data: {
+      env: {
         key: 'value'
       }
     }));
@@ -44,7 +45,7 @@ describe('env', function() {
 
   it('serves javascript', function(done) {
     app.use(env({
-      data: {
+      env: {
         key: 'value'
       }
     }));

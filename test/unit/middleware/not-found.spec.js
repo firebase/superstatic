@@ -23,7 +23,7 @@ describe('not found', function() {
 
     app = connect()
       .use(function(req, res, next) {
-        res._responder = new Responder(req, res, {
+        res.superstatic = new Responder(req, res, {
           provider: {}
         });
         next();
@@ -37,7 +37,7 @@ describe('not found', function() {
   it('serves the file', function(done) {
     app
       .use(notFound({
-        file: '.tmp/not-found.html'
+        errorPage: '.tmp/not-found.html'
       }));
 
     request(app)
@@ -50,7 +50,7 @@ describe('not found', function() {
   it('throws on file read error', function() {
     expect(function() {
       notFound({
-        file: '.tmp/does-not-exist.html'
+        errorPage: '.tmp/does-not-exist.html'
       });
     }).to.throw('ENOENT');
   });
@@ -58,7 +58,7 @@ describe('not found', function() {
   it('caches for one hour', function(done) {
     app
     .use(notFound({
-      file: join(process.cwd(), '.tmp/not-found.html')
+      errorPage: join(process.cwd(), '.tmp/not-found.html')
     }));
 
     request(app)
