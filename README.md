@@ -228,7 +228,7 @@ superstatic({
 ### Authoring Providers
 
 Implementing a new provider is quite simple. You simply need to create a function
-that returns a Promise. The Promise should:
+that takes a request and pathname and returns a Promise. The Promise should:
 
 1. Resolve `null` when content isn't found (i.e. a 404 response).
 2. Resolve with a metadata object as described below when content is found.
@@ -243,6 +243,9 @@ The metadata object returned by a provider needs the following properties:
 
 A simple in-memory store provider can be found at `lib/providers/memory.js` in
 this repo as a simple reference example of a provider.
+
+**Note:** The pathname will be URL-encoded. You should make sure your provider
+properly handles files with non-standard characters (spaces, unicode, etc).
 
 ## Run Tests
 

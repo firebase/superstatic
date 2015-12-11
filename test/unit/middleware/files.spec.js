@@ -53,6 +53,19 @@ describe('static server with trailing slash customization', function() {
       .end(done);
   });
 
+  it('serves html file with unicode name', function(done) {
+    fs.outputFileSync('.tmp/äää.html', 'test', 'utf8');
+
+    app.use(files({}, {provider: provider}));
+
+    request(app)
+      .get('/äää.html')
+      .expect(200)
+      .expect('test')
+      .expect('content-type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
   it('serves css file', function(done) {
     fs.outputFileSync('.tmp/style.css', 'body {}', 'utf8');
 
