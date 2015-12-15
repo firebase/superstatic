@@ -1,4 +1,4 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/divshot/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/firebase/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic) [![Code Climate](https://codeclimate.com/github/firebase/superstatic/badges/gpa.svg)](https://codeclimate.com/github/firebase/superstatic)
 
 Superstatic is an enhanced static web server that was built to power.
 It has fantastic support for HTML5 pushState applications, clean URLs,
@@ -12,11 +12,11 @@ caching, and many other goodies.
 * [API](#api)
   * [Middleware](#middleware)
   * [Server](#server)
+* [Providers](#providers)
+  * [Authoring Providers](#authoring-providers)
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/divshot/superstatic/blob/master/CHANGELOG.md)
+* [Changelog](https://github.com/firebase/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
-
-
 
 ## Installation
 
@@ -52,7 +52,7 @@ $ superstatic public --port 8080 --host 127.0.0.1
 ## Configuration
 
 Superstatic reads special configuration from a JSON file (either `superstatic.json`
-or `divshot.json` by default, configurable with `-c`). This JSON file enables
+or `firebase.json` by default, configurable with `-c`). This JSON file enables
 enhanced static server functionality beyond simply serving files.
 
 **public:** by default, Superstatic will serve the current working directory (or the
@@ -62,7 +62,7 @@ should be served. For example, if serving a Jekyll app, this might be set to `"_
 A directory passed as an argument into the command line app supercedes this configuration
 directive.
 
-**clean_urls:** if `true`, all `.html` files will automatically have their extensions
+**cleanUrls:** if `true`, all `.html` files will automatically have their extensions
 dropped. If `.html` is used at the end of a filename, it will perform a 301 redirect
 to the same path with `.html` dropped.
 
@@ -70,7 +70,7 @@ All paths have clean urls
 
 ```json
 {
-  "clean_urls": true
+  "cleanUrls": true
 }
 ```
 
@@ -78,7 +78,7 @@ Only specific paths get clean urls
 
 ```json
 {
-  "clean_urls": ["/app/**", "/!components/**"]
+  "cleanUrls": ["/app/**", "/!components/**"]
 }
 ```
 
@@ -96,28 +96,28 @@ apps. An example:
 }
 ```
 
-**redirects:** you can specify certain url paths to be redirected to another url by supplying configuration to the `redirects` key. Path matching is similar to using custom routes. Redirects use the `301` HTTP status code by default, but this can be overridden by configuration.
+**redirects:** you can specify certain url paths to be redirected to another url by supplying configuration to the `function()` key. Path matching is similar to using custom routes. function() use the `301` HTTP status code by default, but this can be overridden by configuration.
 
 ```json
 {
-  "redirects": [
+  "function()": [
     {"source":"/some/old/path", "destination":"/some/new/path"},
     {"source":"/firebase/*", "destination":"https://www.firebase.com", "type": 302}
   ]
 }
 ```
 
-Route segments are also supported in the redirects configuration. Segmented redirects also support custom status codes (see above):
+Route segments are also supported in the function() configuration. Segmented function() also support custom status codes (see above):
 
 ```json
 {
-  "redirects": [
+  "function()": [
     {"source":"/old/:segment/path", "destination":"/new/path/:segment"}
   ]
 }
 ```
 
-In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segment`
+In this example, `/old/custom-segment/path` function() to `/new/path/custom-segment`
 
 **headers:** Superstatic allows you to set the response headers for certain paths as well:
 
@@ -147,11 +147,11 @@ In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segme
 }
 ```
 
-**trailing_slash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
+**trailingSlash:** Have full control over whether or not your app has or doesn't have trailing slashes. By default, Superstatic will make assumptions for on the best times to add or remove the trailing slash. Other options include `true`, which always adds a trailing slash, and `false`, which always removes the trailing slash.
 
 ```json
 {
-  "trailing_slash": true
+  "trailingSlash": true
 }
 ```
 
@@ -169,7 +169,7 @@ var connect = require('connect');
 var app = connect()
 	.use(superstatic(/* options */));
 
-app.listen(3000, function () {
+app.listen(3000, function() {
 
 });
 
@@ -177,14 +177,14 @@ app.listen(3000, function () {
 
 ### `superstatic([options])`
 
-Instantiates middleware. See an [example](https://github.com/divshot/superstatic/tree/master/examples) for detail on real world use.
+Instantiates middleware. See an [example](https://github.com/firebase/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
-  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
+  * `fallthrough` - When `false`, render a 404 page from within Superstatic rather than calling through to the next middleware. Defaults to `true`.
+  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration. If an object is provided, it will be merged into existing config in a `superstatic.json`.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
-  * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.divshot.com/guides/environment-variables).
+  * `env`- A file path your application's environment variables file or an object containing values that are made available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
   * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
-  * `services` - An object containing various Superstatic services.
 
 ### Server
 
@@ -193,7 +193,7 @@ var superstatic = require('superstatic').server;
 
 var app = superstatic(/* options */);
 
-var server = app.listen(function () {
+var server = app.listen(function() {
 
 });
 ```
@@ -207,9 +207,45 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/divshot/superstatic/blob/master/lib/assets/not_found.html).
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
+
+## Providers
+
+Superstatic reads content from **providers**. The default provider for Superstatic
+reads from the local filesystem. Other providers can be substituted when initializing
+Superstatic:
+
+```js
+superstatic({
+  provider: require('superstatic-someprovider')({
+    provider: 'options'
+  })
+});
+```
+
+### Authoring Providers
+
+Implementing a new provider is quite simple. You simply need to create a function
+that takes a request and pathname and returns a Promise. The Promise should:
+
+1. Resolve `null` when content isn't found (i.e. a 404 response).
+2. Resolve with a metadata object as described below when content is found.
+3. Reject when an error occurs in the content-fetching process.
+
+The metadata object returned by a provider needs the following properties:
+
+* **stream:** A readable stream for the content.
+* **size:** The length of the content.
+* **etag:** (optional) a content-unique string such as an MD5 hash computed from the content
+* **modified:** (optional) a Date object for when the content was last modified
+
+A simple in-memory store provider can be found at `lib/providers/memory.js` in
+this repo as a simple reference example of a provider.
+
+**Note:** The pathname will be URL-encoded. You should make sure your provider
+properly handles files with non-standard characters (spaces, unicode, etc).
 
 ## Run Tests
 
@@ -222,4 +258,4 @@ npm test
 
 ## Contributing
 
-We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/divshot/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.
+We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/firebase/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.

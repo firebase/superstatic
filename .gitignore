@@ -11,6 +11,7 @@ pids
 logs
 results
 
+coverage
 npm-debug.log
 node_modules
 .tmp
@@ -25,5 +26,5 @@ asdf.txt
 todo.txt
 
 # Errors from testing
-divshot.json
+firebase.json
 superstatic.json
