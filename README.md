@@ -12,11 +12,11 @@ caching, and many other goodies.
 * [API](#api)
   * [Middleware](#middleware)
   * [Server](#server)
+* [Providers](#providers)
+  * [Authoring Providers](#authoring-providers)
 * [Run Tests](#run-tests)
 * [Changelog](https://github.com/firebase/superstatic/blob/master/CHANGELOG.md)
 * [Contributing](#contributing)
-
-
 
 ## Installation
 
@@ -180,11 +180,11 @@ app.listen(3000, function() {
 Instantiates middleware. See an [example](https://github.com/firebase/superstatic/tree/master/examples) for detail on real world use.
 
 * `options` - Optional configuration:
-  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration.
+  * `fallthrough` - When `false`, render a 404 page from within Superstatic rather than calling through to the next middleware. Defaults to `true`.
+  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration. If an object is provided, it will be merged into existing config in a `superstatic.json`.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
-  * `env`- A file path your application's environment variables file or an object containing values that are available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
+  * `env`- A file path your application's environment variables file or an object containing values that are made available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
   * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
-  * `services` - An object containing various Superstatic services.
 
 ### Server
 
