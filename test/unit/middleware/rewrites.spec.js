@@ -66,6 +66,21 @@ describe('static router', function() {
       .end(done);
   });
 
+  it('serves a route with an extension via a glob', function(done) {
+    app.use(rewrites({
+      rewrites: [{
+        source: '**', destination: '/index.html'
+      }]
+    }));
+
+    request(app)
+      .get('/my-route.py')
+      .expect(200)
+      .expect('index')
+      .expect('content-type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
   it('serves a negated route', function(done) {
     app.use(rewrites({
       rewrites: [{
@@ -94,7 +109,7 @@ describe('static router', function() {
       .end(done);
   });
 
-  it('ensures matching file extension', function(done) {
+  it('serves the mime type of the rewritten file', function(done) {
     app.use(rewrites({
       rewrites: [{
         source: '**', destination: '/index.html'
@@ -103,7 +118,7 @@ describe('static router', function() {
 
     request(app)
       .get('/index.js')
-      .expect(404)
+      .expect('content-type', 'text/html; charset=utf-8')
       .end(done);
   });
 
