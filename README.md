@@ -184,7 +184,7 @@ Instantiates middleware. See an [example](https://github.com/firebase/superstati
   * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration. If an object is provided, it will be merged into existing config in a `superstatic.json`.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
   * `env`- A file path your application's environment variables file or an object containing values that are made available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
-  * `cwd` - The current working directory to set as the root. Your application's root configuration option will be used relative to this.
+  * `cwd` - The current working directory to set as the root. Your application's `public` configuration option will be used relative to this.
 
 ### Server
 
