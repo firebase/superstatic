@@ -28,6 +28,7 @@ describe('serves', function() {
     fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf-8');
     fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf-8');
     fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf-8');
+    fs.outputFileSync('.tmp/File With Spaces.html', 'spaces', 'utf-8');
   });
 
   afterEach(function() {
@@ -49,6 +50,30 @@ describe('serves', function() {
   });
 
   it('directory index file', function(done) {
+    var opts = options();
+
+    var app = connect()
+      .use(superstatic(opts));
+
+    request(app)
+      .get('/dir/')
+      .expect(200)
+      .expect('dir index')
+      .expect('Content-Type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
+  it('cannot access files above the root', function(done) {
+    var app = connect()
+      .use(superstatic(options()));
+
+    request(app)
+      .get('/../README.md')
+      .expect(404)
+      .end(done);
+  });
+
+  it('file with spaces', function(done) {
     var opts = options();
 
     var app = connect()
