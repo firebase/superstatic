@@ -28,7 +28,6 @@ describe('serves', function() {
     fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf-8');
     fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf-8');
     fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf-8');
-    fs.outputFileSync('.tmp/File With Spaces.html', 'spaces', 'utf-8');
   });
 
   afterEach(function() {
