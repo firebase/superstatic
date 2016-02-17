@@ -73,20 +73,6 @@ describe('serves', function() {
       .end(done);
   });
 
-  it('file with spaces', function(done) {
-    var opts = options();
-
-    var app = connect()
-      .use(superstatic(opts));
-
-    request(app)
-      .get('/dir/')
-      .expect(200)
-      .expect('dir index')
-      .expect('Content-Type', 'text/html; charset=utf-8')
-      .end(done);
-  });
-
   it('missing directory index', function(done) {
     var opts = options();
 
