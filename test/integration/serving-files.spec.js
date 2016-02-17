@@ -62,6 +62,16 @@ describe('serves', function() {
       .end(done);
   });
 
+  it('cannot access files above the root', function(done) {
+    var app = connect()
+      .use(superstatic(options()));
+
+    request(app)
+      .get('/../README.md')
+      .expect(404)
+      .end(done);
+  });
+
   it('missing directory index', function(done) {
     var opts = options();
 
