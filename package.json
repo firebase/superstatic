@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "as-array": "^2.0.0",
-    "async": "^1.2.1",
+    "async": "^1.5.2",
     "basic-auth-connect": "^1.0.0",
     "chalk": "^1.0.0",
     "char-spinner": "^1.0.1",
