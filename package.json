@@ -56,7 +56,7 @@
     "home-dir": "^1.0.0",
     "is-url": "^1.2.1",
     "join-path": "^1.0.0",
-    "lodash": "^3.1.0",
+    "lodash": "^4.11.2",
     "mime-types": "^2.0.4",
     "minimatch": "^3.0.0",
     "morgan": "^1.5.0",
