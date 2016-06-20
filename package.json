@@ -58,7 +58,7 @@
     "join-path": "^1.0.0",
     "lodash": "^4.11.2",
     "mime-types": "^2.0.4",
-    "minimatch": "^3.0.0",
+    "minimatch": "^3.0.2",
     "morgan": "^1.5.0",
     "nash": "^2.0.0",
     "on-finished": "^2.2.0",
@@ -68,7 +68,7 @@
     "rsvp": "^3.1.0",
     "string-length": "^1.0.0",
     "try-require": "^1.0.0",
-    "update-notifier": "^0.7.0"
+    "update-notifier": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^3.0.0",
