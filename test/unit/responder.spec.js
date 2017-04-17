@@ -95,8 +95,25 @@ describe('Responder', function() {
   });
 
   describe('#handleMiddleware', function() {
-    xit('should call the middleware');
-    xit('should resolve false if next() is called');
+    var rq;
+    beforeEach(function() {
+      rq = {};
+      responder = new Responder(rq, {setHeader: _.noop, end: _.noop}, {});
+    });
+
+    it('should call the middleware', function(done) {
+      responder.handleMiddleware(function() {
+        done();
+      });
+    });
+
+    it('should resolve false if next is called', function() {
+      return responder.handleMiddleware(function(req, res, next) {
+        next();
+      }).then(function(result) {
+        expect(result).to.be.false;
+      });
+    });
   });
 
   describe('#handleFile', function() {
