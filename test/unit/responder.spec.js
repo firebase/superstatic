@@ -57,6 +57,13 @@ describe('Responder', function() {
       responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
     });
+
+    it('should call through to handleRewrite with a rewrite object', function() {
+      var stub = sinon.stub(responder, 'handleRewrite').returns(RSVP.resolve(true));
+      var obj = {rewrite: {}};
+      responder.handle(obj);
+      expect(stub).to.have.been.calledWith(obj);
+    });
   });
 
   describe('#_handle', function() {
@@ -66,6 +73,46 @@ describe('Responder', function() {
 
     it('should reject with an unrecognized payload', function() {
       return expect(responder._handle({foo: 'bar'})).to.be.rejectedWith('is not a recognized responder directive');
+    });
+  });
+
+  describe('#handleRewrite', function() {
+    it('should call through to a registered custom rewriter', function() {
+      var out;
+      responder = new Responder({}, {setHeader: _.noop, end: function(data) { out = data; }}, {
+        rewriters: {
+          message: function(rewrite) {
+            return RSVP.resolve({data: rewrite.message, contentType: 'text/plain', status: 200});
+          }
+        }
+      });
+
+      return responder.handleRewrite({rewrite: {message: 'hi'}}).then(function(result) {
+        expect(result).to.be.true;
+        expect(out).to.equal('hi');
+      });
+    });
+  });
+
+  describe('#handleMiddleware', function() {
+    var rq;
+    beforeEach(function() {
+      rq = {};
+      responder = new Responder(rq, {setHeader: _.noop, end: _.noop}, {});
+    });
+
+    it('should call the middleware', function(done) {
+      responder.handleMiddleware(function() {
+        done();
+      });
+    });
+
+    it('should resolve false if next is called', function() {
+      return responder.handleMiddleware(function(req, res, next) {
+        next();
+      }).then(function(result) {
+        expect(result).to.be.false;
+      });
     });
   });
 
