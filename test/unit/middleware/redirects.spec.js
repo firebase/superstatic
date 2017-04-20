@@ -229,6 +229,21 @@ describe('redirect middleware', function() {
       .end(done);
   });
 
+  it('appends query params to the destination when redirecting', function(done) {
+    var app = connect()
+      .use(setup).use(redirect({redirects: [{
+        source: '/source',
+        destination: '/destination?hello=world',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source?foo=bar&baz=qux')
+      .expect(301)
+      .expect('Location', '/destination?hello=world&foo=bar&baz=qux')
+      .end(done);
+  });
+
   it('preserves query params when redirecting to external urls', function(done) {
     var app = connect()
       .use(setup).use(redirect({redirects: [{
