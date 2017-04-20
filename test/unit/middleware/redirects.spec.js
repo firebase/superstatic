@@ -106,7 +106,7 @@ describe('redirect middleware', function() {
       .end(done);
   });
 
-  it('redirects using segements in the url path', function(done) {
+  it('redirects using segments in the url path', function(done) {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
@@ -211,6 +211,66 @@ describe('redirect middleware', function() {
       .get('/source')
       .expect(301)
       .expect('Location', 'https://redirectedto.com')
+      .end(done);
+  });
+
+  it('preserves query params when redirecting', function(done) {
+    var app = connect()
+      .use(setup).use(redirect({redirects: [{
+        source: '/source',
+        destination: '/destination',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source?foo=bar&baz=qux')
+      .expect(301)
+      .expect('Location', '/destination?foo=bar&baz=qux')
+      .end(done);
+  });
+
+  it('appends query params to the destination when redirecting', function(done) {
+    var app = connect()
+      .use(setup).use(redirect({redirects: [{
+        source: '/source',
+        destination: '/destination?hello=world',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source?foo=bar&baz=qux')
+      .expect(301)
+      .expect('Location', '/destination?hello=world&foo=bar&baz=qux')
+      .end(done);
+  });
+
+  it('preserves query params when redirecting to external urls', function(done) {
+    var app = connect()
+      .use(setup).use(redirect({redirects: [{
+        source: '/source',
+        destination: 'http://example.com/destination',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source?foo=bar&baz=qux')
+      .expect(301)
+      .expect('Location', 'http://example.com/destination?foo=bar&baz=qux')
+      .end(done);
+  });
+
+  it('preserves query params when redirecting with captures', function(done) {
+    var app = connect()
+      .use(setup).use(redirect({redirects: [{
+        source: '/source/:foo',
+        destination: '/:foo/bar',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source/wat?foo=bar&baz=qux')
+      .expect(301)
+      .expect('Location', '/wat/bar?foo=bar&baz=qux')
       .end(done);
   });
 });
