@@ -191,5 +191,15 @@ describe('static server with trailing slash customization', function() {
         .expect('Location', '/about')
         .end(done);
     });
+
+    it('normalizes multiple leading slashes on a redirect', function(done) {
+      app.use(files({trailingSlash: false}, {provider: provider}));
+
+      request(app)
+        .get('//firebase.google.com/')
+        .expect(301)
+        .expect('Location', '/firebase.google.com')
+        .end(done);
+    });
   });
 });
