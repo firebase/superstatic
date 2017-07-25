@@ -1,2 +1,0 @@
-fixed - Updated outdated dependencies.
-fixed - Normalize double-slashes to single slashes.
