@@ -15,7 +15,7 @@ var spec = {
   },
   cwd: __dirname,
   errorPage: __dirname + '/error.html',
-  gzip: true,
+  compression: true,
   debug: true
 };
 

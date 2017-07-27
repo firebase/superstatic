@@ -143,9 +143,16 @@ describe('cli', function() {
     });
   });
 
-  it('enables gzipping', function(done) {
+  it('supports the old --gzip flag', function(done) {
     cli.run(['', '', '--gzip'], function() {
-      expect(cli.get('gzip')).to.equal(true);
+      expect(cli.get('compression')).to.equal(true);
+      cli.get('server').close(done);
+    });
+  });
+
+  it('enables smart compression', function(done) {
+    cli.run(['', '', '--compression'], function() {
+      expect(cli.get('compression')).to.equal(true);
       cli.get('server').close(done);
     });
   });

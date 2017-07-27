@@ -32,6 +32,5 @@ if (notifier.update) {
 var cli = Cli();
 
 cli.run(process.argv, function() {
-
   console.log('\nSuperstatic started.\nVisit ' + format.underline('http://' + cli.get('hostname') + ':' + cli.get('port')) + ' to view your app.');
 });

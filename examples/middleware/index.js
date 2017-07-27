@@ -17,7 +17,8 @@ var spec = {
       destination: '/index.html'
     }]
   },
-  cwd: process.cwd()
+  cwd: process.cwd(),
+  compression: true
 };
 
 var app = connect()
