@@ -5,6 +5,14 @@ node_js:
   - 0.12
   - 4
   - stable
+env:
+  - CXX=g++-4.8 CXXFLAGS=-std=c++11
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
 # script:
   # - npm run outdated # list outdated modules (won't fail build)

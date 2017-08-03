@@ -209,7 +209,8 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
   * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
-  * `gzip` - A boolean value that tells Superstatic to gzip response body. Defaults to `false`.
+  * `compression` - A boolean value that tells Superstatic to use [Shrink-ray](https://www.npmjs.com/package/shrink-ray) to select an appropriate modern compression scheme (brotli/zopfli, gzip) based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
+  * `gzip` - A deprecated boolean value which is now equivalent in behavior to `compression`. Defaults to `false`.
 
 ## Providers
 
