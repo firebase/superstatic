@@ -1,0 +1,2 @@
+feature - Support brotli, zopfli compression via `compression` option.
+deprecated - `gzip` option is deprecated in favor of `compression`.
