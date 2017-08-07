@@ -1,0 +1,1 @@
+fixed - Silence warning when falling back to gzip compression.
