@@ -1,4 +1,2 @@
-feature - Superstatic will now pass through configuration objects provided as
-the `compression` paramenter to the underlying compression library, allowing
-tuning of compression quality/behavior.
+feature - Superstatic will now pass through configuration objects provided as the `compression` paramenter to the underlying compression library, allowing tuning of compression quality/behavior.
 
