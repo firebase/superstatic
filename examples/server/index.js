@@ -15,12 +15,7 @@ var spec = {
   },
   cwd: __dirname,
   errorPage: __dirname + '/error.html',
-  compression: {
-    brotli: { quality: 6 },
-    cache: function(req, res) { // eslint-disable-line no-unused-vars
-      return false;
-    }
-  },
+  compression: true,
   debug: true
 };
 

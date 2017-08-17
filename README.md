@@ -185,7 +185,7 @@ Instantiates middleware. See an [example](https://github.com/firebase/superstati
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
   * `env`- A file path your application's environment variables file or an object containing values that are made available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
   * `cwd` - The current working directory to set as the root. Your application's `public` configuration option will be used relative to this.
-  * `compression` - An option which controls compression via [shrink-ray](https://www.npmjs.com/package/shrink-ray) or [compression](https://www.npmjs.com/package/compression), based on the environment. Any truthy value will enable compression. Objects will be passed through as configuration options to the compression library (the keys accepted by `shrink-ray` are a superset of the keys accepted by `compression`).
+  * `compression` - An option which controls superstatic's response compression. Pass in a standard `compression(req, res, next)` Express middleware function to override the default compression behavior (for example, require [shrink-ray](https://www.npmjs.com/package/shrink-ray) to enable advanced compression schemes such as brotli, or require node.js' stock [compression](https://www.npmjs.com/package/compression) middleware yourself to change the compression quality and caching behavior). Any other truthy value will default to the stock node.js middleware.
 
 ### Server
 
@@ -210,10 +210,8 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
   * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
-  * `compression` - A boolean value that tells Superstatic to use [shrink-ray](https://www.npmjs.com/package/shrink-ray) to select an appropriate modern compression scheme (brotli/zopfli, gzip) based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
+  * `compression` - A boolean value that tells Superstatic to serve gzip/deflate compressed responses based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
   * `gzip` **[DEPRECATED]** - A boolean value which is now equivalent in behavior to `compression`. Defaults to `false`.
-
-  **Note:** Environments on Node <= 0.12 or without C++11 will not be able to utilize advanced compression; Superstatic will fall back to gzip in these cases.
 
 ## Providers
 

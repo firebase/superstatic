@@ -18,12 +18,7 @@ var spec = {
     }]
   },
   cwd: process.cwd(),
-  compression: {
-    brotli: { quality: 6 },
-    cache: function(req, res) { // eslint-disable-line no-unused-vars
-      return false;
-    }
-  }
+  compression: true
 };
 
 var app = connect()
