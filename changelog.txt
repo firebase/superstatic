@@ -1,4 +1,0 @@
-important - Due to excessive compiler warnings on many platforms, we've decided to remove the new dependency on `shrink-ray` and allow for custom compression middleware.
-removed - No longer include `shrink-ray` advanced compression by default.
-changed - `compression` option now takes custom middleware or boolean.
-deprecated - `gzip` option is deprecated in favor of `compression`.
