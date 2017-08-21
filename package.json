@@ -84,8 +84,5 @@
     "sinon-chai": "^2.12.0",
     "std-mocks": "^1.0.1",
     "supertest": "^1.2.0"
-  },
-  "optionalDependencies": {
-    "shrink-ray": "^0.1.3"
   }
 }
