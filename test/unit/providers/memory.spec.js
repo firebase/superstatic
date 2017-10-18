@@ -27,7 +27,7 @@ describe('memory provider', function() {
 
   it('should return a stream of the content if found', function(done) {
     store['/index.html'] = 'foobar';
-    return provider({}, '/index.html').then(function(result) {
+    provider({}, '/index.html').then(function(result) {
       var out = '';
       result.stream.on('data', function(data) {
         out += data;
@@ -36,7 +36,7 @@ describe('memory provider', function() {
         expect(out).to.eq('foobar');
         done();
       });
-    });
+    }, done);
   });
 
   it('should return an etag of the content', function() {

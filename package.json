@@ -76,7 +76,7 @@
     "concat-stream": "^1.5.1",
     "eslint": "^2.9.0",
     "istanbul": "^0.4.5",
-    "mocha": "^2.5.3",
+    "mocha": "^4.0.1",
     "nsp": "^2.6.3",
     "request": "^2.81.0",
     "sinon": "^1.17.7",
