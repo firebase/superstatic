@@ -44,6 +44,18 @@ describe('provider: fs', function() {
     });
   });
 
+  it('should return null if ../', function() {
+    return expect(fsp(opts)({}, '/../b/b.html')).to.eventually.be.null;
+  });
+
+  it('should return null if ..\\', function() {
+    return expect(fsp(opts)({}, '/..\\b\\b.html')).to.eventually.be.null;
+  });
+
+  it('should return null if ..%5c', function() {
+    return expect(fsp(opts)({}, '/..%5Cb%5cb.html')).to.eventually.be.null;
+  });
+
   it('should return null for a file that does not exist', function() {
     return expect(fsp(opts)({}, '/bogus.html')).to.eventually.be.null;
   });
