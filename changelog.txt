@@ -1,0 +1,1 @@
+fixed - Disallow upward tree traversal in `fs` provider in Windows.
