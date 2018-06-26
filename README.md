@@ -74,14 +74,6 @@ All paths have clean urls
 }
 ```
 
-Only specific paths get clean urls
-
-```json
-{
-  "cleanUrls": ["/app/**", "/!components/**"]
-}
-```
-
 **rewrites:** you can specify custom route recognition for your application by supplying
 an object to the routes key. Use a single star `*` to replace one URL segment or a
 double star to replace an arbitrary piece of URLs. This works great for single page
