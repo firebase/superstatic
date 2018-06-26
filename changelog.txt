@@ -1,0 +1,1 @@
+fixed - Disable upward tree traversal in Windows.
