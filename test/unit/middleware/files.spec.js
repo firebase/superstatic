@@ -23,9 +23,9 @@ describe('static server with trailing slash customization', function() {
   var app;
 
   beforeEach(function() {
-    fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
-    fs.outputFileSync('.tmp/me.html', 'testing', 'utf8');
-    fs.outputFileSync('.tmp/about/index.html', 'about index', 'utf8');
+    fs.outputFileSync('.tmp/foo.html', 'foo.html content', 'utf8');
+    fs.outputFileSync('.tmp/foo/index.html', 'foo/index.html content', 'utf8');
+    fs.outputFileSync('.tmp/foo/bar.html', 'foo/bar.html content', 'utf8');
 
     app = connect()
       .use(function(req, res, next) {
@@ -41,14 +41,12 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('serves html file', function(done) {
-    fs.outputFileSync('.tmp/superstatic.html', 'test', 'utf8');
-
     app.use(files({}, {provider: provider}));
 
     request(app)
-      .get('/superstatic.html')
+      .get('/foo.html')
       .expect(200)
-      .expect('test')
+      .expect('foo.html content')
       .expect('content-type', 'text/html; charset=utf-8')
       .end(done);
   });
@@ -105,11 +103,14 @@ describe('static server with trailing slash customization', function() {
   });
 
   it('does not redirect the root url because of the trailing slash', function(done) {
+    fs.outputFileSync('.tmp/index.html', 'an actual index', 'utf8');
+
     app.use(files({}, {provider: provider}));
 
     request(app)
       .get('/')
       .expect(200)
+      .expect('an actual index')
       .end(done);
   });
 
@@ -117,10 +118,10 @@ describe('static server with trailing slash customization', function() {
     app.use(files({}, {provider: provider}));
 
     request(app)
-      .get('/about/')
+      .get('/foo/')
       .expect(200)
       .expect(function(data) {
-        expect(data.req.path).to.equal('/about/');
+        expect(data.req.path).to.equal('/foo/');
       })
       .end(done);
   });
@@ -129,9 +130,9 @@ describe('static server with trailing slash customization', function() {
     app.use(files({}, {provider: provider}));
 
     request(app)
-      .get('/about')
+      .get('/foo')
       .expect(function(req) {
-        expect(req.headers.location).to.equal('/about/');
+        expect(req.headers.location).to.equal('/foo/');
       })
       .expect(301)
       .end(done);
@@ -141,9 +142,9 @@ describe('static server with trailing slash customization', function() {
     app.use(files({}, {provider: provider}));
 
     request(app)
-      .get('/about?query=params')
+      .get('/foo?query=params')
       .expect(function(req) {
-        expect(req.headers.location).to.equal('/about/?query=params');
+        expect(req.headers.location).to.equal('/foo/?query=params');
       })
       .expect(301)
       .end(done);
@@ -154,9 +155,9 @@ describe('static server with trailing slash customization', function() {
       app.use(files({trailingSlash: true}, {provider: provider}));
 
       request(app)
-        .get('/testing')
+        .get('/foo')
         .expect(301)
-        .expect('Location', '/testing/')
+        .expect('Location', '/foo/')
         .end(done);
     });
   });
@@ -166,19 +167,18 @@ describe('static server with trailing slash customization', function() {
       app.use(files({trailingSlash: false}, {provider: provider}));
 
       request(app)
-        .get('/testing/')
+        .get('/foo/')
         .expect(301)
-        .expect('Location', '/testing')
+        .expect('Location', '/foo')
         .end(done);
     });
 
-    it('removes trailing slash on urls with file extension', function(done) {
+    it('returns a 404 if a trailing slash was added to a valid path', function(done) {
       app.use(files({trailingSlash: false}, {provider: provider}));
 
       request(app)
-        .get('/me.html/')
-        .expect(301)
-        .expect('Location', '/me.html')
+        .get('/foo.html/')
+        .expect(404)
         .end(done);
     });
 
@@ -186,9 +186,9 @@ describe('static server with trailing slash customization', function() {
       app.use(files({trailingSlash: false}, {provider: provider}));
 
       request(app)
-        .get('/about/')
+        .get('/foo/')
         .expect(301)
-        .expect('Location', '/about')
+        .expect('Location', '/foo')
         .end(done);
     });
 
@@ -196,10 +196,135 @@ describe('static server with trailing slash customization', function() {
       app.use(files({trailingSlash: false}, {provider: provider}));
 
       request(app)
-        .get('//firebase.google.com/')
+        .get('/foo////')
         .expect(301)
-        .expect('Location', '/firebase.google.com')
+        .expect('Location', '/foo')
         .end(done);
+    });
+  });
+
+  [
+    {
+      trailingSlashBehavior: undefined,
+      cleanUrls: false,
+      tests: [
+        {path: '/foo', wantRedirect: '/foo/'},
+        {path: '/foo.html', wantContent: 'foo.html content'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantContent: 'foo/index.html content'},
+        {path: '/foo/bar', wantNotFound: true},
+        {path: '/foo/bar.html', wantContent: 'foo/bar.html content'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantNotFound: true},
+        {path: '/foo/index', wantNotFound: true},
+        {path: '/foo/index.html', wantContent: 'foo/index.html content'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    },
+    {
+      trailingSlashBehavior: false,
+      cleanUrls: false,
+      tests: [
+        {path: '/foo', wantContent: 'foo/index.html content'},
+        {path: '/foo.html', wantContent: 'foo.html content'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantRedirect: '/foo'},
+        {path: '/foo/bar', wantNotFound: true},
+        {path: '/foo/bar.html', wantContent: 'foo/bar.html content'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantNotFound: true},
+        {path: '/foo/index', wantNotFound: true},
+        {path: '/foo/index.html', wantContent: 'foo/index.html content'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    },
+    {
+      trailingSlashBehavior: true,
+      cleanUrls: false,
+      tests: [
+        {path: '/foo', wantRedirect: '/foo/'},
+        {path: '/foo.html', wantContent: 'foo.html content'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantContent: 'foo/index.html content'},
+        {path: '/foo/bar', wantNotFound: true},
+        {path: '/foo/bar.html', wantContent: 'foo/bar.html content'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantNotFound: true},
+        {path: '/foo/index', wantNotFound: true},
+        {path: '/foo/index.html', wantContent: 'foo/index.html content'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    },
+    {
+      trailingSlashBehavior: undefined,
+      cleanUrls: true,
+      tests: [
+        {path: '/foo', wantContent: 'foo/index.html content'},
+        {path: '/foo.html', wantRedirect: '/foo'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantContent: 'foo/index.html content'},
+        {path: '/foo/bar', wantContent: 'foo/bar.html content'},
+        {path: '/foo/bar.html', wantRedirect: '/foo/bar'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantNotFound: true},
+        {path: '/foo/index', wantRedirect: '/foo'},
+        {path: '/foo/index.html', wantRedirect: '/foo'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    },
+    {
+      trailingSlashBehavior: false,
+      cleanUrls: true,
+      tests: [
+        {path: '/foo', wantContent: 'foo/index.html content'},
+        {path: '/foo.html', wantRedirect: '/foo'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantRedirect: '/foo'},
+        {path: '/foo/bar', wantContent: 'foo/bar.html content'},
+        {path: '/foo/bar.html', wantRedirect: '/foo/bar'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantRedirect: '/foo/bar'},
+        {path: '/foo/index', wantRedirect: '/foo'},
+        {path: '/foo/index.html', wantRedirect: '/foo'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    },
+    {
+      trailingSlashBehavior: true,
+      cleanUrls: true,
+      tests: [
+        {path: '/foo', wantRedirect: '/foo/'},
+        {path: '/foo.html', wantRedirect: '/foo/'},
+        {path: '/foo.html/', wantNotFound: true},
+        {path: '/foo/', wantContent: 'foo/index.html content'},
+        {path: '/foo/bar', wantRedirect: '/foo/bar/'},
+        {path: '/foo/bar.html', wantRedirect: '/foo/bar/'},
+        {path: '/foo/bar.html/', wantNotFound: true},
+        {path: '/foo/bar/', wantContent: 'foo/bar.html content'},
+        {path: '/foo/index', wantRedirect: '/foo/'},
+        {path: '/foo/index.html', wantRedirect: '/foo/'},
+        {path: '/foo/index.html/', wantNotFound: true}
+      ]
+    }
+  ].forEach(function(t) {
+    var desc = 'trailing slash ' + t.trailingSlashBehavior + ' cleanUrls ' + t.cleanUrls + ' ';
+    t.tests.forEach(function(tt) {
+      var ttDesc = desc + JSON.stringify(tt);
+      it('should behave correctly: ' + ttDesc, function(done) {
+        app.use(files({trailingSlash: t.trailingSlashBehavior, cleanUrls: t.cleanUrls}, {provider: provider}));
+
+        var r = request(app).get(tt.path);
+        if (tt.wantRedirect) {
+          r.expect(301).expect('Location', tt.wantRedirect);
+        } else if (tt.wantNotFound) {
+          r.expect(404);
+        } else if (tt.wantContent) {
+          r.expect(200).expect(tt.wantContent);
+        } else {
+          done(new Error('Test set up incorrectly'));
+        }
+        r.end(done);
+      });
     });
   });
 });
