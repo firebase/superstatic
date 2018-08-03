@@ -1,2 +1,0 @@
-important - Breaking: `cleanURLs` will no longer accept an array of globs, only a boolean value.
-changed - The behavior of `trailingSlash` and `cleanURLs` have been streamlined, addresssing odd interactions of the two.
