@@ -60,7 +60,7 @@
     "mime-types": "^2.1.16",
     "minimatch": "^3.0.4",
     "morgan": "^1.8.2",
-    "nash": "^2.0.4",
+    "nash": "^3.0.0",
     "on-finished": "^2.2.0",
     "on-headers": "^1.0.0",
     "path-to-regexp": "^1.7.0",
