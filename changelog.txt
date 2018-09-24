@@ -1,0 +1,1 @@
+fixed - Do not redirect to an empty string
