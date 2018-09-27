@@ -9,8 +9,6 @@
     "test-integration": "mocha test/integration/**",
     "lint": "eslint .",
     "coverage": "istanbul cover --print detail ./node_modules/.bin/_mocha -- test/unit/** test/integration/**",
-    "outdated": "npm outdated --depth 0",
-    "audit": "npm shrinkwrap --dev && nsp check || true && rm npm-shrinkwrap.json",
     "watch": "mocha -w test/unit/** test/integration/**"
   },
   "author": "Firebase (https://www.firebase.com/)",
@@ -77,7 +75,6 @@
     "eslint": "^2.9.0",
     "istanbul": "^0.4.5",
     "mocha": "^4.0.1",
-    "nsp": "^3.2.1",
     "request": "^2.81.0",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.12.0",
