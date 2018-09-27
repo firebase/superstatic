@@ -1,18 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-  - 4
-  - 6
+  - '4'
+  - '6'
+  - '8'
   - stable
-env:
-  - CXX=g++-4.8 CXXFLAGS=-std=c++11
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-
-# script:
-  # - npm run outdated # list outdated modules (won't fail build)
-  # - npm run audit # validate against nodesecurity.io db, but don't fail the build.
+script:
+  - npm test
+  - if [ $(npm --version | cut -d. -f1) -ge 6 ]; then npm audit; else true; fi
+after_script:
+  - npm outdated
