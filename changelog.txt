@@ -1,0 +1,2 @@
+fixed - removed `nsp` from dev dependencies
+fixed - dependency updates to fix audit issues
