@@ -1,2 +1,2 @@
 fixed - removed `nsp` from dev dependencies
-fixed - updated `update-notifier` to ultimately update `got`
+fixed - dependency updates to fix audit issues
