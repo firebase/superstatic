@@ -5,6 +5,8 @@ node_js:
   - '6'
   - '8'
   - stable
+script:
+  - npm test
+  - if [ $(npm --version | cut -d. -f1)" -ge 6 ]; then npm audit; else true; fi
 after_script:
   - npm outdated
-  - npm audit
