@@ -57,9 +57,9 @@ describe('not found', function() {
 
   it('caches for one hour', function(done) {
     app
-    .use(notFound({
-      errorPage: join(process.cwd(), '.tmp/not-found.html')
-    }));
+      .use(notFound({
+        errorPage: join(process.cwd(), '.tmp/not-found.html')
+      }));
 
     request(app)
       .get('/anything')
