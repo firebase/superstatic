@@ -66,7 +66,7 @@
     "rsvp": "^3.6.2",
     "string-length": "^1.0.0",
     "try-require": "^1.0.0",
-    "update-notifier": "^2.5.0"
+    "update-notifier": "^4.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
