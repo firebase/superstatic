@@ -8,7 +8,7 @@
     "test-unit": "mocha test/unit/**",
     "test-integration": "mocha test/integration/**",
     "lint": "eslint .",
-    "coverage": "istanbul cover --print detail ./node_modules/.bin/_mocha -- test/unit/** test/integration/**",
+    "coverage": "nyc mocha test/unit/** test/integration/**",
     "watch": "mocha -w test/unit/** test/integration/**"
   },
   "author": "Firebase (https://www.firebase.com/)",
@@ -66,7 +66,7 @@
     "rsvp": "^3.6.2",
     "string-length": "^1.0.0",
     "try-require": "^1.0.0",
-    "update-notifier": "^2.5.0"
+    "update-notifier": "^4.1.0"
   },
   "optionalDependencies": {
     "re2": "^1.15.0"
@@ -76,8 +76,8 @@
     "chai-as-promised": "^5.3.0",
     "concat-stream": "^1.5.1",
     "eslint": "^2.9.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^8.0.1",
+    "mocha": "^7.2.0",
+    "nyc": "^15.1.0",
     "request": "^2.81.0",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.12.0",
