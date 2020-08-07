@@ -16,6 +16,9 @@
   "bin": {
     "superstatic": "bin/server"
   },
+  "engines": {
+    "node": ">= 8.6.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/firebase/superstatic.git"
