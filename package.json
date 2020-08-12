@@ -71,6 +71,9 @@
     "try-require": "^1.0.0",
     "update-notifier": "^4.1.0"
   },
+  "optionalDependencies": {
+    "re2": "^1.15.0"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",

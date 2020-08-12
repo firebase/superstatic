@@ -76,4 +76,22 @@ describe('cors middleware', function() {
       .expect('custom-header', 'for testing')
       .end(done);
   });
+
+  it('uses regular expressions to set headers', function(done) {
+    var app = connect()
+      .use(headers({
+        headers: [
+          {regex: '/resources/\\d+\\.jpg', headers: [
+            {key: 'custom-header', value: 'for testing'}
+          ]}
+        ]
+      }))
+      .use(okay);
+
+    request(app)
+      .get('/resources/281.jpg')
+      .expect(200)
+      .expect('custom-header', 'for testing')
+      .end(done);
+  });
 });

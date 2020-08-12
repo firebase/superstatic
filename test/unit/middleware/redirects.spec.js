@@ -11,6 +11,7 @@ var redirect = helpers.decorator(require('../../../lib/middleware/redirects'));
 var connect = require('connect');
 var request = require('supertest');
 var Responder = require('../../../lib/responder');
+var patterns = require('../../../lib/utils/patterns');
 var setup = function(req, res, next) {
   res.superstatic = new Responder(req, res, {provider: {}});
   next();
@@ -47,6 +48,38 @@ describe('redirect middleware', function() {
       .use(setup)
       .use(redirect({redirects: [{
         source: '/source',
+        destination: '/redirect',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source')
+      .expect(301)
+      .expect('location', '/redirect')
+      .end(done);
+  });
+
+  it('recognizes glob as synonymous with source', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        glob: '/source',
+        destination: '/redirect',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/source')
+      .expect(301)
+      .expect('location', '/redirect')
+      .end(done);
+  });
+
+  it('redirects to a configured regexp path', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '/source',
         destination: '/redirect',
         type: 301
       }]}));
@@ -121,6 +154,120 @@ describe('redirect middleware', function() {
       .expect('location', '/new/redirect/path/there')
       .end(done);
   });
+
+  it('uses capturing groups as segments when given a regex', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '\/old\/(.+)\/group\/(.+)',
+        destination: '/new/:1/path/:2',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/old/capture/group/there')
+      .expect(301)
+      .expect('location', '/new/capture/path/there')
+      .end(done);
+  });
+
+  it('handles Unicode codepoints in regexes', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '\/äöü',
+        destination: '/aou',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/äöü')
+      .expect(301)
+      .expect('location', '/aou')
+      .end(done);
+  });
+
+  it('percent encodes the redirect location', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '\/aou',
+        destination: '/ć',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/aou')
+      .expect(301)
+      .expect('location', '/%C4%87')
+      .end(done);
+  });
+
+  it('redirects using regexp captures inside path segments', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '\/foo\/(.+)bar\/baz',
+        destination: '/:1',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/foo/barbar/baz')
+      .expect(301)
+      .expect('location', '/bar')
+      .end(done);
+  });
+
+  it('redirects using regexp captures across path segments', function(done) {
+    var app = connect()
+      .use(setup)
+      .use(redirect({redirects: [{
+        regex: '\/foo\/(.+)\/bar',
+        destination: '/:1',
+        type: 301
+      }]}));
+
+    request(app)
+      .get('/foo/1/2/3/4/bar')
+      .expect(301)
+      .expect('location', '/1/2/3/4')
+      .end(done);
+  });
+
+  if (patterns.re2Available()) {
+    it('redirects using RE2 capturing groups', function(done) {
+      var app = connect()
+        .use(setup)
+        .use(redirect({redirects: [{
+          regex: '\/(\?P<asdf>foo)\/bar',
+          destination: '/:asdf',
+          type: 301
+        }]}));
+
+      request(app)
+        .get('/foo/bar')
+        .expect(301)
+        .expect('location', '/foo')
+        .end(done);
+    });
+
+    it('redirects using both named and unnamed capture groups', function(done) {
+      var app = connect()
+        .use(setup)
+        .use(redirect({redirects: [{
+          regex: '\/(\?P<asdf>.+)\/(.+)\/(\?P<jkl>.+)',
+          destination: '/:asdf/:2/:jkl',
+          type: 301
+        }]}));
+
+      request(app)
+        .get('/mixed/capture/types')
+        .expect(301)
+        .expect('location', '/mixed/capture/types')
+        .end(done);
+    });
+  }
 
   it('redirects a missing optional segment', function(done) {
     var app = connect()

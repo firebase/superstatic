@@ -66,6 +66,21 @@ describe('static router', function() {
       .end(done);
   });
 
+  it('serves a route with a regex', function(done) {
+    app.use(rewrites({
+      rewrites: [{
+        regex: '.*', destination: '/index.html'
+      }]
+    }));
+
+    request(app)
+      .get('/my-route')
+      .expect(200)
+      .expect('index')
+      .expect('content-type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
   it('serves a route with an extension via a glob', function(done) {
     app.use(rewrites({
       rewrites: [{
@@ -75,6 +90,21 @@ describe('static router', function() {
 
     request(app)
       .get('/my-route.py')
+      .expect(200)
+      .expect('index')
+      .expect('content-type', 'text/html; charset=utf-8')
+      .end(done);
+  });
+
+  it('serves a route with an extension via a regex', function(done) {
+    app.use(rewrites({
+      rewrites: [{
+        regex: '/\\w+\\.py', destination: '/index.html'
+      }]
+    }));
+
+    request(app)
+      .get('/myroute.py')
       .expect(200)
       .expect('index')
       .expect('content-type', 'text/html; charset=utf-8')
