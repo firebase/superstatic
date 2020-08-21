@@ -203,6 +203,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
   * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `compression` - A boolean value that tells Superstatic to serve gzip/deflate compressed responses based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
+  * `symlink` - A boolean value that tells Superstatic to resolve and show also `symlink` files. Defaults to `false` to prevent `path traversal attacks`.
   * `gzip` **[DEPRECATED]** - A boolean value which is now equivalent in behavior to `compression`. Defaults to `false`.
 
 ## Providers
