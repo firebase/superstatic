@@ -170,4 +170,13 @@ describe('Responder', function() {
       expect(responder.isNotModified(result)).to.be.false;
     });
   });
+
+  describe('#handleNotModified', function() {
+    it('should return true, indicating it responded', function() {
+      responder = new Responder({}, {removeHeader: _.noop, end: _.noop}, {});
+
+      var r = responder.handleNotModified();
+      expect(r).to.equal(true);
+    });
+  });
 });
