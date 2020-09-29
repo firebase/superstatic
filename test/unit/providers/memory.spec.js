@@ -5,7 +5,6 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-'use strict';
 
 var chai = require('chai');
 chai.use(require('chai-as-promised'));

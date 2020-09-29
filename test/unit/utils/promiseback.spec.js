@@ -1,16 +1,12 @@
-'use strict';
+const { expect, use } = require('chai');
+use(require('chai-as-promised'));
 
-var chai = require('chai');
-chai.use(require('chai-as-promised'));
-var expect = chai.expect;
+const promiseback = require('../../../lib/utils/promiseback');
 
-var RSVP = require('rsvp');
-var promiseback = require('../../../lib/utils/promiseback');
-
-describe('promiseback', function() {
-  it('should resolve a promise if one is returned', function() {
-    return expect(promiseback(function(a1, a2) {
-      return RSVP.resolve({
+describe('promiseback', () => {
+  it('should resolve a promise if one is returned', () => {
+    return expect(promiseback((a1, a2) => {
+      return Promise.resolve({
         a: a1,
         b: a2
       });
@@ -20,20 +16,20 @@ describe('promiseback', function() {
     });
   });
 
-  it('should reject a promise if one is rejected', function() {
-    return expect(promiseback(function() {
-      return RSVP.reject('broken');
+  it('should reject a promise if one is rejected', () => {
+    return expect(promiseback(() => {
+      return Promise.reject('broken');
     }, 2)('foo', 'bar')).to.be.rejectedWith('broken');
   });
 
-  it('should reject an errback if one is used and errors', function() {
-    return expect(promiseback(function(a1, a2, cb) {
+  it('should reject an errback if one is used and errors', () => {
+    return expect(promiseback((a1, a2, cb) => {
       cb(a2);
     }, 2)('foo', 'bar')).to.be.rejectedWith('bar');
   });
 
-  it('should resolve an errback if one is used and resolves', function() {
-    return expect(promiseback(function(a1, a2, cb) {
+  it('should resolve an errback if one is used and resolves', () => {
+    return expect(promiseback((a1, a2, cb) => {
       cb(null, a2);
     }, 2)('foo', 'bar'));
   });

@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-'use strict';
+
 
 var fs = require('fs-extra');
 var connect = require('connect');

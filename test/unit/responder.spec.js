@@ -5,7 +5,6 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-'use strict';
 
 var Responder = require('../../lib/responder');
 var RSVP = require('rsvp');
