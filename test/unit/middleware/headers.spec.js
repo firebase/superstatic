@@ -30,7 +30,7 @@ function okay(req, res) {
 }
 
 describe("cors middleware", () => {
-  it("serves custom content types", done => {
+  it("serves custom content types", (done) => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -42,7 +42,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("serves custom access control headers", done => {
+  it("serves custom access control headers", (done) => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -54,7 +54,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses routing rules", done => {
+  it("uses routing rules", (done) => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -66,7 +66,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses glob negation to set headers", done => {
+  it("uses glob negation to set headers", (done) => {
     const app = connect()
       .use(
         headers({
@@ -87,7 +87,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses regular expressions to set headers", done => {
+  it("uses regular expressions to set headers", (done) => {
     const app = connect()
       .use(
         headers({

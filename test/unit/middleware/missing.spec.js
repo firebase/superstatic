@@ -36,7 +36,7 @@ describe("custom not found", () => {
     fs.removeSync(".tmp");
   });
 
-  it("serves the file", done => {
+  it("serves the file", (done) => {
     app.use(
       missing(
         {
@@ -53,7 +53,7 @@ describe("custom not found", () => {
       .end(done);
   });
 
-  it("skips middleware on file serve error", done => {
+  it("skips middleware on file serve error", (done) => {
     app
       .use(
         missing(

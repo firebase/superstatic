@@ -114,7 +114,7 @@ describe("Responder", () => {
 
       return responder
         .handleRewrite({ rewrite: { message: "hi" } })
-        .then(result => {
+        .then((result) => {
           expect(result).to.be.true;
           expect(out).to.equal("hi");
         });
@@ -128,7 +128,7 @@ describe("Responder", () => {
       responder = new Responder(rq, { setHeader: _.noop, end: _.noop }, {});
     });
 
-    it("should call the middleware", done => {
+    it("should call the middleware", (done) => {
       responder.handleMiddleware(() => {
         done();
       });
@@ -139,7 +139,7 @@ describe("Responder", () => {
         .handleMiddleware((req, res, next) => {
           next();
         })
-        .then(result => {
+        .then((result) => {
           expect(result).to.be.false;
         });
     });

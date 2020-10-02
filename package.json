@@ -27,6 +27,9 @@
   "bugs": {
     "url": "https://github.com/firebase/superstatic/issues"
   },
+  "prettier": {
+    "arrowParens": "always"
+  },
   "keywords": [
     "static",
     "server",
