@@ -13,9 +13,6 @@ module.exports = {
     sourceType: "module",
     ecmaVersion: 2017
   },
-  globals: {
-    require_local: "false"
-  },
   plugins: ["prettier"],
   rules: {
     "prettier/prettier": "error",
