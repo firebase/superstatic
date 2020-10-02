@@ -95,26 +95,26 @@ describe("Responder", () => {
         {},
         {
           setHeader: _.noop,
-          end: function (data) {
+          end: function(data) {
             out = data;
-          },
+          }
         },
         {
           rewriters: {
-            message: function (rewrite) {
+            message: function(rewrite) {
               return RSVP.resolve({
                 data: rewrite.message,
                 contentType: "text/plain",
-                status: 200,
+                status: 200
               });
-            },
-          },
+            }
+          }
         }
       );
 
       return responder
         .handleRewrite({ rewrite: { message: "hi" } })
-        .then((result) => {
+        .then(result => {
           expect(result).to.be.true;
           expect(out).to.equal("hi");
         });
@@ -128,7 +128,7 @@ describe("Responder", () => {
       responder = new Responder(rq, { setHeader: _.noop, end: _.noop }, {});
     });
 
-    it("should call the middleware", (done) => {
+    it("should call the middleware", done => {
       responder.handleMiddleware(() => {
         done();
       });
@@ -139,7 +139,7 @@ describe("Responder", () => {
         .handleMiddleware((req, res, next) => {
           next();
         })
-        .then((result) => {
+        .then(result => {
           expect(result).to.be.false;
         });
     });
@@ -153,7 +153,7 @@ describe("Responder", () => {
     beforeEach(() => {
       stub = sinon.stub();
       responder = new Responder(req, res, {
-        provider: stub,
+        provider: stub
       });
     });
 
@@ -171,7 +171,7 @@ describe("Responder", () => {
       responder = new Responder({ headers: {} }, {}, {});
       result = {
         modified: Date.now(),
-        etag: "abcdef",
+        etag: "abcdef"
       };
     });
 

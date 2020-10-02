@@ -15,13 +15,13 @@ const defaultHeaders = [
   {
     source: "/test3",
     headers: [
-      { key: "Access-Control-Allow-Origin", value: "https://www.example.net" },
-    ],
+      { key: "Access-Control-Allow-Origin", value: "https://www.example.net" }
+    ]
   },
   {
     source: "/api/**",
-    headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
-  },
+    headers: [{ key: "Access-Control-Allow-Origin", value: "*" }]
+  }
 ];
 
 function okay(req, res) {
@@ -30,7 +30,7 @@ function okay(req, res) {
 }
 
 describe("cors middleware", () => {
-  it("serves custom content types", (done) => {
+  it("serves custom content types", done => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -42,7 +42,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("serves custom access control headers", (done) => {
+  it("serves custom access control headers", done => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -54,7 +54,7 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses routing rules", (done) => {
+  it("uses routing rules", done => {
     const app = connect()
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
@@ -66,16 +66,16 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses glob negation to set headers", (done) => {
+  it("uses glob negation to set headers", done => {
     const app = connect()
       .use(
         headers({
           headers: [
             {
               source: "!/anything/**",
-              headers: [{ key: "custom-header", value: "for testing" }],
-            },
-          ],
+              headers: [{ key: "custom-header", value: "for testing" }]
+            }
+          ]
         })
       )
       .use(okay);
@@ -87,16 +87,16 @@ describe("cors middleware", () => {
       .end(done);
   });
 
-  it("uses regular expressions to set headers", (done) => {
+  it("uses regular expressions to set headers", done => {
     const app = connect()
       .use(
         headers({
           headers: [
             {
               regex: "/resources/\\d+\\.jpg",
-              headers: [{ key: "custom-header", value: "for testing" }],
-            },
-          ],
+              headers: [{ key: "custom-header", value: "for testing" }]
+            }
+          ]
         })
       )
       .use(okay);

@@ -14,15 +14,15 @@ const RSVP = require("rsvp");
 const fsp = require("../../../lib/providers/fs");
 
 const concatStream = require("concat-stream");
-const readStatStream = function (stat) {
+const readStatStream = function(stat) {
   const stream = stat.stream;
   return new RSVP.Promise((resolve, reject) => {
-    stream.on("error", (err) => {
+    stream.on("error", err => {
       return reject(err);
     });
 
     stream.pipe(
-      concatStream({ encoding: "string" }, (str) => {
+      concatStream({ encoding: "string" }, str => {
         return resolve(str);
       })
     );
@@ -35,14 +35,14 @@ describe("provider: fs", () => {
   beforeEach(() => {
     opts = {
       cwd: path.resolve(path.join(__dirname, "..", "..", "fixtures")),
-      public: "a",
+      public: "a"
     };
   });
 
   it("should return stat information for a file that exists", () => {
     return fsp(opts)({}, "/index.html")
       .then(readStatStream)
-      .then((body) => {
+      .then(body => {
         expect(body).to.eq("A\n");
       });
   });
@@ -71,11 +71,11 @@ describe("provider: fs", () => {
     it("should return the first file found for multiple publics", () => {
       return fsp(opts)({}, "/index.html")
         .then(readStatStream)
-        .then((body) => {
+        .then(body => {
           expect(body).to.eq("A\n");
           return fsp(opts)({}, "/b.html").then(readStatStream);
         })
-        .then((body) => {
+        .then(body => {
           expect(body).to.eq("B\n");
         });
     });

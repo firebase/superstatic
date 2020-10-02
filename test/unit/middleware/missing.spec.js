@@ -16,7 +16,7 @@ const Responder = require("../../../lib/responder");
 
 describe("custom not found", () => {
   const provider = fsProvider({
-    public: ".tmp",
+    public: ".tmp"
   });
   let app;
 
@@ -36,11 +36,11 @@ describe("custom not found", () => {
     fs.removeSync(".tmp");
   });
 
-  it("serves the file", (done) => {
+  it("serves the file", done => {
     app.use(
       missing(
         {
-          errorPage: "/not-found.html",
+          errorPage: "/not-found.html"
         },
         { provider: provider }
       )
@@ -53,12 +53,12 @@ describe("custom not found", () => {
       .end(done);
   });
 
-  it("skips middleware on file serve error", (done) => {
+  it("skips middleware on file serve error", done => {
     app
       .use(
         missing(
           {
-            errorPage: "/does-not-exist.html",
+            errorPage: "/does-not-exist.html"
           },
           { provider: provider }
         )
@@ -67,6 +67,9 @@ describe("custom not found", () => {
         res.end("does not exist");
       });
 
-    request(app).get("/anything").expect("does not exist").end(done);
+    request(app)
+      .get("/anything")
+      .expect("does not exist")
+      .end(done);
   });
 });
