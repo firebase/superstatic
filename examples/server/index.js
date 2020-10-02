@@ -19,7 +19,7 @@ const spec = {
 };
 
 const app = superstatic(spec);
-app.listen(function (err) {
+app.listen((err) => {
   if (err) {
     console.log(err);
   }

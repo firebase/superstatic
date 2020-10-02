@@ -12,11 +12,11 @@ const helpers = require("../../helpers");
 const env = helpers.decorator(require("../../../lib/middleware/env"));
 const Responder = require("../../../lib/responder");
 
-describe("env", function () {
+describe("env", () => {
   let app;
 
-  beforeEach(function () {
-    app = connect().use(function (req, res, next) {
+  beforeEach(() => {
+    app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
         provider: {},
       });
@@ -24,7 +24,7 @@ describe("env", function () {
     });
   });
 
-  it("serves json", function (done) {
+  it("serves json", (done) => {
     app.use(
       env({
         env: {
@@ -43,7 +43,7 @@ describe("env", function () {
       .end(done);
   });
 
-  it("serves javascript", function (done) {
+  it("serves javascript", (done) => {
     app.use(
       env({
         env: {

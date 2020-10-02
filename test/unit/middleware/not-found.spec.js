@@ -14,13 +14,13 @@ const expect = require("chai").expect;
 const notFound = require("../../../lib/middleware/not-found");
 const Responder = require("../../../lib/responder");
 
-describe("not found", function () {
+describe("not found", () => {
   let app;
 
-  beforeEach(function () {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/not-found.html", "not found file", "utf8");
 
-    app = connect().use(function (req, res, next) {
+    app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
         provider: {},
       });
@@ -28,11 +28,11 @@ describe("not found", function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("serves the file", function (done) {
+  it("serves the file", (done) => {
     app.use(
       notFound({
         errorPage: ".tmp/not-found.html",
@@ -46,15 +46,15 @@ describe("not found", function () {
       .end(done);
   });
 
-  it("throws on file read error", function () {
-    expect(function () {
+  it("throws on file read error", () => {
+    expect(() => {
       notFound({
         errorPage: ".tmp/does-not-exist.html",
       });
     }).to.throw("ENOENT");
   });
 
-  it("caches for one hour", function (done) {
+  it("caches for one hour", (done) => {
     app.use(
       notFound({
         errorPage: join(process.cwd(), ".tmp/not-found.html"),

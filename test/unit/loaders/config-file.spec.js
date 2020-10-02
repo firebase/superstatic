@@ -10,8 +10,8 @@ const expect = require("chai").expect;
 
 const loadConfigFile = require("../../../lib/loaders/config-file");
 
-describe("loading config files", function () {
-  beforeEach(function () {
+describe("loading config files", () => {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/file.json", '{"key": "value"}', "utf-8");
     fs.outputFileSync(
       ".tmp/package.json",
@@ -23,11 +23,11 @@ describe("loading config files", function () {
     );
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("filename", function (done) {
+  it("filename", (done) => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
@@ -36,7 +36,7 @@ describe("loading config files", function () {
     done();
   });
 
-  it("loads first existing file in array", function (done) {
+  it("loads first existing file in array", (done) => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
@@ -45,13 +45,13 @@ describe("loading config files", function () {
     done();
   });
 
-  it("empty object for when no file", function (done) {
+  it("empty object for when no file", (done) => {
     const data = loadConfigFile(".tmp/nope.json");
     expect(data).to.eql({});
     done();
   });
 
-  it("loads object as config", function (done) {
+  it("loads object as config", (done) => {
     const config = loadConfigFile({
       my: "data",
     });
@@ -62,8 +62,8 @@ describe("loading config files", function () {
     done();
   });
 
-  describe("extends the file config with the object passed", function () {
-    it("superstatic.json", function (done) {
+  describe("extends the file config with the object passed", () => {
+    it("superstatic.json", (done) => {
       fs.outputFileSync(
         "superstatic.json",
         '{"firebase": "superstatic", "public": "./"}',
@@ -85,7 +85,7 @@ describe("loading config files", function () {
       done();
     });
 
-    it("firebase.json", function (done) {
+    it("firebase.json", (done) => {
       fs.outputFileSync(
         "firebase.json",
         '{"firebase": "example", "public": "./"}',

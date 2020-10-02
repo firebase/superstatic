@@ -18,14 +18,14 @@ const setup = function (req, res, next) {
   next();
 };
 
-describe("redirect middleware", function () {
-  it("skips the middleware if there are no redirects configured", function (done) {
+describe("redirect middleware", () => {
+  it("skips the middleware if there are no redirects configured", (done) => {
     const app = connect().use(redirect({ redirects: [] }));
 
     request(app).get("/").expect(404).end(done);
   });
 
-  it("skips middleware when there are no matching redirects", function (done) {
+  it("skips middleware when there are no matching redirects", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -43,7 +43,7 @@ describe("redirect middleware", function () {
     request(app).get("/none").expect(404).end(done);
   });
 
-  it("redirects to a configured path", function (done) {
+  it("redirects to a configured path", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -65,7 +65,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("recognizes glob as synonymous with source", function (done) {
+  it("recognizes glob as synonymous with source", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -87,7 +87,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects to a configured regexp path", function (done) {
+  it("redirects to a configured regexp path", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -109,7 +109,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects to a configured path with a custom status code", function (done) {
+  it("redirects to a configured path with a custom status code", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -131,7 +131,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("adds leading slash to all redirect paths", function (done) {
+  it("adds leading slash to all redirect paths", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -153,7 +153,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects using glob negation", function (done) {
+  it("redirects using glob negation", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -175,7 +175,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects using segments in the url path", function (done) {
+  it("redirects using segments in the url path", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -197,7 +197,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("uses capturing groups as segments when given a regex", function (done) {
+  it("uses capturing groups as segments when given a regex", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -219,7 +219,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("handles Unicode codepoints in regexes", function (done) {
+  it("handles Unicode codepoints in regexes", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -237,7 +237,7 @@ describe("redirect middleware", function () {
     request(app).get("/äöü").expect(301).expect("location", "/aou").end(done);
   });
 
-  it("percent encodes the redirect location", function (done) {
+  it("percent encodes the redirect location", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -259,7 +259,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects using regexp captures inside path segments", function (done) {
+  it("redirects using regexp captures inside path segments", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -281,7 +281,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects using regexp captures across path segments", function (done) {
+  it("redirects using regexp captures across path segments", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -304,7 +304,7 @@ describe("redirect middleware", function () {
   });
 
   if (patterns.re2Available()) {
-    it("redirects using RE2 capturing groups", function (done) {
+    it("redirects using RE2 capturing groups", (done) => {
       const app = connect()
         .use(setup)
         .use(
@@ -326,7 +326,7 @@ describe("redirect middleware", function () {
         .end(done);
     });
 
-    it("redirects using both named and unnamed capture groups", function (done) {
+    it("redirects using both named and unnamed capture groups", (done) => {
       const app = connect()
         .use(setup)
         .use(
@@ -349,7 +349,7 @@ describe("redirect middleware", function () {
     });
   }
 
-  it("redirects a missing optional segment", function (done) {
+  it("redirects a missing optional segment", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -367,7 +367,7 @@ describe("redirect middleware", function () {
     request(app).get("/old/").expect(301).expect("location", "/new").end(done);
   });
 
-  it("redirects a present optional segment", function (done) {
+  it("redirects a present optional segment", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -389,7 +389,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects a splat segment", function (done) {
+  it("redirects a splat segment", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -411,7 +411,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects using segments in the url path with a 302", function (done) {
+  it("redirects using segments in the url path with a 302", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -433,7 +433,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects to external http url", function (done) {
+  it("redirects to external http url", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -455,7 +455,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("redirects to external https url", function (done) {
+  it("redirects to external https url", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -477,7 +477,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("preserves query params when redirecting", function (done) {
+  it("preserves query params when redirecting", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -499,7 +499,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("appends query params to the destination when redirecting", function (done) {
+  it("appends query params to the destination when redirecting", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -521,7 +521,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("preserves query params when redirecting to external urls", function (done) {
+  it("preserves query params when redirecting to external urls", (done) => {
     const app = connect()
       .use(setup)
       .use(
@@ -543,7 +543,7 @@ describe("redirect middleware", function () {
       .end(done);
   });
 
-  it("preserves query params when redirecting with captures", function (done) {
+  it("preserves query params when redirecting with captures", (done) => {
     const app = connect()
       .use(setup)
       .use(

@@ -15,18 +15,18 @@ const files = helpers.decorator(require("../../../lib/middleware/files"));
 const fsProvider = require("../../../lib/providers/fs");
 const Responder = require("../../../lib/responder");
 
-describe("static server with trailing slash customization", function () {
+describe("static server with trailing slash customization", () => {
   const provider = fsProvider({
     public: ".tmp",
   });
   let app;
 
-  beforeEach(function () {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/foo.html", "foo.html content", "utf8");
     fs.outputFileSync(".tmp/foo/index.html", "foo/index.html content", "utf8");
     fs.outputFileSync(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
 
-    app = connect().use(function (req, res, next) {
+    app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
         provider: provider,
       });
@@ -34,11 +34,11 @@ describe("static server with trailing slash customization", function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("serves html file", function (done) {
+  it("serves html file", (done) => {
     app.use(files({}, { provider: provider }));
 
     request(app)
@@ -49,7 +49,7 @@ describe("static server with trailing slash customization", function () {
       .end(done);
   });
 
-  it("serves html file with unicode name", function (done) {
+  it("serves html file with unicode name", (done) => {
     fs.outputFileSync(".tmp/äää.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
@@ -62,7 +62,7 @@ describe("static server with trailing slash customization", function () {
       .end(done);
   });
 
-  it("serves css file", function (done) {
+  it("serves css file", (done) => {
     fs.outputFileSync(".tmp/style.css", "body {}", "utf8");
 
     app.use(files({}, { provider: provider }));
@@ -75,7 +75,7 @@ describe("static server with trailing slash customization", function () {
       .end(done);
   });
 
-  it("serves a directory index file", function (done) {
+  it("serves a directory index file", (done) => {
     fs.outputFileSync(".tmp/index.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
@@ -88,7 +88,7 @@ describe("static server with trailing slash customization", function () {
       .end(done);
   });
 
-  it("serves a file with query parameters", function (done) {
+  it("serves a file with query parameters", (done) => {
     fs.outputFileSync(".tmp/superstatic.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
@@ -100,7 +100,7 @@ describe("static server with trailing slash customization", function () {
       .end(done);
   });
 
-  it("does not redirect the root url because of the trailing slash", function (done) {
+  it("does not redirect the root url because of the trailing slash", (done) => {
     fs.outputFileSync(".tmp/index.html", "an actual index", "utf8");
 
     app.use(files({}, { provider: provider }));
@@ -108,44 +108,44 @@ describe("static server with trailing slash customization", function () {
     request(app).get("/").expect(200).expect("an actual index").end(done);
   });
 
-  it("does not redirect for directory index files", function (done) {
+  it("does not redirect for directory index files", (done) => {
     app.use(files({}, { provider: provider }));
 
     request(app)
       .get("/foo/")
       .expect(200)
-      .expect(function (data) {
+      .expect((data) => {
         expect(data.req.path).to.equal("/foo/");
       })
       .end(done);
   });
 
-  it("function() directory index to have a trailing slash", function (done) {
+  it("function() directory index to have a trailing slash", (done) => {
     app.use(files({}, { provider: provider }));
 
     request(app)
       .get("/foo")
-      .expect(function (req) {
+      .expect((req) => {
         expect(req.headers.location).to.equal("/foo/");
       })
       .expect(301)
       .end(done);
   });
 
-  it("preserves query parameters and slash on subdirectory directory index redirect", function (done) {
+  it("preserves query parameters and slash on subdirectory directory index redirect", (done) => {
     app.use(files({}, { provider: provider }));
 
     request(app)
       .get("/foo?query=params")
-      .expect(function (req) {
+      .expect((req) => {
         expect(req.headers.location).to.equal("/foo/?query=params");
       })
       .expect(301)
       .end(done);
   });
 
-  describe("force trailing slash", function () {
-    it("adds slash to url with no extension", function (done) {
+  describe("force trailing slash", () => {
+    it("adds slash to url with no extension", (done) => {
       app.use(files({ trailingSlash: true }, { provider: provider }));
 
       request(app)
@@ -156,8 +156,8 @@ describe("static server with trailing slash customization", function () {
     });
   });
 
-  describe("force remove trailing slash", function () {
-    it("removes trailing slash on urls with no file extension", function (done) {
+  describe("force remove trailing slash", () => {
+    it("removes trailing slash on urls with no file extension", (done) => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
       request(app)
@@ -167,13 +167,13 @@ describe("static server with trailing slash customization", function () {
         .end(done);
     });
 
-    it("returns a 404 if a trailing slash was added to a valid path", function (done) {
+    it("returns a 404 if a trailing slash was added to a valid path", (done) => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
       request(app).get("/foo.html/").expect(404).end(done);
     });
 
-    it("removes trailing slash on directory index urls", function (done) {
+    it("removes trailing slash on directory index urls", (done) => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
       request(app)
@@ -183,7 +183,7 @@ describe("static server with trailing slash customization", function () {
         .end(done);
     });
 
-    it("normalizes multiple leading slashes on a redirect", function (done) {
+    it("normalizes multiple leading slashes on a redirect", (done) => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
       request(app)
@@ -297,16 +297,16 @@ describe("static server with trailing slash customization", function () {
         { path: "/foo/index.html/", wantNotFound: true },
       ],
     },
-  ].forEach(function (t) {
+  ].forEach((t) => {
     const desc =
       "trailing slash " +
       t.trailingSlashBehavior +
       " cleanUrls " +
       t.cleanUrls +
       " ";
-    t.tests.forEach(function (tt) {
+    t.tests.forEach((tt) => {
       const ttDesc = desc + JSON.stringify(tt);
-      it("should behave correctly: " + ttDesc, function (done) {
+      it("should behave correctly: " + ttDesc, (done) => {
         app.use(
           files(
             { trailingSlash: t.trailingSlashBehavior, cleanUrls: t.cleanUrls },

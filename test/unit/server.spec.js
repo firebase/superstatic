@@ -20,23 +20,23 @@ const server = require("../../lib/server");
 // supertest runner uses the connect app object in
 // a bare http.createServer() method. This
 // doesn't work with how we are loading services.
-describe.skip("server", function () {
-  beforeEach(function () {
+describe.skip("server", () => {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/index.html", "index file content");
     fs.outputFileSync(".tmp/.env.json", '{"key": "value"}');
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("starts a server", function (done) {
+  it("starts a server", (done) => {
     const app = server();
 
     request(app).get("/").end(done);
   });
 
-  it("with config", function (done) {
+  it("with config", (done) => {
     const app = server({
       config: {
         public: ".tmp",
@@ -46,43 +46,43 @@ describe.skip("server", function () {
     request(app).get("/").expect("index file content").end(done);
   });
 
-  it("with port", function (done) {
+  it("with port", (done) => {
     const app = server({
       port: 9876,
     });
 
-    const s = app.listen(function () {
+    const s = app.listen(() => {
       expect(s.address().port).to.equal(9876);
 
       s.close(done);
     });
   });
 
-  it("with hostname", function (done) {
+  it("with hostname", (done) => {
     const app = server({
       hostname: "127.0.0.1",
     });
 
-    const s = app.listen(function () {
+    const s = app.listen(() => {
       expect(s.address().address).to.equal("127.0.0.1");
 
       s.close(done);
     });
   });
 
-  it("with host", function (done) {
+  it("with host", (done) => {
     const app = server({
       host: "127.0.0.1",
     });
 
-    const s = app.listen(function () {
+    const s = app.listen(() => {
       expect(s.address().address).to.equal("127.0.0.1");
 
       s.close(done);
     });
   });
 
-  it("with debug", function (done) {
+  it("with debug", (done) => {
     let output;
     const app = server({
       debug: true,
@@ -92,7 +92,7 @@ describe.skip("server", function () {
 
     request(app)
       .get("/")
-      .end(function () {
+      .end(() => {
         stdMocks.restore();
         output = stdMocks.flush();
 
@@ -103,7 +103,7 @@ describe.skip("server", function () {
       });
   });
 
-  it("with env filename", function (done) {
+  it("with env filename", (done) => {
     const app = server({
       env: ".tmp/.env.json",
       config: {
@@ -119,7 +119,7 @@ describe.skip("server", function () {
       .end(done);
   });
 
-  it("with env object", function (done) {
+  it("with env object", (done) => {
     const app = server({
       env: {
         type: "object",
@@ -137,7 +137,7 @@ describe.skip("server", function () {
       .end(done);
   });
 
-  it("default error page", function (done) {
+  it("default error page", (done) => {
     const notFoundContent = fs
       .readFileSync(path.resolve(__dirname, "../../lib/assets/not_found.html"))
       .toString();
@@ -147,7 +147,7 @@ describe.skip("server", function () {
     request(app).get("/nope").expect(404).expect(notFoundContent).end(done);
   });
 
-  it("overriden default error page", function (done) {
+  it("overriden default error page", (done) => {
     fs.outputFileSync(".tmp/error.html", "error page");
 
     const app = server({

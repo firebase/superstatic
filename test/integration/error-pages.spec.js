@@ -20,17 +20,17 @@ const options = function () {
   };
 };
 
-describe("error page", function () {
-  beforeEach(function () {
+describe("error page", () => {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/default-error.html", "default error", "utf8");
     fs.outputFileSync(".tmp/error.html", "config error", "utf8");
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("from 404.html", function (done) {
+  it("from 404.html", (done) => {
     fs.outputFileSync(".tmp/404.html", "404.html error", "utf8");
     const opts = options();
 
@@ -44,7 +44,7 @@ describe("error page", function () {
       .end(done);
   });
 
-  it("from custom error page", function (done) {
+  it("from custom error page", (done) => {
     const opts = options();
     opts.config.errorPage = "/error.html";
 
@@ -58,7 +58,7 @@ describe("error page", function () {
       .end(done);
   });
 
-  it("falls back to default when configured error page does not exist", function (done) {
+  it("falls back to default when configured error page does not exist", (done) => {
     const opts = options();
 
     opts.errorPage = ".tmp/default-error.html";

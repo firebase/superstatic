@@ -24,11 +24,11 @@ module.exports = function (pkg) {
   ];
 
   let contentWidth = 0;
-  msg = msg.map(function (line) {
+  msg = msg.map((line) => {
     return "  " + line; // + format.yellow('│');
   });
 
-  msg.forEach(function (line) {
+  msg.forEach((line) => {
     if (stringLength(line) > contentWidth) {
       contentWidth = stringLength(line);
     }

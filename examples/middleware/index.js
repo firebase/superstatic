@@ -24,7 +24,7 @@ const spec = {
 
 const app = connect().use(superstatic(spec));
 
-app.listen(3474, function (err) {
+app.listen(3474, (err) => {
   if (err) {
     console.log(err);
   }

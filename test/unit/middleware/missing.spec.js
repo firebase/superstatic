@@ -14,17 +14,17 @@ const missing = helpers.decorator(require("../../../lib/middleware/missing"));
 const fsProvider = require("../../../lib/providers/fs");
 const Responder = require("../../../lib/responder");
 
-describe("custom not found", function () {
+describe("custom not found", () => {
   const provider = fsProvider({
     public: ".tmp",
   });
   let app;
 
-  beforeEach(function () {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/not-found.html", "custom not found file", "utf8");
 
     app = connect().use(
-      function (req, res, next) {
+      (req, res, next) => {
         res.superstatic = new Responder(req, res, { provider: provider });
         next();
       },
@@ -32,11 +32,11 @@ describe("custom not found", function () {
     );
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("serves the file", function (done) {
+  it("serves the file", (done) => {
     app.use(
       missing(
         {
@@ -53,7 +53,7 @@ describe("custom not found", function () {
       .end(done);
   });
 
-  it("skips middleware on file serve error", function (done) {
+  it("skips middleware on file serve error", (done) => {
     app
       .use(
         missing(
@@ -63,7 +63,7 @@ describe("custom not found", function () {
           { provider: provider }
         )
       )
-      .use(function (req, res) {
+      .use((req, res) => {
         res.end("does not exist");
       });
 

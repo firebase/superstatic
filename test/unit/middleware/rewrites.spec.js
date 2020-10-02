@@ -13,16 +13,16 @@ const rewrites = helpers.decorator(require("../../../lib/middleware/rewrites"));
 const fsProvider = require("../../../lib/providers/fs");
 const Responder = require("../../../lib/responder");
 
-describe("static router", function () {
+describe("static router", () => {
   const provider = fsProvider({
     public: ".tmp",
   });
   let app;
 
-  beforeEach(function () {
+  beforeEach(() => {
     fs.outputFileSync(".tmp/index.html", "index", "utf8");
 
-    app = connect().use(function (req, res, next) {
+    app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
         provider: provider,
       });
@@ -30,11 +30,11 @@ describe("static router", function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     fs.removeSync(".tmp");
   });
 
-  it("serves a route", function (done) {
+  it("serves a route", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -54,7 +54,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("serves a route with a glob", function (done) {
+  it("serves a route with a glob", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -74,7 +74,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("serves a route with a regex", function (done) {
+  it("serves a route with a regex", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -94,7 +94,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("serves a route with an extension via a glob", function (done) {
+  it("serves a route with an extension via a glob", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -114,7 +114,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("serves a route with an extension via a regex", function (done) {
+  it("serves a route with an extension via a regex", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -134,7 +134,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("serves a negated route", function (done) {
+  it("serves a negated route", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -154,7 +154,7 @@ describe("static router", function () {
       .end(done);
   });
 
-  it("skips if no match is found", function (done) {
+  it("skips if no match is found", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -169,7 +169,7 @@ describe("static router", function () {
     request(app).get("/hi").expect(404).end(done);
   });
 
-  it("serves the mime type of the rewritten file", function (done) {
+  it("serves the mime type of the rewritten file", (done) => {
     app.use(
       rewrites({
         rewrites: [
@@ -187,8 +187,8 @@ describe("static router", function () {
       .end(done);
   });
 
-  describe("uses first match", function () {
-    beforeEach(function () {
+  describe("uses first match", () => {
+    beforeEach(() => {
       fs.outputFileSync(".tmp/admin/index.html", "admin index", "utf8");
 
       app.use(
@@ -202,7 +202,7 @@ describe("static router", function () {
       );
     });
 
-    it("first route with 1 depth route", function (done) {
+    it("first route with 1 depth route", (done) => {
       request(app)
         .get("/admin/anything")
         .expect(200)
@@ -210,7 +210,7 @@ describe("static router", function () {
         .end(done);
     });
 
-    it("first route with 2 depth route", function (done) {
+    it("first route with 2 depth route", (done) => {
       request(app)
         .get("/admin/anything/else")
         .expect(200)
@@ -218,7 +218,7 @@ describe("static router", function () {
         .end(done);
     });
 
-    it("second route", function (done) {
+    it("second route", (done) => {
       request(app).get("/anything").expect(200).expect("index").end(done);
     });
   });

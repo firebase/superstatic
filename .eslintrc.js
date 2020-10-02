@@ -18,5 +18,6 @@ module.exports = {
     "prettier/prettier": "error",
 
     "require-jsdoc": "warn",
+    "prefer-arrow-callback": "error",
   }
 }
