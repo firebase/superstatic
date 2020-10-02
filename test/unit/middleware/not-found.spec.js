@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-'use strict';
+
 
 var fs = require('fs-extra');
 var request = require('supertest');
@@ -57,9 +57,9 @@ describe('not found', function() {
 
   it('caches for one hour', function(done) {
     app
-    .use(notFound({
-      errorPage: join(process.cwd(), '.tmp/not-found.html')
-    }));
+      .use(notFound({
+        errorPage: join(process.cwd(), '.tmp/not-found.html')
+      }));
 
     request(app)
       .get('/anything')

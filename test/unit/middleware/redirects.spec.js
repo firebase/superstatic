@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file or at
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
-'use strict';
+
 
 var helpers = require('../../helpers');
 var redirect = helpers.decorator(require('../../../lib/middleware/redirects'));
@@ -159,7 +159,7 @@ describe('redirect middleware', function() {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
-        regex: '\/old\/(.+)\/group\/(.+)',
+        regex: '/old/(.+)/group/(.+)',
         destination: '/new/:1/path/:2',
         type: 301
       }]}));
@@ -175,7 +175,7 @@ describe('redirect middleware', function() {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
-        regex: '\/äöü',
+        regex: '/äöü',
         destination: '/aou',
         type: 301
       }]}));
@@ -191,7 +191,7 @@ describe('redirect middleware', function() {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
-        regex: '\/aou',
+        regex: '/aou',
         destination: '/ć',
         type: 301
       }]}));
@@ -207,7 +207,7 @@ describe('redirect middleware', function() {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
-        regex: '\/foo\/(.+)bar\/baz',
+        regex: '/foo/(.+)bar/baz',
         destination: '/:1',
         type: 301
       }]}));
@@ -223,7 +223,7 @@ describe('redirect middleware', function() {
     var app = connect()
       .use(setup)
       .use(redirect({redirects: [{
-        regex: '\/foo\/(.+)\/bar',
+        regex: '/foo/(.+)/bar',
         destination: '/:1',
         type: 301
       }]}));
@@ -240,7 +240,7 @@ describe('redirect middleware', function() {
       var app = connect()
         .use(setup)
         .use(redirect({redirects: [{
-          regex: '\/(\?P<asdf>foo)\/bar',
+          regex: '/(?P<asdf>foo)/bar',
           destination: '/:asdf',
           type: 301
         }]}));
@@ -256,7 +256,7 @@ describe('redirect middleware', function() {
       var app = connect()
         .use(setup)
         .use(redirect({redirects: [{
-          regex: '\/(\?P<asdf>.+)\/(.+)\/(\?P<jkl>.+)',
+          regex: '/(?P<asdf>.+)/(.+)/(?P<jkl>.+)',
           destination: '/:asdf/:2/:jkl',
           type: 301
         }]}));
