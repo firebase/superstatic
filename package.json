@@ -4,13 +4,13 @@
   "description": "A static file server for fancy apps",
   "main": "./lib",
   "scripts": {
-    "format": "prettier --check \"**/*.js\"",
+    "format": "npm run lint -- --fix --quiet",
     "test": "npm run lint && npm run coverage",
-    "test-unit": "mocha test/unit/**",
-    "test-integration": "mocha test/integration/**",
+    "test-unit": "mocha \"test/unit/**\"",
+    "test-integration": "mocha \"test/integration/**\"",
     "lint": "eslint .",
-    "coverage": "nyc mocha test/unit/** test/integration/**",
-    "watch": "mocha -w test/unit/** test/integration/**"
+    "coverage": "nyc mocha \"test/unit/**\" \"test/integration/**\"",
+    "watch": "mocha -w \"test/unit/**\" \"test/integration/**\""
   },
   "author": "Firebase (https://www.firebase.com/)",
   "license": "MIT",

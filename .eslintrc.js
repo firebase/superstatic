@@ -1,26 +1,25 @@
 module.exports = {
-  "root": true,
-  "extends": [
+  root: true,
+  extends: [
     "eslint:recommended",
     "google",
-    "eslint-config-prettier"
+    "eslint-config-prettier",
   ],
-  "env": {
-    "es6": true,
-    "node": true,
+  env: {
+    es6: true,
+    node: true,
   },
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2017
+  parserOptions: {
+    sourceType: "module",
+    ecmaVersion: 2017
   },
-  "globals": {
-    "require_local": "false"
+  globals: {
+    require_local: "false"
   },
   plugins: ["prettier"],
-  "rules": {
+  rules: {
     "prettier/prettier": "error",
 
-    "space-before-function-paren": ["error", {anonymous: "never", named: "never", asyncArrow: "always"}],
     "require-jsdoc": "warn",
   }
 }

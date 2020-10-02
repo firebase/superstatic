@@ -5,61 +5,68 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const fs = require("fs-extra");
+const request = require("supertest");
+const connect = require("connect");
 
-var fs = require('fs-extra');
-var request = require('supertest');
-var connect = require('connect');
+const helpers = require("../../helpers");
+const missing = helpers.decorator(require("../../../lib/middleware/missing"));
+const fsProvider = require("../../../lib/providers/fs");
+const Responder = require("../../../lib/responder");
 
-var helpers = require('../../helpers');
-var missing = helpers.decorator(require('../../../lib/middleware/missing'));
-var fsProvider = require('../../../lib/providers/fs');
-var Responder = require('../../../lib/responder');
-
-describe('custom not found', function() {
-  var provider = fsProvider({
-    public: '.tmp'
+describe("custom not found", function () {
+  const provider = fsProvider({
+    public: ".tmp",
   });
-  var app;
+  let app;
 
-  beforeEach(function() {
-    fs.outputFileSync('.tmp/not-found.html', 'custom not found file', 'utf8');
+  beforeEach(function () {
+    fs.outputFileSync(".tmp/not-found.html", "custom not found file", "utf8");
 
-    app = connect()
-      .use(function(req, res, next) {
-        res.superstatic = new Responder(req, res, {provider: provider});
+    app = connect().use(
+      function (req, res, next) {
+        res.superstatic = new Responder(req, res, { provider: provider });
         next();
-      }, {provider: provider});
+      },
+      { provider: provider }
+    );
   });
 
-  afterEach(function() {
-    fs.removeSync('.tmp');
+  afterEach(function () {
+    fs.removeSync(".tmp");
   });
 
-  it('serves the file', function(done) {
-    app
-      .use(missing({
-        errorPage: '/not-found.html'
-      }, {provider: provider}));
+  it("serves the file", function (done) {
+    app.use(
+      missing(
+        {
+          errorPage: "/not-found.html",
+        },
+        { provider: provider }
+      )
+    );
 
     request(app)
-      .get('/anything')
+      .get("/anything")
       .expect(404)
-      .expect('custom not found file')
+      .expect("custom not found file")
       .end(done);
   });
 
-  it('skips middleware on file serve error', function(done) {
+  it("skips middleware on file serve error", function (done) {
     app
-      .use(missing({
-        errorPage: '/does-not-exist.html'
-      }, {provider: provider}))
-      .use(function(req, res) {
-        res.end('does not exist');
+      .use(
+        missing(
+          {
+            errorPage: "/does-not-exist.html",
+          },
+          { provider: provider }
+        )
+      )
+      .use(function (req, res) {
+        res.end("does not exist");
       });
 
-    request(app)
-      .get('/anything')
-      .expect('does not exist')
-      .end(done);
+    request(app).get("/anything").expect("does not exist").end(done);
   });
 });

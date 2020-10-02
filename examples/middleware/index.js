@@ -5,26 +5,28 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const superstatic = require("../../");
+const connect = require("connect");
 
-var superstatic = require('../../');
-var connect = require('connect');
-
-var spec = {
+const spec = {
   config: {
-    public: './app',
-    rewrites: [{
-      source: '**',
-      destination: '/index.html'
-    }]
+    public: "./app",
+    rewrites: [
+      {
+        source: "**",
+        destination: "/index.html",
+      },
+    ],
   },
   cwd: process.cwd(),
-  compression: true
+  compression: true,
 };
 
-var app = connect()
-  .use(superstatic(spec));
+const app = connect().use(superstatic(spec));
 
-app.listen(3474, function(err) {
-  if (err) { console.log(err); }
-  console.log('Superstatic now serving on port 3474 ...');
+app.listen(3474, function (err) {
+  if (err) {
+    console.log(err);
+  }
+  console.log("Superstatic now serving on port 3474 ...");
 });
