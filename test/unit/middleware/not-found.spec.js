@@ -5,66 +5,66 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const fs = require("fs-extra");
+const request = require("supertest");
+const connect = require("connect");
+const join = require("join-path");
+const expect = require("chai").expect;
 
-var fs = require('fs-extra');
-var request = require('supertest');
-var connect = require('connect');
-var join = require('join-path');
-var expect = require('chai').expect;
+const notFound = require("../../../lib/middleware/not-found");
+const Responder = require("../../../lib/responder");
 
-var notFound = require('../../../lib/middleware/not-found');
-var Responder = require('../../../lib/responder');
+describe("not found", () => {
+  let app;
 
-describe('not found', function() {
-  var app;
+  beforeEach(() => {
+    fs.outputFileSync(".tmp/not-found.html", "not found file", "utf8");
 
-  beforeEach(function() {
-    fs.outputFileSync('.tmp/not-found.html', 'not found file', 'utf8');
-
-    app = connect()
-      .use(function(req, res, next) {
-        res.superstatic = new Responder(req, res, {
-          provider: {}
-        });
-        next();
+    app = connect().use((req, res, next) => {
+      res.superstatic = new Responder(req, res, {
+        provider: {}
       });
+      next();
+    });
   });
 
-  afterEach(function() {
-    fs.removeSync('.tmp');
+  afterEach(() => {
+    fs.removeSync(".tmp");
   });
 
-  it('serves the file', function(done) {
-    app
-      .use(notFound({
-        errorPage: '.tmp/not-found.html'
-      }));
+  it("serves the file", (done) => {
+    app.use(
+      notFound({
+        errorPage: ".tmp/not-found.html"
+      })
+    );
 
     request(app)
-      .get('/anything')
+      .get("/anything")
       .expect(404)
-      .expect('not found file')
+      .expect("not found file")
       .end(done);
   });
 
-  it('throws on file read error', function() {
-    expect(function() {
+  it("throws on file read error", () => {
+    expect(() => {
       notFound({
-        errorPage: '.tmp/does-not-exist.html'
+        errorPage: ".tmp/does-not-exist.html"
       });
-    }).to.throw('ENOENT');
+    }).to.throw("ENOENT");
   });
 
-  it('caches for one hour', function(done) {
-    app
-      .use(notFound({
-        errorPage: join(process.cwd(), '.tmp/not-found.html')
-      }));
+  it("caches for one hour", (done) => {
+    app.use(
+      notFound({
+        errorPage: join(process.cwd(), ".tmp/not-found.html")
+      })
+    );
 
     request(app)
-      .get('/anything')
+      .get("/anything")
       .expect(404)
-      .expect('Cache-Control', 'public, max-age=3600')
+      .expect("Cache-Control", "public, max-age=3600")
       .end(done);
   });
 });

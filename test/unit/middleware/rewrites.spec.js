@@ -5,187 +5,227 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const fs = require("fs-extra");
+const request = require("supertest");
+const connect = require("connect");
+const helpers = require("../../helpers");
+const rewrites = helpers.decorator(require("../../../lib/middleware/rewrites"));
+const fsProvider = require("../../../lib/providers/fs");
+const Responder = require("../../../lib/responder");
 
-var fs = require('fs-extra');
-var request = require('supertest');
-var connect = require('connect');
-var helpers = require('../../helpers');
-var rewrites = helpers.decorator(require('../../../lib/middleware/rewrites'));
-var fsProvider = require('../../../lib/providers/fs');
-var Responder = require('../../../lib/responder');
-
-describe('static router', function() {
-  var provider = fsProvider({
-    public: '.tmp'
+describe("static router", () => {
+  const provider = fsProvider({
+    public: ".tmp"
   });
-  var app;
+  let app;
 
-  beforeEach(function() {
-    fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
+  beforeEach(() => {
+    fs.outputFileSync(".tmp/index.html", "index", "utf8");
 
-    app = connect()
-      .use(function(req, res, next) {
-        res.superstatic = new Responder(req, res, {
-          provider: provider
-        });
-        next();
+    app = connect().use((req, res, next) => {
+      res.superstatic = new Responder(req, res, {
+        provider: provider
       });
+      next();
+    });
   });
 
-  afterEach(function() {
-    fs.removeSync('.tmp');
+  afterEach(() => {
+    fs.removeSync(".tmp");
   });
 
-  it('serves a route', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '/my-route', destination: '/index.html'
-      }]
-    }));
+  it("serves a route", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "/my-route",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/my-route')
+      .get("/my-route")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('serves a route with a glob', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '**', destination: '/index.html'
-      }]
-    }));
+  it("serves a route with a glob", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "**",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/my-route')
+      .get("/my-route")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('serves a route with a regex', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        regex: '.*', destination: '/index.html'
-      }]
-    }));
+  it("serves a route with a regex", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            regex: ".*",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/my-route')
+      .get("/my-route")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('serves a route with an extension via a glob', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '**', destination: '/index.html'
-      }]
-    }));
+  it("serves a route with an extension via a glob", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "**",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/my-route.py')
+      .get("/my-route.py")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('serves a route with an extension via a regex', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        regex: '/\\w+\\.py', destination: '/index.html'
-      }]
-    }));
+  it("serves a route with an extension via a regex", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            regex: "/\\w+\\.py",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/myroute.py')
+      .get("/myroute.py")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('serves a negated route', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '!/no', destination: '/index.html'
-      }]
-    }));
+  it("serves a negated route", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "!/no",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/my-route')
+      .get("/my-route")
       .expect(200)
-      .expect('index')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  it('skips if no match is found', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '/skip', destination: '/index.html'
-      }]
-    }));
+  it("skips if no match is found", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "/skip",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/hi')
+      .get("/hi")
       .expect(404)
       .end(done);
   });
 
-  it('serves the mime type of the rewritten file', function(done) {
-    app.use(rewrites({
-      rewrites: [{
-        source: '**', destination: '/index.html'
-      }]
-    }));
+  it("serves the mime type of the rewritten file", (done) => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "**",
+            destination: "/index.html"
+          }
+        ]
+      })
+    );
 
     request(app)
-      .get('/index.js')
-      .expect('content-type', 'text/html; charset=utf-8')
+      .get("/index.js")
+      .expect("content-type", "text/html; charset=utf-8")
       .end(done);
   });
 
-  describe('uses first match', function() {
-    beforeEach(function() {
-      fs.outputFileSync('.tmp/admin/index.html', 'admin index', 'utf8');
+  describe("uses first match", () => {
+    beforeEach(() => {
+      fs.outputFileSync(".tmp/admin/index.html", "admin index", "utf8");
 
-      app.use(rewrites({
-        rewrites: [
-          {source: '/admin/**', destination: '/admin/index.html'},
-          {source: '/something/**', destination: '/something/indexf.html'},
-          {source: '**', destination: 'index.html'}
-        ]
-      }));
+      app.use(
+        rewrites({
+          rewrites: [
+            { source: "/admin/**", destination: "/admin/index.html" },
+            { source: "/something/**", destination: "/something/indexf.html" },
+            { source: "**", destination: "index.html" }
+          ]
+        })
+      );
     });
 
-    it('first route with 1 depth route', function(done) {
+    it("first route with 1 depth route", (done) => {
       request(app)
-        .get('/admin/anything')
+        .get("/admin/anything")
         .expect(200)
-        .expect('admin index')
+        .expect("admin index")
         .end(done);
     });
 
-    it('first route with 2 depth route', function(done) {
+    it("first route with 2 depth route", (done) => {
       request(app)
-        .get('/admin/anything/else')
+        .get("/admin/anything/else")
         .expect(200)
-        .expect('admin index')
+        .expect("admin index")
         .end(done);
     });
 
-    it('second route', function(done) {
+    it("second route", (done) => {
       request(app)
-        .get('/anything')
+        .get("/anything")
         .expect(200)
-        .expect('index')
+        .expect("index")
         .end(done);
     });
   });

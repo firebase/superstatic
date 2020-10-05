@@ -1,5 +1,3 @@
-
-
 module.exports = {
   decorator: function(middleware) {
     return function(config, spec) {

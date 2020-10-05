@@ -5,90 +5,93 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const _ = require("lodash");
+const fs = require("fs-extra");
+const request = require("request");
+const expect = require("chai").expect;
 
-var _ = require('lodash');
-var fs = require('fs-extra');
-var request = require('request');
-var expect = require('chai').expect;
+const makecli = require("../../../lib/cli");
+let server;
 
-var makecli = require('../../../lib/cli');
-var server;
+describe("cli", () => {
+  let cli;
 
-describe('cli', function() {
-  var cli;
-
-  var config = {
-    public: './'
+  const config = {
+    public: "./"
   };
 
-  beforeEach(function() {
+  beforeEach(() => {
     cli = makecli();
 
-    fs.outputFileSync('superstatic.json', JSON.stringify(config), 'utf-8');
-    fs.outputFileSync('.tmp/superstatic.json', JSON.stringify(config), 'utf-8');
-    fs.outputFileSync('.tmp/index.html', '.tmp/index.html', 'utf-8');
-    fs.outputFileSync('index.html', 'index', 'utf-8');
+    fs.outputFileSync("superstatic.json", JSON.stringify(config), "utf-8");
+    fs.outputFileSync(".tmp/superstatic.json", JSON.stringify(config), "utf-8");
+    fs.outputFileSync(".tmp/index.html", ".tmp/index.html", "utf-8");
+    fs.outputFileSync("index.html", "index", "utf-8");
   });
 
-  afterEach(function() {
-    fs.removeSync('superstatic.json');
-    fs.removeSync('index.html');
-    fs.removeSync('.tmp');
+  afterEach(() => {
+    fs.removeSync("superstatic.json");
+    fs.removeSync("index.html");
+    fs.removeSync(".tmp");
   });
 
-  it('starts a server', function(done) {
-    cli.run(['', ''], function() {
-      server = cli.get('server');
-      var port = cli.get('port');
+  it("starts a server", (done) => {
+    cli.run(["", ""], () => {
+      server = cli.get("server");
+      const port = cli.get("port");
 
-      request('http://localhost:' + port, function(err, response, body) {
+      request("http://localhost:" + port, (err, response, body) => {
         expect(err).to.equal(null);
         expect(response.statusCode).to.equal(200);
-        expect(body).to.equal('index');
+        expect(body).to.equal("index");
         server.close(done);
       });
     });
   });
 
-  it('starts a server with a given directory', function(done) {
-    cli.run(['', '', '.tmp'], function() {
-      server = cli.get('server');
-      var port = cli.get('port');
+  it("starts a server with a given directory", (done) => {
+    cli.run(["", "", ".tmp"], () => {
+      server = cli.get("server");
+      const port = cli.get("port");
 
-      request('http://localhost:' + port, function(err, response, body) {
+      request("http://localhost:" + port, (err, response, body) => {
         expect(response.statusCode).to.equal(200);
-        expect(body).to.equal('.tmp/index.html');
+        expect(body).to.equal(".tmp/index.html");
         server.close(done);
       });
     });
   });
 
-  it('loads firebase.json config file', function(done) {
-    fs.unlinkSync('superstatic.json');
-    fs.writeFileSync('firebase.json', JSON.stringify({
-      public: '.tmp'
-    }), 'utf-8');
+  it("loads firebase.json config file", (done) => {
+    fs.unlinkSync("superstatic.json");
+    fs.writeFileSync(
+      "firebase.json",
+      JSON.stringify({
+        public: ".tmp"
+      }),
+      "utf-8"
+    );
 
-    cli.run(['', ''], function() {
-      server = cli.get('server');
-      var port = cli.get('port');
+    cli.run(["", ""], () => {
+      server = cli.get("server");
+      const port = cli.get("port");
 
-      request('http://localhost:' + port, function(err, response, body) {
-        expect(body).to.equal('.tmp/index.html');
+      request("http://localhost:" + port, (err, response, body) => {
+        expect(body).to.equal(".tmp/index.html");
 
-        fs.unlinkSync('firebase.json');
+        fs.unlinkSync("firebase.json");
         server.close(done);
       });
     });
   });
 
-  describe('port', function() {
-    it('--port', function(done) {
-      cli.run(['', '', '--port', '4321'], function() {
-        server = cli.get('server');
-        var port = cli.get('port');
+  describe("port", () => {
+    it("--port", (done) => {
+      cli.run(["", "", "--port", "4321"], () => {
+        server = cli.get("server");
+        const port = cli.get("port");
 
-        request('http://localhost:' + port, function(err) {
+        request("http://localhost:" + port, (err) => {
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
           server.close(done);
@@ -96,12 +99,12 @@ describe('cli', function() {
       });
     });
 
-    it('-p', function(done) {
-      cli.run(['', '', '-p', '4321'], function() {
-        server = cli.get('server');
-        var port = cli.get('port');
+    it("-p", (done) => {
+      cli.run(["", "", "-p", "4321"], () => {
+        server = cli.get("server");
+        const port = cli.get("port");
 
-        request('http://localhost:' + port, function(err) {
+        request("http://localhost:" + port, (err) => {
           expect(err).to.equal(null);
           expect(port).to.equal(4321);
           server.close(done);
@@ -110,111 +113,140 @@ describe('cli', function() {
     });
   });
 
-  describe('starts server on host', function() {
-    it('--host', function(done) {
-      cli.run(['', '', '--host', '0.0.0.0'], function() {
-        server = cli.get('server');
+  describe("starts server on host", () => {
+    it("--host", (done) => {
+      cli.run(["", "", "--host", "0.0.0.0"], () => {
+        server = cli.get("server");
 
-        expect(server.address().address).to.equal('0.0.0.0');
+        expect(server.address().address).to.equal("0.0.0.0");
         server.close(done);
       });
     });
 
-    it('--hostname', function(done) {
-      cli.run(['', '', '--hostname', '0.0.0.0'], function() {
-        server = cli.get('server');
+    it("--hostname", (done) => {
+      cli.run(["", "", "--hostname", "0.0.0.0"], () => {
+        server = cli.get("server");
 
-        expect(server.address().address).to.equal('0.0.0.0');
+        expect(server.address().address).to.equal("0.0.0.0");
         server.close(done);
       });
     });
   });
 
-  it('enables log output', function(done) {
-    cli.run(['', '', '--debug'], function() {
-      var app = cli.get('app');
-      var hasLogger = _.find(app.stack, function(layer) {
-        return layer.handle && layer.handle.name === 'logger';
+  it("enables log output", (done) => {
+    cli.run(["", "", "--debug"], () => {
+      const app = cli.get("app");
+      const hasLogger = _.find(app.stack, (layer) => {
+        return layer.handle && layer.handle.name === "logger";
       });
 
-      expect(cli.get('debug')).to.equal(true);
+      expect(cli.get("debug")).to.equal(true);
       expect(!!hasLogger).to.equal(true);
-      cli.get('server').close(done);
+      cli.get("server").close(done);
     });
   });
 
-  it('supports the old --gzip flag', function(done) {
-    cli.run(['', '', '--gzip'], function() {
-      expect(cli.get('compression')).to.equal(true);
-      cli.get('server').close(done);
+  it("supports the old --gzip flag", (done) => {
+    cli.run(["", "", "--gzip"], () => {
+      expect(cli.get("compression")).to.equal(true);
+      cli.get("server").close(done);
     });
   });
 
-  it('enables smart compression', function(done) {
-    cli.run(['', '', '--compression'], function() {
-      expect(cli.get('compression')).to.equal(true);
-      cli.get('server').close(done);
+  it("enables smart compression", (done) => {
+    cli.run(["", "", "--compression"], () => {
+      expect(cli.get("compression")).to.equal(true);
+      cli.get("server").close(done);
     });
   });
 
-  describe('uses custom config', function() {
-    beforeEach(function() {
-      fs.writeFileSync('custom.json', JSON.stringify({
-        public: './',
-        rewrites: [{
-          source: '**',
-          destination: '/index.html'
-        }]
-      }, null, 2), 'utf-8');
+  describe("uses custom config", () => {
+    beforeEach(() => {
+      fs.writeFileSync(
+        "custom.json",
+        JSON.stringify(
+          {
+            public: "./",
+            rewrites: [
+              {
+                source: "**",
+                destination: "/index.html"
+              }
+            ]
+          },
+          null,
+          2
+        ),
+        "utf-8"
+      );
     });
 
-    afterEach(function() {
-      fs.unlinkSync('custom.json');
+    afterEach(() => {
+      fs.unlinkSync("custom.json");
     });
 
-    it('--config', function(done) {
-      cli.run(['', '', '--config', 'custom.json'], function() {
-        request('http://localhost:3474/anything.html', function(err, response, body) {
-          expect(body).to.equal('index');
-          expect(cli.get('config')).to.equal('custom.json');
+    it("--config", (done) => {
+      cli.run(["", "", "--config", "custom.json"], () => {
+        request(
+          "http://localhost:3474/anything.html",
+          (err, response, body) => {
+            expect(body).to.equal("index");
+            expect(cli.get("config")).to.equal("custom.json");
 
-          cli.get('server').close(done);
-        });
+            cli.get("server").close(done);
+          }
+        );
       });
     });
 
-    it('-c', function(done) {
-      cli.run(['', '', '-c', 'custom.json'], function() {
-        request('http://localhost:3474/anything.html', function(err, response, body) {
-          expect(body).to.equal('index');
-          expect(cli.get('config')).to.equal('custom.json');
+    it("-c", (done) => {
+      cli.run(["", "", "-c", "custom.json"], () => {
+        request(
+          "http://localhost:3474/anything.html",
+          (err, response, body) => {
+            expect(body).to.equal("index");
+            expect(cli.get("config")).to.equal("custom.json");
 
-          cli.get('server').close(done);
-        });
+            cli.get("server").close(done);
+          }
+        );
       });
     });
 
-    it('uses custom config object', function(done) {
-      cli.run(['', '', '--config', JSON.stringify({
-        rewrites: [{
-          source: '**',
-          destination: '/index.html'
-        }]
-      })], function() {
-        request('http://localhost:3474/anything.html', function(err, response, body) {
-          expect(body).to.equal('index');
-          cli.get('server').close(done);
-        });
-      });
+    it("uses custom config object", (done) => {
+      cli.run(
+        [
+          "",
+          "",
+          "--config",
+          JSON.stringify({
+            rewrites: [
+              {
+                source: "**",
+                destination: "/index.html"
+              }
+            ]
+          })
+        ],
+        () => {
+          request(
+            "http://localhost:3474/anything.html",
+            (err, response, body) => {
+              expect(body).to.equal("index");
+              cli.get("server").close(done);
+            }
+          );
+        }
+      );
     });
   });
 
   // NOTE: can't test flags that exit
   // This should be fixed in Nash 2.0
-  it.skip('version flag', function(done) {
+  it.skip("version flag", (done) => {
     // stdMocks.use();
 
-    cli.run(['', '', '-v'], function() {
+    cli.run(["", "", "-v"], () => {
       // stdMocks.restore();
       // var output = stdMocks.flush();
 
@@ -222,7 +254,7 @@ describe('cli', function() {
     });
   });
 
-  it('restarts the server if the config file is changed');
+  it("restarts the server if the config file is changed");
 
   // describe.skip('installing services', function() {
 
@@ -230,7 +262,5 @@ describe('cli', function() {
   //   it('globally');
   // });
 
-  describe.skip('services', function() {
-
-  });
+  describe.skip("services", () => {});
 });

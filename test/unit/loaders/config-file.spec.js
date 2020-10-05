@@ -5,95 +5,105 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const fs = require("fs-extra");
+const expect = require("chai").expect;
 
-var fs = require('fs-extra');
-var expect = require('chai').expect;
+const loadConfigFile = require("../../../lib/loaders/config-file");
 
-var loadConfigFile = require('../../../lib/loaders/config-file');
-
-describe('loading config files', function() {
-  beforeEach(function() {
-    fs.outputFileSync('.tmp/file.json', '{"key": "value"}', 'utf-8');
-    fs.outputFileSync('.tmp/package.json', JSON.stringify({
-      superstatic: {
-        key: 'value'
-      }
-    }));
+describe("loading config files", () => {
+  beforeEach(() => {
+    fs.outputFileSync(".tmp/file.json", '{"key": "value"}', "utf-8");
+    fs.outputFileSync(
+      ".tmp/package.json",
+      JSON.stringify({
+        superstatic: {
+          key: "value"
+        }
+      })
+    );
   });
 
-  afterEach(function() {
-    fs.removeSync('.tmp');
+  afterEach(() => {
+    fs.removeSync(".tmp");
   });
 
-  it('filename', function(done) {
-    var data = loadConfigFile('.tmp/file.json');
+  it("filename", (done) => {
+    const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
-      key: 'value'
+      key: "value"
     });
     done();
   });
 
-  it('loads first existing file in array', function(done) {
-    var data = loadConfigFile(['another.json', '.tmp/file.json']);
+  it("loads first existing file in array", (done) => {
+    const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
-      key: 'value'
+      key: "value"
     });
     done();
   });
 
-  it('empty object for when no file', function(done) {
-    var data = loadConfigFile('.tmp/nope.json');
+  it("empty object for when no file", (done) => {
+    const data = loadConfigFile(".tmp/nope.json");
     expect(data).to.eql({});
     done();
   });
 
-  it('loads object as config', function(done) {
-    var config = loadConfigFile({
-      my: 'data'
+  it("loads object as config", (done) => {
+    const config = loadConfigFile({
+      my: "data"
     });
 
     expect(config).to.eql({
-      my: 'data'
+      my: "data"
     });
     done();
   });
 
-  describe('extends the file config with the object passed', function() {
-    it('superstatic.json', function(done) {
-      fs.outputFileSync('superstatic.json', '{"firebase": "superstatic", "public": "./"}', 'utf-8');
+  describe("extends the file config with the object passed", () => {
+    it("superstatic.json", (done) => {
+      fs.outputFileSync(
+        "superstatic.json",
+        '{"firebase": "superstatic", "public": "./"}',
+        "utf-8"
+      );
 
-      var config = loadConfigFile({
-        override: 'test',
-        public: 'app'
+      const config = loadConfigFile({
+        override: "test",
+        public: "app"
       });
 
       expect(config).to.eql({
-        firebase: 'superstatic',
-        override: 'test',
-        public: 'app'
+        firebase: "superstatic",
+        override: "test",
+        public: "app"
       });
 
-      fs.removeSync('superstatic.json');
+      fs.removeSync("superstatic.json");
       done();
     });
 
-    it('firebase.json', function(done) {
-      fs.outputFileSync('firebase.json', '{"firebase": "example", "public": "./"}', 'utf-8');
+    it("firebase.json", (done) => {
+      fs.outputFileSync(
+        "firebase.json",
+        '{"firebase": "example", "public": "./"}',
+        "utf-8"
+      );
 
-      var config = loadConfigFile({
-        override: 'test',
-        public: 'app'
+      const config = loadConfigFile({
+        override: "test",
+        public: "app"
       });
 
       expect(config).to.eql({
-        firebase: 'example',
-        override: 'test',
-        public: 'app'
+        firebase: "example",
+        override: "test",
+        public: "app"
       });
 
-      fs.removeSync('firebase.json');
+      fs.removeSync("firebase.json");
       done();
     });
   });

@@ -5,55 +5,60 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const chai = require("chai");
+chai.use(require("chai-as-promised"));
+const expect = chai.expect;
+const memoryProvider = require("../../../lib/providers/memory");
+const RSVP = require("rsvp");
 
-var chai = require('chai');
-chai.use(require('chai-as-promised'));
-var expect = chai.expect;
-var memoryProvider = require('../../../lib/providers/memory');
-var RSVP = require('rsvp');
-
-describe('memory provider', function() {
-  var store;
-  var provider;
-  beforeEach(function() {
+describe("memory provider", () => {
+  let store;
+  let provider;
+  beforeEach(() => {
     store = store || {};
-    provider = memoryProvider({store: store});
+    provider = memoryProvider({ store: store });
   });
 
-  it('should resolve null if not in the store', function() {
-    return expect(provider({}, '/whatever')).to.eventually.be.null;
+  it("should resolve null if not in the store", () => {
+    return expect(provider({}, "/whatever")).to.eventually.be.null;
   });
 
-  it('should return a stream of the content if found', function(done) {
-    store['/index.html'] = 'foobar';
-    provider({}, '/index.html').then(function(result) {
-      var out = '';
-      result.stream.on('data', function(data) {
+  it("should return a stream of the content if found", (done) => {
+    store["/index.html"] = "foobar";
+    provider({}, "/index.html").then((result) => {
+      let out = "";
+      result.stream.on("data", (data) => {
         out += data;
       });
-      result.stream.on('end', function() {
-        expect(out).to.eq('foobar');
+      result.stream.on("end", () => {
+        expect(out).to.eq("foobar");
         done();
       });
     }, done);
   });
 
-  it('should return an etag of the content', function() {
-    store['/a.html'] = 'foo';
-    store['/b.html'] = 'bar';
-    return RSVP.hash({a: provider({}, '/a.html'), b: provider({}, '/b.html')}).then(function(result) {
+  it("should return an etag of the content", () => {
+    store["/a.html"] = "foo";
+    store["/b.html"] = "bar";
+    return RSVP.hash({
+      a: provider({}, "/a.html"),
+      b: provider({}, "/b.html")
+    }).then((result) => {
       expect(result.a.etag).not.to.be.null;
       expect(result.b.etag).not.to.be.null;
       expect(result.a.etag).not.to.eq(result.b.etag);
     });
   });
 
-  it('should return the length of content', function() {
-    store['/index.html'] = 'foobar';
-    return expect(provider({}, '/index.html')).to.eventually.have.property('size', 6);
+  it("should return the length of content", () => {
+    store["/index.html"] = "foobar";
+    return expect(provider({}, "/index.html")).to.eventually.have.property(
+      "size",
+      6
+    );
   });
 
-  afterEach(function() {
+  afterEach(() => {
     store = null;
   });
 });

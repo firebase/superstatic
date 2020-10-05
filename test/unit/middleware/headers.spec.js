@@ -5,16 +5,23 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const helpers = require("../../helpers");
+const headers = helpers.decorator(require("../../../lib/middleware/headers"));
+const connect = require("connect");
+const request = require("supertest");
 
-var helpers = require('../../helpers');
-var headers = helpers.decorator(require('../../../lib/middleware/headers'));
-var connect = require('connect');
-var request = require('supertest');
-
-var defaultHeaders = [
-  {source: '/test1', headers: [{key: 'Content-Type', value: 'mime/type'}]},
-  {source: '/test3', headers: [{key: 'Access-Control-Allow-Origin', value: 'https://www.example.net'}]},
-  {source: '/api/**', headers: [{key: 'Access-Control-Allow-Origin', value: '*'}]}
+const defaultHeaders = [
+  { source: "/test1", headers: [{ key: "Content-Type", value: "mime/type" }] },
+  {
+    source: "/test3",
+    headers: [
+      { key: "Access-Control-Allow-Origin", value: "https://www.example.net" }
+    ]
+  },
+  {
+    source: "/api/**",
+    headers: [{ key: "Access-Control-Allow-Origin", value: "*" }]
+  }
 ];
 
 function okay(req, res) {
@@ -22,76 +29,82 @@ function okay(req, res) {
   res.end();
 }
 
-describe('cors middleware', function() {
-  it('serves custom content types', function(done) {
-    var app = connect()
-      .use(headers({headers: defaultHeaders}))
+describe("cors middleware", () => {
+  it("serves custom content types", (done) => {
+    const app = connect()
+      .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
     request(app)
-      .get('/test1')
+      .get("/test1")
       .expect(200)
-      .expect('Content-Type', 'mime/type')
+      .expect("Content-Type", "mime/type")
       .end(done);
   });
 
-  it('serves custom access control headers', function(done) {
-    var app = connect()
-      .use(headers({headers: defaultHeaders}))
+  it("serves custom access control headers", (done) => {
+    const app = connect()
+      .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
     request(app)
-      .get('/test3')
+      .get("/test3")
       .expect(200)
-      .expect('Access-Control-Allow-Origin', 'https://www.example.net')
+      .expect("Access-Control-Allow-Origin", "https://www.example.net")
       .end(done);
   });
 
-  it('uses routing rules', function(done) {
-    var app = connect()
-      .use(headers({headers: defaultHeaders}))
+  it("uses routing rules", (done) => {
+    const app = connect()
+      .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
     request(app)
-      .get('/api/whatever/you/wish')
+      .get("/api/whatever/you/wish")
       .expect(200)
-      .expect('Access-Control-Allow-Origin', '*')
+      .expect("Access-Control-Allow-Origin", "*")
       .end(done);
   });
 
-  it('uses glob negation to set headers', function(done) {
-    var app = connect()
-      .use(headers({
-        headers: [
-          {source: '!/anything/**', headers: [
-            {key: 'custom-header', value: 'for testing'}
-          ]}
-        ]
-      }))
+  it("uses glob negation to set headers", (done) => {
+    const app = connect()
+      .use(
+        headers({
+          headers: [
+            {
+              source: "!/anything/**",
+              headers: [{ key: "custom-header", value: "for testing" }]
+            }
+          ]
+        })
+      )
       .use(okay);
 
     request(app)
-      .get('/something')
+      .get("/something")
       .expect(200)
-      .expect('custom-header', 'for testing')
+      .expect("custom-header", "for testing")
       .end(done);
   });
 
-  it('uses regular expressions to set headers', function(done) {
-    var app = connect()
-      .use(headers({
-        headers: [
-          {regex: '/resources/\\d+\\.jpg', headers: [
-            {key: 'custom-header', value: 'for testing'}
-          ]}
-        ]
-      }))
+  it("uses regular expressions to set headers", (done) => {
+    const app = connect()
+      .use(
+        headers({
+          headers: [
+            {
+              regex: "/resources/\\d+\\.jpg",
+              headers: [{ key: "custom-header", value: "for testing" }]
+            }
+          ]
+        })
+      )
       .use(okay);
 
     request(app)
-      .get('/resources/281.jpg')
+      .get("/resources/281.jpg")
       .expect(200)
-      .expect('custom-header', 'for testing')
+      .expect("custom-header", "for testing")
       .end(done);
   });
 });

@@ -5,103 +5,97 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
+const fs = require("fs-extra");
+const connect = require("connect");
+const request = require("supertest");
 
-var fs = require('fs-extra');
-var connect = require('connect');
-var request = require('supertest');
+const superstatic = require("../../");
 
-var superstatic = require('../../');
-
-var options = function() {
+const options = function() {
   return {
     config: {
-      public: '.tmp'
+      public: ".tmp"
     }
   };
 };
 
-describe('clean urls', function() {
-  beforeEach(function() {
-    fs.outputFileSync('.tmp/index.html', 'index', 'utf8');
-    fs.outputFileSync('.tmp/test.html', 'test', 'utf8');
-    fs.outputFileSync('.tmp/app.js', 'console.log("js")', 'utf8');
-    fs.outputFileSync('.tmp/dir/index.html', 'dir index', 'utf8');
-    fs.outputFileSync('.tmp/dir/sub.html', 'dir sub', 'utf8');
+describe("clean urls", () => {
+  beforeEach(() => {
+    fs.outputFileSync(".tmp/index.html", "index", "utf8");
+    fs.outputFileSync(".tmp/test.html", "test", "utf8");
+    fs.outputFileSync(".tmp/app.js", 'console.log("js")', "utf8");
+    fs.outputFileSync(".tmp/dir/index.html", "dir index", "utf8");
+    fs.outputFileSync(".tmp/dir/sub.html", "dir sub", "utf8");
   });
 
-  afterEach(function() {
-    fs.removeSync('.tmp');
+  afterEach(() => {
+    fs.removeSync(".tmp");
   });
 
-  it('not configured', function(done) {
-    var opts = options();
+  it("not configured", (done) => {
+    const opts = options();
 
-    var app = connect()
-      .use(superstatic(opts));
+    const app = connect().use(superstatic(opts));
 
     request(app)
-      .get('/test')
+      .get("/test")
       .expect(404)
       .end(done);
   });
 
-  it('redirects html file', function(done) {
-    var opts = options();
+  it("redirects html file", (done) => {
+    const opts = options();
 
     opts.config.cleanUrls = true;
 
-    var app = connect()
-      .use(superstatic(opts));
+    const app = connect().use(superstatic(opts));
 
     request(app)
-      .get('/test.html')
+      .get("/test.html")
       .expect(301)
-      .expect('Location', '/test')
+      .expect("Location", "/test")
       .end(done);
   });
 
-  it('serves html file', function(done) {
-    var opts = options();
+  it("serves html file", (done) => {
+    const opts = options();
 
     opts.config.cleanUrls = true;
 
-    var app = connect()
-      .use(superstatic(opts));
+    const app = connect().use(superstatic(opts));
 
     request(app)
-      .get('/test')
+      .get("/test")
       .expect(200)
-      .expect('test')
+      .expect("test")
       .end(done);
   });
 
-  it('redirects using globs', function(done) {
-    var opts = options();
+  it("redirects using globs", (done) => {
+    const opts = options();
 
-    opts.config.cleanUrls = ['/*.html'];
+    opts.config.cleanUrls = ["/*.html"];
 
-    var app = connect()
-      .use(superstatic(opts));
+    const app = connect().use(superstatic(opts));
 
     request(app)
-      .get('/test.html')
+      .get("/test.html")
       .expect(301)
-      .expect('Location', '/test')
+      .expect("Location", "/test")
       .end(done);
   });
 
-  it('serves html file using globs', function(done) {
-    var opts = options();
+  it("serves html file using globs", (done) => {
+    const opts = options();
 
-    opts.config.cleanUrls = ['*.html'];
+    opts.config.cleanUrls = ["*.html"];
 
-    var app = connect()
-      .use(superstatic(opts));
+    const app = connect().use(superstatic(opts));
 
     request(app)
-      .get('/test')
+      .get("/test")
       .expect(200)
-      .expect('test')
+      .expect("test")
       .end(done);
   });
 });
