@@ -157,6 +157,10 @@ describe("i18n", () => {
 
 const basePathConfigs = [
   ["", "static server with trailing slash customization"],
+  [
+    "/base/path",
+    "static server under base path, with trailing slash customization",
+  ],
 ];
 
 basePathConfigs.forEach(([basePath, testTitle]) => {
