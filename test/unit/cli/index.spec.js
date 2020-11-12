@@ -6,9 +6,9 @@
  */
 
 const _ = require("lodash");
-const fs = require("fs-extra");
-const request = require("request");
 const expect = require("chai").expect;
+const fetch = require("node-fetch");
+const fs = require("fs-extra");
 
 const makecli = require("../../../lib/cli");
 let server;
@@ -40,12 +40,15 @@ describe("cli", () => {
       server = cli.get("server");
       const port = cli.get("port");
 
-      request("http://localhost:" + port, (err, response, body) => {
-        expect(err).to.equal(null);
-        expect(response.statusCode).to.equal(200);
-        expect(body).to.equal("index");
-        server.close(done);
-      });
+      fetch("http://localhost:" + port)
+        .then((res) => {
+          expect(res.status).to.equal(200);
+          res.text().then((body) => {
+            expect(body).to.equal("index");
+            server.close(done);
+          });
+        })
+        .catch(done);
     });
   });
 
@@ -54,11 +57,15 @@ describe("cli", () => {
       server = cli.get("server");
       const port = cli.get("port");
 
-      request("http://localhost:" + port, (err, response, body) => {
-        expect(response.statusCode).to.equal(200);
-        expect(body).to.equal(".tmp/index.html");
-        server.close(done);
-      });
+      fetch("http://localhost:" + port)
+        .then((res) => {
+          expect(res.status).to.equal(200);
+          res.text().then((body) => {
+            expect(body).to.equal(".tmp/index.html");
+            server.close(done);
+          });
+        })
+        .catch(done);
     });
   });
 
@@ -76,12 +83,15 @@ describe("cli", () => {
       server = cli.get("server");
       const port = cli.get("port");
 
-      request("http://localhost:" + port, (err, response, body) => {
-        expect(body).to.equal(".tmp/index.html");
+      fetch("http://localhost:" + port)
+        .then((res) => res.text())
+        .then((body) => {
+          expect(body).to.equal(".tmp/index.html");
 
-        fs.unlinkSync("firebase.json");
-        server.close(done);
-      });
+          fs.unlinkSync("firebase.json");
+          server.close(done);
+        })
+        .catch(done);
     });
   });
 
@@ -91,11 +101,12 @@ describe("cli", () => {
         server = cli.get("server");
         const port = cli.get("port");
 
-        request("http://localhost:" + port, (err) => {
-          expect(err).to.equal(null);
-          expect(port).to.equal(4321);
-          server.close(done);
-        });
+        fetch("http://localhost:" + port)
+          .then(() => {
+            expect(port).to.equal(4321);
+            server.close(done);
+          })
+          .catch(done);
       });
     });
 
@@ -104,11 +115,12 @@ describe("cli", () => {
         server = cli.get("server");
         const port = cli.get("port");
 
-        request("http://localhost:" + port, (err) => {
-          expect(err).to.equal(null);
-          expect(port).to.equal(4321);
-          server.close(done);
-        });
+        fetch("http://localhost:" + port)
+          .then(() => {
+            expect(port).to.equal(4321);
+            server.close(done);
+          })
+          .catch(done);
       });
     });
   });
@@ -187,29 +199,29 @@ describe("cli", () => {
 
     it("--config", (done) => {
       cli.run(["", "", "--config", "custom.json"], () => {
-        request(
-          "http://localhost:3474/anything.html",
-          (err, response, body) => {
+        fetch("http://localhost:3474/anything.html")
+          .then((res) => res.text())
+          .then((body) => {
             expect(body).to.equal("index");
             expect(cli.get("config")).to.equal("custom.json");
 
             cli.get("server").close(done);
-          }
-        );
+          })
+          .catch(done);
       });
     });
 
     it("-c", (done) => {
       cli.run(["", "", "-c", "custom.json"], () => {
-        request(
-          "http://localhost:3474/anything.html",
-          (err, response, body) => {
+        fetch("http://localhost:3474/anything.html")
+          .then((res) => res.text())
+          .then((body) => {
             expect(body).to.equal("index");
             expect(cli.get("config")).to.equal("custom.json");
 
             cli.get("server").close(done);
-          }
-        );
+          })
+          .catch(done);
       });
     });
 
@@ -229,13 +241,13 @@ describe("cli", () => {
           })
         ],
         () => {
-          request(
-            "http://localhost:3474/anything.html",
-            (err, response, body) => {
+          fetch("http://localhost:3474/anything.html")
+            .then((res) => res.text())
+            .then((body) => {
               expect(body).to.equal("index");
               cli.get("server").close(done);
-            }
-          );
+            })
+            .catch(done);
         }
       );
     });
