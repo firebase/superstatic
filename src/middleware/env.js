@@ -7,7 +7,7 @@
 
 const fs = require("fs");
 const template = fs
-  .readFileSync(__dirname + "/../assets/env.js.template")
+  .readFileSync(__dirname + "/../../templates/env.js.template")
   .toString();
 const mime = require("mime-types");
 const _ = require("lodash");

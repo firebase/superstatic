@@ -144,7 +144,7 @@ describe.skip("server", () => {
 
   it("default error page", (done) => {
     const notFoundContent = fs
-      .readFileSync(path.resolve(__dirname, "../../lib/assets/not_found.html"))
+      .readFileSync(path.resolve(__dirname, "../../templates/assets/not_found.html"))
       .toString();
 
     const app = server();
