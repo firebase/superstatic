@@ -4,6 +4,10 @@
   "description": "A static file server for fancy apps",
   "main": "./lib",
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf lib",
+    "prepare": "npm run clean && npm run build -- --build tsconfig.json",
     "format": "npm run lint -- --fix --quiet",
     "test": "npm run lint && npm run coverage",
     "test-unit": "mocha \"test/unit/**\"",
@@ -84,6 +88,7 @@
     "node-fetch": "^2.6.1",
     "nyc": "^15.1.0",
     "prettier": "1.19.1",
+    "rimraf": "^3.0.2",
     "sinon": "^9.0.3",
     "sinon-chai": "^3.5.0",
     "std-mocks": "^1.0.1",
