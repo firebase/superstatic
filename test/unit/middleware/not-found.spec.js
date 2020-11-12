@@ -11,8 +11,8 @@ const connect = require("connect");
 const join = require("join-path");
 const expect = require("chai").expect;
 
-const notFound = require("../../../lib/middleware/not-found");
-const Responder = require("../../../lib/responder");
+const notFound = require("../../../src/middleware/not-found");
+const Responder = require("../../../src/responder");
 
 describe("not found", () => {
   let app;

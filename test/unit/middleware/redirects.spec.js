@@ -7,12 +7,12 @@
 
 const helpers = require("../../helpers");
 const redirect = helpers.decorator(
-  require("../../../lib/middleware/redirects")
+  require("../../../src/middleware/redirects")
 );
 const connect = require("connect");
 const request = require("supertest");
-const Responder = require("../../../lib/responder");
-const patterns = require("../../../lib/utils/patterns");
+const Responder = require("../../../src/responder");
+const patterns = require("../../../src/utils/patterns");
 const setup = function(req, res, next) {
   res.superstatic = new Responder(req, res, { provider: {} });
   next();

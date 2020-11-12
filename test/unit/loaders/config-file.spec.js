@@ -8,7 +8,7 @@
 const fs = require("fs-extra");
 const expect = require("chai").expect;
 
-const loadConfigFile = require("../../../lib/loaders/config-file");
+const loadConfigFile = require("../../../src/loaders/config-file");
 
 describe("loading config files", () => {
   beforeEach(() => {

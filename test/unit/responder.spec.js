@@ -5,7 +5,7 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-const Responder = require("../../lib/responder");
+const Responder = require("../../src/responder");
 const RSVP = require("rsvp");
 const _ = require("lodash");
 const chai = require("chai");

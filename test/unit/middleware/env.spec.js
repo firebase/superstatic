@@ -9,8 +9,8 @@ const request = require("supertest");
 const connect = require("connect");
 
 const helpers = require("../../helpers");
-const env = helpers.decorator(require("../../../lib/middleware/env"));
-const Responder = require("../../../lib/responder");
+const env = helpers.decorator(require("../../../src/middleware/env"));
+const Responder = require("../../../src/responder");
 
 describe("env", () => {
   let app;

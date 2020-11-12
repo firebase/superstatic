@@ -34,6 +34,12 @@
   "prettier": {
     "arrowParens": "always"
   },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ]
+  },
   "keywords": [
     "static",
     "server",
@@ -91,8 +97,10 @@
     "rimraf": "^3.0.2",
     "sinon": "^9.0.3",
     "sinon-chai": "^3.5.0",
+    "source-map-support": "^0.5.19",
     "std-mocks": "^1.0.1",
     "supertest": "^4.0.2",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   }
 }

@@ -11,9 +11,9 @@ const request = require("supertest");
 const connect = require("connect");
 
 const helpers = require("../../helpers");
-const files = helpers.decorator(require("../../../lib/middleware/files"));
-const fsProvider = require("../../../lib/providers/fs");
-const Responder = require("../../../lib/responder");
+const files = helpers.decorator(require("../../../src/middleware/files"));
+const fsProvider = require("../../../src/providers/fs");
+const Responder = require("../../../src/responder");
 
 describe("static server with trailing slash customization", () => {
   const provider = fsProvider({

@@ -12,7 +12,7 @@ const request = require("supertest");
 const expect = require("chai").expect;
 const stdMocks = require("std-mocks");
 
-const server = require("../../lib/server");
+const server = require("../../src/server");
 
 // NOTE: skipping these tests because of how
 // supertest runs a connect server. The Superstatic

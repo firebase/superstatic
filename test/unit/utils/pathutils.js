@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 
-const pathutils = require("../../../lib/utils/pathutils");
+const pathutils = require("../../../src/utils/pathutils");
 
 describe("pathutils", () => {
   describe("asDirectoryIndex", () => {

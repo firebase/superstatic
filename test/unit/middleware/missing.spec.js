@@ -10,9 +10,9 @@ const request = require("supertest");
 const connect = require("connect");
 
 const helpers = require("../../helpers");
-const missing = helpers.decorator(require("../../../lib/middleware/missing"));
-const fsProvider = require("../../../lib/providers/fs");
-const Responder = require("../../../lib/responder");
+const missing = helpers.decorator(require("../../../src/middleware/missing"));
+const fsProvider = require("../../../src/providers/fs");
+const Responder = require("../../../src/responder");
 
 describe("custom not found", () => {
   const provider = fsProvider({

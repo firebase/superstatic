@@ -6,7 +6,7 @@
  */
 
 const helpers = require("../../helpers");
-const headers = helpers.decorator(require("../../../lib/middleware/headers"));
+const headers = helpers.decorator(require("../../../src/middleware/headers"));
 const connect = require("connect");
 const request = require("supertest");
 

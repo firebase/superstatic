@@ -10,7 +10,7 @@ const expect = require("chai").expect;
 const fetch = require("node-fetch");
 const fs = require("fs-extra");
 
-const makecli = require("../../../lib/cli");
+const makecli = require("../../../src/cli");
 let server;
 
 describe("cli", () => {
