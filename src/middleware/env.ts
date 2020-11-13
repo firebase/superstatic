@@ -5,19 +5,23 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-const fs = require("fs");
-const template = fs
-  .readFileSync(__dirname + "/../../templates/env.js.template")
-  .toString();
-const mime = require("mime-types");
-const _ = require("lodash");
+import * as fs from "fs";
+import * as mime from "mime-types";
+import * as _ from "lodash";
 
-module.exports = function(spec) {
-  return function(req, res, next) {
-    const config = _.get(req, "superstatic.env");
+const template = fs
+  .readFileSync(`${__dirname}/../../templates/env.js.template`)
+  .toString();
+
+/**
+ * 
+ */
+export function env(spec: { env: any }) {
+  return (req: any, res: any, next: () => {}) => {
+    const config = req.superstatic?.env;
     let env;
     if (spec.env || config) {
-      env = _.assign({}, config, spec.env);
+      env = Object.assign({}, config, spec.env);
     } else {
       return next();
     }
@@ -27,16 +31,16 @@ module.exports = function(spec) {
         data: JSON.stringify(env, null, 2),
         contentType: mime.contentType("json")
       });
-      return undefined;
+      return;
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
       res.superstatic.handleData({
         data: payload,
         contentType: mime.contentType("js")
       });
-      return undefined;
+      return;
     }
 
     return next();
   };
-};
+}

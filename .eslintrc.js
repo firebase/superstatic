@@ -11,13 +11,16 @@ module.exports = {
   },
   parserOptions: {
     sourceType: "module",
-    ecmaVersion: 2017
+    ecmaVersion: 2017,
   },
-  plugins: ["prettier"],
+  plugins: [
+    "prettier",
+  ],
   rules: {
     "prettier/prettier": "error",
 
     "require-jsdoc": "warn",
     "prefer-arrow-callback": "error",
-  }
+  },
+  parser: "@typescript-eslint/parser",
 }
