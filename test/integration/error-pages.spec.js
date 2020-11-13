@@ -9,7 +9,7 @@ const fs = require("fs-extra");
 const connect = require("connect");
 const request = require("supertest");
 
-const superstatic = require("../../");
+const superstatic = require("../../src");
 
 const options = function() {
   return {

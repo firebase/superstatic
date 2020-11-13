@@ -60,3 +60,5 @@ export function env(spec: { env: { [key: string]: string } }) {
     return next();
   };
 }
+
+module.exports = env;
