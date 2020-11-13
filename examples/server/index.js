@@ -10,12 +10,12 @@ const superstatic = require("../../lib/server");
 const spec = {
   port: 3474,
   config: {
-    public: "./app"
+    public: "./app",
   },
   cwd: __dirname,
   errorPage: __dirname + "/error.html",
   compression: true,
-  debug: true
+  debug: true,
 };
 
 const app = superstatic(spec);

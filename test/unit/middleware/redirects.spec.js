@@ -37,9 +37,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -58,9 +58,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -80,9 +80,9 @@ describe("redirect middleware", () => {
             {
               glob: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -102,9 +102,9 @@ describe("redirect middleware", () => {
             {
               regex: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -124,9 +124,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 302
-            }
-          ]
+              type: 302,
+            },
+          ],
         })
       );
 
@@ -146,9 +146,9 @@ describe("redirect middleware", () => {
             {
               source: "source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -168,9 +168,9 @@ describe("redirect middleware", () => {
             {
               source: "!source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -190,9 +190,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -212,9 +212,9 @@ describe("redirect middleware", () => {
             {
               regex: "/old/(.+)/group/(.+)",
               destination: "/new/:1/path/:2",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -234,9 +234,9 @@ describe("redirect middleware", () => {
             {
               regex: "/äöü",
               destination: "/aou",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -256,9 +256,9 @@ describe("redirect middleware", () => {
             {
               regex: "/aou",
               destination: "/ć",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -278,9 +278,9 @@ describe("redirect middleware", () => {
             {
               regex: "/foo/(.+)bar/baz",
               destination: "/:1",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -300,9 +300,9 @@ describe("redirect middleware", () => {
             {
               regex: "/foo/(.+)/bar",
               destination: "/:1",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -323,9 +323,9 @@ describe("redirect middleware", () => {
               {
                 regex: "/(?P<asdf>foo)/bar",
                 destination: "/:asdf",
-                type: 301
-              }
-            ]
+                type: 301,
+              },
+            ],
           })
         );
 
@@ -345,9 +345,9 @@ describe("redirect middleware", () => {
               {
                 regex: "/(?P<asdf>.+)/(.+)/(?P<jkl>.+)",
                 destination: "/:asdf/:2/:jkl",
-                type: 301
-              }
-            ]
+                type: 301,
+              },
+            ],
           })
         );
 
@@ -368,9 +368,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -390,9 +390,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -412,9 +412,9 @@ describe("redirect middleware", () => {
             {
               source: "/blog/:post*",
               destination: "/new/:post*",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -434,9 +434,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 302
-            }
-          ]
+              type: 302,
+            },
+          ],
         })
       );
 
@@ -456,9 +456,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "http://redirectedto.com",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -478,9 +478,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "https://redirectedto.com",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -500,9 +500,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/destination",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -522,9 +522,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/destination?hello=world",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -544,9 +544,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "http://example.com/destination",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -566,9 +566,9 @@ describe("redirect middleware", () => {
             {
               source: "/source/:foo",
               destination: "/:foo/bar",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 

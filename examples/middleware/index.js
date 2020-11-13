@@ -14,12 +14,12 @@ const spec = {
     rewrites: [
       {
         source: "**",
-        destination: "/index.html"
-      }
-    ]
+        destination: "/index.html",
+      },
+    ],
   },
   cwd: process.cwd(),
-  compression: true
+  compression: true,
 };
 
 const app = connect().use(superstatic(spec));

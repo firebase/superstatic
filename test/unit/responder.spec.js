@@ -97,7 +97,7 @@ describe("Responder", () => {
           setHeader: _.noop,
           end: function(data) {
             out = data;
-          }
+          },
         },
         {
           rewriters: {
@@ -105,10 +105,10 @@ describe("Responder", () => {
               return RSVP.resolve({
                 data: rewrite.message,
                 contentType: "text/plain",
-                status: 200
+                status: 200,
               });
-            }
-          }
+            },
+          },
         }
       );
 
@@ -153,7 +153,7 @@ describe("Responder", () => {
     beforeEach(() => {
       stub = sinon.stub();
       responder = new Responder(req, res, {
-        provider: stub
+        provider: stub,
       });
     });
 
@@ -171,7 +171,7 @@ describe("Responder", () => {
       responder = new Responder({ headers: {} }, {}, {});
       result = {
         modified: Date.now(),
-        etag: "abcdef"
+        etag: "abcdef",
       };
     });
 

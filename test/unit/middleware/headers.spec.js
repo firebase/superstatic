@@ -15,13 +15,13 @@ const defaultHeaders = [
   {
     source: "/test3",
     headers: [
-      { key: "Access-Control-Allow-Origin", value: "https://www.example.net" }
-    ]
+      { key: "Access-Control-Allow-Origin", value: "https://www.example.net" },
+    ],
   },
   {
     source: "/api/**",
-    headers: [{ key: "Access-Control-Allow-Origin", value: "*" }]
-  }
+    headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+  },
 ];
 
 function okay(req, res) {
@@ -73,9 +73,9 @@ describe("cors middleware", () => {
           headers: [
             {
               source: "!/anything/**",
-              headers: [{ key: "custom-header", value: "for testing" }]
-            }
-          ]
+              headers: [{ key: "custom-header", value: "for testing" }],
+            },
+          ],
         })
       )
       .use(okay);
@@ -94,9 +94,9 @@ describe("cors middleware", () => {
           headers: [
             {
               regex: "/resources/\\d+\\.jpg",
-              headers: [{ key: "custom-header", value: "for testing" }]
-            }
-          ]
+              headers: [{ key: "custom-header", value: "for testing" }],
+            },
+          ],
         })
       )
       .use(okay);

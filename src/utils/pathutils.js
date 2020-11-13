@@ -37,7 +37,7 @@ const pathutils = {
       return string;
     }
     return string.slice(0, string.lastIndexOf(rm));
-  }
+  },
 };
 
 module.exports = pathutils;

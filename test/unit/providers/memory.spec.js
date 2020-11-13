@@ -42,7 +42,7 @@ describe("memory provider", () => {
     store["/b.html"] = "bar";
     return RSVP.hash({
       a: provider({}, "/a.html"),
-      b: provider({}, "/b.html")
+      b: provider({}, "/b.html"),
     }).then((result) => {
       expect(result.a.etag).not.to.be.null;
       expect(result.b.etag).not.to.be.null;

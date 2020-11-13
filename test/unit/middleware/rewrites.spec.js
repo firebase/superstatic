@@ -15,7 +15,7 @@ const Responder = require("../../../src/responder");
 
 describe("static router", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -24,7 +24,7 @@ describe("static router", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider
+        provider: provider,
       });
       next();
     });
@@ -40,9 +40,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "/my-route",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -60,9 +60,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "**",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -80,9 +80,9 @@ describe("static router", () => {
         rewrites: [
           {
             regex: ".*",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -100,9 +100,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "**",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -120,9 +120,9 @@ describe("static router", () => {
         rewrites: [
           {
             regex: "/\\w+\\.py",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -140,9 +140,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "!/no",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -160,9 +160,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "/skip",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -178,9 +178,9 @@ describe("static router", () => {
         rewrites: [
           {
             source: "**",
-            destination: "/index.html"
-          }
-        ]
+            destination: "/index.html",
+          },
+        ],
       })
     );
 
@@ -199,8 +199,8 @@ describe("static router", () => {
           rewrites: [
             { source: "/admin/**", destination: "/admin/index.html" },
             { source: "/something/**", destination: "/something/indexf.html" },
-            { source: "**", destination: "index.html" }
-          ]
+            { source: "**", destination: "index.html" },
+          ],
         })
       );
     });

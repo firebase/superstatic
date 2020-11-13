@@ -39,14 +39,14 @@ module.exports = function() {
   cli.register(
     [
       {
-        register: require("./flags")
+        register: require("./flags"),
       },
       {
         register: require("./server"),
         options: {
-          server: require("../server")
-        }
-      }
+          server: require("../server"),
+        },
+      },
     ],
     () => {}
   );

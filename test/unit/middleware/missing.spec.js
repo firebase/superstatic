@@ -16,7 +16,7 @@ const Responder = require("../../../src/responder");
 
 describe("custom not found", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -40,7 +40,7 @@ describe("custom not found", () => {
     app.use(
       missing(
         {
-          errorPage: "/not-found.html"
+          errorPage: "/not-found.html",
         },
         { provider: provider }
       )
@@ -58,7 +58,7 @@ describe("custom not found", () => {
       .use(
         missing(
           {
-            errorPage: "/does-not-exist.html"
+            errorPage: "/does-not-exist.html",
           },
           { provider: provider }
         )

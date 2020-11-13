@@ -35,7 +35,7 @@ describe("provider: fs", () => {
   beforeEach(() => {
     opts = {
       cwd: path.resolve(path.join(__dirname, "..", "..", "fixtures")),
-      public: "a"
+      public: "a",
     };
   });
 

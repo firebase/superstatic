@@ -15,8 +15,8 @@ const options = function() {
   return {
     fallthrough: false,
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 

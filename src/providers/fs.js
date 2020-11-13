@@ -57,7 +57,7 @@ module.exports = function(options) {
         const etag = hash.read();
         etagCache[pathname] = {
           timestamp: stat.mtime,
-          value: etag
+          value: etag,
         };
         resolve(etag);
       });

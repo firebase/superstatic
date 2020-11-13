@@ -17,7 +17,7 @@ const Responder = require("../../../src/responder");
 
 describe("static server with trailing slash customization", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -28,7 +28,7 @@ describe("static server with trailing slash customization", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider
+        provider: provider,
       });
       next();
     });
@@ -216,8 +216,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: false,
@@ -233,8 +233,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: true,
@@ -250,8 +250,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: undefined,
@@ -267,8 +267,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantRedirect: "/foo" },
         { path: "/foo/index.html", wantRedirect: "/foo" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: false,
@@ -284,8 +284,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantRedirect: "/foo/bar" },
         { path: "/foo/index", wantRedirect: "/foo" },
         { path: "/foo/index.html", wantRedirect: "/foo" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: true,
@@ -301,9 +301,9 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantContent: "foo/bar.html content" },
         { path: "/foo/index", wantRedirect: "/foo/" },
         { path: "/foo/index.html", wantRedirect: "/foo/" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
-    }
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
+    },
   ].forEach((t) => {
     const desc =
       "trailing slash " +

@@ -17,7 +17,7 @@ describe("cli", () => {
   let cli;
 
   const config = {
-    public: "./"
+    public: "./",
   };
 
   beforeEach(() => {
@@ -74,7 +74,7 @@ describe("cli", () => {
     fs.writeFileSync(
       "firebase.json",
       JSON.stringify({
-        public: ".tmp"
+        public: ".tmp",
       }),
       "utf-8"
     );
@@ -182,9 +182,9 @@ describe("cli", () => {
             rewrites: [
               {
                 source: "**",
-                destination: "/index.html"
-              }
-            ]
+                destination: "/index.html",
+              },
+            ],
           },
           null,
           2
@@ -235,10 +235,10 @@ describe("cli", () => {
             rewrites: [
               {
                 source: "**",
-                destination: "/index.html"
-              }
-            ]
-          })
+                destination: "/index.html",
+              },
+            ],
+          }),
         ],
         () => {
           fetch("http://localhost:3474/anything.html")

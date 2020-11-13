@@ -15,8 +15,8 @@ const superstatic = require("../../");
 const options = function() {
   return {
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 
@@ -116,7 +116,7 @@ describe("serves", () => {
     opts.config.redirects = [
       { source: "/from", destination: "/to" },
       { source: "/fromCustom", destination: "/toCustom", type: 302 },
-      { source: "/external", destination: "http://redirect.com" }
+      { source: "/external", destination: "http://redirect.com" },
     ];
 
     const app = connect().use(superstatic(opts));
@@ -194,10 +194,10 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing"
-            }
-          ]
-        }
+              value: "testing",
+            },
+          ],
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -217,10 +217,10 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing"
-            }
-          ]
-        }
+              value: "testing",
+            },
+          ],
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -237,7 +237,7 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       const app = connect().use(superstatic(opts));
@@ -253,7 +253,7 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       const app = connect().use(superstatic(opts));
@@ -283,14 +283,14 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -310,8 +310,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -331,8 +331,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -351,8 +351,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -370,8 +370,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "!/no",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -388,8 +388,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));

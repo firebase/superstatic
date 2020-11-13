@@ -30,7 +30,7 @@ module.exports = function(options) {
       modified: options.modified || null,
       stream: stream,
       size: content.length,
-      etag: hash.digest("hex")
+      etag: hash.digest("hex"),
     });
   };
   fn.store = options.store || {};

@@ -14,8 +14,8 @@ const superstatic = require("../../");
 const options = function() {
   return {
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 
