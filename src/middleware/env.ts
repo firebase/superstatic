@@ -7,21 +7,39 @@
 
 import * as fs from "fs";
 import * as mime from "mime-types";
-import * as _ from "lodash";
 
 const template = fs
   .readFileSync(`${__dirname}/../../templates/env.js.template`)
   .toString();
 
+interface SuperstaticRequest {
+  superstatic: {
+    env: { [key: string]: string };
+  };
+}
+
+interface SuperstaticResponse {
+  superstatic: {
+    handleData: (d: { [key: string]: string }) => void;
+  };
+}
+
 /**
- * 
+ * Returns middleware for `/__/env.json|js`.
+ * @param spec superstatic options.
+ * @param spec.env environment variables.
+ * @return middleware.
  */
-export function env(spec: { env: any }) {
-  return (req: any, res: any, next: () => {}) => {
-    const config = req.superstatic?.env;
+export function env(spec: { env: { [key: string]: string } }) {
+  return (
+    req: Request & SuperstaticRequest,
+    res: Response & SuperstaticResponse,
+    next: () => void
+  ): void => {
+    // const config = req.superstatic.env;
     let env;
-    if (spec.env || config) {
-      env = Object.assign({}, config, spec.env);
+    if (spec.env || req.superstatic.env) {
+      env = Object.assign({}, req.superstatic.env, spec.env);
     } else {
       return next();
     }
@@ -29,16 +47,14 @@ export function env(spec: { env: any }) {
     if (req.url === "/__/env.json") {
       res.superstatic.handleData({
         data: JSON.stringify(env, null, 2),
-        contentType: mime.contentType("json")
+        contentType: mime.contentType("json") || "",
       });
-      return;
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
       res.superstatic.handleData({
         data: payload,
-        contentType: mime.contentType("js")
+        contentType: mime.contentType("js") || "",
       });
-      return;
     }
 
     return next();

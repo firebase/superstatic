@@ -5,6 +5,7 @@ module.exports = {
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:jsdoc/recommended",
     "google",
     "prettier",
     "prettier/@typescript-eslint",
@@ -13,6 +14,7 @@ module.exports = {
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   parserOptions: {
     sourceType: "module",
     ecmaVersion: 2017,
@@ -20,12 +22,20 @@ module.exports = {
   },
   plugins: [
     "prettier",
+    "@typescript-eslint",
+    "jsdoc",
   ],
   rules: {
+    "jsdoc/newline-after-description": "off",
+    "jsdoc/require-jsdoc": ["warn", { publicOnly: true }],
+    "jsdoc/require-param-type": "off",
+    "jsdoc/require-returns-type": "off",
+    "prefer-arrow-callback": "error",
     "prettier/prettier": "error",
 
-    "require-jsdoc": "warn",
-    "prefer-arrow-callback": "error",
+    "require-atomic-updates": "off", // This rule is so noisy and isn't useful: https://github.com/eslint/eslint/issues/11899
+    "require-jsdoc": "off", // This rule is deprecated and superseded by jsdoc/require-jsdoc.
+    "valid-jsdoc": "off", // This is deprecated but included in recommended configs.
   },
   overrides: [
     {
@@ -51,5 +61,11 @@ module.exports = {
       rules: {},
     },
   ],
-  parser: "@typescript-eslint/parser",
+  settings: {
+    jsdoc: {
+      tagNamePreference: {
+        returns: "return",
+      },
+    },
+  },
 }
