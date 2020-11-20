@@ -148,6 +148,85 @@ describe("static server with trailing slash customization", () => {
       .end(done);
   });
 
+  describe("i18n", () => {
+    beforeEach(() => {
+      fs.outputFileSync(".tmp/intl/es/index.html", "hola", "utf8");
+      fs.outputFileSync(".tmp/intl/fr/index.html", "French Index!", "utf8");
+      fs.outputFileSync(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
+      fs.outputFileSync(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
+    });
+
+    afterEach(() => {
+      fs.removeSync(".tmp/intl/");
+    });
+
+    it("should resolve i18n content by accept-language", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/")
+        .set("accept-language", "es")
+        .expect(200, "hola")
+        .end(done);
+    });
+
+    it("should resolve default files if nothing is provided", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/foo.html")
+        .set("accept-language", "jp")
+        .expect(200, "foo.html content")
+        .end(done);
+    });
+
+    it("should resolve i18n content by x-country-code", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/")
+        .set("x-country-code", "ca")
+        .expect(200, "Oh Canada")
+        .end(done);
+    });
+
+    it("should resolve i18n content by accept-language and x-country-code", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/")
+        .set("accept-language", "fr")
+        .set("x-country-code", "ca")
+        .expect(200, "French CA!")
+        .end(done);
+    });
+
+    it("should override the content using cookies for location", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/")
+        .set("accept-language", "es")
+        .set("cookie", "firebase-language-override=fr")
+        .expect(200, "French Index!")
+        .end(done);
+    });
+
+    it("should override the content using cookies for location and country", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/")
+        .set("accept-language", "en")
+        .set(
+          "cookie",
+          "firebase-language-override=fr; firebase-country-override=ca"
+        )
+        .expect(200, "French CA!")
+        .end(done);
+    });
+  });
+
   describe("force trailing slash", () => {
     it("adds slash to url with no extension", (done) => {
       app.use(files({ trailingSlash: true }, { provider: provider }));
