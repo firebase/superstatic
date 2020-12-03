@@ -147,6 +147,36 @@ In this example, `/old/custom-segment/path` redirects to `/new/path/custom-segme
 }
 ```
 
+**i18n:** Internationalized content can be served based on `accept-language` or `x-country-code` headers.
+
+Imagine a setup with the following files:
+
+```
+- public/
+  - index.html
+  - i18n/
+    - fr_ca/
+      - index.html
+    - ALL_ca/
+      - index.html
+    - fr/
+      - index.html
+```
+
+With `i18n` enabled, when a request is received for `/index.html` with the `accept-language` header set to `fr` (and no `x-country-code`), the content at `public/i18n/fr/index.html` will be returned as a response.
+
+If `accept-language: fr` and `x-country-code: ca` are passed, the content at `public/i18n/fr_ca/index.html` will be returned for `/index.html`.
+
+For more information about how content is resolved when using `i18n`, see [the Firebase Hosting documentation of the feature](https://firebase.google.com/docs/hosting/i18n-rewrites).
+
+```json
+{
+  "i18n": {
+    "root": "/intl"
+  }
+}
+```
+
 ## API
 
 Superstatic is available as a middleware and a standalone [Connect](http://www.npmjs.org/package/connect) server. This means you can plug this into your current server or run your own static server using Superstatic's server.
