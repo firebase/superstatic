@@ -152,8 +152,10 @@ describe("static server with trailing slash customization", () => {
     beforeEach(() => {
       fs.outputFileSync(".tmp/intl/es/index.html", "hola", "utf8");
       fs.outputFileSync(".tmp/intl/fr/index.html", "French Index!", "utf8");
+      fs.outputFileSync(".tmp/intl/jp_ALL/other.html", "Japanese!", "utf8");
       fs.outputFileSync(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
       fs.outputFileSync(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
+      fs.outputFileSync(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
     });
 
     afterEach(() => {
@@ -190,6 +192,26 @@ describe("static server with trailing slash customization", () => {
         .end(done);
     });
 
+    it("should not show i18n content for other countries", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/hockey.html")
+        .set("x-country-code", "jp")
+        .expect(404)
+        .end(done);
+    });
+
+    it("should allow i18n content specific to a country", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/hockey.html")
+        .set("x-country-code", "ca")
+        .expect(200, "Only Canada")
+        .end(done);
+    });
+
     it("should resolve i18n content by accept-language and x-country-code", (done) => {
       app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
@@ -223,6 +245,16 @@ describe("static server with trailing slash customization", () => {
           "firebase-language-override=fr; firebase-country-override=ca"
         )
         .expect(200, "French CA!")
+        .end(done);
+    });
+
+    it("should allow i18n resolution by language with _ALL", (done) => {
+      app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+      request(app)
+        .get("/other.html")
+        .set("accept-language", "jp")
+        .expect(200, "Japanese!")
         .end(done);
     });
   });
