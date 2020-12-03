@@ -15,6 +15,132 @@ const files = helpers.decorator(require("../../../lib/middleware/files"));
 const fsProvider = require("../../../lib/providers/fs");
 const Responder = require("../../../lib/responder");
 
+describe("i18n", () => {
+  const provider = fsProvider({
+    public: ".tmp"
+  });
+  let app;
+
+  beforeEach(() => {
+    fs.outputFileSync(".tmp/foo.html", "foo.html content", "utf8");
+    fs.outputFileSync(".tmp/foo/index.html", "foo/index.html content", "utf8");
+    fs.outputFileSync(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
+    fs.outputFileSync(".tmp/intl/es/index.html", "hola", "utf8");
+    fs.outputFileSync(".tmp/intl/fr/index.html", "French Index!", "utf8");
+    fs.outputFileSync(".tmp/intl/jp_ALL/other.html", "Japanese!", "utf8");
+    fs.outputFileSync(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
+    fs.outputFileSync(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
+    fs.outputFileSync(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
+
+    app = connect().use((req, res, next) => {
+      res.superstatic = new Responder(req, res, {
+        provider: provider
+      });
+      next();
+    });
+  });
+
+  afterEach(() => {
+    fs.removeSync(".tmp/");
+  });
+
+  it("should resolve i18n content by accept-language", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/")
+      .set("accept-language", "es")
+      .expect(200, "hola")
+      .end(done);
+  });
+
+  it("should resolve default files if nothing is provided", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/foo.html")
+      .set("accept-language", "jp")
+      .expect(200, "foo.html content")
+      .end(done);
+  });
+
+  it("should resolve i18n content by x-country-code", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/")
+      .set("x-country-code", "ca")
+      .expect(200, "Oh Canada")
+      .end(done);
+  });
+
+  it("should not show i18n content for other countries", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/hockey.html")
+      .set("x-country-code", "jp")
+      .expect(404)
+      .end(done);
+  });
+
+  it("should allow i18n content specific to a country", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/hockey.html")
+      .set("x-country-code", "ca")
+      .expect(200, "Only Canada")
+      .end(done);
+  });
+
+  it("should resolve i18n content by accept-language and x-country-code", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/")
+      .set("accept-language", "fr")
+      .set("x-country-code", "ca")
+      .expect(200, "French CA!")
+      .end(done);
+  });
+
+  it("should override the content using cookies for location", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/")
+      .set("accept-language", "es")
+      .set("cookie", "firebase-language-override=fr")
+      .expect(200, "French Index!")
+      .end(done);
+  });
+
+  it("should override the content using cookies for location and country", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/")
+      .set("accept-language", "en")
+      .set(
+        "cookie",
+        "firebase-language-override=fr; firebase-country-override=ca"
+      )
+      .expect(200, "French CA!")
+      .end(done);
+  });
+
+  it("should allow i18n resolution by language with _ALL", (done) => {
+    app.use(files({ i18n: { root: "/intl" } }, { provider }));
+
+    request(app)
+      .get("/other.html")
+      .set("accept-language", "jp")
+      .expect(200, "Japanese!")
+      .end(done);
+  });
+});
+
 describe("static server with trailing slash customization", () => {
   const provider = fsProvider({
     public: ".tmp"
@@ -146,117 +272,6 @@ describe("static server with trailing slash customization", () => {
       })
       .expect(301)
       .end(done);
-  });
-
-  describe("i18n", () => {
-    beforeEach(() => {
-      fs.outputFileSync(".tmp/intl/es/index.html", "hola", "utf8");
-      fs.outputFileSync(".tmp/intl/fr/index.html", "French Index!", "utf8");
-      fs.outputFileSync(".tmp/intl/jp_ALL/other.html", "Japanese!", "utf8");
-      fs.outputFileSync(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
-      fs.outputFileSync(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
-      fs.outputFileSync(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
-    });
-
-    afterEach(() => {
-      fs.removeSync(".tmp/intl/");
-    });
-
-    it("should resolve i18n content by accept-language", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/")
-        .set("accept-language", "es")
-        .expect(200, "hola")
-        .end(done);
-    });
-
-    it("should resolve default files if nothing is provided", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/foo.html")
-        .set("accept-language", "jp")
-        .expect(200, "foo.html content")
-        .end(done);
-    });
-
-    it("should resolve i18n content by x-country-code", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/")
-        .set("x-country-code", "ca")
-        .expect(200, "Oh Canada")
-        .end(done);
-    });
-
-    it("should not show i18n content for other countries", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/hockey.html")
-        .set("x-country-code", "jp")
-        .expect(404)
-        .end(done);
-    });
-
-    it("should allow i18n content specific to a country", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/hockey.html")
-        .set("x-country-code", "ca")
-        .expect(200, "Only Canada")
-        .end(done);
-    });
-
-    it("should resolve i18n content by accept-language and x-country-code", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/")
-        .set("accept-language", "fr")
-        .set("x-country-code", "ca")
-        .expect(200, "French CA!")
-        .end(done);
-    });
-
-    it("should override the content using cookies for location", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/")
-        .set("accept-language", "es")
-        .set("cookie", "firebase-language-override=fr")
-        .expect(200, "French Index!")
-        .end(done);
-    });
-
-    it("should override the content using cookies for location and country", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/")
-        .set("accept-language", "en")
-        .set(
-          "cookie",
-          "firebase-language-override=fr; firebase-country-override=ca"
-        )
-        .expect(200, "French CA!")
-        .end(done);
-    });
-
-    it("should allow i18n resolution by language with _ALL", (done) => {
-      app.use(files({ i18n: { root: "/intl" } }, { provider }));
-
-      request(app)
-        .get("/other.html")
-        .set("accept-language", "jp")
-        .expect(200, "Japanese!")
-        .end(done);
-    });
   });
 
   describe("force trailing slash", () => {
