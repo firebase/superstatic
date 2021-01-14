@@ -17,8 +17,8 @@ describe("loading config files", () => {
       ".tmp/package.json",
       JSON.stringify({
         superstatic: {
-          key: "value",
-        },
+          key: "value"
+        }
       })
     );
   });
@@ -27,43 +27,43 @@ describe("loading config files", () => {
     fs.removeSync(".tmp");
   });
 
-  it("filename", (done) => {
+  it("filename", done => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
-      key: "value",
+      key: "value"
     });
     done();
   });
 
-  it("loads first existing file in array", (done) => {
+  it("loads first existing file in array", done => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
-      key: "value",
+      key: "value"
     });
     done();
   });
 
-  it("empty object for when no file", (done) => {
+  it("empty object for when no file", done => {
     const data = loadConfigFile(".tmp/nope.json");
     expect(data).to.eql({});
     done();
   });
 
-  it("loads object as config", (done) => {
+  it("loads object as config", done => {
     const config = loadConfigFile({
-      my: "data",
+      my: "data"
     });
 
     expect(config).to.eql({
-      my: "data",
+      my: "data"
     });
     done();
   });
 
   describe("extends the file config with the object passed", () => {
-    it("superstatic.json", (done) => {
+    it("superstatic.json", done => {
       fs.outputFileSync(
         "superstatic.json",
         '{"firebase": "superstatic", "public": "./"}',
@@ -72,20 +72,20 @@ describe("loading config files", () => {
 
       const config = loadConfigFile({
         override: "test",
-        public: "app",
+        public: "app"
       });
 
       expect(config).to.eql({
         firebase: "superstatic",
         override: "test",
-        public: "app",
+        public: "app"
       });
 
       fs.removeSync("superstatic.json");
       done();
     });
 
-    it("firebase.json", (done) => {
+    it("firebase.json", done => {
       fs.outputFileSync(
         "firebase.json",
         '{"firebase": "example", "public": "./"}',
@@ -94,13 +94,13 @@ describe("loading config files", () => {
 
       const config = loadConfigFile({
         override: "test",
-        public: "app",
+        public: "app"
       });
 
       expect(config).to.eql({
         firebase: "example",
         override: "test",
-        public: "app",
+        public: "app"
       });
 
       fs.removeSync("firebase.json");

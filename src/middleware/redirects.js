@@ -85,7 +85,7 @@ Redirect.prototype.test = function(url) {
       const dest = decodeURIComponent(this.compileDestination(params));
       return {
         type: this.type,
-        destination: encodeURI(addQuery(dest, qs)),
+        destination: encodeURI(addQuery(dest, qs))
       };
     } catch (e) {
       return undefined;
@@ -95,7 +95,7 @@ Redirect.prototype.test = function(url) {
   ) {
     return {
       type: this.type,
-      destination: encodeURI(addQuery(this.destination, qs)),
+      destination: encodeURI(addQuery(this.destination, qs))
     };
   }
   return undefined;
@@ -110,7 +110,7 @@ module.exports = function() {
 
     const redirects = [];
     if (_.isArray(config)) {
-      config.forEach((redir) => {
+      config.forEach(redir => {
         const glob = redir.glob || redir.source;
         redirects.push(
           new Redirect(glob, redir.regex, redir.destination, redir.type)
@@ -141,7 +141,7 @@ module.exports = function() {
 
     return res.superstatic.handle({
       redirect: redirectUrl,
-      status: match.type,
+      status: match.type
     });
   };
 };

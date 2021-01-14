@@ -9,12 +9,12 @@ describe("promiseback", () => {
       promiseback((a1, a2) => {
         return Promise.resolve({
           a: a1,
-          b: a2,
+          b: a2
         });
       }, 2)("foo", "bar")
     ).to.eventually.deep.eq({
       a: "foo",
-      b: "bar",
+      b: "bar"
     });
   });
 

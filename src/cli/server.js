@@ -28,7 +28,7 @@ module.exports = function(cli, imports, ready) {
       compression: compression,
       debug: debug,
       env: env,
-      live: live,
+      live: live
     };
 
     cli.set("options", options);

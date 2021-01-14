@@ -17,7 +17,7 @@ describe("cli", () => {
   let cli;
 
   const config = {
-    public: "./",
+    public: "./"
   };
 
   beforeEach(() => {
@@ -35,15 +35,15 @@ describe("cli", () => {
     fs.removeSync(".tmp");
   });
 
-  it("starts a server", (done) => {
+  it("starts a server", done => {
     cli.run(["", ""], () => {
       server = cli.get("server");
       const port = cli.get("port");
 
       fetch("http://localhost:" + port)
-        .then((res) => {
+        .then(res => {
           expect(res.status).to.equal(200);
-          res.text().then((body) => {
+          res.text().then(body => {
             expect(body).to.equal("index");
             server.close(done);
           });
@@ -52,15 +52,15 @@ describe("cli", () => {
     });
   });
 
-  it("starts a server with a given directory", (done) => {
+  it("starts a server with a given directory", done => {
     cli.run(["", "", ".tmp"], () => {
       server = cli.get("server");
       const port = cli.get("port");
 
       fetch("http://localhost:" + port)
-        .then((res) => {
+        .then(res => {
           expect(res.status).to.equal(200);
-          res.text().then((body) => {
+          res.text().then(body => {
             expect(body).to.equal(".tmp/index.html");
             server.close(done);
           });
@@ -69,12 +69,12 @@ describe("cli", () => {
     });
   });
 
-  it("loads firebase.json config file", (done) => {
+  it("loads firebase.json config file", done => {
     fs.unlinkSync("superstatic.json");
     fs.writeFileSync(
       "firebase.json",
       JSON.stringify({
-        public: ".tmp",
+        public: ".tmp"
       }),
       "utf-8"
     );
@@ -84,8 +84,8 @@ describe("cli", () => {
       const port = cli.get("port");
 
       fetch("http://localhost:" + port)
-        .then((res) => res.text())
-        .then((body) => {
+        .then(res => res.text())
+        .then(body => {
           expect(body).to.equal(".tmp/index.html");
 
           fs.unlinkSync("firebase.json");
@@ -96,7 +96,7 @@ describe("cli", () => {
   });
 
   describe("port", () => {
-    it("--port", (done) => {
+    it("--port", done => {
       cli.run(["", "", "--port", "4321"], () => {
         server = cli.get("server");
         const port = cli.get("port");
@@ -110,7 +110,7 @@ describe("cli", () => {
       });
     });
 
-    it("-p", (done) => {
+    it("-p", done => {
       cli.run(["", "", "-p", "4321"], () => {
         server = cli.get("server");
         const port = cli.get("port");
@@ -126,7 +126,7 @@ describe("cli", () => {
   });
 
   describe("starts server on host", () => {
-    it("--host", (done) => {
+    it("--host", done => {
       cli.run(["", "", "--host", "0.0.0.0"], () => {
         server = cli.get("server");
 
@@ -135,7 +135,7 @@ describe("cli", () => {
       });
     });
 
-    it("--hostname", (done) => {
+    it("--hostname", done => {
       cli.run(["", "", "--hostname", "0.0.0.0"], () => {
         server = cli.get("server");
 
@@ -145,10 +145,10 @@ describe("cli", () => {
     });
   });
 
-  it("enables log output", (done) => {
+  it("enables log output", done => {
     cli.run(["", "", "--debug"], () => {
       const app = cli.get("app");
-      const hasLogger = _.find(app.stack, (layer) => {
+      const hasLogger = _.find(app.stack, layer => {
         return layer.handle && layer.handle.name === "logger";
       });
 
@@ -158,14 +158,14 @@ describe("cli", () => {
     });
   });
 
-  it("supports the old --gzip flag", (done) => {
+  it("supports the old --gzip flag", done => {
     cli.run(["", "", "--gzip"], () => {
       expect(cli.get("compression")).to.equal(true);
       cli.get("server").close(done);
     });
   });
 
-  it("enables smart compression", (done) => {
+  it("enables smart compression", done => {
     cli.run(["", "", "--compression"], () => {
       expect(cli.get("compression")).to.equal(true);
       cli.get("server").close(done);
@@ -182,9 +182,9 @@ describe("cli", () => {
             rewrites: [
               {
                 source: "**",
-                destination: "/index.html",
-              },
-            ],
+                destination: "/index.html"
+              }
+            ]
           },
           null,
           2
@@ -197,11 +197,11 @@ describe("cli", () => {
       fs.unlinkSync("custom.json");
     });
 
-    it("--config", (done) => {
+    it("--config", done => {
       cli.run(["", "", "--config", "custom.json"], () => {
         fetch("http://localhost:3474/anything.html")
-          .then((res) => res.text())
-          .then((body) => {
+          .then(res => res.text())
+          .then(body => {
             expect(body).to.equal("index");
             expect(cli.get("config")).to.equal("custom.json");
 
@@ -211,11 +211,11 @@ describe("cli", () => {
       });
     });
 
-    it("-c", (done) => {
+    it("-c", done => {
       cli.run(["", "", "-c", "custom.json"], () => {
         fetch("http://localhost:3474/anything.html")
-          .then((res) => res.text())
-          .then((body) => {
+          .then(res => res.text())
+          .then(body => {
             expect(body).to.equal("index");
             expect(cli.get("config")).to.equal("custom.json");
 
@@ -225,7 +225,7 @@ describe("cli", () => {
       });
     });
 
-    it("uses custom config object", (done) => {
+    it("uses custom config object", done => {
       cli.run(
         [
           "",
@@ -235,15 +235,15 @@ describe("cli", () => {
             rewrites: [
               {
                 source: "**",
-                destination: "/index.html",
-              },
-            ],
-          }),
+                destination: "/index.html"
+              }
+            ]
+          })
         ],
         () => {
           fetch("http://localhost:3474/anything.html")
-            .then((res) => res.text())
-            .then((body) => {
+            .then(res => res.text())
+            .then(body => {
               expect(body).to.equal("index");
               cli.get("server").close(done);
             })
@@ -255,7 +255,7 @@ describe("cli", () => {
 
   // NOTE: can't test flags that exit
   // This should be fixed in Nash 2.0
-  it.skip("version flag", (done) => {
+  it.skip("version flag", done => {
     // stdMocks.use();
 
     cli.run(["", "", "-v"], () => {

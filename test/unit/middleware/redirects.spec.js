@@ -19,7 +19,7 @@ const setup = function(req, res, next) {
 };
 
 describe("redirect middleware", () => {
-  it("skips the middleware if there are no redirects configured", (done) => {
+  it("skips the middleware if there are no redirects configured", done => {
     const app = connect().use(redirect({ redirects: [] }));
 
     request(app)
@@ -28,7 +28,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("skips middleware when there are no matching redirects", (done) => {
+  it("skips middleware when there are no matching redirects", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -37,9 +37,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -49,7 +49,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects to a configured path", (done) => {
+  it("redirects to a configured path", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -58,9 +58,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -71,7 +71,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("recognizes glob as synonymous with source", (done) => {
+  it("recognizes glob as synonymous with source", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -80,9 +80,9 @@ describe("redirect middleware", () => {
             {
               glob: "/source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -93,7 +93,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects to a configured regexp path", (done) => {
+  it("redirects to a configured regexp path", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -102,9 +102,9 @@ describe("redirect middleware", () => {
             {
               regex: "/source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -115,7 +115,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects to a configured path with a custom status code", (done) => {
+  it("redirects to a configured path with a custom status code", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -124,9 +124,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/redirect",
-              type: 302,
-            },
-          ],
+              type: 302
+            }
+          ]
         })
       );
 
@@ -137,7 +137,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("adds leading slash to all redirect paths", (done) => {
+  it("adds leading slash to all redirect paths", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -146,9 +146,9 @@ describe("redirect middleware", () => {
             {
               source: "source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -159,7 +159,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects using glob negation", (done) => {
+  it("redirects using glob negation", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -168,9 +168,9 @@ describe("redirect middleware", () => {
             {
               source: "!source",
               destination: "/redirect",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -181,7 +181,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects using segments in the url path", (done) => {
+  it("redirects using segments in the url path", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -190,9 +190,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -203,7 +203,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("uses capturing groups as segments when given a regex", (done) => {
+  it("uses capturing groups as segments when given a regex", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -212,9 +212,9 @@ describe("redirect middleware", () => {
             {
               regex: "/old/(.+)/group/(.+)",
               destination: "/new/:1/path/:2",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -225,7 +225,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("handles Unicode codepoints in regexes", (done) => {
+  it("handles Unicode codepoints in regexes", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -234,9 +234,9 @@ describe("redirect middleware", () => {
             {
               regex: "/äöü",
               destination: "/aou",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -247,7 +247,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("percent encodes the redirect location", (done) => {
+  it("percent encodes the redirect location", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -256,9 +256,9 @@ describe("redirect middleware", () => {
             {
               regex: "/aou",
               destination: "/ć",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -269,7 +269,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects using regexp captures inside path segments", (done) => {
+  it("redirects using regexp captures inside path segments", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -278,9 +278,9 @@ describe("redirect middleware", () => {
             {
               regex: "/foo/(.+)bar/baz",
               destination: "/:1",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -291,7 +291,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects using regexp captures across path segments", (done) => {
+  it("redirects using regexp captures across path segments", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -300,9 +300,9 @@ describe("redirect middleware", () => {
             {
               regex: "/foo/(.+)/bar",
               destination: "/:1",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -314,7 +314,7 @@ describe("redirect middleware", () => {
   });
 
   if (patterns.re2Available()) {
-    it("redirects using RE2 capturing groups", (done) => {
+    it("redirects using RE2 capturing groups", done => {
       const app = connect()
         .use(setup)
         .use(
@@ -323,9 +323,9 @@ describe("redirect middleware", () => {
               {
                 regex: "/(?P<asdf>foo)/bar",
                 destination: "/:asdf",
-                type: 301,
-              },
-            ],
+                type: 301
+              }
+            ]
           })
         );
 
@@ -336,7 +336,7 @@ describe("redirect middleware", () => {
         .end(done);
     });
 
-    it("redirects using both named and unnamed capture groups", (done) => {
+    it("redirects using both named and unnamed capture groups", done => {
       const app = connect()
         .use(setup)
         .use(
@@ -345,9 +345,9 @@ describe("redirect middleware", () => {
               {
                 regex: "/(?P<asdf>.+)/(.+)/(?P<jkl>.+)",
                 destination: "/:asdf/:2/:jkl",
-                type: 301,
-              },
-            ],
+                type: 301
+              }
+            ]
           })
         );
 
@@ -359,7 +359,7 @@ describe("redirect middleware", () => {
     });
   }
 
-  it("redirects a missing optional segment", (done) => {
+  it("redirects a missing optional segment", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -368,9 +368,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -381,7 +381,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects a present optional segment", (done) => {
+  it("redirects a present optional segment", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -390,9 +390,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -403,7 +403,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects a splat segment", (done) => {
+  it("redirects a splat segment", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -412,9 +412,9 @@ describe("redirect middleware", () => {
             {
               source: "/blog/:post*",
               destination: "/new/:post*",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -425,7 +425,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects using segments in the url path with a 302", (done) => {
+  it("redirects using segments in the url path with a 302", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -434,9 +434,9 @@ describe("redirect middleware", () => {
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 302,
-            },
-          ],
+              type: 302
+            }
+          ]
         })
       );
 
@@ -447,7 +447,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects to external http url", (done) => {
+  it("redirects to external http url", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -456,9 +456,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "http://redirectedto.com",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -469,7 +469,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("redirects to external https url", (done) => {
+  it("redirects to external https url", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -478,9 +478,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "https://redirectedto.com",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -491,7 +491,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("preserves query params when redirecting", (done) => {
+  it("preserves query params when redirecting", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -500,9 +500,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/destination",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -513,7 +513,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("appends query params to the destination when redirecting", (done) => {
+  it("appends query params to the destination when redirecting", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -522,9 +522,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "/destination?hello=world",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -535,7 +535,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("preserves query params when redirecting to external urls", (done) => {
+  it("preserves query params when redirecting to external urls", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -544,9 +544,9 @@ describe("redirect middleware", () => {
             {
               source: "/source",
               destination: "http://example.com/destination",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 
@@ -557,7 +557,7 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
-  it("preserves query params when redirecting with captures", (done) => {
+  it("preserves query params when redirecting with captures", done => {
     const app = connect()
       .use(setup)
       .use(
@@ -566,9 +566,9 @@ describe("redirect middleware", () => {
             {
               source: "/source/:foo",
               destination: "/:foo/bar",
-              type: 301,
-            },
-          ],
+              type: 301
+            }
+          ]
         })
       );
 

@@ -15,7 +15,7 @@ const Responder = require("../../../src/responder");
 
 describe("static router", () => {
   const provider = fsProvider({
-    public: ".tmp",
+    public: ".tmp"
   });
   let app;
 
@@ -24,7 +24,7 @@ describe("static router", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider,
+        provider: provider
       });
       next();
     });
@@ -34,15 +34,15 @@ describe("static router", () => {
     fs.removeSync(".tmp");
   });
 
-  it("serves a route", (done) => {
+  it("serves a route", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "/my-route",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -54,15 +54,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves a route with a glob", (done) => {
+  it("serves a route with a glob", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "**",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -74,15 +74,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves a route with a regex", (done) => {
+  it("serves a route with a regex", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             regex: ".*",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -94,15 +94,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves a route with an extension via a glob", (done) => {
+  it("serves a route with an extension via a glob", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "**",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -114,15 +114,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves a route with an extension via a regex", (done) => {
+  it("serves a route with an extension via a regex", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             regex: "/\\w+\\.py",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -134,15 +134,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves a negated route", (done) => {
+  it("serves a negated route", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "!/no",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -154,15 +154,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("skips if no match is found", (done) => {
+  it("skips if no match is found", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "/skip",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -172,15 +172,15 @@ describe("static router", () => {
       .end(done);
   });
 
-  it("serves the mime type of the rewritten file", (done) => {
+  it("serves the mime type of the rewritten file", done => {
     app.use(
       rewrites({
         rewrites: [
           {
             source: "**",
-            destination: "/index.html",
-          },
-        ],
+            destination: "/index.html"
+          }
+        ]
       })
     );
 
@@ -199,13 +199,13 @@ describe("static router", () => {
           rewrites: [
             { source: "/admin/**", destination: "/admin/index.html" },
             { source: "/something/**", destination: "/something/indexf.html" },
-            { source: "**", destination: "index.html" },
-          ],
+            { source: "**", destination: "index.html" }
+          ]
         })
       );
     });
 
-    it("first route with 1 depth route", (done) => {
+    it("first route with 1 depth route", done => {
       request(app)
         .get("/admin/anything")
         .expect(200)
@@ -213,7 +213,7 @@ describe("static router", () => {
         .end(done);
     });
 
-    it("first route with 2 depth route", (done) => {
+    it("first route with 2 depth route", done => {
       request(app)
         .get("/admin/anything/else")
         .expect(200)
@@ -221,7 +221,7 @@ describe("static router", () => {
         .end(done);
     });
 
-    it("second route", (done) => {
+    it("second route", done => {
       request(app)
         .get("/anything")
         .expect(200)

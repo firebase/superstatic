@@ -15,8 +15,8 @@ const superstatic = require("../../src");
 const options = function() {
   return {
     config: {
-      public: ".tmp",
-    },
+      public: ".tmp"
+    }
   };
 };
 
@@ -33,7 +33,7 @@ describe("serves", () => {
     fs.removeSync(".tmp");
   });
 
-  it("static file", (done) => {
+  it("static file", done => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
@@ -46,7 +46,7 @@ describe("serves", () => {
       .end(done);
   });
 
-  it("directory index file", (done) => {
+  it("directory index file", done => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
@@ -59,7 +59,7 @@ describe("serves", () => {
       .end(done);
   });
 
-  it("cannot access files above the root", (done) => {
+  it("cannot access files above the root", done => {
     const app = connect().use(superstatic(options()));
 
     request(app)
@@ -68,7 +68,7 @@ describe("serves", () => {
       .end(done);
   });
 
-  it("missing directory index", (done) => {
+  it("missing directory index", done => {
     const opts = options();
 
     opts.config.public = "./";
@@ -81,7 +81,7 @@ describe("serves", () => {
       .end(done);
   });
 
-  it("javascript file", (done) => {
+  it("javascript file", done => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
@@ -94,7 +94,7 @@ describe("serves", () => {
       .end(done);
   });
 
-  it("from custom current working directory", (done) => {
+  it("from custom current working directory", done => {
     const opts = options();
 
     opts.cwd = join(process.cwd(), ".tmp");
@@ -116,12 +116,12 @@ describe("serves", () => {
     opts.config.redirects = [
       { source: "/from", destination: "/to" },
       { source: "/fromCustom", destination: "/toCustom", type: 302 },
-      { source: "/external", destination: "http://redirect.com" },
+      { source: "/external", destination: "http://redirect.com" }
     ];
 
     const app = connect().use(superstatic(opts));
 
-    it("301", (done) => {
+    it("301", done => {
       request(app)
         .get("/from")
         .expect(301)
@@ -129,7 +129,7 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("custom", (done) => {
+    it("custom", done => {
       request(app)
         .get("/fromCustom")
         .expect(302)
@@ -137,7 +137,7 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("external urls", (done) => {
+    it("external urls", done => {
       request(app)
         .get("/external")
         .expect(301)
@@ -147,7 +147,7 @@ describe("serves", () => {
   });
 
   describe("trailing slash", () => {
-    xit("removes trailling slash for file", (done) => {
+    xit("removes trailling slash for file", done => {
       const app = connect().use(superstatic(options()));
 
       request(app)
@@ -157,7 +157,7 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("add trailing slash with a directory index file", (done) => {
+    it("add trailing slash with a directory index file", done => {
       const app = connect().use(superstatic(options()));
 
       request(app)
@@ -169,7 +169,7 @@ describe("serves", () => {
   });
 
   describe("basic auth", () => {
-    it("protects", (done) => {
+    it("protects", done => {
       const opts = options();
 
       opts.protect = "username:passwords";
@@ -185,7 +185,7 @@ describe("serves", () => {
   });
 
   describe("custom headers", () => {
-    it("with globs", (done) => {
+    it("with globs", done => {
       const opts = options();
 
       opts.config.headers = [
@@ -194,10 +194,10 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing",
-            },
-          ],
-        },
+              value: "testing"
+            }
+          ]
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -208,7 +208,7 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("exact", (done) => {
+    it("exact", done => {
       const opts = options();
 
       opts.config.headers = [
@@ -217,10 +217,10 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing",
-            },
-          ],
-        },
+              value: "testing"
+            }
+          ]
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -233,11 +233,11 @@ describe("serves", () => {
   });
 
   xdescribe("environment variables", () => {
-    it("json", (done) => {
+    it("json", done => {
       const opts = options();
 
       opts.env = {
-        key: "value",
+        key: "value"
       };
 
       const app = connect().use(superstatic(opts));
@@ -249,11 +249,11 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("js", (done) => {
+    it("js", done => {
       const opts = options();
 
       opts.env = {
-        key: "value",
+        key: "value"
       };
 
       const app = connect().use(superstatic(opts));
@@ -265,7 +265,7 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("defaults to .env.json", (done) => {
+    it("defaults to .env.json", done => {
       fs.outputFileSync(".env.json", '{"key":"value"}');
 
       const app = connect().use(superstatic());
@@ -273,24 +273,24 @@ describe("serves", () => {
       request(app)
         .get("/__/env.json")
         .expect({ key: "value" })
-        .end((err) => {
+        .end(err => {
           fs.remove(".env.json");
           done(err);
         });
     });
 
-    it("serves env file, overriding static routing", (done) => {
+    it("serves env file, overriding static routing", done => {
       const opts = options();
 
       opts.env = {
-        key: "value",
+        key: "value"
       };
 
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -304,14 +304,14 @@ describe("serves", () => {
   });
 
   describe("custom routes", () => {
-    it("serves file", (done) => {
+    it("serves file", done => {
       const opts = options();
 
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -324,15 +324,15 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("serves file from custom route when clean urls are on and route matches an html as a clean url", (done) => {
+    it("serves file from custom route when clean urls are on and route matches an html as a clean url", done => {
       const opts = options();
 
       opts.config.cleanUrls = true;
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -345,14 +345,14 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("serves static file when no matching route", (done) => {
+    it("serves static file when no matching route", done => {
       const opts = options();
 
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -364,14 +364,14 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("serves with negation", (done) => {
+    it("serves with negation", done => {
       const opts = options();
 
       opts.config.rewrites = [
         {
           source: "!/no",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));
@@ -382,14 +382,14 @@ describe("serves", () => {
         .end(done);
     });
 
-    it("serves file if url matches exact file path", (done) => {
+    it("serves file if url matches exact file path", done => {
       const opts = options();
 
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html",
-        },
+          destination: "/index.html"
+        }
       ];
 
       const app = connect().use(superstatic(opts));

@@ -30,7 +30,7 @@ describe.skip("server", () => {
     fs.removeSync(".tmp");
   });
 
-  it("starts a server", (done) => {
+  it("starts a server", done => {
     const app = server();
 
     request(app)
@@ -38,11 +38,11 @@ describe.skip("server", () => {
       .end(done);
   });
 
-  it("with config", (done) => {
+  it("with config", done => {
     const app = server({
       config: {
-        public: ".tmp",
-      },
+        public: ".tmp"
+      }
     });
 
     request(app)
@@ -51,9 +51,9 @@ describe.skip("server", () => {
       .end(done);
   });
 
-  it("with port", (done) => {
+  it("with port", done => {
     const app = server({
-      port: 9876,
+      port: 9876
     });
 
     const s = app.listen(() => {
@@ -63,9 +63,9 @@ describe.skip("server", () => {
     });
   });
 
-  it("with hostname", (done) => {
+  it("with hostname", done => {
     const app = server({
-      hostname: "127.0.0.1",
+      hostname: "127.0.0.1"
     });
 
     const s = app.listen(() => {
@@ -75,9 +75,9 @@ describe.skip("server", () => {
     });
   });
 
-  it("with host", (done) => {
+  it("with host", done => {
     const app = server({
-      host: "127.0.0.1",
+      host: "127.0.0.1"
     });
 
     const s = app.listen(() => {
@@ -87,10 +87,10 @@ describe.skip("server", () => {
     });
   });
 
-  it("with debug", (done) => {
+  it("with debug", done => {
     let output;
     const app = server({
-      debug: true,
+      debug: true
     });
 
     stdMocks.use();
@@ -108,41 +108,41 @@ describe.skip("server", () => {
       });
   });
 
-  it("with env filename", (done) => {
+  it("with env filename", done => {
     const app = server({
       env: ".tmp/.env.json",
       config: {
-        public: ".tmp",
-      },
+        public: ".tmp"
+      }
     });
 
     request(app)
       .get("/__/env.json")
       .expect({
-        key: "value",
+        key: "value"
       })
       .end(done);
   });
 
-  it("with env object", (done) => {
+  it("with env object", done => {
     const app = server({
       env: {
-        type: "object",
+        type: "object"
       },
       config: {
-        public: ".tmp",
-      },
+        public: ".tmp"
+      }
     });
 
     request(app)
       .get("/__/env.json")
       .expect({
-        type: "object",
+        type: "object"
       })
       .end(done);
   });
 
-  it("default error page", (done) => {
+  it("default error page", done => {
     const notFoundContent = fs
       .readFileSync(
         path.resolve(__dirname, "../../templates/assets/not_found.html")
@@ -158,14 +158,14 @@ describe.skip("server", () => {
       .end(done);
   });
 
-  it("overriden default error page", (done) => {
+  it("overriden default error page", done => {
     fs.outputFileSync(".tmp/error.html", "error page");
 
     const app = server({
       errorPage: ".tmp/error.html",
       config: {
-        public: ".tmp",
-      },
+        public: ".tmp"
+      }
     });
 
     request(app)

@@ -15,8 +15,8 @@ const options = function() {
   return {
     fallthrough: false,
     config: {
-      public: ".tmp",
-    },
+      public: ".tmp"
+    }
   };
 };
 
@@ -30,7 +30,7 @@ describe("error page", () => {
     fs.removeSync(".tmp");
   });
 
-  it("from 404.html", (done) => {
+  it("from 404.html", done => {
     fs.outputFileSync(".tmp/404.html", "404.html error", "utf8");
     const opts = options();
 
@@ -44,7 +44,7 @@ describe("error page", () => {
       .end(done);
   });
 
-  it("from custom error page", (done) => {
+  it("from custom error page", done => {
     const opts = options();
     opts.config.errorPage = "/error.html";
 
@@ -58,7 +58,7 @@ describe("error page", () => {
       .end(done);
   });
 
-  it("falls back to default when configured error page does not exist", (done) => {
+  it("falls back to default when configured error page does not exist", done => {
     const opts = options();
 
     opts.errorPage = ".tmp/default-error.html";

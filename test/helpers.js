@@ -6,5 +6,5 @@ module.exports = {
         return middleware(spec || {})(req, res, next);
       };
     };
-  },
+  }
 };

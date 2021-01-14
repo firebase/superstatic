@@ -18,18 +18,18 @@ describe("env", () => {
   beforeEach(() => {
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: {},
+        provider: {}
       });
       next();
     });
   });
 
-  it("serves json", (done) => {
+  it("serves json", done => {
     app.use(
       env({
         env: {
-          key: "value",
-        },
+          key: "value"
+        }
       })
     );
 
@@ -37,18 +37,18 @@ describe("env", () => {
       .get("/__/env.json")
       .expect(200)
       .expect({
-        key: "value",
+        key: "value"
       })
       .expect("content-type", "application/json; charset=utf-8")
       .end(done);
   });
 
-  it("serves javascript", (done) => {
+  it("serves javascript", done => {
     app.use(
       env({
         env: {
-          key: "value",
-        },
+          key: "value"
+        }
       })
     );
 

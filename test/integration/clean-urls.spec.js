@@ -14,8 +14,8 @@ const superstatic = require("../../src");
 const options = function() {
   return {
     config: {
-      public: ".tmp",
-    },
+      public: ".tmp"
+    }
   };
 };
 
@@ -32,7 +32,7 @@ describe("clean urls", () => {
     fs.removeSync(".tmp");
   });
 
-  it("not configured", (done) => {
+  it("not configured", done => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
@@ -43,7 +43,7 @@ describe("clean urls", () => {
       .end(done);
   });
 
-  it("redirects html file", (done) => {
+  it("redirects html file", done => {
     const opts = options();
 
     opts.config.cleanUrls = true;
@@ -57,7 +57,7 @@ describe("clean urls", () => {
       .end(done);
   });
 
-  it("serves html file", (done) => {
+  it("serves html file", done => {
     const opts = options();
 
     opts.config.cleanUrls = true;
@@ -71,7 +71,7 @@ describe("clean urls", () => {
       .end(done);
   });
 
-  it("redirects using globs", (done) => {
+  it("redirects using globs", done => {
     const opts = options();
 
     opts.config.cleanUrls = ["/*.html"];
@@ -85,7 +85,7 @@ describe("clean urls", () => {
       .end(done);
   });
 
-  it("serves html file using globs", (done) => {
+  it("serves html file using globs", done => {
     const opts = options();
 
     opts.config.cleanUrls = ["*.html"];

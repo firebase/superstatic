@@ -21,7 +21,7 @@ module.exports = function(spec) {
     setHeaders(spec)(
       {
         superstatic: config,
-        url: errorPage,
+        url: errorPage
       },
       res,
       () => {

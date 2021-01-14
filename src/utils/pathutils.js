@@ -4,31 +4,31 @@ const _ = require("lodash");
 const INDEX_FILE = "index.html";
 
 const pathutils = {
-  asDirectoryIndex: (pathname) => {
+  asDirectoryIndex: pathname => {
     return pathutils.isDirectoryIndex(pathname)
       ? pathname
       : join(pathname, INDEX_FILE);
   },
 
-  isDirectoryIndex: (pathname) => {
+  isDirectoryIndex: pathname => {
     return _.endsWith(pathname, "/" + INDEX_FILE);
   },
 
-  hasTrailingSlash: (pathname) => {
+  hasTrailingSlash: pathname => {
     return _.endsWith(pathname, "/");
   },
 
-  addTrailingSlash: (pathname) => {
+  addTrailingSlash: pathname => {
     return pathutils.hasTrailingSlash(pathname) ? pathname : pathname + "/";
   },
 
-  removeTrailingSlash: (pathname) => {
+  removeTrailingSlash: pathname => {
     return pathutils.hasTrailingSlash(pathname)
       ? pathname.slice(0, pathname.length - 1)
       : pathname;
   },
 
-  normalizeMultiSlashes: (pathname) => {
+  normalizeMultiSlashes: pathname => {
     return pathname.replace(/\/+/g, "/");
   },
 
@@ -37,7 +37,7 @@ const pathutils = {
       return string;
     }
     return string.slice(0, string.lastIndexOf(rm));
-  },
+  }
 };
 
 module.exports = pathutils;
