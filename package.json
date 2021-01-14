@@ -7,7 +7,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "clean": "rimraf lib",
-    "prepare": "npm run clean && npm run build -- --build tsconfig.json",
+    "prepare": "npm run clean && npm run build -- --build tsconfig.publish.json",
     "format": "npm run lint -- --fix --quiet",
     "test": "npm run lint && npm run coverage",
     "test-unit": "mocha \"test/unit/**\"",
@@ -21,6 +21,11 @@
   "bin": {
     "superstatic": "bin/server"
   },
+  "files": [
+    "bin",
+    "lib",
+    "templates"
+  ],
   "engines": {
     "node": ">= 8.6.0"
   },

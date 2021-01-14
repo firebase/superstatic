@@ -4,8 +4,10 @@
     "module": "commonjs",
     "strict": true,
     "outDir": "lib",
-    "removeComments": true,
     "target": "es2015",
     "sourceMap": true
   },
+  "include": [
+    "src/**/*",
+  ]
 }
