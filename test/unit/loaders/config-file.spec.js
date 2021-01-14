@@ -27,7 +27,7 @@ describe("loading config files", () => {
     fs.removeSync(".tmp");
   });
 
-  it("filename", done => {
+  it("filename", (done) => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
@@ -36,7 +36,7 @@ describe("loading config files", () => {
     done();
   });
 
-  it("loads first existing file in array", done => {
+  it("loads first existing file in array", (done) => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
@@ -45,13 +45,13 @@ describe("loading config files", () => {
     done();
   });
 
-  it("empty object for when no file", done => {
+  it("empty object for when no file", (done) => {
     const data = loadConfigFile(".tmp/nope.json");
     expect(data).to.eql({});
     done();
   });
 
-  it("loads object as config", done => {
+  it("loads object as config", (done) => {
     const config = loadConfigFile({
       my: "data"
     });
@@ -63,7 +63,7 @@ describe("loading config files", () => {
   });
 
   describe("extends the file config with the object passed", () => {
-    it("superstatic.json", done => {
+    it("superstatic.json", (done) => {
       fs.outputFileSync(
         "superstatic.json",
         '{"firebase": "superstatic", "public": "./"}',
@@ -85,7 +85,7 @@ describe("loading config files", () => {
       done();
     });
 
-    it("firebase.json", done => {
+    it("firebase.json", (done) => {
       fs.outputFileSync(
         "firebase.json",
         '{"firebase": "example", "public": "./"}',

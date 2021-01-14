@@ -110,7 +110,7 @@ module.exports = function() {
 
     const redirects = [];
     if (_.isArray(config)) {
-      config.forEach(redir => {
+      config.forEach((redir) => {
         const glob = redir.glob || redir.source;
         redirects.push(
           new Redirect(glob, redir.regex, redir.destination, redir.type)

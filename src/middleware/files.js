@@ -32,7 +32,7 @@ module.exports = function() {
 
     // Exact file always wins.
     return providerResult(req, res, pathname)
-      .then(result => {
+      .then((result) => {
         if (result) {
           // If we are using cleanURLs, we'll trim off any `.html` (or `/index.html`), if it exists.
           if (cleanUrlRules) {
@@ -60,7 +60,7 @@ module.exports = function() {
           pathutils.addTrailingSlash(pathname)
         );
         return providerResult(req, res, pathAsDirectoryWithIndex).then(
-          pathAsDirectoryWithIndexResult => {
+          (pathAsDirectoryWithIndexResult) => {
             // If an exact file wins now, we know that this path leads us to a directory.
             if (pathAsDirectoryWithIndexResult) {
               if (
@@ -112,7 +112,7 @@ module.exports = function() {
               }
 
               return providerResult(req, res, appendedPath).then(
-                appendedPathResult => {
+                (appendedPathResult) => {
                   if (appendedPathResult) {
                     // Okay, back to trailing slash behavior
                     if (trailingSlashBehavior === false && hasTrailingSlash) {
@@ -166,7 +166,7 @@ module.exports = function() {
           }
         );
       })
-      .catch(err => {
+      .catch((err) => {
         res.superstatic.handleError(err);
       });
   };
@@ -225,7 +225,7 @@ function providerResult(req, res, p) {
       promises.push(res.superstatic.provider(req, p));
       return Promise.all(promises);
     })
-    .then(results => {
+    .then((results) => {
       for (const r of results) {
         if (r) {
           return r;
@@ -296,7 +296,7 @@ function cookieValue(cookieString, key) {
   if (!cookieString) {
     return "";
   }
-  const cookies = cookieString.split(";").map(c => c.trim());
+  const cookies = cookieString.split(";").map((c) => c.trim());
   for (const cookie of cookies) {
     if (cookie.startsWith(key)) {
       const s = cookie.split("=", 2);

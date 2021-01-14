@@ -23,11 +23,11 @@ describe("memory provider", () => {
     return expect(provider({}, "/whatever")).to.eventually.be.null;
   });
 
-  it("should return a stream of the content if found", done => {
+  it("should return a stream of the content if found", (done) => {
     store["/index.html"] = "foobar";
-    provider({}, "/index.html").then(result => {
+    provider({}, "/index.html").then((result) => {
       let out = "";
-      result.stream.on("data", data => {
+      result.stream.on("data", (data) => {
         out += data;
       });
       result.stream.on("end", () => {
@@ -43,7 +43,7 @@ describe("memory provider", () => {
     return RSVP.hash({
       a: provider({}, "/a.html"),
       b: provider({}, "/b.html")
-    }).then(result => {
+    }).then((result) => {
       expect(result.a.etag).not.to.be.null;
       expect(result.b.etag).not.to.be.null;
       expect(result.a.etag).not.to.eq(result.b.etag);

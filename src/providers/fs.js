@@ -15,11 +15,11 @@ const statPromise = RSVP.denodeify(fs.stat);
 const multiStat = function(paths) {
   const pathname = paths.shift();
   return statPromise(pathname).then(
-    stat => {
+    (stat) => {
       stat.path = pathname;
       return stat;
     },
-    err => {
+    (err) => {
       if (paths.length) {
         return multiStat(paths);
       }
@@ -48,7 +48,7 @@ module.exports = function(options) {
       const hash = crypto.createHash("md5");
       hash.setEncoding("hex");
 
-      fd.on("error", err => {
+      fd.on("error", (err) => {
         reject(err);
       });
 
@@ -80,23 +80,23 @@ module.exports = function(options) {
 
     const result = {};
     let foundPath;
-    const fullPathnames = publicPaths.map(p => {
+    const fullPathnames = publicPaths.map((p) => {
       return pathjoin(cwd, p, pathname);
     });
 
     return multiStat(fullPathnames)
-      .then(stat => {
+      .then((stat) => {
         foundPath = stat.path;
         result.modified = stat.mtime.getTime();
         result.size = stat.size;
         return _fetchEtag(stat.path, stat);
       })
-      .then(etag => {
+      .then((etag) => {
         result.etag = etag;
         result.stream = fs.createReadStream(foundPath);
         return result;
       })
-      .catch(err => {
+      .catch((err) => {
         if (
           err.code === "ENOENT" ||
           err.code === "ENOTDIR" ||

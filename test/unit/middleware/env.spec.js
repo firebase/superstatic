@@ -24,7 +24,7 @@ describe("env", () => {
     });
   });
 
-  it("serves json", done => {
+  it("serves json", (done) => {
     app.use(
       env({
         env: {
@@ -43,7 +43,7 @@ describe("env", () => {
       .end(done);
   });
 
-  it("serves javascript", done => {
+  it("serves javascript", (done) => {
     app.use(
       env({
         env: {

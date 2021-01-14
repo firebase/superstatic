@@ -36,7 +36,7 @@ Activator.prototype.buildStack = function() {
     stack.splice(...[stack.indexOf(name) + 1, 0].concat(wares));
   });
 
-  return stack.map(ware => {
+  return stack.map((ware) => {
     return _.isFunction(ware) ? ware : middleware[ware](self.spec);
   });
 };
@@ -45,7 +45,7 @@ Activator.prototype.build = function() {
   const self = this;
 
   return function(req, res, next) {
-    promiseback(self.awaitConfig, 2)(req, res).then(config => {
+    promiseback(self.awaitConfig, 2)(req, res).then((config) => {
       req.superstatic = config || {};
 
       const stack = self.stack.slice(0).reverse();

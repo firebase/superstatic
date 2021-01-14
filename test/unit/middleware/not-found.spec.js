@@ -32,7 +32,7 @@ describe("not found", () => {
     fs.removeSync(".tmp");
   });
 
-  it("serves the file", done => {
+  it("serves the file", (done) => {
     app.use(
       notFound({
         errorPage: ".tmp/not-found.html"
@@ -54,7 +54,7 @@ describe("not found", () => {
     }).to.throw("ENOENT");
   });
 
-  it("caches for one hour", done => {
+  it("caches for one hour", (done) => {
     app.use(
       notFound({
         errorPage: join(process.cwd(), ".tmp/not-found.html")
