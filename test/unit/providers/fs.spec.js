@@ -11,7 +11,7 @@ const expect = chai.expect;
 const path = require("path");
 const RSVP = require("rsvp");
 
-const fsp = require("../../../lib/providers/fs");
+const fsp = require("../../../src/providers/fs");
 
 const concatStream = require("concat-stream");
 const readStatStream = function(stat) {

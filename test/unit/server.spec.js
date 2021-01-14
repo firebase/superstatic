@@ -12,7 +12,7 @@ const request = require("supertest");
 const expect = require("chai").expect;
 const stdMocks = require("std-mocks");
 
-const server = require("../../lib/server");
+const server = require("../../src/server");
 
 // NOTE: skipping these tests because of how
 // supertest runs a connect server. The Superstatic
@@ -144,7 +144,9 @@ describe.skip("server", () => {
 
   it("default error page", (done) => {
     const notFoundContent = fs
-      .readFileSync(path.resolve(__dirname, "../../lib/assets/not_found.html"))
+      .readFileSync(
+        path.resolve(__dirname, "../../templates/assets/not_found.html")
+      )
       .toString();
 
     const app = server();

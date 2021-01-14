@@ -1,7 +1,7 @@
 const { expect, use } = require("chai");
 use(require("chai-as-promised"));
 
-const promiseback = require("../../../lib/utils/promiseback");
+const promiseback = require("../../../src/utils/promiseback");
 
 describe("promiseback", () => {
   it("should resolve a promise if one is returned", () => {

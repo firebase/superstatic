@@ -9,9 +9,9 @@ const fs = require("fs-extra");
 const request = require("supertest");
 const connect = require("connect");
 const helpers = require("../../helpers");
-const rewrites = helpers.decorator(require("../../../lib/middleware/rewrites"));
-const fsProvider = require("../../../lib/providers/fs");
-const Responder = require("../../../lib/responder");
+const rewrites = helpers.decorator(require("../../../src/middleware/rewrites"));
+const fsProvider = require("../../../src/providers/fs");
+const Responder = require("../../../src/responder");
 
 describe("static router", () => {
   const provider = fsProvider({
