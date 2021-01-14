@@ -2,7 +2,6 @@ module.exports = {
   root: true,
   extends: [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jsdoc/recommended",
@@ -18,13 +17,9 @@ module.exports = {
   parserOptions: {
     sourceType: "module",
     ecmaVersion: 2017,
-    project: ["tsconfig.json"],
+    project: ["tsconfig.json", "tsconfig.dev.json"],
   },
-  plugins: [
-    "prettier",
-    "@typescript-eslint",
-    "jsdoc",
-  ],
+  plugins: ["prettier", "@typescript-eslint", "jsdoc"],
   rules: {
     "jsdoc/newline-after-description": "off",
     "jsdoc/require-jsdoc": ["warn", { publicOnly: true }],
@@ -69,4 +64,4 @@ module.exports = {
       },
     },
   },
-}
+};
