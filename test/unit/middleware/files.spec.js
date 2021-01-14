@@ -17,7 +17,7 @@ const Responder = require("../../../src/responder");
 
 describe("i18n", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -34,7 +34,7 @@ describe("i18n", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider
+        provider: provider,
       });
       next();
     });

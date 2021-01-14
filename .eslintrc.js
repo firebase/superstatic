@@ -47,6 +47,7 @@ module.exports = {
         "@typescript-eslint/no-unsafe-call": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-unsafe-member-access": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-unsafe-return": "warn", // TODO(bkendall): remove, allow to error.
+        "@typescript-eslint/no-use-before-define": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-var-requires": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/prefer-regexp-exec": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/restrict-plus-operands": "warn", // TODO(bkendall): remove, allow to error.
