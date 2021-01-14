@@ -157,7 +157,7 @@ describe("Responder", () => {
     });
 
     it("should call through to provider", async () => {
-      stub.returns(Promise.resolve(1));
+      stub.returns(Promise.resolve());
       await responder.handleFile({ file: "abc/def.html" });
       expect(stub).to.have.been.calledWithExactly(req, "abc/def.html");
     });
