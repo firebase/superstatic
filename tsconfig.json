@@ -2,10 +2,10 @@
   "compilerOptions": {
     "allowJs": true,
     "module": "commonjs",
-    "strict": true,
     "outDir": "lib",
-    "target": "es2017",
-    "sourceMap": true
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017"
   },
   "include": [
     "src/**/*",

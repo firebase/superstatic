@@ -8,7 +8,6 @@
 const middleware = require("./middleware");
 const _ = require("lodash");
 const promiseback = require("./utils/promiseback");
-const RSVP = require("rsvp");
 
 const Activator = function(spec, provider) {
   this.spec = spec;
@@ -19,7 +18,7 @@ const Activator = function(spec, provider) {
     this.awaitConfig = spec.config;
   } else {
     this.awaitConfig = function() {
-      return RSVP.resolve(spec.config);
+      return Promise.resolve(spec.config);
     };
   }
 };

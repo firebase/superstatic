@@ -9,7 +9,6 @@ const chai = require("chai");
 chai.use(require("chai-as-promised"));
 const expect = chai.expect;
 const memoryProvider = require("../../../src/providers/memory");
-const RSVP = require("rsvp");
 
 describe("memory provider", () => {
   let store;
@@ -37,12 +36,12 @@ describe("memory provider", () => {
     }, done);
   });
 
-  it("should return an etag of the content", () => {
+  it("should return an etag of the content", async () => {
     store["/a.html"] = "foo";
     store["/b.html"] = "bar";
-    return RSVP.hash({
-      a: provider({}, "/a.html"),
-      b: provider({}, "/b.html")
+    return Promise.resolve({
+      a: await provider({}, "/a.html"),
+      b: await provider({}, "/b.html")
     }).then((result) => {
       expect(result.a.etag).not.to.be.null;
       expect(result.b.etag).not.to.be.null;
