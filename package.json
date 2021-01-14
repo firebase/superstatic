@@ -27,7 +27,7 @@
     "templates"
   ],
   "engines": {
-    "node": ">= 8.6.0"
+    "node": ">= 10.13"
   },
   "repository": {
     "type": "git",

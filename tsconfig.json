@@ -4,7 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "outDir": "lib",
-    "target": "es2015",
+    "target": "es2017",
     "sourceMap": true
   },
   "include": [
