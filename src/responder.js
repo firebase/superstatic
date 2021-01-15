@@ -10,9 +10,12 @@ const mime = require("mime-types");
 const path = require("path");
 const onFinished = require("on-finished");
 const destroy = require("destroy");
-const promiseback = require("./utils/promiseback");
 
-const awaitFinished = promiseback(onFinished, 1);
+const awaitFinished = (res) => {
+  return new Promise((resolve) => {
+    onFinished(res, resolve);
+  });
+};
 
 const Responder = function(req, res, options) {
   this.req = req;
