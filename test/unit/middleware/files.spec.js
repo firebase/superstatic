@@ -455,7 +455,7 @@ describe("static server with trailing slash customization", () => {
         } else if (tt.wantContent) {
           r.expect(200).expect(tt.wantContent);
         } else {
-          done(new Error("Test set up incorrectly"));
+          return done(new Error("Test set up incorrectly"));
         }
         r.end(done);
       });
