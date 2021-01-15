@@ -6,7 +6,6 @@
  */
 
 const crypto = require("crypto");
-const RSVP = require("rsvp");
 const Readable = require("stream").Readable;
 
 module.exports = function(options) {
@@ -14,7 +13,7 @@ module.exports = function(options) {
     pathname = decodeURI(pathname);
 
     if (!options.store[pathname]) {
-      return RSVP.resolve(null);
+      return Promise.resolve(null);
     }
 
     const content = options.store[pathname];
@@ -26,7 +25,7 @@ module.exports = function(options) {
     const hash = crypto.createHash("md5");
     hash.update(content);
 
-    return RSVP.resolve({
+    return Promise.resolve({
       modified: options.modified || null,
       stream: stream,
       size: content.length,

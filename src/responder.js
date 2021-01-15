@@ -5,12 +5,17 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-const RSVP = require("rsvp");
 const _ = require("lodash");
 const mime = require("mime-types");
 const path = require("path");
-const awaitFinished = RSVP.denodeify(require("on-finished"));
+const onFinished = require("on-finished");
 const destroy = require("destroy");
+
+const awaitFinished = (res) => {
+  return new Promise((resolve) => {
+    onFinished(res, resolve);
+  });
+};
 
 const Responder = function(req, res, options) {
   this.req = req;
@@ -70,7 +75,7 @@ Responder.prototype._handle = function(item) {
     return this.handleMiddleware(item);
   }
 
-  return RSVP.reject(
+  return Promise.reject(
     new Error(JSON.stringify(item) + " is not a recognized responder directive")
   );
 };
@@ -89,7 +94,7 @@ Responder.prototype.handleStack = function(stack) {
     });
   }
 
-  return RSVP.resolve(false);
+  return Promise.resolve(false);
 };
 
 Responder.prototype.handleFile = function(file) {
@@ -160,12 +165,12 @@ Responder.prototype.handleRedirect = function(redirect) {
   this.res.setHeader("Location", redirect.redirect);
   this.res.setHeader("Content-Type", "text/html; charset=utf-8");
   this.res.end("Redirecting to " + redirect.redirect);
-  return RSVP.resolve(true);
+  return Promise.resolve(true);
 };
 
 Responder.prototype.handleMiddleware = function(middleware) {
   const self = this;
-  return new RSVP.Promise((resolve) => {
+  return new Promise((resolve) => {
     middleware(self.req, self.res, () => {
       resolve(false);
     });
@@ -185,7 +190,7 @@ Responder.prototype.handleRewrite = function(item) {
       });
     }
   }
-  return RSVP.reject(
+  return Promise.reject(
     new Error(
       "Unable to find a matching rewriter for " + JSON.stringify(item.rewrite)
     )
@@ -199,7 +204,7 @@ Responder.prototype.handleData = function(data) {
     data.contentType || "text/html; charset=utf-8"
   );
   this.res.end(data.data);
-  return RSVP.resolve(true);
+  return Promise.resolve(true);
 };
 
 module.exports = Responder;

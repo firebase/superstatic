@@ -9,14 +9,13 @@ const chai = require("chai");
 chai.use(require("chai-as-promised"));
 const expect = chai.expect;
 const path = require("path");
-const RSVP = require("rsvp");
 
 const fsp = require("../../../src/providers/fs");
 
 const concatStream = require("concat-stream");
 const readStatStream = function(stat) {
   const stream = stat.stream;
-  return new RSVP.Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     stream.on("error", (err) => {
       return reject(err);
     });

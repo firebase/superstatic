@@ -6,7 +6,6 @@
  */
 
 const Responder = require("../../src/responder");
-const RSVP = require("rsvp");
 const _ = require("lodash");
 const chai = require("chai");
 const sinon = require("sinon");
@@ -35,7 +34,7 @@ describe("Responder", () => {
     it("should call through to handleFile with a string", () => {
       const stub = sinon
         .stub(responder, "handleFile")
-        .returns(RSVP.resolve(true));
+        .returns(Promise.resolve(true));
       responder.handle("abc/def.html");
       expect(stub).to.have.been.calledWith({ file: "abc/def.html" });
     });
@@ -43,7 +42,7 @@ describe("Responder", () => {
     it("should call through to handleFile with a file object", () => {
       const stub = sinon
         .stub(responder, "handleFile")
-        .returns(RSVP.resolve(true));
+        .returns(Promise.resolve(true));
       responder.handle({ file: "abc/def.html" });
       expect(stub).to.have.been.calledWith({ file: "abc/def.html" });
     });
@@ -51,7 +50,7 @@ describe("Responder", () => {
     it("should call through to handleData with a data object", () => {
       const stub = sinon
         .stub(responder, "handleData")
-        .returns(RSVP.resolve(true));
+        .returns(Promise.resolve(true));
       const obj = { data: "abc def" };
       responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
@@ -60,7 +59,7 @@ describe("Responder", () => {
     it("should call through to handleRedirect with a redirect object", () => {
       const stub = sinon
         .stub(responder, "handleRedirect")
-        .returns(RSVP.resolve(true));
+        .returns(Promise.resolve(true));
       const obj = { redirect: "/" };
       responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
@@ -69,7 +68,7 @@ describe("Responder", () => {
     it("should call through to handleRewrite with a rewrite object", () => {
       const stub = sinon
         .stub(responder, "handleRewrite")
-        .returns(RSVP.resolve(true));
+        .returns(Promise.resolve(true));
       const obj = { rewrite: {} };
       responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
@@ -102,7 +101,7 @@ describe("Responder", () => {
         {
           rewriters: {
             message: function(rewrite) {
-              return RSVP.resolve({
+              return Promise.resolve({
                 data: rewrite.message,
                 contentType: "text/plain",
                 status: 200
@@ -157,10 +156,10 @@ describe("Responder", () => {
       });
     });
 
-    it("should call through to provider", () => {
-      stub.returns(RSVP.resolve({}));
-      responder.handleFile({ file: "abc/def.html" });
-      expect(stub).to.have.been.calledWith(req, "abc/def.html");
+    it("should call through to provider", async () => {
+      stub.returns(Promise.resolve());
+      await responder.handleFile({ file: "abc/def.html" });
+      expect(stub).to.have.been.calledWithExactly(req, "abc/def.html");
     });
   });
 

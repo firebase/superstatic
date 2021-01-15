@@ -8,13 +8,18 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const pathjoin = require("join-path");
-const RSVP = require("rsvp");
 const _ = require("lodash");
 
-const statPromise = RSVP.denodeify(fs.stat);
 const multiStat = function(paths) {
   const pathname = paths.shift();
-  return statPromise(pathname).then(
+  return new Promise((resolve, reject) => {
+    fs.stat(pathname, (err, stat) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(stat);
+    });
+  }).then(
     (stat) => {
       stat.path = pathname;
       return stat;
@@ -23,7 +28,7 @@ const multiStat = function(paths) {
       if (paths.length) {
         return multiStat(paths);
       }
-      return RSVP.reject(err);
+      return Promise.reject(err);
     }
   );
 };
@@ -37,7 +42,7 @@ module.exports = function(options) {
   }
 
   function _fetchEtag(pathname, stat) {
-    return new RSVP.Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const cached = etagCache[pathname];
       if (cached && cached.timestamp === stat.mtime) {
         return resolve(cached.value);
@@ -75,7 +80,7 @@ module.exports = function(options) {
       pathname.indexOf("..\\") >= 0 ||
       pathname.toLowerCase().indexOf("..%5c") >= 0
     ) {
-      return RSVP.resolve(null);
+      return Promise.resolve(null);
     }
 
     const result = {};
@@ -105,7 +110,7 @@ module.exports = function(options) {
         ) {
           return null;
         }
-        return RSVP.reject(err);
+        return Promise.reject(err);
       });
   };
 };
