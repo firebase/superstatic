@@ -161,7 +161,11 @@ describe("static server with trailing slash customization", () => {
   });
 
   afterEach(() => {
-    fs.removeSync(".tmp");
+    try {
+      fs.removeSync(".tmp");
+    } catch (_) {
+      // Do nothing.
+    }
   });
 
   it("serves html file", (done) => {
