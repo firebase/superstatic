@@ -41,11 +41,7 @@ describe("i18n", () => {
   });
 
   afterEach(() => {
-    try {
-      fs.removeSync(".tmp/");
-    } catch (_) {
-      // Do nothing.
-    }
+    fs.removeSync(".tmp/");
   });
 
   it("should resolve i18n content by accept-language", (done) => {
@@ -165,11 +161,7 @@ describe("static server with trailing slash customization", () => {
   });
 
   afterEach(() => {
-    try {
-      fs.removeSync(".tmp");
-    } catch (_) {
-      // Do nothing.
-    }
+    fs.removeSync(".tmp");
   });
 
   it("serves html file", (done) => {
