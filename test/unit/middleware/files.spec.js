@@ -41,7 +41,11 @@ describe("i18n", () => {
   });
 
   afterEach(() => {
-    fs.removeSync(".tmp/");
+    try {
+      fs.removeSync(".tmp/");
+    } catch (_) {
+      // Do nothing.
+    }
   });
 
   it("should resolve i18n content by accept-language", (done) => {
