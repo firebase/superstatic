@@ -5,16 +5,17 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-const nash = require("nash");
+const { Command } = require("commander");
+const join = require("join-path");
 const fs = require("fs");
 const path = require("path");
+const pkg = require("../../package.json");
+const server = require("../server");
 
 const PORT = 3474;
 const HOSTNAME = "localhost";
 const CONFIG_FILENAME = ["superstatic.json", "firebase.json"];
 const ENV_FILENAME = ".env.json";
-const DEBUG = false;
-const LIVE = false;
 
 let env;
 try {
@@ -23,33 +24,37 @@ try {
   // do nothing
 }
 
-module.exports = function() {
-  const cli = (module.exports = nash());
+const program = new Command();
 
-  // Defaults
-  cli.set("port", PORT);
-  cli.set("hostname", HOSTNAME);
-  cli.set("config", CONFIG_FILENAME);
-  cli.set("env", env);
-  cli.set("debug", DEBUG);
-  cli.set("live", LIVE);
+program.name("superstatic").version(pkg.version, "-v, --version");
 
-  // If no commands matched, the user probably
-  // wants to run a server
-  cli.register(
-    [
-      {
-        register: require("./flags")
-      },
-      {
-        register: require("./server"),
-        options: {
-          server: require("../server")
-        }
-      }
-    ],
-    () => {}
-  );
+program
+  .command("serve", { isDefault: true })
+  .argument("[folder]")
+  .option("-p, --port <port>", "Port", PORT)
+  .option("--host, --hostname <hostname>", "Hostname", HOSTNAME)
+  .option("-c, --config <config>", "Filename of config", CONFIG_FILENAME)
+  .option("--debug")
+  .option("--gzip")
+  .option("--compression")
+  .description("start server")
+  .action((folder, options) => {
+    return new Promise((resolve) => {
+      const app = server({
+        cwd: join(process.cwd(), folder),
+        config: options.config,
+        port: options.port,
+        hostname: options.hostname,
+        compression: options.compression,
+        debug: options.debug,
+        env: env
+      });
+      app.listen(() => resolve());
+      console.log(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `Superstatic started.\nVisit http://${options.hostname}:${options.port} to view your app.`
+      );
+    });
+  });
 
-  return cli;
-};
+module.exports = program;
