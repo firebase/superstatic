@@ -28,4 +28,4 @@ if (notifier.update) {
   notify(notifier.update);
 }
 
-cli.parse();
+cli.parseAsync();

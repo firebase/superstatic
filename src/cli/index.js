@@ -38,7 +38,7 @@ program
   .option("--gzip")
   .option("--compression")
   .description("start server")
-  .action((folder, options, command) => {
+  .action((folder, options) => {
     return new Promise((resolve) => {
       const app = server({
         cwd: join(process.cwd(), folder),
