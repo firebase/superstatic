@@ -6,8 +6,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jsdoc/recommended",
     "google",
-    "prettier",
-    "prettier/@typescript-eslint"
+    "plugin:prettier/recommended"
   ],
   env: {
     es6: true,
@@ -19,14 +18,12 @@ module.exports = {
     ecmaVersion: 2017,
     project: ["tsconfig.json", "tsconfig.dev.json"]
   },
-  plugins: ["prettier", "@typescript-eslint", "jsdoc"],
+  plugins: ["@typescript-eslint", "jsdoc"],
   rules: {
     "jsdoc/newline-after-description": "off",
     "jsdoc/require-jsdoc": ["warn", { publicOnly: true }],
     "jsdoc/require-param-type": "off",
     "jsdoc/require-returns-type": "off",
-    "prefer-arrow-callback": "error",
-    "prettier/prettier": "error",
 
     "require-atomic-updates": "off", // This rule is so noisy and isn't useful: https://github.com/eslint/eslint/issues/11899
     "require-jsdoc": "off", // This rule is deprecated and superseded by jsdoc/require-jsdoc.
