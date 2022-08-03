@@ -78,6 +78,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.167",
     "@types/mime-types": "^2.1.0",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^10.17.51",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",

@@ -35,6 +35,7 @@ module.exports = {
       rules: {
         "@typescript-eslint/no-empty-function": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-this-alias": "warn", // TODO(bkendall): remove, allow to error.
+        "@typescript-eslint/no-unsafe-argument": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-unsafe-assignment": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-unsafe-call": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/no-unsafe-member-access": "warn", // TODO(bkendall): remove, allow to error.
