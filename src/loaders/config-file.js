@@ -13,7 +13,7 @@ const path = require("path");
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
 
-module.exports = function(filename) {
+module.exports = function (filename) {
   if (_.isFunction(filename)) {
     return filename;
   }

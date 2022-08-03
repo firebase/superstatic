@@ -33,27 +33,22 @@ describe.skip("server", () => {
   it("starts a server", (done) => {
     const app = server();
 
-    request(app)
-      .get("/")
-      .end(done);
+    request(app).get("/").end(done);
   });
 
   it("with config", (done) => {
     const app = server({
       config: {
-        public: ".tmp"
-      }
+        public: ".tmp",
+      },
     });
 
-    request(app)
-      .get("/")
-      .expect("index file content")
-      .end(done);
+    request(app).get("/").expect("index file content").end(done);
   });
 
   it("with port", (done) => {
     const app = server({
-      port: 9876
+      port: 9876,
     });
 
     const s = app.listen(() => {
@@ -65,7 +60,7 @@ describe.skip("server", () => {
 
   it("with hostname", (done) => {
     const app = server({
-      hostname: "127.0.0.1"
+      hostname: "127.0.0.1",
     });
 
     const s = app.listen(() => {
@@ -77,7 +72,7 @@ describe.skip("server", () => {
 
   it("with host", (done) => {
     const app = server({
-      host: "127.0.0.1"
+      host: "127.0.0.1",
     });
 
     const s = app.listen(() => {
@@ -90,7 +85,7 @@ describe.skip("server", () => {
   it("with debug", (done) => {
     let output;
     const app = server({
-      debug: true
+      debug: true,
     });
 
     stdMocks.use();
@@ -112,14 +107,14 @@ describe.skip("server", () => {
     const app = server({
       env: ".tmp/.env.json",
       config: {
-        public: ".tmp"
-      }
+        public: ".tmp",
+      },
     });
 
     request(app)
       .get("/__/env.json")
       .expect({
-        key: "value"
+        key: "value",
       })
       .end(done);
   });
@@ -127,17 +122,17 @@ describe.skip("server", () => {
   it("with env object", (done) => {
     const app = server({
       env: {
-        type: "object"
+        type: "object",
       },
       config: {
-        public: ".tmp"
-      }
+        public: ".tmp",
+      },
     });
 
     request(app)
       .get("/__/env.json")
       .expect({
-        type: "object"
+        type: "object",
       })
       .end(done);
   });
@@ -151,11 +146,7 @@ describe.skip("server", () => {
 
     const app = server();
 
-    request(app)
-      .get("/nope")
-      .expect(404)
-      .expect(notFoundContent)
-      .end(done);
+    request(app).get("/nope").expect(404).expect(notFoundContent).end(done);
   });
 
   it("overriden default error page", (done) => {
@@ -164,14 +155,10 @@ describe.skip("server", () => {
     const app = server({
       errorPage: ".tmp/error.html",
       config: {
-        public: ".tmp"
-      }
+        public: ".tmp",
+      },
     });
 
-    request(app)
-      .get("/nope")
-      .expect(404)
-      .expect("error page")
-      .end(done);
+    request(app).get("/nope").expect(404).expect("error page").end(done);
   });
 });

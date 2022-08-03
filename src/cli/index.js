@@ -47,7 +47,7 @@ program
         hostname: options.hostname,
         compression: options.compression,
         debug: options.debug,
-        env: env
+        env: env,
       });
       app.listen(() => resolve());
       console.log(

@@ -17,7 +17,7 @@ const Responder = require("../../../src/responder");
 
 describe("i18n", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -34,7 +34,7 @@ describe("i18n", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider
+        provider: provider,
       });
       next();
     });
@@ -143,7 +143,7 @@ describe("i18n", () => {
 
 describe("static server with trailing slash customization", () => {
   const provider = fsProvider({
-    public: ".tmp"
+    public: ".tmp",
   });
   let app;
 
@@ -154,7 +154,7 @@ describe("static server with trailing slash customization", () => {
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
-        provider: provider
+        provider: provider,
       });
       next();
     });
@@ -231,11 +231,7 @@ describe("static server with trailing slash customization", () => {
 
     app.use(files({}, { provider: provider }));
 
-    request(app)
-      .get("/")
-      .expect(200)
-      .expect("an actual index")
-      .end(done);
+    request(app).get("/").expect(200).expect("an actual index").end(done);
   });
 
   it("does not redirect for directory index files", (done) => {
@@ -300,10 +296,7 @@ describe("static server with trailing slash customization", () => {
     it("returns a 404 if a trailing slash was added to a valid path", (done) => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
-      request(app)
-        .get("/foo.html/")
-        .expect(404)
-        .end(done);
+      request(app).get("/foo.html/").expect(404).end(done);
     });
 
     it("removes trailing slash on directory index urls", (done) => {
@@ -342,8 +335,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: false,
@@ -359,8 +352,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: true,
@@ -376,8 +369,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantNotFound: true },
         { path: "/foo/index.html", wantContent: "foo/index.html content" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: undefined,
@@ -393,8 +386,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantNotFound: true },
         { path: "/foo/index", wantRedirect: "/foo" },
         { path: "/foo/index.html", wantRedirect: "/foo" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: false,
@@ -410,8 +403,8 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantRedirect: "/foo/bar" },
         { path: "/foo/index", wantRedirect: "/foo" },
         { path: "/foo/index.html", wantRedirect: "/foo" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
     },
     {
       trailingSlashBehavior: true,
@@ -427,9 +420,9 @@ describe("static server with trailing slash customization", () => {
         { path: "/foo/bar/", wantContent: "foo/bar.html content" },
         { path: "/foo/index", wantRedirect: "/foo/" },
         { path: "/foo/index.html", wantRedirect: "/foo/" },
-        { path: "/foo/index.html/", wantNotFound: true }
-      ]
-    }
+        { path: "/foo/index.html/", wantNotFound: true },
+      ],
+    },
   ].forEach((t) => {
     const desc =
       "trailing slash " +

@@ -8,8 +8,8 @@
 const crypto = require("crypto");
 const Readable = require("stream").Readable;
 
-module.exports = function(options) {
-  const fn = function(req, pathname) {
+module.exports = function (options) {
+  const fn = function (req, pathname) {
     pathname = decodeURI(pathname);
 
     if (!options.store[pathname]) {
@@ -29,7 +29,7 @@ module.exports = function(options) {
       modified: options.modified || null,
       stream: stream,
       size: content.length,
-      etag: hash.digest("hex")
+      etag: hash.digest("hex"),
     });
   };
   fn.store = options.store || {};

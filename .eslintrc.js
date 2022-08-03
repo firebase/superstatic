@@ -6,17 +6,17 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jsdoc/recommended",
     "google",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
   ],
   env: {
     es6: true,
-    node: true
+    node: true,
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     sourceType: "module",
     ecmaVersion: 2017,
-    project: ["tsconfig.json", "tsconfig.dev.json"]
+    project: ["tsconfig.json", "tsconfig.dev.json"],
   },
   plugins: ["@typescript-eslint", "jsdoc"],
   rules: {
@@ -27,7 +27,7 @@ module.exports = {
 
     "require-atomic-updates": "off", // This rule is so noisy and isn't useful: https://github.com/eslint/eslint/issues/11899
     "require-jsdoc": "off", // This rule is deprecated and superseded by jsdoc/require-jsdoc.
-    "valid-jsdoc": "off" // This is deprecated but included in recommended configs.
+    "valid-jsdoc": "off", // This is deprecated but included in recommended configs.
   },
   overrides: [
     {
@@ -43,22 +43,22 @@ module.exports = {
         "@typescript-eslint/no-var-requires": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/prefer-regexp-exec": "warn", // TODO(bkendall): remove, allow to error.
         "@typescript-eslint/restrict-plus-operands": "warn", // TODO(bkendall): remove, allow to error.
-        "@typescript-eslint/unbound-method": "warn" // TODO(bkendall): remove, allow to error.
-      }
+        "@typescript-eslint/unbound-method": "warn", // TODO(bkendall): remove, allow to error.
+      },
     },
     {
       files: ["*.spec.*"],
       env: {
-        mocha: true
+        mocha: true,
       },
-      rules: {}
-    }
+      rules: {},
+    },
   ],
   settings: {
     jsdoc: {
       tagNamePreference: {
-        returns: "return"
-      }
-    }
-  }
+        returns: "return",
+      },
+    },
+  },
 };

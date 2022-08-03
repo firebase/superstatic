@@ -29,7 +29,7 @@ function addQuery(url, qs) {
   return url;
 }
 
-const Redirect = function(glob, regex, destination, type) {
+const Redirect = function (glob, regex, destination, type) {
   this.type = type || 301;
   this.glob = slasher(glob);
   this.regex = regex;
@@ -49,7 +49,7 @@ const Redirect = function(glob, regex, destination, type) {
   }
 };
 
-Redirect.prototype.test = function(url) {
+Redirect.prototype.test = function (url) {
   let qs = "";
   if (url.indexOf("?") >= 0) {
     const parts = url.split("?");
@@ -85,7 +85,7 @@ Redirect.prototype.test = function(url) {
       const dest = decodeURIComponent(this.compileDestination(params));
       return {
         type: this.type,
-        destination: encodeURI(addQuery(dest, qs))
+        destination: encodeURI(addQuery(dest, qs)),
       };
     } catch (e) {
       return undefined;
@@ -95,14 +95,14 @@ Redirect.prototype.test = function(url) {
   ) {
     return {
       type: this.type,
-      destination: encodeURI(addQuery(this.destination, qs))
+      destination: encodeURI(addQuery(this.destination, qs)),
     };
   }
   return undefined;
 };
 
-module.exports = function() {
-  return function(req, res, next) {
+module.exports = function () {
+  return function (req, res, next) {
     const config = _.get(req, "superstatic.redirects");
     if (!config) {
       return next();
@@ -120,7 +120,7 @@ module.exports = function() {
       throw new Error("redirects provided in an unrecognized format");
     }
 
-    const matcher = function(url) {
+    const matcher = function (url) {
       for (let i = 0; i < redirects.length; i++) {
         const result = redirects[i].test(url);
         if (result) {
@@ -141,7 +141,7 @@ module.exports = function() {
 
     return res.superstatic.handle({
       redirect: redirectUrl,
-      status: match.type
+      status: match.type,
     });
   };
 };

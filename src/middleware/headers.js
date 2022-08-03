@@ -11,10 +11,10 @@ const urlParser = require("fast-url-parser");
 const onHeaders = require("on-headers");
 const patterns = require("../utils/patterns");
 
-const normalizedConfigHeaders = function(spec, config) {
+const normalizedConfigHeaders = function (spec, config) {
   const out = config || [];
   if (_.isArray(config)) {
-    const _isAllowed = function(headerToSet) {
+    const _isAllowed = function (headerToSet) {
       return _.includes(spec.allowedHeaders, headerToSet.key.toLowerCase());
     };
 
@@ -30,8 +30,8 @@ const normalizedConfigHeaders = function(spec, config) {
   return out;
 };
 
-const matcher = function(configHeaders) {
-  return function(url) {
+const matcher = function (configHeaders) {
+  return function (url) {
     return configHeaders
       .filter((configHeader) => {
         return patterns.configMatcher(url, configHeader);
@@ -45,8 +45,8 @@ const matcher = function(configHeaders) {
   };
 };
 
-module.exports = function(spec) {
-  return function(req, res, next) {
+module.exports = function (spec) {
+  return function (req, res, next) {
     const config = _.get(req, "superstatic.headers");
     if (!config) {
       return next();

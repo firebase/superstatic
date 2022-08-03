@@ -11,11 +11,11 @@ const request = require("supertest");
 
 const superstatic = require("../../src");
 
-const options = function() {
+const options = function () {
   return {
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 
@@ -37,10 +37,7 @@ describe("clean urls", () => {
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
-      .get("/test")
-      .expect(404)
-      .end(done);
+    request(app).get("/test").expect(404).end(done);
   });
 
   it("redirects html file", (done) => {
@@ -64,11 +61,7 @@ describe("clean urls", () => {
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
-      .get("/test")
-      .expect(200)
-      .expect("test")
-      .end(done);
+    request(app).get("/test").expect(200).expect("test").end(done);
   });
 
   it("redirects using globs", (done) => {
@@ -92,10 +85,6 @@ describe("clean urls", () => {
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
-      .get("/test")
-      .expect(200)
-      .expect("test")
-      .end(done);
+    request(app).get("/test").expect(200).expect("test").end(done);
   });
 });

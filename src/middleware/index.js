@@ -14,9 +14,9 @@ const _ = require("lodash");
   "env",
   "files",
   "rewrites",
-  "missing"
+  "missing",
 ].forEach((name) => {
-  exports[name] = function(spec, config) {
+  exports[name] = function (spec, config) {
     const mware = require("./" + _.kebabCase(name))(spec, config);
     mware._name = name;
     return mware;

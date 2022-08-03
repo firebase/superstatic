@@ -47,13 +47,13 @@ export function env(spec: { env: { [key: string]: string } }) {
     if (req.url === "/__/env.json") {
       res.superstatic.handleData({
         data: JSON.stringify(env, null, 2),
-        contentType: mime.contentType("json") || ""
+        contentType: mime.contentType("json") || "",
       });
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
       res.superstatic.handleData({
         data: payload,
-        contentType: mime.contentType("js") || ""
+        contentType: mime.contentType("js") || "",
       });
     }
 

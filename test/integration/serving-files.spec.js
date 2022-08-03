@@ -12,11 +12,11 @@ const request = require("supertest");
 
 const superstatic = require("../../src");
 
-const options = function() {
+const options = function () {
   return {
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 
@@ -62,10 +62,7 @@ describe("serves", () => {
   it("cannot access files above the root", (done) => {
     const app = connect().use(superstatic(options()));
 
-    request(app)
-      .get("/../README.md")
-      .expect(404)
-      .end(done);
+    request(app).get("/../README.md").expect(404).end(done);
   });
 
   it("missing directory index", (done) => {
@@ -75,10 +72,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
-      .get("/")
-      .expect(404)
-      .end(done);
+    request(app).get("/").expect(404).end(done);
   });
 
   it("javascript file", (done) => {
@@ -116,17 +110,13 @@ describe("serves", () => {
     opts.config.redirects = [
       { source: "/from", destination: "/to" },
       { source: "/fromCustom", destination: "/toCustom", type: 302 },
-      { source: "/external", destination: "http://redirect.com" }
+      { source: "/external", destination: "http://redirect.com" },
     ];
 
     const app = connect().use(superstatic(opts));
 
     it("301", (done) => {
-      request(app)
-        .get("/from")
-        .expect(301)
-        .expect("Location", "/to")
-        .end(done);
+      request(app).get("/from").expect(301).expect("Location", "/to").end(done);
     });
 
     it("custom", (done) => {
@@ -194,18 +184,15 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing"
-            }
-          ]
-        }
+              value: "testing",
+            },
+          ],
+        },
       ];
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
-        .get("/dir/sub.html")
-        .expect("x-custom", "testing")
-        .end(done);
+      request(app).get("/dir/sub.html").expect("x-custom", "testing").end(done);
     });
 
     it("exact", (done) => {
@@ -217,18 +204,15 @@ describe("serves", () => {
           headers: [
             {
               key: "x-custom",
-              value: "testing"
-            }
-          ]
-        }
+              value: "testing",
+            },
+          ],
+        },
       ];
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
-        .get("/app.js")
-        .expect("x-custom", "testing")
-        .end(done);
+      request(app).get("/app.js").expect("x-custom", "testing").end(done);
     });
   });
 
@@ -237,7 +221,7 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       const app = connect().use(superstatic(opts));
@@ -253,7 +237,7 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       const app = connect().use(superstatic(opts));
@@ -283,14 +267,14 @@ describe("serves", () => {
       const opts = options();
 
       opts.env = {
-        key: "value"
+        key: "value",
       };
 
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -310,8 +294,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -331,8 +315,8 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
@@ -351,17 +335,13 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "/testing",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
-        .get("/test.html")
-        .expect(200)
-        .expect("test")
-        .end(done);
+      request(app).get("/test.html").expect(200).expect("test").end(done);
     });
 
     it("serves with negation", (done) => {
@@ -370,16 +350,13 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "!/no",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
-        .get("/no")
-        .expect(404)
-        .end(done);
+      request(app).get("/no").expect(404).end(done);
     });
 
     it("serves file if url matches exact file path", (done) => {
@@ -388,17 +365,13 @@ describe("serves", () => {
       opts.config.rewrites = [
         {
           source: "**",
-          destination: "/index.html"
-        }
+          destination: "/index.html",
+        },
       ];
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
-        .get("/test.html")
-        .expect(200)
-        .expect("test")
-        .end(done);
+      request(app).get("/test.html").expect(200).expect("test").end(done);
     });
   });
 });
