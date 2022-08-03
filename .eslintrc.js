@@ -31,6 +31,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ["*.ts"],
+      rules: {
+        "@typescript-eslint/no-unsafe-argument": "warn", // TODO(bkendall): remove, allow to error.
+      },
+    },
+    {
       files: ["*.js"],
       rules: {
         "@typescript-eslint/no-empty-function": "warn", // TODO(bkendall): remove, allow to error.
@@ -52,7 +58,9 @@ module.exports = {
       env: {
         mocha: true,
       },
-      rules: {},
+      rules: {
+        "@typescript-eslint/no-floating-promises": "warn", // TODO(bkendall): remove, allow to error.
+      },
     },
   ],
   settings: {
