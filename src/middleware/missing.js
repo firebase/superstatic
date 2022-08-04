@@ -9,7 +9,7 @@ const setHeaders = require("./headers");
 const fs = require("fs");
 
 module.exports = function (spec) {
-  let defaultErrorContent;
+  let defaultErrorContent = undefined;
   if (spec.errorPage) {
     defaultErrorContent = fs.readFileSync(spec.errorPage, "utf8");
   }

@@ -57,7 +57,7 @@ Redirect.prototype.test = function (url) {
     qs = parts[1];
   }
 
-  let match;
+  let match = undefined;
   if (this.capture) {
     match = this.capture.exec(url);
   }
