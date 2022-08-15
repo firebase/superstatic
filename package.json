@@ -55,7 +55,7 @@
     "commander": "^9.2.0",
     "compare-semver": "^1.0.0",
     "compression": "^1.7.0",
-    "connect": "^3.6.2",
+    "connect": "^3.7.0",
     "destroy": "^1.0.4",
     "fast-url-parser": "^1.1.3",
     "glob-slasher": "^1.0.1",
