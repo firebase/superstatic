@@ -86,5 +86,5 @@ module.exports = {
   createRaw: createRaw,
   re2Available: re2Available,
   containsRE2Capture: containsRE2Capture,
-  containsPCRECapture: containsPCRECapture
+  containsPCRECapture: containsPCRECapture,
 };

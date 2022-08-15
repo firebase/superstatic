@@ -10,7 +10,7 @@ const fs = require("fs");
 const pathjoin = require("join-path");
 const _ = require("lodash");
 
-const multiStat = function(paths) {
+const multiStat = function (paths) {
   const pathname = paths.shift();
   return new Promise((resolve, reject) => {
     fs.stat(pathname, (err, stat) => {
@@ -33,7 +33,7 @@ const multiStat = function(paths) {
   );
 };
 
-module.exports = function(options) {
+module.exports = function (options) {
   const etagCache = {};
   const cwd = options.cwd || process.cwd();
   let publicPaths = options.public || ["."];
@@ -62,7 +62,7 @@ module.exports = function(options) {
         const etag = hash.read();
         etagCache[pathname] = {
           timestamp: stat.mtime,
-          value: etag
+          value: etag,
         };
         resolve(etag);
       });
@@ -72,7 +72,7 @@ module.exports = function(options) {
     });
   }
 
-  return function(req, pathname) {
+  return function (req, pathname) {
     pathname = decodeURI(pathname);
     // jumping to parent directories is not allowed
     if (

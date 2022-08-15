@@ -19,8 +19,8 @@ function normalizeRedirectPath(path) {
   return path || "/";
 }
 
-module.exports = function() {
-  return function(req, res, next) {
+module.exports = function () {
+  return function (req, res, next) {
     const config = req.superstatic;
     const trailingSlashBehavior = config.trailingSlash;
 
@@ -45,7 +45,7 @@ module.exports = function() {
                 redirPath = pathutils.addTrailingSlash(redirPath);
               }
               return res.superstatic.handle({
-                redirect: normalizeRedirectPath(redirPath + search)
+                redirect: normalizeRedirectPath(redirPath + search),
               });
             }
           }
@@ -69,7 +69,7 @@ module.exports = function() {
                 !cleanUrlRules
               ) {
                 return res.superstatic.handle({
-                  redirect: pathutils.addTrailingSlash(pathname) + search
+                  redirect: pathutils.addTrailingSlash(pathname) + search,
                 });
               }
               if (
@@ -81,12 +81,12 @@ module.exports = function() {
                 return res.superstatic.handle({
                   redirect: normalizeRedirectPath(
                     pathutils.removeTrailingSlash(pathname) + search
-                  )
+                  ),
                 });
               }
               if (trailingSlashBehavior === true && !hasTrailingSlash) {
                 return res.superstatic.handle({
-                  redirect: pathutils.addTrailingSlash(pathname) + search
+                  redirect: pathutils.addTrailingSlash(pathname) + search,
                 });
               }
               // If we haven't returned yet, our path is "correct" and we should be serving a file, not redirecting.
@@ -121,7 +121,7 @@ module.exports = function() {
                       return res.superstatic.handle({
                         redirect: normalizeRedirectPath(
                           pathutils.removeTrailingSlash(pathname) + search
-                        )
+                        ),
                       });
                     }
                     if (trailingSlashBehavior === true && !hasTrailingSlash) {
@@ -136,7 +136,7 @@ module.exports = function() {
                       );
                       return res.superstatic.handle({
                         redirect:
-                          pathutils.addTrailingSlash(appendedPath) + search
+                          pathutils.addTrailingSlash(appendedPath) + search,
                       });
                     }
                     // If we've gotten this far and still have `/index.html` on the end, we want to remove it from the URL.
@@ -147,7 +147,7 @@ module.exports = function() {
                             appendedPath,
                             "/index.html"
                           ) + search
-                        )
+                        ),
                       });
                     }
                     // And if we should be serving a file and we're at the right path, we'll serve the file.
