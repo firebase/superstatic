@@ -8,59 +8,25 @@
 import { join } from "node:path";
 
 /**
- * Uses the provider to look for a file given a path.
- * This also takes into account i18n settings.
- * @param req the Request.
- * @param res the Response.
- * @param p the path to search for.
- * @return a non-null value if a file is found.
- */
-export async function providerResult(
-  req: any,
-  res: any,
-  p: string
-): Promise<ReadableStream | undefined> {
-  const promises: Promise<ReadableStream | undefined>[] = [];
-
-  const i18n = req.superstatic.i18n;
-  if (i18n && i18n.root) {
-    const country = getCountryCode(req.headers);
-    const languages = getI18nLanguages(req.headers);
-    const paths = i18nContentOptions(p, country, languages, i18n);
-    for (const pth of paths) {
-      promises.push(res.superstatic.provider(req, pth));
-    }
-  }
-
-  promises.push(res.superstatic.provider(req, p));
-  const results = await Promise.all(promises);
-  for (const r of results) {
-    if (r) {
-      return r;
-    }
-  }
-}
-
-/**
  * Returns the list of paths to check for i18n content.
  * The path order is:
  * (1) root/language_country/path (for each language)
  * (2) root/ALL_country/path (if country is set)
  * (3) root/language_ALL/path or root/language/path (for each language)
+ *
+ * If i18n is *not* configured, an empty list is returned.
  * @param p requested path.
- * @param country country code.
- * @param languages languages accepted in the response.
- * @param i18n i18n config.
- * @param i18n.root i18n root path.
+ * @param req the request object containing superstatic and i18n configuration.
  * @return list of paths to check for i18n content.
  */
-function i18nContentOptions(
-  p: string,
-  country: string,
-  languages: string[],
-  i18n: { root: string }
-): string[] {
+export function i18nContentOptions(p: string, req: any): string[] {
   const paths: string[] = [];
+  const i18n = req.superstatic.i18n;
+  if (!i18n || !i18n.root) {
+    return paths;
+  }
+  const country = getCountryCode(req.headers);
+  const languages = getI18nLanguages(req.headers);
   // (1)
   if (country) {
     for (const l of languages) {
