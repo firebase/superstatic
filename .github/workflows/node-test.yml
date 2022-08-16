@@ -15,7 +15,7 @@ jobs:
         with:
           go-version: "^1.18.0"
       - run: go install github.com/google/addlicense@latest
-      - run: env bash -c 'addlicense --check -c "Google LLC" -l MIT src/**/* bin/**/* examples/**/*'
+      - run: env bash -c 'addlicense --check -c "Google LLC" -l MIT src/**/* bin/* examples/**/*'
 
   test:
     runs-on: ubuntu-latest
