@@ -230,7 +230,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/lib/assets/not_found.html).
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/templates/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `compression` - A boolean value that tells Superstatic to serve gzip/deflate compressed responses based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
   * `gzip` **[DEPRECATED]** - A boolean value which is now equivalent in behavior to `compression`. Defaults to `false`.
