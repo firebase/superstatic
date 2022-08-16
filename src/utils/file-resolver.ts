@@ -22,33 +22,13 @@ export async function providerResult(
 ): Promise<ReadableStream | undefined> {
   const promises: Promise<ReadableStream | undefined>[] = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const i18n = req.superstatic.i18n;
   if (i18n && i18n.root) {
-    // The path order is:
-    // (1) root/language_country/path (for each language)
-    // (2) root/ALL_country/path (if country is set)
-    // (3) root/language_ALL/path or root/language/path (for each language)
     const country = getCountryCode(req.headers);
     const languages = getI18nLanguages(req.headers);
-    // (1)
-    if (country) {
-      for (const l of languages) {
-        promises.push(
-          res.superstatic.provider(req, join(i18n.root, `${l}_${country}`, p))
-        );
-      }
-      // (2)
-      promises.push(
-        res.superstatic.provider(req, join(i18n.root, `ALL_${country}`, p))
-      );
-    }
-    // (3)
-    for (const l of languages) {
-      promises.push(
-        res.superstatic.provider(req, join(i18n.root, `${l}_ALL`, p))
-      );
-      promises.push(res.superstatic.provider(req, join(i18n.root, `${l}`, p)));
+    const paths = i18nContentOptions(p, country, languages, i18n);
+    for (const pth of paths) {
+      promises.push(res.superstatic.provider(req, pth));
     }
   }
 
@@ -59,6 +39,42 @@ export async function providerResult(
       return r;
     }
   }
+}
+
+/**
+ * Returns the list of paths to check for i18n content.
+ * The path order is:
+ * (1) root/language_country/path (for each language)
+ * (2) root/ALL_country/path (if country is set)
+ * (3) root/language_ALL/path or root/language/path (for each language)
+ * @param p requested path.
+ * @param country country code.
+ * @param languages languages accepted in the response.
+ * @param i18n i18n config.
+ * @param i18n.root i18n root path.
+ * @return list of paths to check for i18n content.
+ */
+function i18nContentOptions(
+  p: string,
+  country: string,
+  languages: string[],
+  i18n: { root: string }
+): string[] {
+  const paths: string[] = [];
+  // (1)
+  if (country) {
+    for (const l of languages) {
+      paths.push(join(i18n.root, `${l}_${country}`, p));
+    }
+    // (2)
+    paths.push(join(i18n.root, `ALL_${country}`, p));
+  }
+  // (3)
+  for (const l of languages) {
+    paths.push(join(i18n.root, `${l}_ALL`, p));
+    paths.push(join(i18n.root, `${l}`, p));
+  }
+  return paths;
 }
 
 /**
