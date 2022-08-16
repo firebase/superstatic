@@ -13,7 +13,7 @@ const path = require("path");
 const fsp = require("../../../src/providers/fs");
 
 const concatStream = require("concat-stream");
-const readStatStream = function(stat) {
+const readStatStream = function (stat) {
   const stream = stat.stream;
   return new Promise((resolve, reject) => {
     stream.on("error", (err) => {
@@ -34,7 +34,7 @@ describe("provider: fs", () => {
   beforeEach(() => {
     opts = {
       cwd: path.resolve(path.join(__dirname, "..", "..", "fixtures")),
-      public: "a"
+      public: "a",
     };
   });
 

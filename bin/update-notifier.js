@@ -9,7 +9,7 @@ const compare = require("compare-semver");
 const format = require("chalk");
 const stringLength = require("string-length");
 
-module.exports = function(pkg) {
+module.exports = function (pkg) {
   if (compare.gt(pkg.current, [pkg.latest])) {
     return;
   }
@@ -20,7 +20,7 @@ module.exports = function(pkg) {
     "Your current version is " + format.green.bold(pkg.current) + ".",
     "The latest version is " + format.green.bold(pkg.latest) + ".",
     "",
-    "Run " + format.bold.yellow("npm install superstatic -g") + " to update."
+    "Run " + format.bold.yellow("npm install superstatic -g") + " to update.",
   ];
 
   let contentWidth = 0;
@@ -34,7 +34,7 @@ module.exports = function(pkg) {
     }
   });
 
-  const fill = function(str, count) {
+  const fill = function (str, count) {
     return Array(count + 1).join(str);
   };
 

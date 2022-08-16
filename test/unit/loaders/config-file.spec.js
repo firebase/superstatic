@@ -17,8 +17,8 @@ describe("loading config files", () => {
       ".tmp/package.json",
       JSON.stringify({
         superstatic: {
-          key: "value"
-        }
+          key: "value",
+        },
       })
     );
   });
@@ -31,7 +31,7 @@ describe("loading config files", () => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
-      key: "value"
+      key: "value",
     });
     done();
   });
@@ -40,7 +40,7 @@ describe("loading config files", () => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
-      key: "value"
+      key: "value",
     });
     done();
   });
@@ -53,11 +53,11 @@ describe("loading config files", () => {
 
   it("loads object as config", (done) => {
     const config = loadConfigFile({
-      my: "data"
+      my: "data",
     });
 
     expect(config).to.eql({
-      my: "data"
+      my: "data",
     });
     done();
   });
@@ -72,13 +72,13 @@ describe("loading config files", () => {
 
       const config = loadConfigFile({
         override: "test",
-        public: "app"
+        public: "app",
       });
 
       expect(config).to.eql({
         firebase: "superstatic",
         override: "test",
-        public: "app"
+        public: "app",
       });
 
       fs.removeSync("superstatic.json");
@@ -94,13 +94,13 @@ describe("loading config files", () => {
 
       const config = loadConfigFile({
         override: "test",
-        public: "app"
+        public: "app",
       });
 
       expect(config).to.eql({
         firebase: "example",
         override: "test",
-        public: "app"
+        public: "app",
       });
 
       fs.removeSync("firebase.json");

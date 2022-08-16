@@ -13,7 +13,7 @@ const connect = require("connect");
 const request = require("supertest");
 const Responder = require("../../../src/responder");
 const patterns = require("../../../src/utils/patterns");
-const setup = function(req, res, next) {
+const superstaticSetup = function (req, res, next) {
   res.superstatic = new Responder(req, res, { provider: {} });
   next();
 };
@@ -22,45 +22,39 @@ describe("redirect middleware", () => {
   it("skips the middleware if there are no redirects configured", (done) => {
     const app = connect().use(redirect({ redirects: [] }));
 
-    request(app)
-      .get("/")
-      .expect(404)
-      .end(done);
+    request(app).get("/").expect(404).end(done);
   });
 
   it("skips middleware when there are no matching redirects", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
-    request(app)
-      .get("/none")
-      .expect(404)
-      .end(done);
+    request(app).get("/none").expect(404).end(done);
   });
 
   it("redirects to a configured path", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -73,16 +67,16 @@ describe("redirect middleware", () => {
 
   it("recognizes glob as synonymous with source", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               glob: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -95,16 +89,16 @@ describe("redirect middleware", () => {
 
   it("redirects to a configured regexp path", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -117,16 +111,16 @@ describe("redirect middleware", () => {
 
   it("redirects to a configured path with a custom status code", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "/redirect",
-              type: 302
-            }
-          ]
+              type: 302,
+            },
+          ],
         })
       );
 
@@ -139,16 +133,16 @@ describe("redirect middleware", () => {
 
   it("adds leading slash to all redirect paths", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -161,16 +155,16 @@ describe("redirect middleware", () => {
 
   it("redirects using glob negation", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "!source",
               destination: "/redirect",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -183,16 +177,16 @@ describe("redirect middleware", () => {
 
   it("redirects using segments in the url path", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -205,16 +199,16 @@ describe("redirect middleware", () => {
 
   it("uses capturing groups as segments when given a regex", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/old/(.+)/group/(.+)",
               destination: "/new/:1/path/:2",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -227,38 +221,34 @@ describe("redirect middleware", () => {
 
   it("handles Unicode codepoints in regexes", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/äöü",
               destination: "/aou",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
-    request(app)
-      .get("/äöü")
-      .expect(301)
-      .expect("location", "/aou")
-      .end(done);
+    request(app).get("/äöü").expect(301).expect("location", "/aou").end(done);
   });
 
   it("percent encodes the redirect location", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/aou",
               destination: "/ć",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -271,16 +261,16 @@ describe("redirect middleware", () => {
 
   it("redirects using regexp captures inside path segments", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/foo/(.+)bar/baz",
               destination: "/:1",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -293,16 +283,16 @@ describe("redirect middleware", () => {
 
   it("redirects using regexp captures across path segments", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               regex: "/foo/(.+)/bar",
               destination: "/:1",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -316,16 +306,16 @@ describe("redirect middleware", () => {
   if (patterns.re2Available()) {
     it("redirects using RE2 capturing groups", (done) => {
       const app = connect()
-        .use(setup)
+        .use(superstaticSetup)
         .use(
           redirect({
             redirects: [
               {
                 regex: "/(?P<asdf>foo)/bar",
                 destination: "/:asdf",
-                type: 301
-              }
-            ]
+                type: 301,
+              },
+            ],
           })
         );
 
@@ -338,16 +328,16 @@ describe("redirect middleware", () => {
 
     it("redirects using both named and unnamed capture groups", (done) => {
       const app = connect()
-        .use(setup)
+        .use(superstaticSetup)
         .use(
           redirect({
             redirects: [
               {
                 regex: "/(?P<asdf>.+)/(.+)/(?P<jkl>.+)",
                 destination: "/:asdf/:2/:jkl",
-                type: 301
-              }
-            ]
+                type: 301,
+              },
+            ],
           })
         );
 
@@ -361,38 +351,34 @@ describe("redirect middleware", () => {
 
   it("redirects a missing optional segment", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
-    request(app)
-      .get("/old/")
-      .expect(301)
-      .expect("location", "/new")
-      .end(done);
+    request(app).get("/old/").expect(301).expect("location", "/new").end(done);
   });
 
   it("redirects a present optional segment", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/old/:value?",
               destination: "/new/:value?",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -405,16 +391,16 @@ describe("redirect middleware", () => {
 
   it("redirects a splat segment", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/blog/:post*",
               destination: "/new/:post*",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -427,16 +413,16 @@ describe("redirect middleware", () => {
 
   it("redirects using segments in the url path with a 302", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/old/:value/path/:loc",
               destination: "/new/:value/path/:loc",
-              type: 302
-            }
-          ]
+              type: 302,
+            },
+          ],
         })
       );
 
@@ -449,16 +435,16 @@ describe("redirect middleware", () => {
 
   it("redirects to external http url", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "http://redirectedto.com",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -471,16 +457,16 @@ describe("redirect middleware", () => {
 
   it("redirects to external https url", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "https://redirectedto.com",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -493,16 +479,16 @@ describe("redirect middleware", () => {
 
   it("preserves query params when redirecting", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "/destination",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -515,16 +501,16 @@ describe("redirect middleware", () => {
 
   it("appends query params to the destination when redirecting", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "/destination?hello=world",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -537,16 +523,16 @@ describe("redirect middleware", () => {
 
   it("preserves query params when redirecting to external urls", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source",
               destination: "http://example.com/destination",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 
@@ -559,16 +545,16 @@ describe("redirect middleware", () => {
 
   it("preserves query params when redirecting with captures", (done) => {
     const app = connect()
-      .use(setup)
+      .use(superstaticSetup)
       .use(
         redirect({
           redirects: [
             {
               source: "/source/:foo",
               destination: "/:foo/bar",
-              type: 301
-            }
-          ]
+              type: 301,
+            },
+          ],
         })
       );
 

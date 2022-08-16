@@ -41,7 +41,7 @@ describe("memory provider", () => {
     store["/b.html"] = "bar";
     return Promise.resolve({
       a: await provider({}, "/a.html"),
-      b: await provider({}, "/b.html")
+      b: await provider({}, "/b.html"),
     }).then((result) => {
       expect(result.a.etag).not.to.be.null;
       expect(result.b.etag).not.to.be.null;

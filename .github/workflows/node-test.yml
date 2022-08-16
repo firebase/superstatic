@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - "12"
           - "14"
           - "16"
           - "18"
@@ -19,14 +18,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      - name: cache npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-
-      - run: npm i -g npm@8.5
+      - run: npm i -g npm@8.16
       - run: npm ci
       - run: npm test
       - run: npm outdated
@@ -39,7 +34,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "14"
-      - run: npm i -g npm@8.5
+          node-version: "16"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm i -g npm@8.16
       - run: npm install --package-lock-only --ignore-scripts
       - run: "git diff --exit-code -- package-lock.json || (echo 'Error: package-lock.json is changed during npm install! Please make sure to use npm >= 6.9.0 and commit package-lock.json.' && false)"

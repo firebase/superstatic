@@ -30,14 +30,14 @@ interface SuperstaticResponse {
  * @param spec.env environment variables.
  * @return middleware.
  */
-export function env(spec: { env: { [key: string]: string } }) {
+export function env(spec: { env: Record<string, string> }) {
   return (
     req: Request & SuperstaticRequest,
     res: Response & SuperstaticResponse,
     next: () => void
   ): void => {
     // const config = req.superstatic.env;
-    let env;
+    let env = undefined;
     if (spec.env || req.superstatic.env) {
       env = Object.assign({}, req.superstatic.env, spec.env);
     } else {
@@ -47,13 +47,13 @@ export function env(spec: { env: { [key: string]: string } }) {
     if (req.url === "/__/env.json") {
       res.superstatic.handleData({
         data: JSON.stringify(env, null, 2),
-        contentType: mime.contentType("json") || ""
+        contentType: mime.contentType("json") || "",
       });
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
       res.superstatic.handleData({
         data: payload,
-        contentType: mime.contentType("js") || ""
+        contentType: mime.contentType("js") || "",
       });
     }
 

@@ -17,7 +17,7 @@ const HOSTNAME = "localhost";
 const CONFIG_FILENAME = ["superstatic.json", "firebase.json"];
 const ENV_FILENAME = ".env.json";
 
-let env;
+let env = undefined;
 try {
   env = JSON.parse(fs.readFileSync(path.resolve(ENV_FILENAME), "utf8"));
 } catch (e) {
@@ -47,7 +47,7 @@ program
         hostname: options.hostname,
         compression: options.compression,
         debug: options.debug,
-        env: env
+        env: env,
       });
       app.listen(() => resolve());
       console.log(

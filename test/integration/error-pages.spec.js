@@ -11,12 +11,12 @@ const request = require("supertest");
 
 const superstatic = require("../../src");
 
-const options = function() {
+const options = function () {
   return {
     fallthrough: false,
     config: {
-      public: ".tmp"
-    }
+      public: ".tmp",
+    },
   };
 };
 

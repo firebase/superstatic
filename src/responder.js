@@ -17,7 +17,7 @@ const awaitFinished = (res) => {
   });
 };
 
-const Responder = function(req, res, options) {
+const Responder = function (req, res, options) {
   this.req = req;
   this.res = res;
   this.provider = options.provider;
@@ -26,7 +26,7 @@ const Responder = function(req, res, options) {
   this.compressor = options.compressor;
 };
 
-Responder.prototype.isNotModified = function(stats) {
+Responder.prototype.isNotModified = function (stats) {
   if (stats.etag && stats.etag === this.req.headers["if-none-match"]) {
     return true;
   }
@@ -42,7 +42,7 @@ Responder.prototype.isNotModified = function(stats) {
   return false;
 };
 
-Responder.prototype.handle = function(item, next) {
+Responder.prototype.handle = function (item, next) {
   const self = this;
   return this._handle(item)
     .then((responded) => {
@@ -56,7 +56,7 @@ Responder.prototype.handle = function(item, next) {
     });
 };
 
-Responder.prototype._handle = function(item) {
+Responder.prototype._handle = function (item) {
   if (_.isArray(item)) {
     return this.handleStack(item);
   } else if (_.isString(item)) {
@@ -80,13 +80,13 @@ Responder.prototype._handle = function(item) {
   );
 };
 
-Responder.prototype.handleError = function(err) {
+Responder.prototype.handleError = function (err) {
   this.res.statusCode = 500;
   console.log(err.stack);
   this.res.end("Unexpected error occurred.");
 };
 
-Responder.prototype.handleStack = function(stack) {
+Responder.prototype.handleStack = function (stack) {
   const self = this;
   if (stack.length) {
     return this._handle(stack.shift()).then((responded) => {
@@ -97,7 +97,7 @@ Responder.prototype.handleStack = function(stack) {
   return Promise.resolve(false);
 };
 
-Responder.prototype.handleFile = function(file) {
+Responder.prototype.handleFile = function (file) {
   const self = this;
   return this.provider(this.req, file.file).then((result) => {
     if (!result) {
@@ -112,7 +112,7 @@ Responder.prototype.handleFile = function(file) {
   });
 };
 
-Responder.prototype.handleFileStream = function(file, result) {
+Responder.prototype.handleFileStream = function (file, result) {
   const self = this;
 
   this.streamedFile = file;
@@ -151,7 +151,7 @@ Responder.prototype.handleFileStream = function(file, result) {
   });
 };
 
-Responder.prototype.handleNotModified = function() {
+Responder.prototype.handleNotModified = function () {
   this.res.statusCode = 304;
   this.res.removeHeader("Content-Type");
   this.res.removeHeader("Content-Length");
@@ -160,7 +160,7 @@ Responder.prototype.handleNotModified = function() {
   return true;
 };
 
-Responder.prototype.handleRedirect = function(redirect) {
+Responder.prototype.handleRedirect = function (redirect) {
   this.res.statusCode = redirect.status || 301;
   this.res.setHeader("Location", redirect.redirect);
   this.res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -168,7 +168,7 @@ Responder.prototype.handleRedirect = function(redirect) {
   return Promise.resolve(true);
 };
 
-Responder.prototype.handleMiddleware = function(middleware) {
+Responder.prototype.handleMiddleware = function (middleware) {
   const self = this;
   return new Promise((resolve) => {
     middleware(self.req, self.res, () => {
@@ -177,7 +177,7 @@ Responder.prototype.handleMiddleware = function(middleware) {
   });
 };
 
-Responder.prototype.handleRewrite = function(item) {
+Responder.prototype.handleRewrite = function (item) {
   const self = this;
   if (item.rewrite.destination) {
     return self.handleFile({ file: item.rewrite.destination });
@@ -197,7 +197,7 @@ Responder.prototype.handleRewrite = function(item) {
   );
 };
 
-Responder.prototype.handleData = function(data) {
+Responder.prototype.handleData = function (data) {
   this.res.statusCode = data.status || 200;
   this.res.setHeader(
     "Content-Type",
