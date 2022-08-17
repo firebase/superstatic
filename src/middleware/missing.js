@@ -22,7 +22,7 @@
 const fs = require("fs");
 
 const setHeaders = require("./headers");
-const { providerResult } = require("../utils/file-resolver");
+const { i18nContentOptions } = require("../utils/i18n");
 
 module.exports = function (spec) {
   let defaultErrorContent = undefined;
@@ -34,33 +34,25 @@ module.exports = function (spec) {
     const config = req.superstatic;
     const errorPage = config.errorPage || "/404.html";
 
-    // To handle i18n, we will use the providerResult function to try to
-    // resolve the path with i18n in mind. If we get a result from that,
-    // it is a stream we can hand off to handleFileStream directly.
-    void providerResult(req, res, errorPage).then((resolvedErrorPage) => {
-      setHeaders(spec)(
-        {
-          superstatic: config,
-          url: errorPage,
-        },
-        res,
-        () => {
-          if (resolvedErrorPage) {
-            const responded = res.superstatic.handleFileStream(
-              { file: errorPage, status: 404 },
-              resolvedErrorPage
-            );
-            // Only return if we've responded. If it errored for some reason,
-            // we can allow the handler to continue and try other error pages.
-            if (responded) {
-              return;
-            }
+    setHeaders(spec)(
+      {
+        superstatic: config,
+        url: errorPage,
+      },
+      res,
+      () => {
+        const handles = [];
+        const i18n = req.superstatic.i18n;
+        // To handle i18n, we will try to resolve i18n paths first.
+        if (i18n && i18n.root) {
+          const paths = i18nContentOptions(errorPage, req);
+          for (const pth of paths) {
+            handles.push({ file: pth, status: 404 });
           }
-          const handles = [{ file: errorPage, status: 404 }];
-          if (defaultErrorContent) {
-            handles.push({ data: defaultErrorContent, status: 404 });
-          }
-          res.superstatic.handle(handles, next);
+        }
+        handles.push({ file: errorPage, status: 404 });
+        if (defaultErrorContent) {
+          handles.push({ data: defaultErrorContent, status: 404 });
         }
       );
     });

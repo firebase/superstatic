@@ -20,7 +20,7 @@
  */
 
 const _ = require("lodash");
-const { providerResult } = require("../utils/file-resolver");
+const { i18nContentOptions } = require("../utils/i18n");
 const pathutils = require("../utils/pathutils");
 const url = require("fast-url-parser");
 
@@ -185,3 +185,32 @@ module.exports = function () {
       });
   };
 };
+
+/**
+ * Uses the provider to look for a file given a path.
+ * This also takes into account i18n settings.
+ * @param {*} req the Request.
+ * @param {*} res the Response.
+ * @param {string} p the path to search for.
+ * @return {Promise<*>} a non-null value if a file is found.
+ */
+function providerResult(req, res, p) {
+  const promises = [];
+
+  const i18n = req.superstatic.i18n;
+  if (i18n && i18n.root) {
+    const paths = i18nContentOptions(p, req);
+    for (const pth of paths) {
+      promises.push(res.superstatic.provider(req, pth));
+    }
+  }
+  promises.push(res.superstatic.provider(req, p));
+
+  return Promise.all(promises).then((results) => {
+    for (const r of results) {
+      if (r) {
+        return r;
+      }
+    }
+  });
+}
