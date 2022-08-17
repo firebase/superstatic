@@ -54,6 +54,7 @@ module.exports = function (spec) {
         if (defaultErrorContent) {
           handles.push({ data: defaultErrorContent, status: 404 });
         }
+        res.superstatic.handle(handles, next);
       }
     );
   };
