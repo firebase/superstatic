@@ -5,8 +5,10 @@
  * https://github.com/firebase/superstatic/blob/master/LICENSE
  */
 
-const setHeaders = require("./headers");
 const fs = require("fs");
+
+const setHeaders = require("./headers");
+const { i18nContentOptions } = require("../utils/i18n");
 
 module.exports = function (spec) {
   let defaultErrorContent = undefined;
@@ -25,7 +27,16 @@ module.exports = function (spec) {
       },
       res,
       () => {
-        const handles = [{ file: errorPage, status: 404 }];
+        const handles = [];
+        const i18n = req.superstatic.i18n;
+        // To handle i18n, we will try to resolve i18n paths first.
+        if (i18n && i18n.root) {
+          const paths = i18nContentOptions(errorPage, req);
+          for (const pth of paths) {
+            handles.push({ file: pth, status: 404 });
+          }
+        }
+        handles.push({ file: errorPage, status: 404 });
         if (defaultErrorContent) {
           handles.push({ data: defaultErrorContent, status: 404 });
         }

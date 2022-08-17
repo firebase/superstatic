@@ -33,6 +33,9 @@ overrides:
       - "*.ts"
     rules:
       "@typescript-eslint/no-unsafe-argument": warn # TODO(bkendall): remove allow to error.
+      "@typescript-eslint/no-unsafe-assignment": warn # TODO(bkendall): remove allow to error.
+      "@typescript-eslint/no-unsafe-call": warn # TODO(bkendall): remove allow to error.
+      "@typescript-eslint/no-unsafe-member-access": warn # TODO(bkendall): remove allow to error.
   - files:
       - "*.js"
     rules:
