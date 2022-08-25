@@ -24,7 +24,7 @@ const join = require("join-path");
 const connect = require("connect");
 const request = require("supertest");
 
-const superstatic = require("../../src");
+const { default: superstatic } = require("../../src");
 
 const options = function () {
   return {
