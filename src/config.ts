@@ -1,7 +1,7 @@
 export interface Configuration {
   // Defaults to the current working directory.
   public?: string;
-  cleanUrls?: boolean;
+  cleanUrls?: boolean | string[];
   rewrites?: Array<Rewrite>;
   redirects?: Array<Redirect>;
   headers?: Array<Header>;

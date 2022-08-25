@@ -23,11 +23,12 @@ import * as fs from "node:fs/promises";
 import * as connect from "connect";
 import * as request from "supertest";
 
-import * as superstatic from "../../src";
+import superstatic from "../../";
+import { MiddlewareOptions } from "../../src/options";
+import { Configuration } from "../../src/config";
 
-function options(): {
-  config: { public: string; cleanUrls?: boolean | string[] };
-} {
+// config will always exist, so let's make typing nicer.
+function options(): MiddlewareOptions & { config: Configuration } {
   return {
     config: {
       public: ".tmp",

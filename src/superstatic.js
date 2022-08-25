@@ -21,6 +21,7 @@
 
 const _ = require("lodash");
 const makerouter = require("router");
+const { HandleFunction } = require("connect");
 
 const fsProvider = require("./providers/fs");
 const Responder = require("./responder");
@@ -37,8 +38,9 @@ const { MiddlewareOptions } = require("./options");
 const CWD = process.cwd();
 
 /**
+ * Superstatic returns a router that can be used in a server.
  * @param {MiddlewareOptions} spec superstatic options.
- * @return {unknown} unknown.
+ * @return {HandleFunction} router handler.
  */
 const superstatic = function (spec) {
   if (!spec.stack) {
