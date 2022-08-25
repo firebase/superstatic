@@ -65,7 +65,7 @@ function configMatcher(path, config) {
  * import.
  *
  * @param {string} pattern A regular expression pattern to test against.
- * @return {regexp} A regular expression object, created by either base
+ * @return {RegExp} A regular expression object, created by either base
  *                  RegExp or RE2, which matches the RegExp prototype
  */
 function createRaw(pattern) {

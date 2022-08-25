@@ -19,6 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-exports = module.exports = require("./superstatic");
-exports.server = require("./server");
-exports.RE2mode = require("./utils/patterns").re2Available;
+import superstatic = require("./superstatic");
+import server = require("./server");
+import patterns = require("./utils/patterns");
+const RE2mode = patterns.re2Available;
+
+export default superstatic;
+export { server, RE2mode };
