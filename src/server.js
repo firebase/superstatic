@@ -19,14 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
 const connect = require("connect");
 const networkLogger = require("morgan");
 
 const superstatic = require("./superstatic");
+const { ServerOptions } = require("./options");
 
+/**
+ * @param {ServerOptions} spec superstatic options.
+ * @return unknown
+ */
 module.exports = function (spec) {
-  spec = _.assign({ fallthrough: false }, spec);
+  if (spec.fallthrough === undefined) {
+    spec.fallthrough = false;
+  }
 
   const app = connect();
   const listen = app.listen.bind(app);

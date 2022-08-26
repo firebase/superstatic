@@ -2,7 +2,8 @@
   "name": "superstatic",
   "version": "8.0.0",
   "description": "A static file server for fancy apps",
-  "main": "./lib",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",

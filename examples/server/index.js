@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const superstatic = require("../../lib/server");
+const { server: superstaticServer } = require("../../");
 
 const spec = {
   port: 3474,
@@ -32,7 +32,7 @@ const spec = {
   debug: true,
 };
 
-const app = superstatic(spec);
+const app = superstaticServer(spec);
 app.listen((err) => {
   if (err) {
     console.log(err);

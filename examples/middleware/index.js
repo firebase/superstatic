@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const superstatic = require("../../");
+const { default: superstatic } = require("../../");
 const connect = require("connect");
 
 const spec = {

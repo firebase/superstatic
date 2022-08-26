@@ -31,6 +31,7 @@ const awaitFinished = (res) => {
   });
 };
 
+/** @type Class */
 const Responder = function (req, res, options) {
   this.req = req;
   this.res = res;
