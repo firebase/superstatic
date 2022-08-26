@@ -22,8 +22,8 @@
 const fs = require("fs-extra");
 const request = require("supertest");
 const connect = require("connect");
-const join = require("join-path");
-const expect = require("chai").expect;
+const { join } = require("path");
+const { expect } = require("chai");
 
 const notFound = require("../../../src/middleware/not-found");
 const Responder = require("../../../src/responder");

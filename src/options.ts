@@ -12,6 +12,7 @@ export interface MiddlewareOptions {
   after?: Record<string, HandleFunction>;
   before?: Record<string, HandleFunction>;
   rewriters?: Record<string, unknown>;
+  errorPage?: string;
 }
 
 export interface ServerOptions extends MiddlewareOptions {

@@ -7,6 +7,7 @@ export interface Configuration {
   headers?: Array<Header>;
   trailingSlash?: boolean;
   i18n?: { root: string };
+  errorPage?: string;
 }
 
 export interface Rewrite {
@@ -22,8 +23,8 @@ export interface Redirect {
 
 export interface Header {
   source: string;
-  headers: {
+  headers: Array<{
     key: string;
     value: string;
-  };
+  }>;
 }

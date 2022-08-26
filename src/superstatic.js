@@ -42,7 +42,7 @@ const CWD = process.cwd();
  * @param {MiddlewareOptions} spec superstatic options.
  * @return {HandleFunction} router handler.
  */
-const superstatic = function (spec) {
+const superstatic = function (spec = {}) {
   if (!spec.stack) {
     spec.stack = "default";
   }
