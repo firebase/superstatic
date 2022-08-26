@@ -20,26 +20,24 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-'use strict';
 
 var updateNotifier = require('update-notifier');
 var format = require('chalk');
 
-var cli = require('../lib/cli');
-var pkg = require('../package.json');
-var notify = require('./update-notifier');
+var cli = require('../cli');
+var pkg = require('../../package.json');
 
 var updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 
 var notifier = updateNotifier({
-  pkg: pkg,
-  updateCheckInterval: updateCheckInterval
+  pkg,
+  updateCheckInterval: 1,
+  shouldNotifyInNpmScript: true,
 });
 
-if (notifier.update) {
-  // NOTE: Custom notify function because update-notifier runs in
-  // a child process, and we block this when running the server
-  notify(notifier.update);
-}
+const updateMessage =
+  `Update available ${format.gray("{currentVersion}")} → ${format.green("{latestVersion}")}\n` +
+  `To update to the latest version using npm, run\n${format.cyan("npm install -g superstatic")}` +
+notifier.notify({ defer: true, isGlobal: true });
 
 cli.parseAsync();
