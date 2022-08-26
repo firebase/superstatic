@@ -52,9 +52,7 @@
   ],
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
-    "chalk": "^4.1.2",
     "commander": "^9.2.0",
-    "compare-semver": "^1.0.0",
     "compression": "^1.7.0",
     "connect": "^3.7.0",
     "destroy": "^1.0.4",
@@ -70,7 +68,6 @@
     "on-headers": "^1.0.0",
     "path-to-regexp": "^1.8.0",
     "router": "^1.3.1",
-    "string-length": "^4.0.2",
     "update-notifier": "^5.1.0"
   },
   "optionalDependencies": {

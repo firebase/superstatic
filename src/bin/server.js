@@ -21,23 +21,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-var updateNotifier = require('update-notifier');
-var format = require('chalk');
+const updateNotifier = require("update-notifier");
 
-var cli = require('../cli');
-var pkg = require('../../package.json');
+const cli = require("../cli");
+const pkg = require("../../package.json");
 
-var updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
+const updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 
-var notifier = updateNotifier({
+const notifier = updateNotifier({
   pkg,
-  updateCheckInterval: 1,
+  updateCheckInterval: updateCheckInterval,
   shouldNotifyInNpmScript: true,
 });
 
-const updateMessage =
-  `Update available ${format.gray("{currentVersion}")} → ${format.green("{latestVersion}")}\n` +
-  `To update to the latest version using npm, run\n${format.cyan("npm install -g superstatic")}` +
-notifier.notify({ defer: true, isGlobal: true });
+notifier.notify();
 
-cli.parseAsync();
+cli.parse();
