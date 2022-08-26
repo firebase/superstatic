@@ -19,71 +19,72 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs-extra");
-const connect = require("connect");
-const request = require("supertest");
+import * as fs from "node:fs/promises";
+import * as connect from "connect";
+import * as request from "supertest";
 
-const { default: superstatic } = require("../../src");
+import superstatic from "../../";
+import { MiddlewareOptions } from "../../src/options";
+import { Configuration } from "../../src/config";
 
-const options = function () {
+function options(): MiddlewareOptions & { config: Configuration } {
   return {
     fallthrough: false,
     config: {
       public: ".tmp",
     },
   };
-};
+}
 
 describe("error page", () => {
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/default-error.html", "default error", "utf8");
-    fs.outputFileSync(".tmp/error.html", "config error", "utf8");
+  beforeEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
+    await fs.mkdir(".tmp");
+    await fs.writeFile(".tmp/default-error.html", "default error", "utf8");
+    await fs.writeFile(".tmp/error.html", "config error", "utf8");
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("from 404.html", (done) => {
-    fs.outputFileSync(".tmp/404.html", "404.html error", "utf8");
+  it("from 404.html", async () => {
+    await fs.writeFile(".tmp/404.html", "404.html error", "utf8");
     const opts = options();
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/does-not-exist")
       .expect(404)
       .expect("404.html error")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 
-  it("from custom error page", (done) => {
+  it("from custom error page", async () => {
     const opts = options();
     opts.config.errorPage = "/error.html";
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    await request(app)
       .get("/does-not-exist")
       .expect(404)
       .expect("config error")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 
-  it("falls back to default when configured error page does not exist", (done) => {
+  it("falls back to default when configured error page does not exist", async () => {
     const opts = options();
 
     opts.errorPage = ".tmp/default-error.html";
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/does-not-exist")
       .expect(404)
       .expect("default error")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 });

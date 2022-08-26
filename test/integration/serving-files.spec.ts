@@ -19,90 +19,93 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs-extra");
-const join = require("join-path");
-const connect = require("connect");
-const request = require("supertest");
+import * as fs from "node:fs/promises";
+import { join } from "path";
+import * as connect from "connect";
+import * as request from "supertest";
 
-const { default: superstatic } = require("../../src");
+import superstatic from "../../";
+import { MiddlewareOptions } from "../../src/options";
+import { Configuration } from "../../src/config";
 
-const options = function () {
+function options(): MiddlewareOptions & { config: Configuration } {
   return {
+    fallthrough: false,
     config: {
       public: ".tmp",
     },
   };
-};
+}
 
 describe("serves", () => {
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/index.html", "index", "utf-8");
-    fs.outputFileSync(".tmp/test.html", "test", "utf-8");
-    fs.outputFileSync(".tmp/app.js", 'console.log("js")', "utf-8");
-    fs.outputFileSync(".tmp/dir/index.html", "dir index", "utf-8");
-    fs.outputFileSync(".tmp/dir/sub.html", "dir sub", "utf-8");
+  beforeEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
+    await fs.mkdir(".tmp");
+    await fs.writeFile(".tmp/index.html", "index", "utf-8");
+    await fs.writeFile(".tmp/test.html", "test", "utf-8");
+    await fs.writeFile(".tmp/app.js", 'console.log("js")', "utf-8");
+    await fs.mkdir(".tmp/dir");
+    await fs.writeFile(".tmp/dir/index.html", "dir index", "utf-8");
+    await fs.writeFile(".tmp/dir/sub.html", "dir sub", "utf-8");
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("static file", (done) => {
+  it("static file", async () => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/test.html")
       .expect(200)
       .expect("test")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 
-  it("directory index file", (done) => {
+  it("directory index file", async () => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/dir/")
       .expect(200)
       .expect("dir index")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 
-  it("cannot access files above the root", (done) => {
+  it("cannot access files above the root", async () => {
     const app = connect().use(superstatic(options()));
 
-    request(app).get("/../README.md").expect(404).end(done);
+    return request(app).get("/../README.md").expect(404);
   });
 
-  it("missing directory index", (done) => {
+  it("missing directory index", async () => {
     const opts = options();
 
     opts.config.public = "./";
 
     const app = connect().use(superstatic(opts));
 
-    request(app).get("/").expect(404).end(done);
+    return request(app).get("/").expect(404);
   });
 
-  it("javascript file", (done) => {
+  it("javascript file", async () => {
     const opts = options();
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/app.js")
       .expect(200)
       .expect('console.log("js")')
-      .expect("Content-Type", "application/javascript; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "application/javascript; charset=utf-8");
   });
 
-  it("from custom current working directory", (done) => {
+  it("from custom current working directory", async () => {
     const opts = options();
 
     opts.cwd = join(process.cwd(), ".tmp");
@@ -110,12 +113,11 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    request(app)
+    return request(app)
       .get("/index.html")
       .expect(200)
       .expect("dir index")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8");
   });
 
   describe("redirects", () => {
@@ -129,67 +131,59 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    it("301", (done) => {
-      request(app).get("/from").expect(301).expect("Location", "/to").end(done);
+    it("301", async () => {
+      return request(app).get("/from").expect(301).expect("Location", "/to");
     });
 
-    it("custom", (done) => {
-      request(app)
+    it("custom", async () => {
+      return request(app)
         .get("/fromCustom")
         .expect(302)
-        .expect("Location", "/toCustom")
-        .end(done);
+        .expect("Location", "/toCustom");
     });
 
-    it("external urls", (done) => {
-      request(app)
+    it("external urls", async () => {
+      return request(app)
         .get("/external")
         .expect(301)
-        .expect("Location", "http://redirect.com")
-        .end(done);
+        .expect("Location", "http://redirect.com");
     });
   });
 
   describe("trailing slash", () => {
-    xit("removes trailling slash for file", (done) => {
+    xit("removes trailling slash for file", async () => {
       const app = connect().use(superstatic(options()));
 
-      request(app)
+      return request(app)
         .get("/test.html/")
         .expect(301)
-        .expect("Location", "/test.html")
-        .end(done);
+        .expect("Location", "/test.html");
     });
 
-    it("add trailing slash with a directory index file", (done) => {
+    it("add trailing slash with a directory index file", async () => {
       const app = connect().use(superstatic(options()));
 
-      request(app)
-        .get("/dir")
-        .expect(301)
-        .expect("Location", "/dir/")
-        .end(done);
+      return request(app).get("/dir").expect(301).expect("Location", "/dir/");
     });
   });
 
   describe("basic auth", () => {
-    it("protects", (done) => {
+    it("protects", async () => {
       const opts = options();
 
       opts.protect = "username:passwords";
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/")
         .expect(401)
-        .expect("www-authenticate", 'Basic realm="Authorization Required"')
-        .end(done);
+        .expect("www-authenticate", 'Basic realm="Authorization Required"');
     });
   });
 
   describe("custom headers", () => {
-    it("with globs", (done) => {
+    it("with globs", async () => {
       const opts = options();
 
       opts.config.headers = [
@@ -206,10 +200,10 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app).get("/dir/sub.html").expect("x-custom", "testing").end(done);
+      return request(app).get("/dir/sub.html").expect("x-custom", "testing");
     });
 
-    it("exact", (done) => {
+    it("exact", async () => {
       const opts = options();
 
       opts.config.headers = [
@@ -226,12 +220,12 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app).get("/app.js").expect("x-custom", "testing").end(done);
+      return request(app).get("/app.js").expect("x-custom", "testing");
     });
   });
 
   xdescribe("environment variables", () => {
-    it("json", (done) => {
+    it("json", async () => {
       const opts = options();
 
       opts.env = {
@@ -240,14 +234,13 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/__/env.json")
         .expect({ key: "value" })
-        .expect("Content-Type", "application/json; charset=utf-8")
-        .end(done);
+        .expect("Content-Type", "application/json; charset=utf-8");
     });
 
-    it("js", (done) => {
+    it("js", async () => {
       const opts = options();
 
       opts.env = {
@@ -256,28 +249,23 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/__/env.js")
         .expect(200)
-        .expect("Content-Type", "application/javascript; charset=utf-8")
-        .end(done);
+        .expect("Content-Type", "application/javascript; charset=utf-8");
     });
 
-    it("defaults to .env.json", (done) => {
-      fs.outputFileSync(".env.json", '{"key":"value"}');
+    it("defaults to .env.json", async () => {
+      await fs.writeFile(".env.json", '{"key":"value"}', "utf8");
 
       const app = connect().use(superstatic());
 
-      request(app)
-        .get("/__/env.json")
-        .expect({ key: "value" })
-        .end((err) => {
-          fs.remove(".env.json");
-          done(err);
-        });
+      await request(app).get("/__/env.json").expect({ key: "value" });
+
+      await fs.rm(".env.json");
     });
 
-    it("serves env file, overriding static routing", (done) => {
+    it("serves env file, overriding static routing", async () => {
       const opts = options();
 
       opts.env = {
@@ -293,16 +281,15 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/__/env.json")
         .expect({ key: "value" })
-        .expect("Content-Type", "application/json; charset=utf-8")
-        .end(done);
+        .expect("Content-Type", "application/json; charset=utf-8");
     });
   });
 
   describe("custom routes", () => {
-    it("serves file", (done) => {
+    it("serves file", async () => {
       const opts = options();
 
       opts.config.rewrites = [
@@ -314,15 +301,14 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/testing")
         .expect(200)
         .expect("index")
-        .expect("Content-Type", "text/html; charset=utf-8")
-        .end(done);
+        .expect("Content-Type", "text/html; charset=utf-8");
     });
 
-    it("serves file from custom route when clean urls are on and route matches an html as a clean url", (done) => {
+    it("serves file from custom route when clean urls are on and route matches an html as a clean url", async () => {
       const opts = options();
 
       opts.config.cleanUrls = true;
@@ -335,15 +321,14 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app)
+      return request(app)
         .get("/testing")
         .expect(200)
         .expect("index")
-        .expect("Content-Type", "text/html; charset=utf-8")
-        .end(done);
+        .expect("Content-Type", "text/html; charset=utf-8");
     });
 
-    it("serves static file when no matching route", (done) => {
+    it("serves static file when no matching route", async () => {
       const opts = options();
 
       opts.config.rewrites = [
@@ -355,10 +340,10 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app).get("/test.html").expect(200).expect("test").end(done);
+      return request(app).get("/test.html").expect(200).expect("test");
     });
 
-    it("serves with negation", (done) => {
+    it("serves with negation", async () => {
       const opts = options();
 
       opts.config.rewrites = [
@@ -370,10 +355,10 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app).get("/no").expect(404).end(done);
+      return request(app).get("/no").expect(404);
     });
 
-    it("serves file if url matches exact file path", (done) => {
+    it("serves file if url matches exact file path", async () => {
       const opts = options();
 
       opts.config.rewrites = [
@@ -385,7 +370,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      request(app).get("/test.html").expect(200).expect("test").end(done);
+      return request(app).get("/test.html").expect(200).expect("test");
     });
   });
 });
