@@ -2,7 +2,6 @@
   "compilerOptions": {
     "allowJs": true,
     "declaration": true,
-    "resolveJsonModule": true,
     "module": "commonjs",
     "outDir": "lib",
     "sourceMap": true,

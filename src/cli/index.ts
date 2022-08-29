@@ -23,7 +23,7 @@ import { Command } from "commander";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import * as pkg from "../../package.json";
+const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
 import server = require("../server");
 
 const PORT = "3474";
