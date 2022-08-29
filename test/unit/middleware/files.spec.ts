@@ -23,6 +23,7 @@ import * as fs from "node:fs/promises";
 import { expect } from "chai";
 import * as request from "supertest";
 import * as connect from "connect";
+import { ServerResponse } from "node:http";
 
 import * as helpers from "../../helpers";
 import * as filesPkg from "../../../src/middleware/files";
@@ -55,13 +56,13 @@ describe("i18n", () => {
     await fs.writeFile(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
     await fs.writeFile(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
 
-    app = connect().use((req, res, next) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      res.superstatic = new Responder(req, res, {
-        provider: provider,
-      });
-      next();
-    });
+    app = connect().use(
+      (req, res: ServerResponse & { superstatic?: Responder }, next) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        res.superstatic = new Responder(req, res, { provider });
+        next();
+      }
+    );
   });
 
   afterEach(async () => {
@@ -169,13 +170,13 @@ describe("static server with trailing slash customization", () => {
     await fs.writeFile(".tmp/foo/index.html", "foo/index.html content", "utf8");
     await fs.writeFile(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
 
-    app = connect().use((req, res, next) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      res.superstatic = new Responder(req, res, {
-        provider: provider,
-      });
-      next();
-    });
+    app = connect().use(
+      (req, res: ServerResponse & { superstatic?: Responder }, next) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        res.superstatic = new Responder(req, res, { provider });
+        next();
+      }
+    );
   });
 
   afterEach(async () => {
