@@ -19,30 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { Command } = require("commander");
-const join = require("join-path");
-const fs = require("fs");
-const path = require("path");
-const pkg = require("../../package.json");
-const server = require("../server");
+import { Command } from "commander";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-const PORT = 3474;
+import pkg from "../../package.json";
+import server from "../server";
+
+const PORT = "3474";
 const HOSTNAME = "localhost";
 const CONFIG_FILENAME = ["superstatic.json", "firebase.json"];
 const ENV_FILENAME = ".env.json";
 
-let env = undefined;
+let env: Record<string, string> | undefined = undefined;
 try {
   env = JSON.parse(fs.readFileSync(path.resolve(ENV_FILENAME), "utf8"));
 } catch (e) {
   // do nothing
 }
 
-const program = new Command();
+const cli = new Command();
 
-program.name("superstatic").version(pkg.version, "-v, --version");
+cli.name("superstatic").version(pkg.version, "-v, --version");
 
-program
+cli
   .command("serve", { isDefault: true })
   .argument("[folder]")
   .option("-p, --port <port>", "Port", PORT)
@@ -55,7 +55,7 @@ program
   .action((folder, options) => {
     return new Promise((resolve) => {
       const app = server({
-        cwd: join(process.cwd(), folder),
+        cwd: path.join(process.cwd(), folder),
         config: options.config,
         port: options.port,
         hostname: options.hostname,
@@ -71,4 +71,4 @@ program
     });
   });
 
-module.exports = program;
+export default cli;

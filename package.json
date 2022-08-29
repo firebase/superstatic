@@ -52,7 +52,7 @@
   ],
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
-    "commander": "^9.2.0",
+    "commander": "^9.4.0",
     "compression": "^1.7.0",
     "connect": "^3.7.0",
     "destroy": "^1.0.4",
