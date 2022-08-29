@@ -19,139 +19,139 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs-extra");
-const expect = require("chai").expect;
-const request = require("supertest");
-const connect = require("connect");
+import * as fs from "node:fs/promises";
+import { expect } from "chai";
+import * as request from "supertest";
+import * as connect from "connect";
 
-const helpers = require("../../helpers");
-const files = helpers.decorator(require("../../../src/middleware/files"));
-const fsProvider = require("../../../src/providers/fs");
-const Responder = require("../../../src/responder");
+import * as helpers from "../../helpers";
+import * as filesPkg from "../../../src/middleware/files";
+import * as fsProvider from "../../../src/providers/fs";
+import * as Responder from "../../../src/responder";
+
+const files = helpers.decorator(filesPkg);
 
 describe("i18n", () => {
   const provider = fsProvider({
     public: ".tmp",
   });
-  let app;
+  let app: connect.Server;
 
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/foo.html", "foo.html content", "utf8");
-    fs.outputFileSync(".tmp/foo/index.html", "foo/index.html content", "utf8");
-    fs.outputFileSync(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
-    fs.outputFileSync(".tmp/intl/es/index.html", "hola", "utf8");
-    fs.outputFileSync(".tmp/intl/fr/index.html", "French Index!", "utf8");
-    fs.outputFileSync(".tmp/intl/jp_ALL/other.html", "Japanese!", "utf8");
-    fs.outputFileSync(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
-    fs.outputFileSync(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
-    fs.outputFileSync(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
+  beforeEach(async () => {
+    await fs.mkdir(".tmp", { recursive: true });
+    await fs.writeFile(".tmp/foo.html", "foo.html content", "utf8");
+    await fs.mkdir(".tmp/foo", { recursive: true });
+    await fs.writeFile(".tmp/foo/index.html", "foo/index.html content", "utf8");
+    await fs.writeFile(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
+    await fs.mkdir(".tmp/intl/es", { recursive: true });
+    await fs.writeFile(".tmp/intl/es/index.html", "hola", "utf8");
+    await fs.mkdir(".tmp/intl/fr", { recursive: true });
+    await fs.writeFile(".tmp/intl/fr/index.html", "French Index!", "utf8");
+    await fs.mkdir(".tmp/intl/jp_ALL", { recursive: true });
+    await fs.writeFile(".tmp/intl/jp_ALL/other.html", "Japanese!", "utf8");
+    await fs.mkdir(".tmp/intl/fr_ca", { recursive: true });
+    await fs.writeFile(".tmp/intl/fr_ca/index.html", "French CA!", "utf8");
+    await fs.mkdir(".tmp/intl/ALL_ca", { recursive: true });
+    await fs.writeFile(".tmp/intl/ALL_ca/index.html", "Oh Canada", "utf8");
+    await fs.writeFile(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
 
     app = connect().use((req, res, next) => {
-      res.superstatic = new Responder(req, res, {
+      (res as any).superstatic = new Responder(req, res, {
         provider: provider,
       });
       next();
     });
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp/");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("should resolve i18n content by accept-language", (done) => {
+  it("should resolve i18n content by accept-language", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .set("accept-language", "es")
-      .expect(200, "hola")
-      .end(done);
+      .expect(200, "hola");
   });
 
-  it("should resolve default files if nothing is provided", (done) => {
+  it("should resolve default files if nothing is provided", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/foo.html")
       .set("accept-language", "jp")
-      .expect(200, "foo.html content")
-      .end(done);
+      .expect(200, "foo.html content");
   });
 
-  it("should resolve i18n content by x-country-code", (done) => {
+  it("should resolve i18n content by x-country-code", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .set("x-country-code", "ca")
-      .expect(200, "Oh Canada")
-      .end(done);
+      .expect(200, "Oh Canada");
   });
 
-  it("should not show i18n content for other countries", (done) => {
+  it("should not show i18n content for other countries", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/hockey.html")
       .set("x-country-code", "jp")
-      .expect(404)
-      .end(done);
+      .expect(404);
   });
 
-  it("should allow i18n content specific to a country", (done) => {
+  it("should allow i18n content specific to a country", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/hockey.html")
       .set("x-country-code", "ca")
-      .expect(200, "Only Canada")
-      .end(done);
+      .expect(200, "Only Canada");
   });
 
-  it("should resolve i18n content by accept-language and x-country-code", (done) => {
+  it("should resolve i18n content by accept-language and x-country-code", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .set("accept-language", "fr")
       .set("x-country-code", "ca")
-      .expect(200, "French CA!")
-      .end(done);
+      .expect(200, "French CA!");
   });
 
-  it("should override the content using cookies for location", (done) => {
+  it("should override the content using cookies for location", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .set("accept-language", "es")
       .set("cookie", "firebase-language-override=fr")
-      .expect(200, "French Index!")
-      .end(done);
+      .expect(200, "French Index!");
   });
 
-  it("should override the content using cookies for location and country", (done) => {
+  it("should override the content using cookies for location and country", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .set("accept-language", "en")
       .set(
         "cookie",
         "firebase-language-override=fr; firebase-country-override=ca"
       )
-      .expect(200, "French CA!")
-      .end(done);
+      .expect(200, "French CA!");
   });
 
-  it("should allow i18n resolution by language with _ALL", (done) => {
+  it("should allow i18n resolution by language with _ALL", async () => {
     app.use(files({ i18n: { root: "/intl" } }, { provider }));
 
-    request(app)
+    await request(app)
       .get("/other.html")
       .set("accept-language", "jp")
-      .expect(200, "Japanese!")
-      .end(done);
+      .expect(200, "Japanese!");
   });
 });
 
@@ -159,178 +159,154 @@ describe("static server with trailing slash customization", () => {
   const provider = fsProvider({
     public: ".tmp",
   });
-  let app;
+  let app: connect.Server;
 
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/foo.html", "foo.html content", "utf8");
-    fs.outputFileSync(".tmp/foo/index.html", "foo/index.html content", "utf8");
-    fs.outputFileSync(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
+  beforeEach(async () => {
+    await fs.mkdir(".tmp", { recursive: true });
+    await fs.writeFile(".tmp/foo.html", "foo.html content", "utf8");
+    await fs.mkdir(".tmp/foo", { recursive: true });
+    await fs.writeFile(".tmp/foo/index.html", "foo/index.html content", "utf8");
+    await fs.writeFile(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
 
     app = connect().use((req, res, next) => {
-      res.superstatic = new Responder(req, res, {
+      (res as any).superstatic = new Responder(req, res, {
         provider: provider,
       });
       next();
     });
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("serves html file", (done) => {
+  it("serves html file", async () => {
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/foo.html")
       .expect(200)
       .expect("foo.html content")
-      .expect("content-type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("content-type", "text/html; charset=utf-8");
   });
 
-  it("serves html file with unicode name", (done) => {
-    fs.outputFileSync(".tmp/äää.html", "test", "utf8");
+  it("serves html file with unicode name", async () => {
+    await fs.writeFile(".tmp/äää.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/äää.html")
       .expect(200)
       .expect("test")
-      .expect("content-type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("content-type", "text/html; charset=utf-8");
   });
 
-  it("serves css file", (done) => {
-    fs.outputFileSync(".tmp/style.css", "body {}", "utf8");
+  it("serves css file", async () => {
+    await fs.writeFile(".tmp/style.css", "body {}", "utf8");
 
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/style.css")
       .expect(200)
       .expect("body {}")
-      .expect("content-type", "text/css; charset=utf-8")
-      .end(done);
+      .expect("content-type", "text/css; charset=utf-8");
   });
 
-  it("serves a directory index file", (done) => {
-    fs.outputFileSync(".tmp/index.html", "test", "utf8");
+  it("serves a directory index file", async () => {
+    await fs.writeFile(".tmp/index.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/")
       .expect(200)
       .expect("test")
-      .expect("content-type", "text/html; charset=utf-8")
-      .end(done);
+      .expect("content-type", "text/html; charset=utf-8");
   });
 
-  it("serves a file with query parameters", (done) => {
-    fs.outputFileSync(".tmp/superstatic.html", "test", "utf8");
+  it("serves a file with query parameters", async () => {
+    await fs.writeFile(".tmp/superstatic.html", "test", "utf8");
 
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/superstatic.html?key=value")
       .expect(200)
-      .expect("test")
-      .end(done);
+      .expect("test");
   });
 
-  it("does not redirect the root url because of the trailing slash", (done) => {
-    fs.outputFileSync(".tmp/index.html", "an actual index", "utf8");
+  it("does not redirect the root url because of the trailing slash", async () => {
+    await fs.writeFile(".tmp/index.html", "an actual index", "utf8");
 
     app.use(files({}, { provider: provider }));
 
-    request(app).get("/").expect(200).expect("an actual index").end(done);
+    await request(app).get("/").expect(200).expect("an actual index");
   });
 
-  it("does not redirect for directory index files", (done) => {
+  it("does not redirect for directory index files", async () => {
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/foo/")
       .expect(200)
-      .expect((data) => {
-        expect(data.req.path).to.equal("/foo/");
-      })
-      .end(done);
+      .expect("foo/index.html content");
   });
 
-  it("function() directory index to have a trailing slash", (done) => {
+  it("function() directory index to have a trailing slash", async () => {
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/foo")
-      .expect((req) => {
-        expect(req.headers.location).to.equal("/foo/");
+      .expect((res) => {
+        expect(res.headers.location).to.equal("/foo/");
       })
-      .expect(301)
-      .end(done);
+      .expect(301);
   });
 
-  it("preserves query parameters and slash on subdirectory directory index redirect", (done) => {
+  it("preserves query parameters and slash on subdirectory directory index redirect", async () => {
     app.use(files({}, { provider: provider }));
 
-    request(app)
+    await request(app)
       .get("/foo?query=params")
       .expect((req) => {
         expect(req.headers.location).to.equal("/foo/?query=params");
       })
-      .expect(301)
-      .end(done);
+      .expect(301);
   });
 
   describe("force trailing slash", () => {
-    it("adds slash to url with no extension", (done) => {
+    it("adds slash to url with no extension", async () => {
       app.use(files({ trailingSlash: true }, { provider: provider }));
 
-      request(app)
-        .get("/foo")
-        .expect(301)
-        .expect("Location", "/foo/")
-        .end(done);
+      await request(app).get("/foo").expect(301).expect("Location", "/foo/");
     });
   });
 
   describe("force remove trailing slash", () => {
-    it("removes trailing slash on urls with no file extension", (done) => {
+    it("removes trailing slash on urls with no file extension", async () => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
-      request(app)
-        .get("/foo/")
-        .expect(301)
-        .expect("Location", "/foo")
-        .end(done);
+      await request(app).get("/foo/").expect(301).expect("Location", "/foo");
     });
 
-    it("returns a 404 if a trailing slash was added to a valid path", (done) => {
+    it("returns a 404 if a trailing slash was added to a valid path", async () => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
-      request(app).get("/foo.html/").expect(404).end(done);
+      await request(app).get("/foo.html/").expect(404);
     });
 
-    it("removes trailing slash on directory index urls", (done) => {
+    it("removes trailing slash on directory index urls", async () => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
-      request(app)
-        .get("/foo/")
-        .expect(301)
-        .expect("Location", "/foo")
-        .end(done);
+      await request(app).get("/foo/").expect(301).expect("Location", "/foo");
     });
 
-    it("normalizes multiple leading slashes on a redirect", (done) => {
+    it("normalizes multiple leading slashes on a redirect", async () => {
       app.use(files({ trailingSlash: false }, { provider: provider }));
 
-      request(app)
-        .get("/foo////")
-        .expect(301)
-        .expect("Location", "/foo")
-        .end(done);
+      await request(app).get("/foo////").expect(301).expect("Location", "/foo");
     });
   });
 
@@ -438,15 +414,11 @@ describe("static server with trailing slash customization", () => {
       ],
     },
   ].forEach((t) => {
-    const desc =
-      "trailing slash " +
-      t.trailingSlashBehavior +
-      " cleanUrls " +
-      t.cleanUrls +
-      " ";
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const desc = `trailing slash ${t.trailingSlashBehavior} cleanUrls ${t.cleanUrls}`;
     t.tests.forEach((tt) => {
-      const ttDesc = desc + JSON.stringify(tt);
-      it("should behave correctly: " + ttDesc, (done) => {
+      const ttDesc = `${desc} ${JSON.stringify(tt)}`;
+      it("should behave correctly: " + ttDesc, async () => {
         app.use(
           files(
             { trailingSlash: t.trailingSlashBehavior, cleanUrls: t.cleanUrls },
@@ -456,15 +428,14 @@ describe("static server with trailing slash customization", () => {
 
         const r = request(app).get(tt.path);
         if (tt.wantRedirect) {
-          r.expect(301).expect("Location", tt.wantRedirect);
+          await r.expect(301).expect("Location", tt.wantRedirect);
         } else if (tt.wantNotFound) {
-          r.expect(404);
+          await r.expect(404);
         } else if (tt.wantContent) {
-          r.expect(200).expect(tt.wantContent);
+          await r.expect(200).expect(tt.wantContent);
         } else {
-          return done(new Error("Test set up incorrectly"));
+          throw new Error("Test set up incorrectly");
         }
-        r.end(done);
       });
     });
   });

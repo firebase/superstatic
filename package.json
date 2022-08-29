@@ -74,6 +74,7 @@
     "re2": "^1.17.7"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.3",
     "@types/connect": "^3.4.35",
     "@types/lodash": "^4.14.167",
     "@types/mime-types": "^2.1.0",
