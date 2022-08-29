@@ -58,7 +58,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/test.html")
       .expect(200)
       .expect("test")
@@ -70,7 +70,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/dir/")
       .expect(200)
       .expect("dir index")
@@ -80,7 +80,7 @@ describe("serves", () => {
   it("cannot access files above the root", async () => {
     const app = connect().use(superstatic(options()));
 
-    return request(app).get("/../README.md").expect(404);
+    await request(app).get("/../README.md").expect(404);
   });
 
   it("missing directory index", async () => {
@@ -90,7 +90,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app).get("/").expect(404);
+    await request(app).get("/").expect(404);
   });
 
   it("javascript file", async () => {
@@ -98,7 +98,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/app.js")
       .expect(200)
       .expect('console.log("js")')
@@ -113,7 +113,7 @@ describe("serves", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/index.html")
       .expect(200)
       .expect("dir index")
@@ -132,18 +132,18 @@ describe("serves", () => {
     const app = connect().use(superstatic(opts));
 
     it("301", async () => {
-      return request(app).get("/from").expect(301).expect("Location", "/to");
+      await request(app).get("/from").expect(301).expect("Location", "/to");
     });
 
     it("custom", async () => {
-      return request(app)
+      await request(app)
         .get("/fromCustom")
         .expect(302)
         .expect("Location", "/toCustom");
     });
 
     it("external urls", async () => {
-      return request(app)
+      await request(app)
         .get("/external")
         .expect(301)
         .expect("Location", "http://redirect.com");
@@ -154,7 +154,7 @@ describe("serves", () => {
     xit("removes trailling slash for file", async () => {
       const app = connect().use(superstatic(options()));
 
-      return request(app)
+      await request(app)
         .get("/test.html/")
         .expect(301)
         .expect("Location", "/test.html");
@@ -163,7 +163,7 @@ describe("serves", () => {
     it("add trailing slash with a directory index file", async () => {
       const app = connect().use(superstatic(options()));
 
-      return request(app).get("/dir").expect(301).expect("Location", "/dir/");
+      await request(app).get("/dir").expect(301).expect("Location", "/dir/");
     });
   });
 
@@ -175,7 +175,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/")
         .expect(401)
         .expect("www-authenticate", 'Basic realm="Authorization Required"');
@@ -200,7 +200,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app).get("/dir/sub.html").expect("x-custom", "testing");
+      await request(app).get("/dir/sub.html").expect("x-custom", "testing");
     });
 
     it("exact", async () => {
@@ -220,7 +220,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app).get("/app.js").expect("x-custom", "testing");
+      await request(app).get("/app.js").expect("x-custom", "testing");
     });
   });
 
@@ -234,7 +234,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/__/env.json")
         .expect({ key: "value" })
         .expect("Content-Type", "application/json; charset=utf-8");
@@ -249,7 +249,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/__/env.js")
         .expect(200)
         .expect("Content-Type", "application/javascript; charset=utf-8");
@@ -281,7 +281,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/__/env.json")
         .expect({ key: "value" })
         .expect("Content-Type", "application/json; charset=utf-8");
@@ -301,7 +301,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/testing")
         .expect(200)
         .expect("index")
@@ -321,7 +321,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app)
+      await request(app)
         .get("/testing")
         .expect(200)
         .expect("index")
@@ -340,7 +340,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app).get("/test.html").expect(200).expect("test");
+      await request(app).get("/test.html").expect(200).expect("test");
     });
 
     it("serves with negation", async () => {
@@ -355,7 +355,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app).get("/no").expect(404);
+      await request(app).get("/no").expect(404);
     });
 
     it("serves file if url matches exact file path", async () => {
@@ -370,7 +370,7 @@ describe("serves", () => {
 
       const app = connect().use(superstatic(opts));
 
-      return request(app).get("/test.html").expect(200).expect("test");
+      await request(app).get("/test.html").expect(200).expect("test");
     });
   });
 });

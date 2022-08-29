@@ -23,7 +23,7 @@
 
 const updateNotifier = require("update-notifier"); // eslint-disable-line @typescript-eslint/no-var-requires
 
-import cli = require("../cli");
+import cli from "../cli";
 const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 const updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week

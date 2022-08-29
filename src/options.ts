@@ -17,7 +17,7 @@ export interface MiddlewareOptions {
 
 export interface ServerOptions extends MiddlewareOptions {
   port?: number;
-  host?: string;
+  hostname?: string;
   errorPage?: string;
   debug?: boolean;
   compression?: boolean;

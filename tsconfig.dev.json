@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "include": [
-    "bin/**/*", // Move this to tsconfig once it's in `src`.
     "examples/**/*",
     "test/**/*",
     ".eslintrc.js",
