@@ -54,7 +54,7 @@ describe("error page", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/does-not-exist")
       .expect(404)
       .expect("404.html error")
@@ -81,7 +81,7 @@ describe("error page", () => {
 
     const app = connect().use(superstatic(opts));
 
-    return request(app)
+    await request(app)
       .get("/does-not-exist")
       .expect(404)
       .expect("default error")

@@ -56,7 +56,8 @@ describe("i18n", () => {
     await fs.writeFile(".tmp/intl/ALL_ca/hockey.html", "Only Canada", "utf8");
 
     app = connect().use((req, res, next) => {
-      (res as any).superstatic = new Responder(req, res, {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      res.superstatic = new Responder(req, res, {
         provider: provider,
       });
       next();
@@ -169,7 +170,8 @@ describe("static server with trailing slash customization", () => {
     await fs.writeFile(".tmp/foo/bar.html", "foo/bar.html content", "utf8");
 
     app = connect().use((req, res, next) => {
-      (res as any).superstatic = new Responder(req, res, {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      res.superstatic = new Responder(req, res, {
         provider: provider,
       });
       next();
