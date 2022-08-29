@@ -23,8 +23,8 @@ import { Command } from "commander";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import pkg from "../../package.json";
-import server from "../server";
+import * as pkg from "../../package.json";
+import server = require("../server");
 
 const PORT = "3474";
 const HOSTNAME = "localhost";
