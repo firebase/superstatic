@@ -60,9 +60,7 @@ export function addTrailingSlash(pathname: string): string {
  * @return pathname without a trailing slash.
  */
 export function removeTrailingSlash(pathname: string): string {
-  return hasTrailingSlash(pathname)
-    ? pathname.slice(0, pathname.length - 1)
-    : pathname;
+  return removeTrailingString(pathname, "/");
 }
 
 /**
