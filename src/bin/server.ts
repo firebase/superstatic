@@ -20,26 +20,20 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-'use strict';
 
-var updateNotifier = require('update-notifier');
-var format = require('chalk');
+const updateNotifier = require("update-notifier"); // eslint-disable-line @typescript-eslint/no-var-requires
 
-var cli = require('../lib/cli');
-var pkg = require('../package.json');
-var notify = require('./update-notifier');
+import cli = require("../cli");
+const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
 
-var updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
+const updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 
-var notifier = updateNotifier({
-  pkg: pkg,
-  updateCheckInterval: updateCheckInterval
+const notifier = updateNotifier({
+  pkg,
+  updateCheckInterval: updateCheckInterval,
+  shouldNotifyInNpmScript: true,
 });
 
-if (notifier.update) {
-  // NOTE: Custom notify function because update-notifier runs in
-  // a child process, and we block this when running the server
-  notify(notifier.update);
-}
+notifier.notify();
 
-cli.parseAsync();
+cli.parse();
