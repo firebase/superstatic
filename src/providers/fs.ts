@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import * as nodeCrypto from "node:crypto";
+import * as crypto from "node:crypto";
 import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
 const pathjoin = require("join-path"); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -57,7 +57,7 @@ module.exports = function provider(options: any) {
 
       // the file you want to get the hash
       const fd = fs.createReadStream(pathname);
-      const hash = nodeCrypto.createHash("md5");
+      const hash = crypto.createHash("md5");
       hash.setEncoding("hex");
 
       fd.on("error", reject);
