@@ -19,43 +19,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const crypto = require("crypto");
-const fs = require("fs");
-const pathjoin = require("join-path");
-const _ = require("lodash");
+import * as nodeCrypto from "node:crypto";
+import { stat as fsStat } from "node:fs/promises";
+import * as fs from "node:fs";
+const pathjoin = require("join-path"); // eslint-disable-line @typescript-eslint/no-var-requires
 
-const multiStat = function (paths) {
-  const pathname = paths.shift();
-  return new Promise((resolve, reject) => {
-    fs.stat(pathname, (err, stat) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(stat);
-    });
-  }).then(
-    (stat) => {
-      stat.path = pathname;
-      return stat;
-    },
-    (err) => {
-      if (paths.length) {
-        return multiStat(paths);
-      }
-      return Promise.reject(err);
+async function multiStat(
+  paths: string[]
+): Promise<fs.Stats & { pathname: string }> {
+  // const pathname = paths.shift();
+  let err: any;
+  for (const pathname of paths) {
+    try {
+      const stat = await fsStat(pathname);
+      return { pathname, ...stat };
+    } catch (e: unknown) {
+      err = e;
     }
-  );
-};
+  }
+  throw err;
+}
 
-module.exports = function (options) {
-  const etagCache = {};
+module.exports = function provider(options: any) {
+  const etagCache: Record<string, { timestamp: Date; value: string }> = {};
   const cwd = options.cwd || process.cwd();
-  let publicPaths = options.public || ["."];
-  if (!_.isArray(publicPaths)) {
+  let publicPaths: string[] = options.public || ["."];
+  if (!Array.isArray(publicPaths)) {
     publicPaths = [publicPaths];
   }
 
-  function _fetchEtag(pathname, stat) {
+  async function fetchEtag(pathname: string, stat: fs.Stats): Promise<string> {
     return new Promise((resolve, reject) => {
       const cached = etagCache[pathname];
       if (cached && cached.timestamp === stat.mtime) {
@@ -64,12 +57,10 @@ module.exports = function (options) {
 
       // the file you want to get the hash
       const fd = fs.createReadStream(pathname);
-      const hash = crypto.createHash("md5");
+      const hash = nodeCrypto.createHash("md5");
       hash.setEncoding("hex");
 
-      fd.on("error", (err) => {
-        reject(err);
-      });
+      fd.on("error", reject);
 
       fd.on("end", () => {
         hash.end();
@@ -86,45 +77,45 @@ module.exports = function (options) {
     });
   }
 
-  return function (req, pathname) {
+  return async function (
+    req: unknown,
+    pathname: string
+  ): Promise<{
+    modified: number;
+    size: number;
+    etag: string;
+    stream: fs.ReadStream;
+  } | null> {
     pathname = decodeURI(pathname);
     // jumping to parent directories is not allowed
     if (
-      pathname.indexOf("../") >= 0 ||
-      pathname.indexOf("..\\") >= 0 ||
-      pathname.toLowerCase().indexOf("..%5c") >= 0
+      pathname.includes("../") ||
+      pathname.includes("..\\") ||
+      pathname.toLowerCase().includes("..%5c") ||
+      // A path that didn't start with a slash is not valid.
+      !pathname.startsWith("/")
     ) {
       return Promise.resolve(null);
     }
 
-    const result = {};
-    let foundPath;
-    const fullPathnames = publicPaths.map((p) => {
-      return pathjoin(cwd, p, pathname);
-    });
+    const fullPathnames: string[] = publicPaths.map((p) =>
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      pathjoin(cwd, p, pathname)
+    );
 
-    return multiStat(fullPathnames)
-      .then((stat) => {
-        foundPath = stat.path;
-        result.modified = stat.mtime.getTime();
-        result.size = stat.size;
-        return _fetchEtag(stat.path, stat);
-      })
-      .then((etag) => {
-        result.etag = etag;
-        result.stream = fs.createReadStream(foundPath);
-        return result;
-      })
-      .catch((err) => {
-        if (
-          err.code === "ENOENT" ||
-          err.code === "ENOTDIR" ||
-          err.code === "EISDIR" ||
-          err.code === "EINVAL"
-        ) {
-          return null;
-        }
-        return Promise.reject(err);
-      });
+    try {
+      const stat = await multiStat(fullPathnames);
+      return {
+        modified: stat.mtime.getTime(),
+        size: stat.size,
+        etag: await fetchEtag(stat.pathname, stat),
+        stream: fs.createReadStream(stat.pathname),
+      };
+    } catch (err: any) {
+      if (["ENOENT", "ENOTDIR", "EISDIR", "EINVAL"].includes(err.code)) {
+        return null;
+      }
+      return Promise.reject(err);
+    }
   };
 };
