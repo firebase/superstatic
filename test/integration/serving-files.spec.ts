@@ -373,4 +373,42 @@ describe("serves", () => {
       await request(app).get("/test.html").expect(200).expect("test");
     });
   });
+
+  describe("rewrites", () => {
+    beforeEach(async () => {
+      await fs.writeFile(".tmp/404.html", "404", "utf8");
+    });
+
+    it("rewrites unknown files to /index.html", async () => {
+      const opts = options();
+      opts.config.rewrites = [
+        {
+          source: "/**",
+          destination: "/index.html",
+        },
+      ];
+
+      const app = connect().use(superstatic(opts));
+
+      await request(app).get("/index.html").expect(200).expect("index");
+      await request(app).get("/dir/").expect(200).expect("dir index");
+      await request(app).get("/testing/").expect(200).expect("index");
+    });
+
+    it("never is able to rewrite to a relative path", async () => {
+      const opts = options();
+      opts.config.rewrites = [
+        {
+          source: "/**",
+          destination: "index.html",
+        },
+      ];
+
+      const app = connect().use(superstatic(opts));
+
+      await request(app).get("/index.html").expect(200).expect("index");
+      await request(app).get("/foo").expect(404).expect("404");
+      await request(app).get("/page2/").expect(404).expect("404");
+    });
+  });
 });

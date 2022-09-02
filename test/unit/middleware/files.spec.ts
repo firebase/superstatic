@@ -27,15 +27,13 @@ import { ServerResponse } from "node:http";
 
 import * as helpers from "../../helpers";
 import * as filesPkg from "../../../src/middleware/files";
-import * as fsProvider from "../../../src/providers/fs";
+const fsProvider = require("../../../src/providers/fs"); // eslint-disable-line @typescript-eslint/no-var-requires
 import * as Responder from "../../../src/responder";
 
 const files = helpers.decorator(filesPkg);
 
 describe("i18n", () => {
-  const provider = fsProvider({
-    public: ".tmp",
-  });
+  const provider = fsProvider({ public: ".tmp" });
   let app: connect.Server;
 
   beforeEach(async () => {

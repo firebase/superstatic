@@ -19,30 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const slasher = require("glob-slasher");
-const urlParser = require("fast-url-parser");
-const patterns = require("../utils/patterns");
+const slasher = require("glob-slasher"); // eslint-disable-line @typescript-eslint/no-var-requires
+const urlParser = require("fast-url-parser"); // eslint-disable-line @typescript-eslint/no-var-requires
+import { NextFunction } from "connect";
+import { IncomingMessage, ServerResponse } from "http";
 
-const normalizeConfig = function (config) {
-  return config || [];
-};
+import { Configuration, Rewrite } from "../config";
+import Responder = require("../responder");
+import * as patterns from "../utils/patterns";
 
-const matcher = function (rewrites) {
-  return function (url) {
+function matcher(rewrites: Rewrite[]) {
+  return function (url: string) {
     for (let i = 0; i < rewrites.length; i++) {
       if (patterns.configMatcher(url, rewrites[i])) {
         return rewrites[i];
       }
     }
-    return undefined;
+    return;
   };
-};
+}
 
+/**
+ * Looks for possible rewrites for the given req.url.
+ * @return middleware for handling rewrites.
+ */
 module.exports = function () {
-  return function (req, res, next) {
-    const rewrites = matcher(normalizeConfig(req.superstatic.rewrites));
-
-    const pathname = urlParser.parse(req.url).pathname;
+  return function (
+    req: IncomingMessage & { superstatic: Configuration },
+    res: ServerResponse & { superstatic: Responder },
+    next: NextFunction
+  ) {
+    const rewrites = matcher(req.superstatic.rewrites || []);
+    const pathname: string = urlParser.parse(req.url).pathname;
     const match = rewrites(slasher(pathname));
 
     if (!match) {
@@ -50,7 +58,6 @@ module.exports = function () {
     }
 
     res.statusCode = 200;
-
-    return res.superstatic.handle({ rewrite: match }, next);
+    res.superstatic.handle({ rewrite: match }, next);
   };
 };
