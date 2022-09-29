@@ -19,15 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs-extra");
+const fs = require("node:fs/promises");
 const expect = require("chai").expect;
 
 const loadConfigFile = require("../../../src/loaders/config-file");
 
 describe("loading config files", () => {
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/file.json", '{"key": "value"}', "utf-8");
-    fs.outputFileSync(
+  beforeEach(async () => {
+    await fs.mkdir(".tmp");
+    await fs.writeFile(".tmp/file.json", '{"key": "value"}', "utf-8");
+    await fs.writeFile(
       ".tmp/package.json",
       JSON.stringify({
         superstatic: {
@@ -37,8 +38,8 @@ describe("loading config files", () => {
     );
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
   it("filename", (done) => {
@@ -77,8 +78,8 @@ describe("loading config files", () => {
   });
 
   describe("extends the file config with the object passed", () => {
-    it("superstatic.json", (done) => {
-      fs.outputFileSync(
+    it("superstatic.json", async () => {
+      await fs.writeFile(
         "superstatic.json",
         '{"firebase": "superstatic", "public": "./"}',
         "utf-8"
@@ -95,12 +96,11 @@ describe("loading config files", () => {
         public: "app",
       });
 
-      fs.removeSync("superstatic.json");
-      done();
+      await fs.rm("superstatic.json");
     });
 
-    it("firebase.json", (done) => {
-      fs.outputFileSync(
+    it("firebase.json", async () => {
+      await fs.writeFile(
         "firebase.json",
         '{"firebase": "example", "public": "./"}',
         "utf-8"
@@ -117,8 +117,7 @@ describe("loading config files", () => {
         public: "app",
       });
 
-      fs.removeSync("firebase.json");
-      done();
+      await fs.rm("firebase.json");
     });
   });
 });

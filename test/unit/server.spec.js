@@ -21,7 +21,7 @@
 
 const path = require("path");
 
-const fs = require("fs-extra");
+const fs = require("node:fs/promises");
 const request = require("supertest");
 const expect = require("chai").expect;
 const stdMocks = require("std-mocks");
@@ -35,13 +35,14 @@ const server = require("../../src/server");
 // a bare http.createServer() method. This
 // doesn't work with how we are loading services.
 describe.skip("server", () => {
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/index.html", "index file content");
-    fs.outputFileSync(".tmp/.env.json", '{"key": "value"}');
+  beforeEach(async () => {
+    await fs.mkdir(".tmp");
+    await fs.writeFile(".tmp/index.html", "index file content");
+    await fs.writeFile(".tmp/.env.json", '{"key": "value"}');
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
   it("starts a server", (done) => {
@@ -151,20 +152,17 @@ describe.skip("server", () => {
       .end(done);
   });
 
-  it("default error page", (done) => {
-    const notFoundContent = fs
-      .readFileSync(
-        path.resolve(__dirname, "../../templates/assets/not_found.html")
-      )
-      .toString();
+  it("default error page", async () => {
+    const p = path.resolve(__dirname, "../../templates/assets/not_found.html");
+    const notFoundContent = await fs.readFile(p, "utf8");
 
     const app = server();
 
-    request(app).get("/nope").expect(404).expect(notFoundContent).end(done);
+    return request(app).get("/nope").expect(404).expect(notFoundContent);
   });
 
-  it("overriden default error page", (done) => {
-    fs.outputFileSync(".tmp/error.html", "error page");
+  it("overriden default error page", async () => {
+    await fs.writeFile(".tmp/error.html", "error page");
 
     const app = server({
       errorPage: ".tmp/error.html",
@@ -173,6 +171,6 @@ describe.skip("server", () => {
       },
     });
 
-    request(app).get("/nope").expect(404).expect("error page").end(done);
+    return request(app).get("/nope").expect(404).expect("error page");
   });
 });
