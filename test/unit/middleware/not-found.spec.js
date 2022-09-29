@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs-extra");
+const fs = require("node:fs/promises");
 const request = require("supertest");
 const connect = require("connect");
 const { join } = require("path");
@@ -31,8 +31,9 @@ const Responder = require("../../../src/responder");
 describe("not found", () => {
   let app;
 
-  beforeEach(() => {
-    fs.outputFileSync(".tmp/not-found.html", "not found file", "utf8");
+  beforeEach(async () => {
+    await fs.mkdir(".tmp");
+    await fs.writeFile(".tmp/not-found.html", "not found file", "utf8");
 
     app = connect().use((req, res, next) => {
       res.superstatic = new Responder(req, res, {
@@ -42,8 +43,8 @@ describe("not found", () => {
     });
   });
 
-  afterEach(() => {
-    fs.removeSync(".tmp");
+  afterEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
   it("serves the file", (done) => {
