@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const updateNotifier = require("update-notifier"); // eslint-disable-line @typescript-eslint/no-var-requires
+const updateNotifier = require("update-notifier-cjs"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 import cli from "../cli";
 const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
