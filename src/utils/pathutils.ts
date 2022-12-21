@@ -19,8 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { join } from "node:path";
-
 const INDEX_FILE = "index.html";
 
 /**
@@ -28,7 +26,10 @@ const INDEX_FILE = "index.html";
  * @return the path with "/index.html" appended, if required.
  */
 export function asDirectoryIndex(pathname: string): string {
-  return isDirectoryIndex(pathname) ? pathname : join(pathname, INDEX_FILE);
+  if (isDirectoryIndex(pathname)) {
+    return pathname;
+  }
+  return normalizeMultiSlashes(`${pathname}/${INDEX_FILE}`);
 }
 
 /**
