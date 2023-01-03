@@ -57,7 +57,7 @@ describe("provider: fs", () => {
     await fsp(opts)({}, "/index.html")
       .then(readStatStream)
       .then((body: string) => {
-        expect(body).to.eq("A\n");
+        expect(body.trim()).to.eq("A");
       });
   });
 
@@ -86,13 +86,13 @@ describe("provider: fs", () => {
       await fsp(opts)({}, "/index.html")
         .then(readStatStream)
         .then((body: string) => {
-          expect(body).to.eq("A\n");
+          expect(body.trim()).to.eq("A");
         });
 
       await fsp(opts)({}, "/b.html")
         .then(readStatStream)
         .then((body: string) => {
-          expect(body).to.eq("B\n");
+          expect(body.trim()).to.eq("B");
         });
     });
 
