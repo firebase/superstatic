@@ -1,1 +1,1 @@
-- Fixes issue with path resolution on Windows.
+- Fixes i18n issues introduced when fixing relative rewrites.
