@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { join } from "node:path";
+import { normalizeMultiSlashes } from "./pathutils";
 
 /**
  * Returns the list of paths to check for i18n content.
@@ -55,6 +55,11 @@ export function i18nContentOptions(p: string, req: any): string[] {
     paths.push(join(i18n.root, `${l}`, p));
   }
   return paths;
+}
+
+function join(...arr: string[]): string {
+  arr.unshift("/");
+  return normalizeMultiSlashes(arr.join("/"));
 }
 
 /**
