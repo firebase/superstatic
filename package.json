@@ -52,7 +52,7 @@
   ],
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
-    "commander": "^9.4.0",
+    "commander": "^10.0.0",
     "compression": "^1.7.0",
     "connect": "^3.7.0",
     "destroy": "^1.0.4",
@@ -62,7 +62,7 @@
     "join-path": "^1.1.1",
     "lodash": "^4.17.19",
     "mime-types": "^2.1.35",
-    "minimatch": "^5.1.0",
+    "minimatch": "^6.1.6",
     "morgan": "^1.8.2",
     "on-finished": "^2.2.0",
     "on-headers": "^1.0.0",
