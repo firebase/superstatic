@@ -73,6 +73,10 @@ describe("provider: fs", () => {
     await expect(fsp(opts)({}, "/..%5Cb%5cb.html")).to.eventually.be.null;
   });
 
+  it("should return null if path has null bytes", async () => {
+    await expect(fsp(opts)({}, "/\0a.html")).to.eventually.be.null;
+  });
+
   it("should return null for a file that does not exist", async () => {
     await expect(fsp(opts)({}, "/bogus.html")).to.eventually.be.null;
   });
