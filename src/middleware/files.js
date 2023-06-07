@@ -42,6 +42,11 @@ module.exports = function () {
     const pathname = pathutils.normalizeMultiSlashes(parsedUrl.pathname);
     const search = parsedUrl.search || "";
 
+    const parsedOriginalUrl = url.parse(req.originalUrl);
+    const originalPathname = pathutils.normalizeMultiSlashes(
+      parsedOriginalUrl.pathname
+    );
+
     const cleanUrlRules = !!_.get(req, "superstatic.cleanUrls");
 
     // Exact file always wins.
@@ -50,8 +55,11 @@ module.exports = function () {
         if (result) {
           // If we are using cleanURLs, we'll trim off any `.html` (or `/index.html`), if it exists.
           if (cleanUrlRules) {
-            if (_.endsWith(pathname, ".html")) {
-              let redirPath = pathutils.removeTrailingString(pathname, ".html");
+            if (_.endsWith(originalPathname, ".html")) {
+              let redirPath = pathutils.removeTrailingString(
+                originalPathname,
+                ".html"
+              );
               if (_.endsWith(redirPath, "/index")) {
                 redirPath = pathutils.removeTrailingString(redirPath, "/index");
               }
@@ -67,7 +75,7 @@ module.exports = function () {
         }
 
         // Now, let's consider the trailing slash.
-        const hasTrailingSlash = pathutils.hasTrailingSlash(pathname);
+        const hasTrailingSlash = pathutils.hasTrailingSlash(originalPathname);
 
         // We want to check for some other files, namely an `index.html` if this were a directory.
         const pathAsDirectoryWithIndex = pathutils.asDirectoryIndex(
@@ -83,7 +91,8 @@ module.exports = function () {
                 !cleanUrlRules
               ) {
                 return res.superstatic.handle({
-                  redirect: pathutils.addTrailingSlash(pathname) + search,
+                  redirect:
+                    pathutils.addTrailingSlash(originalPathname) + search,
                 });
               }
               if (
@@ -94,13 +103,14 @@ module.exports = function () {
                 // No infinite redirects
                 return res.superstatic.handle({
                   redirect: normalizeRedirectPath(
-                    pathutils.removeTrailingSlash(pathname) + search
+                    pathutils.removeTrailingSlash(originalPathname) + search
                   ),
                 });
               }
               if (trailingSlashBehavior === true && !hasTrailingSlash) {
                 return res.superstatic.handle({
-                  redirect: pathutils.addTrailingSlash(pathname) + search,
+                  redirect:
+                    pathutils.addTrailingSlash(originalPathname) + search,
                 });
               }
               // If we haven't returned yet, our path is "correct" and we should be serving a file, not redirecting.
@@ -114,15 +124,20 @@ module.exports = function () {
             // We want to know if a specific mutation of the path exists.
             if (cleanUrlRules) {
               let appendedPath = pathname;
+              let appendedOriginalPath = originalPathname;
               if (hasTrailingSlash) {
                 if (trailingSlashBehavior !== undefined) {
                   // We want to remove the trailing slash and see if a file exists with an .html attached.
                   appendedPath =
-                    pathutils.removeTrailingString(pathname, "/") + ".html";
+                    pathutils.removeTrailingString(appendedPath, "/") + ".html";
+                  appendedOriginalPath =
+                    pathutils.removeTrailingString(appendedOriginalPath, "/") +
+                    ".html";
                 }
               } else {
                 // Let's see if our path is a simple clean URL missing a .HTML5
                 appendedPath += ".html";
+                appendedOriginalPath += ".html";
               }
 
               return providerResult(req, res, appendedPath).then(
@@ -134,7 +149,8 @@ module.exports = function () {
                       // (This works because we are in the cleanURL block.)
                       return res.superstatic.handle({
                         redirect: normalizeRedirectPath(
-                          pathutils.removeTrailingSlash(pathname) + search
+                          pathutils.removeTrailingSlash(originalPathname) +
+                            search
                         ),
                       });
                     }
@@ -148,17 +164,26 @@ module.exports = function () {
                         appendedPath,
                         "/index"
                       );
+                      appendedOriginalPath = pathutils.removeTrailingString(
+                        appendedOriginalPath,
+                        ".html"
+                      );
+                      appendedOriginalPath = pathutils.removeTrailingString(
+                        appendedOriginalPath,
+                        "/index"
+                      );
                       return res.superstatic.handle({
                         redirect:
-                          pathutils.addTrailingSlash(appendedPath) + search,
+                          pathutils.addTrailingSlash(appendedOriginalPath) +
+                          search,
                       });
                     }
                     // If we've gotten this far and still have `/index.html` on the end, we want to remove it from the URL.
-                    if (_.endsWith(appendedPath, "/index.html")) {
+                    if (_.endsWith(appendedOriginalPath, "/index.html")) {
                       return res.superstatic.handle({
                         redirect: normalizeRedirectPath(
                           pathutils.removeTrailingString(
-                            appendedPath,
+                            appendedOriginalPath,
                             "/index.html"
                           ) + search
                         ),
