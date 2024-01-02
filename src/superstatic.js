@@ -56,12 +56,12 @@ const superstatic = function (spec = {}) {
   }
 
   const router = makerouter();
-  const cwd = spec.cwd || CWD;
+  const cwd = spec.cwd ?? CWD;
 
   // Load data
   /** @type {Configuration} */
   const config = (spec.config = loadConfigFile(spec.config));
-  config.errorPage = config.errorPage || "/404.html";
+  config.errorPage = config.errorPage ?? "/404.html";
 
   // Set up provider
   const provider = spec.provider
@@ -79,7 +79,7 @@ const superstatic = function (spec = {}) {
   let compressor;
   if (_.isFunction(spec.compression)) {
     compressor = spec.compression;
-  } else if (spec.compression || spec.gzip) {
+  } else if (spec.compression ?? spec.gzip) {
     compressor = defaultCompressor;
   } else {
     compressor = null;

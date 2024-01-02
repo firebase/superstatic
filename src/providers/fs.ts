@@ -92,7 +92,7 @@ module.exports = function provider(options: any) {
       pathname.includes("../") ||
       pathname.includes("..\\") ||
       pathname.toLowerCase().includes("..%5c") ||
-      pathname.match(/\0/g) ||
+      pathname.match(/\0/g) !== null ||
       // A path that didn't start with a slash is not valid.
       !pathname.startsWith("/")
     ) {

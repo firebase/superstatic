@@ -49,7 +49,7 @@ module.exports = function () {
     res: ServerResponse & { superstatic: Responder },
     next: NextFunction,
   ) {
-    const rewrites = matcher(req.superstatic.rewrites || []);
+    const rewrites = matcher(req.superstatic.rewrites ?? []);
     const pathname: string = urlParser.parse(req.url).pathname;
     const match = rewrites(slasher(pathname));
 
