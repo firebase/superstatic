@@ -28,13 +28,13 @@ const template = fs
 
 interface SuperstaticRequest {
   superstatic: {
-    env: { [key: string]: string };
+    env: Record<string, string>;
   };
 }
 
 interface SuperstaticResponse {
   superstatic: {
-    handleData: (d: { [key: string]: string }) => void;
+    handleData: (d: Record<string, string>) => void;
   };
 }
 
