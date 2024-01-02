@@ -135,8 +135,8 @@ module.exports = function () {
     }
 
     const matcher = function (url) {
-      for (let i = 0; i < redirects.length; i++) {
-        const result = redirects[i].test(url);
+      for (const redirect of redirects) {
+        const result = redirect.test(url);
         if (result) {
           return result;
         }

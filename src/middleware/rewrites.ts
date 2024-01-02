@@ -30,9 +30,9 @@ import * as patterns from "../utils/patterns";
 
 function matcher(rewrites: Rewrite[]) {
   return function (url: string) {
-    for (let i = 0; i < rewrites.length; i++) {
-      if (patterns.configMatcher(url, rewrites[i])) {
-        return rewrites[i];
+    for (const rw of rewrites) {
+      if (patterns.configMatcher(url, rw)) {
+        return rw;
       }
     }
     return;

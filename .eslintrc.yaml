@@ -34,7 +34,6 @@ overrides:
     rules:
       "@typescript-eslint/consistent-indexed-object-style": warn
       "@typescript-eslint/no-explicit-any": warn
-      "@typescript-eslint/prefer-for-of": warn
       "@typescript-eslint/prefer-nullish-coalescing": warn
       "@typescript-eslint/prefer-optional-chain": warn
       "@typescript-eslint/no-unsafe-argument": warn # TODO(bkendall): remove allow to error.
@@ -44,7 +43,6 @@ overrides:
   - files:
       - "*.js"
     rules:
-      "@typescript-eslint/prefer-for-of": warn
       "@typescript-eslint/prefer-nullish-coalescing": warn
       "@typescript-eslint/prefer-optional-chain": warn
       "@typescript-eslint/no-empty-function": warn # TODO(bkendall): remove allow to error.
