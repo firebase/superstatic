@@ -198,7 +198,7 @@ function providerResult(req, res, p) {
   const promises = [];
 
   const i18n = req.superstatic.i18n;
-  if (i18n && i18n.root) {
+  if (i18n?.root) {
     const paths = i18nContentOptions(p, req);
     for (const pth of paths) {
       promises.push(res.superstatic.provider(req, pth));

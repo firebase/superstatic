@@ -37,7 +37,7 @@ function formatExternalUrl(u) {
 function addQuery(url, qs) {
   if (url.indexOf("?") >= 0) {
     return url + "&" + qs;
-  } else if (qs && qs.length) {
+  } else if (qs?.length) {
     return url + "?" + qs;
   }
   return url;

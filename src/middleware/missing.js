@@ -44,7 +44,7 @@ module.exports = function (spec) {
         const handles = [];
         const i18n = req.superstatic.i18n;
         // To handle i18n, we will try to resolve i18n paths first.
-        if (i18n && i18n.root) {
+        if (i18n?.root) {
           const paths = i18nContentOptions(errorPage, req);
           for (const pth of paths) {
             handles.push({ file: pth, status: 404 });

@@ -36,7 +36,7 @@ import { normalizeMultiSlashes } from "./pathutils";
 export function i18nContentOptions(p: string, req: any): string[] {
   const paths: string[] = [];
   const i18n = req.superstatic.i18n;
-  if (!i18n || !i18n.root) {
+  if (!i18n?.root) {
     return paths;
   }
   const country = getCountryCode(req.headers);
