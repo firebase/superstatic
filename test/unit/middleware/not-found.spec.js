@@ -54,7 +54,7 @@ describe("not found", () => {
       }),
     );
 
-    request(app)
+    void request(app)
       .get("/anything")
       .expect(404)
       .expect("not found file")
@@ -76,7 +76,7 @@ describe("not found", () => {
       }),
     );
 
-    request(app)
+    void request(app)
       .get("/anything")
       .expect(404)
       .expect("Cache-Control", "public, max-age=3600")

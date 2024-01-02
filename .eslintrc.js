@@ -62,9 +62,6 @@ module.exports = {
       env: {
         mocha: true,
       },
-      rules: {
-        "@typescript-eslint/no-floating-promises": "warn", // TODO(bkendall): remove allow to error.
-      },
     },
   ],
   settings: {
