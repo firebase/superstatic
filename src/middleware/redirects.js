@@ -127,7 +127,7 @@ module.exports = function () {
       config.forEach((redir) => {
         const glob = redir.glob || redir.source;
         redirects.push(
-          new Redirect(glob, redir.regex, redir.destination, redir.type)
+          new Redirect(glob, redir.regex, redir.destination, redir.type),
         );
       });
     } else {

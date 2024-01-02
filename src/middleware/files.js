@@ -71,7 +71,7 @@ module.exports = function () {
 
         // We want to check for some other files, namely an `index.html` if this were a directory.
         const pathAsDirectoryWithIndex = pathutils.asDirectoryIndex(
-          pathutils.addTrailingSlash(pathname)
+          pathutils.addTrailingSlash(pathname),
         );
         return providerResult(req, res, pathAsDirectoryWithIndex).then(
           (pathAsDirectoryWithIndexResult) => {
@@ -94,7 +94,7 @@ module.exports = function () {
                 // No infinite redirects
                 return res.superstatic.handle({
                   redirect: normalizeRedirectPath(
-                    pathutils.removeTrailingSlash(pathname) + search
+                    pathutils.removeTrailingSlash(pathname) + search,
                   ),
                 });
               }
@@ -106,7 +106,7 @@ module.exports = function () {
               // If we haven't returned yet, our path is "correct" and we should be serving a file, not redirecting.
               return res.superstatic.handleFileStream(
                 { file: pathAsDirectoryWithIndex },
-                pathAsDirectoryWithIndexResult
+                pathAsDirectoryWithIndexResult,
               );
             }
 
@@ -134,7 +134,7 @@ module.exports = function () {
                       // (This works because we are in the cleanURL block.)
                       return res.superstatic.handle({
                         redirect: normalizeRedirectPath(
-                          pathutils.removeTrailingSlash(pathname) + search
+                          pathutils.removeTrailingSlash(pathname) + search,
                         ),
                       });
                     }
@@ -142,11 +142,11 @@ module.exports = function () {
                       // If we are missing a slash and need to add it, we want to make sure our appended path is cleaned up.
                       appendedPath = pathutils.removeTrailingString(
                         appendedPath,
-                        ".html"
+                        ".html",
                       );
                       appendedPath = pathutils.removeTrailingString(
                         appendedPath,
-                        "/index"
+                        "/index",
                       );
                       return res.superstatic.handle({
                         redirect:
@@ -159,25 +159,25 @@ module.exports = function () {
                         redirect: normalizeRedirectPath(
                           pathutils.removeTrailingString(
                             appendedPath,
-                            "/index.html"
-                          ) + search
+                            "/index.html",
+                          ) + search,
                         ),
                       });
                     }
                     // And if we should be serving a file and we're at the right path, we'll serve the file.
                     return res.superstatic.handleFileStream(
                       { file: appendedPath },
-                      appendedPathResult
+                      appendedPathResult,
                     );
                   }
 
                   return next();
-                }
+                },
               );
             }
 
             return next();
-          }
+          },
         );
       })
       .catch((err) => {

@@ -59,7 +59,7 @@ describe("i18n", () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         res.superstatic = new Responder(req, res, { provider });
         next();
-      }
+      },
     );
   });
 
@@ -140,7 +140,7 @@ describe("i18n", () => {
       .set("accept-language", "en")
       .set(
         "cookie",
-        "firebase-language-override=fr; firebase-country-override=ca"
+        "firebase-language-override=fr; firebase-country-override=ca",
       )
       .expect(200, "French CA!");
   });
@@ -173,7 +173,7 @@ describe("static server with trailing slash customization", () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         res.superstatic = new Responder(req, res, { provider });
         next();
-      }
+      },
     );
   });
 
@@ -423,8 +423,8 @@ describe("static server with trailing slash customization", () => {
         app.use(
           files(
             { trailingSlash: t.trailingSlashBehavior, cleanUrls: t.cleanUrls },
-            { provider: provider }
-          )
+            { provider: provider },
+          ),
         );
 
         const r = request(app).get(tt.path);

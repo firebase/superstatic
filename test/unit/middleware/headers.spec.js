@@ -90,7 +90,7 @@ describe("cors middleware", () => {
               headers: [{ key: "custom-header", value: "for testing" }],
             },
           ],
-        })
+        }),
       )
       .use(okay);
 
@@ -111,7 +111,7 @@ describe("cors middleware", () => {
               headers: [{ key: "custom-header", value: "for testing" }],
             },
           ],
-        })
+        }),
       )
       .use(okay);
 

@@ -66,7 +66,7 @@ cli
       app.listen(() => resolve());
       console.log(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `Superstatic started.\nVisit http://${options.hostname}:${options.port} to view your app.`
+        `Superstatic started.\nVisit http://${options.hostname}:${options.port} to view your app.`,
       );
     });
   });

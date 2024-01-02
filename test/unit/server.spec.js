@@ -112,7 +112,7 @@ describe.skip("server", () => {
         output = stdMocks.flush();
 
         expect(
-          output.stdout.toString().indexOf('"GET / HTTP/1.1" 404')
+          output.stdout.toString().indexOf('"GET / HTTP/1.1" 404'),
         ).to.be.greaterThan(-1);
         done();
       });

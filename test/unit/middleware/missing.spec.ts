@@ -44,11 +44,11 @@ describe("custom not found", () => {
       (
         req: connect.IncomingMessage,
         res: any, // TODO(bkendall): extend http.ServerResponse.
-        next: connect.NextFunction
+        next: connect.NextFunction,
       ): void => {
         res.superstatic = new Responder(req, res, { provider: provider });
         next();
-      }
+      },
     );
   });
 
@@ -68,7 +68,7 @@ describe("custom not found", () => {
   it("skips middleware on file serve error", async () => {
     app
       .use(
-        missing({ errorPage: "/does-not-exist.html" }, { provider: provider })
+        missing({ errorPage: "/does-not-exist.html" }, { provider: provider }),
       )
       .use((req, res) => {
         res.end("does not exist");
@@ -82,7 +82,7 @@ describe("custom not found", () => {
       await fs.mkdir(".tmp/i18n/fr", { recursive: true });
       await fs.writeFile(
         ".tmp/i18n/fr/not-found.html",
-        "my custom 404, in French"
+        "my custom 404, in French",
       );
     });
 
@@ -90,8 +90,8 @@ describe("custom not found", () => {
       app.use(
         missing(
           { errorPage: "/not-found.html", i18n: { root: "/i18n" } },
-          { provider: provider }
-        )
+          { provider: provider },
+        ),
       );
 
       await request(app).get("/anything").expect(404, "custom not found file");
@@ -101,8 +101,8 @@ describe("custom not found", () => {
       app.use(
         missing(
           { errorPage: "/not-found.html", i18n: { root: "/i18n" } },
-          { provider: provider }
-        )
+          { provider: provider },
+        ),
       );
 
       await request(app)

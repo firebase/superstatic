@@ -55,7 +55,7 @@ module.exports = function (spec) {
           handles.push({ data: defaultErrorContent, status: 404 });
         }
         res.superstatic.handle(handles, next);
-      }
+      },
     );
   };
 };

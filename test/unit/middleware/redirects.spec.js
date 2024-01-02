@@ -21,7 +21,7 @@
 
 const helpers = require("../../helpers");
 const redirect = helpers.decorator(
-  require("../../../src/middleware/redirects")
+  require("../../../src/middleware/redirects"),
 );
 const connect = require("connect");
 const request = require("supertest");
@@ -51,7 +51,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app).get("/none").expect(404).end(done);
@@ -69,7 +69,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -91,7 +91,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -113,7 +113,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -135,7 +135,7 @@ describe("redirect middleware", () => {
               type: 302,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -157,7 +157,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -179,7 +179,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -201,7 +201,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -223,7 +223,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -245,7 +245,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app).get("/äöü").expect(301).expect("location", "/aou").end(done);
@@ -263,7 +263,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -285,7 +285,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -307,7 +307,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -330,7 +330,7 @@ describe("redirect middleware", () => {
                 type: 301,
               },
             ],
-          })
+          }),
         );
 
       request(app)
@@ -352,7 +352,7 @@ describe("redirect middleware", () => {
                 type: 301,
               },
             ],
-          })
+          }),
         );
 
       request(app)
@@ -375,7 +375,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app).get("/old/").expect(301).expect("location", "/new").end(done);
@@ -393,7 +393,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -415,7 +415,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -437,7 +437,7 @@ describe("redirect middleware", () => {
               type: 302,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -459,7 +459,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -481,7 +481,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -503,7 +503,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -525,7 +525,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -547,7 +547,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)
@@ -569,7 +569,7 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
     request(app)

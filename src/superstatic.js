@@ -71,8 +71,8 @@ const superstatic = function (spec = {}) {
           {
             cwd: cwd, // default current working directory
           },
-          config
-        )
+          config,
+        ),
       );
 
   // Select compression middleware

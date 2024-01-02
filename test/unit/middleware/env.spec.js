@@ -44,7 +44,7 @@ describe("env", () => {
         env: {
           key: "value",
         },
-      })
+      }),
     );
 
     request(app)
@@ -63,7 +63,7 @@ describe("env", () => {
         env: {
           key: "value",
         },
-      })
+      }),
     );
 
     request(app)

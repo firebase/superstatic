@@ -48,7 +48,7 @@ export function env(spec: { env: Record<string, string> }) {
   return (
     req: Request & SuperstaticRequest,
     res: Response & SuperstaticResponse,
-    next: () => void
+    next: () => void,
   ): void => {
     // const config = req.superstatic.env;
     let env = undefined;

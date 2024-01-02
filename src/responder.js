@@ -91,7 +91,9 @@ Responder.prototype._handle = function (item) {
   }
 
   return Promise.reject(
-    new Error(JSON.stringify(item) + " is not a recognized responder directive")
+    new Error(
+      JSON.stringify(item) + " is not a recognized responder directive",
+    ),
   );
 };
 
@@ -137,7 +139,7 @@ Responder.prototype.handleFileStream = function (file, result) {
   }
   this.res.setHeader(
     "Content-Type",
-    result.contentType || mime.contentType(path.extname(file.file))
+    result.contentType || mime.contentType(path.extname(file.file)),
   );
   if (result.size) {
     this.res.setHeader("Content-Length", result.size);
@@ -148,7 +150,7 @@ Responder.prototype.handleFileStream = function (file, result) {
   if (result.modified) {
     this.res.setHeader(
       "Last-Modified",
-      new Date(result.modified).toUTCString()
+      new Date(result.modified).toUTCString(),
     );
   }
 
@@ -207,8 +209,8 @@ Responder.prototype.handleRewrite = function (item) {
   }
   return Promise.reject(
     new Error(
-      "Unable to find a matching rewriter for " + JSON.stringify(item.rewrite)
-    )
+      "Unable to find a matching rewriter for " + JSON.stringify(item.rewrite),
+    ),
   );
 };
 
@@ -216,7 +218,7 @@ Responder.prototype.handleData = function (data) {
   this.res.statusCode = data.status || 200;
   this.res.setHeader(
     "Content-Type",
-    data.contentType || "text/html; charset=utf-8"
+    data.contentType || "text/html; charset=utf-8",
   );
   this.res.end(data.data);
   return Promise.resolve(true);

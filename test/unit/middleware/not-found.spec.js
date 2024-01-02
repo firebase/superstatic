@@ -51,7 +51,7 @@ describe("not found", () => {
     app.use(
       notFound({
         errorPage: ".tmp/not-found.html",
-      })
+      }),
     );
 
     request(app)
@@ -73,7 +73,7 @@ describe("not found", () => {
     app.use(
       notFound({
         errorPage: join(process.cwd(), ".tmp/not-found.html"),
-      })
+      }),
     );
 
     request(app)

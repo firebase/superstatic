@@ -47,7 +47,7 @@ module.exports = function () {
   return function (
     req: IncomingMessage & { superstatic: Configuration },
     res: ServerResponse & { superstatic: Responder },
-    next: NextFunction
+    next: NextFunction,
   ) {
     const rewrites = matcher(req.superstatic.rewrites || []);
     const pathname: string = urlParser.parse(req.url).pathname;
