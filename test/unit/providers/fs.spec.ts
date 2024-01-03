@@ -31,7 +31,7 @@ const fsp = require("../../../src/providers/fs"); // eslint-disable-line @typesc
 async function readStatStream(
   stat: {
     stream: fs.ReadStream;
-  } | null
+  } | null,
 ): Promise<string> {
   if (!stat) {
     throw new Error("do not have stat");

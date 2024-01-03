@@ -21,7 +21,7 @@
 
 const helpers = require("../../helpers");
 const redirect = helpers.decorator(
-  require("../../../src/middleware/redirects")
+  require("../../../src/middleware/redirects"),
 );
 const connect = require("connect");
 const request = require("supertest");
@@ -36,7 +36,7 @@ describe("redirect middleware", () => {
   it("skips the middleware if there are no redirects configured", (done) => {
     const app = connect().use(redirect({ redirects: [] }));
 
-    request(app).get("/").expect(404).end(done);
+    void request(app).get("/").expect(404).end(done);
   });
 
   it("skips middleware when there are no matching redirects", (done) => {
@@ -51,10 +51,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app).get("/none").expect(404).end(done);
+    void request(app).get("/none").expect(404).end(done);
   });
 
   it("redirects to a configured path", (done) => {
@@ -69,10 +69,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("location", "/redirect")
@@ -91,10 +91,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("location", "/redirect")
@@ -113,10 +113,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("location", "/redirect")
@@ -135,10 +135,10 @@ describe("redirect middleware", () => {
               type: 302,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(302)
       .expect("location", "/redirect")
@@ -157,10 +157,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("location", "/redirect")
@@ -179,10 +179,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/anthing")
       .expect(301)
       .expect("location", "/redirect")
@@ -201,10 +201,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/old/redirect/path/there")
       .expect(301)
       .expect("location", "/new/redirect/path/there")
@@ -223,10 +223,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/old/capture/group/there")
       .expect(301)
       .expect("location", "/new/capture/path/there")
@@ -245,10 +245,14 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app).get("/äöü").expect(301).expect("location", "/aou").end(done);
+    void request(app)
+      .get("/äöü")
+      .expect(301)
+      .expect("location", "/aou")
+      .end(done);
   });
 
   it("percent encodes the redirect location", (done) => {
@@ -263,10 +267,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/aou")
       .expect(301)
       .expect("location", "/%C4%87")
@@ -285,10 +289,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/foo/barbar/baz")
       .expect(301)
       .expect("location", "/bar")
@@ -307,10 +311,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/foo/1/2/3/4/bar")
       .expect(301)
       .expect("location", "/1/2/3/4")
@@ -330,10 +334,10 @@ describe("redirect middleware", () => {
                 type: 301,
               },
             ],
-          })
+          }),
         );
 
-      request(app)
+      void request(app)
         .get("/foo/bar")
         .expect(301)
         .expect("location", "/foo")
@@ -352,10 +356,10 @@ describe("redirect middleware", () => {
                 type: 301,
               },
             ],
-          })
+          }),
         );
 
-      request(app)
+      void request(app)
         .get("/mixed/capture/types")
         .expect(301)
         .expect("location", "/mixed/capture/types")
@@ -375,10 +379,14 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app).get("/old/").expect(301).expect("location", "/new").end(done);
+    void request(app)
+      .get("/old/")
+      .expect(301)
+      .expect("location", "/new")
+      .end(done);
   });
 
   it("redirects a present optional segment", (done) => {
@@ -393,10 +401,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/old/derp")
       .expect(301)
       .expect("location", "/new/derp")
@@ -415,10 +423,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/blog/this/old/post")
       .expect(301)
       .expect("location", "/new/this/old/post")
@@ -437,10 +445,10 @@ describe("redirect middleware", () => {
               type: 302,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/old/redirect/path/there")
       .expect(302)
       .expect("location", "/new/redirect/path/there")
@@ -459,10 +467,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("Location", "http://redirectedto.com")
@@ -481,10 +489,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source")
       .expect(301)
       .expect("Location", "https://redirectedto.com")
@@ -503,10 +511,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source?foo=bar&baz=qux")
       .expect(301)
       .expect("Location", "/destination?foo=bar&baz=qux")
@@ -525,10 +533,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source?foo=bar&baz=qux")
       .expect(301)
       .expect("Location", "/destination?hello=world&foo=bar&baz=qux")
@@ -547,10 +555,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source?foo=bar&baz=qux")
       .expect(301)
       .expect("Location", "http://example.com/destination?foo=bar&baz=qux")
@@ -569,10 +577,10 @@ describe("redirect middleware", () => {
               type: 301,
             },
           ],
-        })
+        }),
       );
 
-    request(app)
+    void request(app)
       .get("/source/wat?foo=bar&baz=qux")
       .expect(301)
       .expect("Location", "/wat/bar?foo=bar&baz=qux")

@@ -48,7 +48,7 @@ describe.skip("server", () => {
   it("starts a server", (done) => {
     const app = server();
 
-    request(app).get("/").end(done);
+    void request(app).get("/").end(done);
   });
 
   it("with config", (done) => {
@@ -58,7 +58,7 @@ describe.skip("server", () => {
       },
     });
 
-    request(app).get("/").expect("index file content").end(done);
+    void request(app).get("/").expect("index file content").end(done);
   });
 
   it("with port", (done) => {
@@ -105,14 +105,14 @@ describe.skip("server", () => {
 
     stdMocks.use();
 
-    request(app)
+    void request(app)
       .get("/")
       .end(() => {
         stdMocks.restore();
         output = stdMocks.flush();
 
         expect(
-          output.stdout.toString().indexOf('"GET / HTTP/1.1" 404')
+          output.stdout.toString().indexOf('"GET / HTTP/1.1" 404'),
         ).to.be.greaterThan(-1);
         done();
       });
@@ -126,7 +126,7 @@ describe.skip("server", () => {
       },
     });
 
-    request(app)
+    void request(app)
       .get("/__/env.json")
       .expect({
         key: "value",
@@ -144,7 +144,7 @@ describe.skip("server", () => {
       },
     });
 
-    request(app)
+    void request(app)
       .get("/__/env.json")
       .expect({
         type: "object",
@@ -158,7 +158,7 @@ describe.skip("server", () => {
 
     const app = server();
 
-    return request(app).get("/nope").expect(404).expect(notFoundContent);
+    return void request(app).get("/nope").expect(404).expect(notFoundContent);
   });
 
   it("overriden default error page", async () => {
@@ -171,6 +171,6 @@ describe.skip("server", () => {
       },
     });
 
-    return request(app).get("/nope").expect(404).expect("error page");
+    return void request(app).get("/nope").expect(404).expect("error page");
   });
 });

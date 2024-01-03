@@ -25,7 +25,7 @@ import * as fs from "node:fs";
 const pathjoin = require("join-path"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 async function multiStat(
-  paths: string[]
+  paths: string[],
 ): Promise<fs.Stats & { pathname: string }> {
   // const pathname = paths.shift();
   let err: any;
@@ -79,7 +79,7 @@ module.exports = function provider(options: any) {
 
   return async function (
     req: unknown,
-    pathname: string
+    pathname: string,
   ): Promise<{
     modified: number;
     size: number;
@@ -92,7 +92,7 @@ module.exports = function provider(options: any) {
       pathname.includes("../") ||
       pathname.includes("..\\") ||
       pathname.toLowerCase().includes("..%5c") ||
-      pathname.match(/\0/g) ||
+      pathname.match(/\0/g) !== null ||
       // A path that didn't start with a slash is not valid.
       !pathname.startsWith("/")
     ) {
@@ -101,7 +101,7 @@ module.exports = function provider(options: any) {
 
     const fullPathnames: string[] = publicPaths.map((p) =>
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      pathjoin(cwd, p, pathname)
+      pathjoin(cwd, p, pathname),
     );
 
     try {

@@ -6,10 +6,10 @@ describe("pathutils", () => {
   describe("asDirectoryIndex", () => {
     it("should append `index.html` if it does not already", () => {
       expect(pathutils.asDirectoryIndex("path/to/dir")).to.equal(
-        "path/to/dir/index.html"
+        "path/to/dir/index.html",
       );
       expect(pathutils.asDirectoryIndex("path/to/index.html")).to.equal(
-        "path/to/index.html"
+        "path/to/index.html",
       );
     });
   });
@@ -24,10 +24,10 @@ describe("pathutils", () => {
   describe("addTrailingSlash", () => {
     it("should return the path with a trailing slash", () => {
       expect(pathutils.addTrailingSlash("path/to/file")).to.equal(
-        "path/to/file/"
+        "path/to/file/",
       );
       expect(pathutils.addTrailingSlash("path/to/slash/")).to.equal(
-        "path/to/slash/"
+        "path/to/slash/",
       );
     });
   });
@@ -35,10 +35,10 @@ describe("pathutils", () => {
   describe("removeTrailingSlash", () => {
     it("should return the path without any trailing slash", () => {
       expect(pathutils.removeTrailingSlash("path/to/file")).to.equal(
-        "path/to/file"
+        "path/to/file",
       );
       expect(pathutils.removeTrailingSlash("path/to/slash/")).to.equal(
-        "path/to/slash"
+        "path/to/slash",
       );
     });
   });
@@ -46,13 +46,13 @@ describe("pathutils", () => {
   describe("normalizeMultiSlashes", () => {
     it("should return the path without double slashes", () => {
       expect(pathutils.normalizeMultiSlashes("path/to///file")).to.equal(
-        "path/to/file"
+        "path/to/file",
       );
       expect(pathutils.normalizeMultiSlashes("path//to/slash//")).to.equal(
-        "path/to/slash/"
+        "path/to/slash/",
       );
       expect(pathutils.normalizeMultiSlashes("path/to/slash/")).to.equal(
-        "path/to/slash/"
+        "path/to/slash/",
       );
     });
   });
@@ -60,10 +60,10 @@ describe("pathutils", () => {
   describe("removeTrailingString", () => {
     it("should return the path without double slashes", () => {
       expect(pathutils.removeTrailingString("hello/world", "nothing")).to.equal(
-        "hello/world"
+        "hello/world",
       );
       expect(pathutils.removeTrailingString("hello/world", "/world")).to.equal(
-        "hello"
+        "hello",
       );
     });
   });

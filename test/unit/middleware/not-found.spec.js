@@ -51,10 +51,10 @@ describe("not found", () => {
     app.use(
       notFound({
         errorPage: ".tmp/not-found.html",
-      })
+      }),
     );
 
-    request(app)
+    void request(app)
       .get("/anything")
       .expect(404)
       .expect("not found file")
@@ -73,10 +73,10 @@ describe("not found", () => {
     app.use(
       notFound({
         errorPage: join(process.cwd(), ".tmp/not-found.html"),
-      })
+      }),
     );
 
-    request(app)
+    void request(app)
       .get("/anything")
       .expect(404)
       .expect("Cache-Control", "public, max-age=3600")

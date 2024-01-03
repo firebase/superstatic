@@ -59,7 +59,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -78,7 +78,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -97,7 +97,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -116,7 +116,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -135,7 +135,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -154,7 +154,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -173,7 +173,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app).get("/hi").expect(404);
@@ -188,7 +188,7 @@ describe("static router", () => {
             destination: "/index.html",
           },
         ],
-      })
+      }),
     );
 
     await request(app)
@@ -208,7 +208,7 @@ describe("static router", () => {
             { source: "/something/**", destination: "/something/indexf.html" },
             { source: "**", destination: "/index.html" },
           ],
-        })
+        }),
       );
     });
 
@@ -236,7 +236,7 @@ describe("static router", () => {
       app.use(
         rewrites({
           rewrites: [{ source: "**", destination: "index.html" }],
-        })
+        }),
       );
     });
 

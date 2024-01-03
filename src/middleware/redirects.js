@@ -37,7 +37,7 @@ function formatExternalUrl(u) {
 function addQuery(url, qs) {
   if (url.indexOf("?") >= 0) {
     return url + "&" + qs;
-  } else if (qs && qs.length) {
+  } else if (qs?.length) {
     return url + "?" + qs;
   }
   return url;
@@ -127,7 +127,7 @@ module.exports = function () {
       config.forEach((redir) => {
         const glob = redir.glob || redir.source;
         redirects.push(
-          new Redirect(glob, redir.regex, redir.destination, redir.type)
+          new Redirect(glob, redir.regex, redir.destination, redir.type),
         );
       });
     } else {
@@ -135,8 +135,8 @@ module.exports = function () {
     }
 
     const matcher = function (url) {
-      for (let i = 0; i < redirects.length; i++) {
-        const result = redirects[i].test(url);
+      for (const redirect of redirects) {
+        const result = redirect.test(url);
         if (result) {
           return result;
         }

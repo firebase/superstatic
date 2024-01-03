@@ -34,7 +34,7 @@ describe("loading config files", () => {
         superstatic: {
           key: "value",
         },
-      })
+      }),
     );
   });
 
@@ -82,7 +82,7 @@ describe("loading config files", () => {
       await fs.writeFile(
         "superstatic.json",
         '{"firebase": "superstatic", "public": "./"}',
-        "utf-8"
+        "utf-8",
       );
 
       const config = loadConfigFile({
@@ -103,7 +103,7 @@ describe("loading config files", () => {
       await fs.writeFile(
         "firebase.json",
         '{"firebase": "example", "public": "./"}',
-        "utf-8"
+        "utf-8",
       );
 
       const config = loadConfigFile({

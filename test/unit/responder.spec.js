@@ -41,7 +41,7 @@ describe("Responder", () => {
 
     it("should call the stack if an array is passed", () => {
       return expect(responder.handle([{ data: "abcdef" }])).to.eventually.eq(
-        true
+        true,
       );
     });
 
@@ -96,7 +96,7 @@ describe("Responder", () => {
 
     it("should reject with an unrecognized payload", () => {
       return expect(responder._handle({ foo: "bar" })).to.be.rejectedWith(
-        "is not a recognized responder directive"
+        "is not a recognized responder directive",
       );
     });
   });
@@ -122,7 +122,7 @@ describe("Responder", () => {
               });
             },
           },
-        }
+        },
       );
 
       return responder
@@ -204,14 +204,14 @@ describe("Responder", () => {
 
     it("should be true if there is an if-modified-since after the modified", () => {
       responder.req.headers["if-modified-since"] = new Date(
-        result.modified + 30000
+        result.modified + 30000,
       ).toUTCString();
       expect(responder.isNotModified(result)).to.be.true;
     });
 
     it("should be false if there is an if-modified-since before the modified", () => {
       responder.req.headers["if-modified-since"] = new Date(
-        result.modified - 30000
+        result.modified - 30000,
       ).toUTCString();
       expect(responder.isNotModified(result)).to.be.false;
     });

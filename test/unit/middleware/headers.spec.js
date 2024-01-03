@@ -49,7 +49,7 @@ describe("cors middleware", () => {
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
-    request(app)
+    void request(app)
       .get("/test1")
       .expect(200)
       .expect("Content-Type", "mime/type")
@@ -61,7 +61,7 @@ describe("cors middleware", () => {
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
-    request(app)
+    void request(app)
       .get("/test3")
       .expect(200)
       .expect("Access-Control-Allow-Origin", "https://www.example.net")
@@ -73,7 +73,7 @@ describe("cors middleware", () => {
       .use(headers({ headers: defaultHeaders }))
       .use(okay);
 
-    request(app)
+    void request(app)
       .get("/api/whatever/you/wish")
       .expect(200)
       .expect("Access-Control-Allow-Origin", "*")
@@ -90,11 +90,11 @@ describe("cors middleware", () => {
               headers: [{ key: "custom-header", value: "for testing" }],
             },
           ],
-        })
+        }),
       )
       .use(okay);
 
-    request(app)
+    void request(app)
       .get("/something")
       .expect(200)
       .expect("custom-header", "for testing")
@@ -111,11 +111,11 @@ describe("cors middleware", () => {
               headers: [{ key: "custom-header", value: "for testing" }],
             },
           ],
-        })
+        }),
       )
       .use(okay);
 
-    request(app)
+    void request(app)
       .get("/resources/281.jpg")
       .expect(200)
       .expect("custom-header", "for testing")

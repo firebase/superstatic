@@ -28,13 +28,13 @@ const template = fs
 
 interface SuperstaticRequest {
   superstatic: {
-    env: { [key: string]: string };
+    env: Record<string, string>;
   };
 }
 
 interface SuperstaticResponse {
   superstatic: {
-    handleData: (d: { [key: string]: string }) => void;
+    handleData: (d: Record<string, string>) => void;
   };
 }
 
@@ -48,7 +48,7 @@ export function env(spec: { env: Record<string, string> }) {
   return (
     req: Request & SuperstaticRequest,
     res: Response & SuperstaticResponse,
-    next: () => void
+    next: () => void,
   ): void => {
     // const config = req.superstatic.env;
     let env = undefined;

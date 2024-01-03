@@ -41,9 +41,8 @@ try {
  *
  * No special consideration is taken if the configuration hash contains both
  * a glob and a regex. normalizeConfig() will error in that case.
- *
  * @param {string} path The URL path from the request.
- * @param {Object} config A dictionary from a sanitized JSON configuration.
+ * @param {object} config A dictionary from a sanitized JSON configuration.
  * @return {boolean} Whether the config should be applied to the request.
  */
 function configMatcher(path, config) {
@@ -63,7 +62,6 @@ function configMatcher(path, config) {
  * Creates either an RE2 or a Javascript RegExp from a provided string
  * pattern, depending on whether or not the RE2 library is available as an
  * import.
- *
  * @param {string} pattern A regular expression pattern to test against.
  * @return {RegExp} A regular expression object, created by either base
  *                  RegExp or RE2, which matches the RegExp prototype

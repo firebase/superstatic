@@ -11,7 +11,7 @@ describe("promiseback", () => {
           a: a1,
           b: a2,
         });
-      }, 2)("foo", "bar")
+      }, 2)("foo", "bar"),
     ).to.eventually.deep.eq({
       a: "foo",
       b: "bar",
@@ -22,7 +22,7 @@ describe("promiseback", () => {
     return expect(
       promiseback(() => {
         return Promise.reject(new Error("broken"));
-      }, 2)("foo", "bar")
+      }, 2)("foo", "bar"),
     ).to.be.rejectedWith("broken");
   });
 
@@ -30,7 +30,7 @@ describe("promiseback", () => {
     return expect(
       promiseback((a1, a2, cb) => {
         cb(a2);
-      }, 2)("foo", "bar")
+      }, 2)("foo", "bar"),
     ).to.be.rejectedWith("bar");
   });
 
@@ -38,7 +38,7 @@ describe("promiseback", () => {
     return expect(
       promiseback((a1, a2, cb) => {
         cb(null, a2);
-      }, 2)("foo", "bar")
+      }, 2)("foo", "bar"),
     );
   });
 });

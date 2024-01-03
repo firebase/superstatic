@@ -1,1 +1,1 @@
-
+* **BREAKING:** Requires Node.js >= 18.0.0.

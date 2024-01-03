@@ -32,11 +32,11 @@ const normalizedConfigHeaders = function (spec, config) {
       return _.includes(spec.allowedHeaders, headerToSet.key.toLowerCase());
     };
 
-    for (let i = 0; i < config.length; i++) {
-      config[i].source = slasher(config[i].source);
-      config[i].headers = config[i].headers || [];
+    for (const c of config) {
+      c.source = slasher(c.source);
+      c.headers = c.headers || [];
       if (spec.allowedHeaders) {
-        config[i].headers = config[i].headers.filter(_isAllowed);
+        c.headers = c.headers.filter(_isAllowed);
       }
     }
   }

@@ -45,7 +45,7 @@ module.exports = function (spec) {
     app.use(superstatic(spec));
 
     // Start server
-    server = listen(spec.port, spec.hostname || spec.host, done);
+    server = listen(spec.port, spec.hostname ?? spec.host, done);
 
     return server;
   };

@@ -67,7 +67,7 @@ describe("memory provider", () => {
     store["/index.html"] = "foobar";
     return expect(provider({}, "/index.html")).to.eventually.have.property(
       "size",
-      6
+      6,
     );
   });
 

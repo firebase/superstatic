@@ -2,9 +2,9 @@ export interface Configuration {
   // Defaults to the current working directory.
   public?: string;
   cleanUrls?: boolean | string[];
-  rewrites?: Array<Rewrite>;
-  redirects?: Array<Redirect>;
-  headers?: Array<Header>;
+  rewrites?: Rewrite[];
+  redirects?: Redirect[];
+  headers?: Header[];
   trailingSlash?: boolean;
   i18n?: { root: string };
   errorPage?: string;
@@ -23,8 +23,8 @@ export interface Redirect {
 
 export interface Header {
   source: string;
-  headers: Array<{
+  headers: {
     key: string;
     value: string;
-  }>;
+  }[];
 }

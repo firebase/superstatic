@@ -36,7 +36,7 @@ import { normalizeMultiSlashes } from "./pathutils";
 export function i18nContentOptions(p: string, req: any): string[] {
   const paths: string[] = [];
   const i18n = req.superstatic.i18n;
-  if (!i18n || !i18n.root) {
+  if (!i18n?.root) {
     return paths;
   }
   const country = getCountryCode(req.headers);
@@ -70,7 +70,7 @@ function join(...arr: string[]): string {
 function getCountryCode(headers: Record<string, string>): string {
   const overrideValue = cookieValue(
     headers.cookie,
-    "firebase-country-override"
+    "firebase-country-override",
   );
   if (overrideValue) {
     return overrideValue;
@@ -86,7 +86,7 @@ function getCountryCode(headers: Record<string, string>): string {
 function getI18nLanguages(headers: Record<string, string>): string[] {
   const overrideValue = cookieValue(
     headers.cookie,
-    "firebase-language-override"
+    "firebase-language-override",
   );
   if (overrideValue) {
     return overrideValue.includes(",")

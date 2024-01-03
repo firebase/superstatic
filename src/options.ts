@@ -8,7 +8,7 @@ export interface MiddlewareOptions {
   env?: string | Record<string, string>;
   cwd?: string;
   compression?: boolean;
-  stack?: string | Array<string>;
+  stack?: string | string[];
   after?: Record<string, HandleFunction>;
   before?: Record<string, HandleFunction>;
   rewriters?: Record<string, unknown>;

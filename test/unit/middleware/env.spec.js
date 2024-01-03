@@ -44,10 +44,10 @@ describe("env", () => {
         env: {
           key: "value",
         },
-      })
+      }),
     );
 
-    request(app)
+    void request(app)
       .get("/__/env.json")
       .expect(200)
       .expect({
@@ -63,10 +63,10 @@ describe("env", () => {
         env: {
           key: "value",
         },
-      })
+      }),
     );
 
-    request(app)
+    void request(app)
       .get("/__/env.js")
       .expect(200)
       .expect("content-type", "application/javascript; charset=utf-8")
