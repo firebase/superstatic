@@ -102,6 +102,6 @@
     "std-mocks": "^1.0.1",
     "supertest": "^6.2.4",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "typescript": "^5.3.0"
   }
 }
