@@ -1,1 +1,2 @@
-* **BREAKING:** Requires Node.js >= 18.0.0.
+* Updates dependencies to address `npm audit` issues.
+* Fixes issue where redirects of unicode paths may not have been handled correctly.
