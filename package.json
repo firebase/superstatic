@@ -28,7 +28,7 @@
     "templates"
   ],
   "engines": {
-    "node": "18 || 20"
+    "node": "18 || 20 || 22"
   },
   "repository": {
     "type": "git",
