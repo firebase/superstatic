@@ -107,7 +107,7 @@ module.exports = function provider(options: any) {
     try {
       const stat = await multiStat(fullPathnames);
       return {
-        modified: stat.mtime.getTime(),
+        modified: stat.mtimeMs,
         size: stat.size,
         etag: await fetchEtag(stat.pathname, stat),
         stream: fs.createReadStream(stat.pathname),
