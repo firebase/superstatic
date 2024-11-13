@@ -1,4 +1,1 @@
-* Updates `engines.node` to include Node 22.
-* Updates dependencies to address `npm audit` issues.
-* Fixes issue where redirects of unicode paths may not have been handled correctly.
-* Fixes issue in Node 22 where `mtime` from `stat`-ing a file is no longer available.
+
