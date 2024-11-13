@@ -107,7 +107,8 @@ module.exports = function provider(options: any) {
     try {
       const stat = await multiStat(fullPathnames);
       return {
-        modified: stat.mtime.getTime(),
+        // stat.mtime is gone in node.js v22, so transition over to mtimeMs.
+        modified: stat.mtime?.getTime() ?? stat.mtimeMs,
         size: stat.size,
         etag: await fetchEtag(stat.pathname, stat),
         stream: fs.createReadStream(stat.pathname),

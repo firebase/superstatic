@@ -144,7 +144,7 @@ module.exports = function () {
       return undefined;
     };
 
-    const match = matcher(req.url);
+    const match = matcher(decodeURI(req.url));
 
     if (!match) {
       return next();
