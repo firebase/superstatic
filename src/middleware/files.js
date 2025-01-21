@@ -22,7 +22,7 @@
 const _ = require("lodash");
 const { i18nContentOptions } = require("../utils/i18n");
 const pathutils = require("../utils/pathutils");
-const url = require("fast-url-parser");
+const url = require("url");
 
 /**
  * We cannot redirect to "", redirect to "/" instead.
@@ -40,7 +40,7 @@ module.exports = function () {
 
     const parsedUrl = url.parse(req.url);
     const pathname = pathutils.normalizeMultiSlashes(parsedUrl.pathname);
-    const search = parsedUrl.search || "";
+    const search = parsedUrl.search ?? "";
 
     const cleanUrlRules = !!_.get(req, "superstatic.cleanUrls");
 

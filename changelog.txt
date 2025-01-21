@@ -1,1 +1,1 @@
-
+* Switches from 'fast-url-parser' to Node's built-in URL parser.

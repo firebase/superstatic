@@ -20,7 +20,7 @@
  */
 
 const slasher = require("glob-slasher"); // eslint-disable-line @typescript-eslint/no-var-requires
-const urlParser = require("fast-url-parser"); // eslint-disable-line @typescript-eslint/no-var-requires
+import * as urlParser from "url"; // eslint-disable-line @typescript-eslint/no-var-requires
 import { NextFunction } from "connect";
 import { IncomingMessage, ServerResponse } from "http";
 
@@ -50,7 +50,10 @@ module.exports = function () {
     next: NextFunction,
   ) {
     const rewrites = matcher(req.superstatic.rewrites ?? []);
-    const pathname: string = urlParser.parse(req.url).pathname;
+    if (!req.url) {
+      return next();
+    }
+    const pathname = urlParser.parse(req.url).pathname;
     const match = rewrites(slasher(pathname));
 
     if (!match) {

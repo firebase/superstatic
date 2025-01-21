@@ -21,7 +21,7 @@
 
 const _ = require("lodash");
 const slasher = require("glob-slasher");
-const urlParser = require("fast-url-parser");
+const urlParser = require("url");
 const onHeaders = require("on-headers");
 const patterns = require("../utils/patterns");
 
