@@ -51,7 +51,7 @@
     "hashbang"
   ],
   "dependencies": {
-    "basic-auth-connect": "^1.0.0",
+    "basic-auth-connect": "^1.1.0",
     "commander": "^10.0.0",
     "compression": "^1.7.0",
     "connect": "^3.7.0",
@@ -65,7 +65,7 @@
     "morgan": "^1.8.2",
     "on-finished": "^2.2.0",
     "on-headers": "^1.0.0",
-    "path-to-regexp": "^1.8.0",
+    "path-to-regexp": "^1.9.0",
     "router": "^2.0.0",
     "update-notifier-cjs": "^5.1.6"
   },
