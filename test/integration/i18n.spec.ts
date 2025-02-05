@@ -23,7 +23,7 @@ import * as fs from "node:fs/promises";
 import * as connect from "connect";
 import * as request from "supertest";
 
-import superstatic from "../../";
+import superstatic from "../../src/";
 import { MiddlewareOptions } from "../../src/options";
 import { Configuration } from "../../src/config";
 
