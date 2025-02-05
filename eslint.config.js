@@ -45,6 +45,7 @@ module.exports = [
       parserOptions: {
         ecmaVersion: "es2020",
         projectService: {
+          project: "./tsconfig.dev.json",
           allowDefaultProject: ["eslint.config.js"],
         },
         tsconfigRootDir: __dirname,

@@ -10,8 +10,6 @@
     "target": "ES2020"
   },
   "include": [
-    "examples/**/*",
-    "src/**/*",
-    "test/**/*"
+    "src/**/*"
   ]
 }
