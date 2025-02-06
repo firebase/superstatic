@@ -1,6 +1,9 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "sourceMap": false
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
