@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2020"
+  },
+}
