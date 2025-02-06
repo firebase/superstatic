@@ -1,12 +1,12 @@
-const eslint = require("@eslint/js");
-const eslintConfigGoogle = require("eslint-config-google");
-const eslintConfigPrettier = require("eslint-config-prettier");
-const eslintConfigJSDoc = require("eslint-plugin-jsdoc");
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
-const tseslint = require("typescript-eslint");
-const globals = require("globals");
+import eslint from "@eslint/js";
+import eslintConfigGoogle from "eslint-config-google";
+import eslintConfigPrettier from "eslint-config-prettier";
+import eslintConfigJSDoc from "eslint-plugin-jsdoc";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import tseslint from "typescript-eslint";
+import globals from "globals";
 
-module.exports = [
+export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -15,7 +15,7 @@ module.exports = [
   eslintConfigPrettier,
   eslintPluginPrettierRecommended,
   {
-    ignores: ["lib/**/*", "coverage/**/*"],
+    ignores: ["eslint.config.mjs", "lib/**/*", "coverage/**/*"],
   },
   {
     rules: {
@@ -48,7 +48,7 @@ module.exports = [
           project: "./tsconfig.json",
           allowDefaultProject: ["eslint.config.js"],
         },
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
