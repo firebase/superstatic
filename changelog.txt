@@ -1,1 +1,2 @@
 - Added Node 24 to engines.
+- [Breaking] Removed Node 18 from engines, as it is EOL.
