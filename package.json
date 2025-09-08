@@ -28,7 +28,7 @@
     "templates"
   ],
   "engines": {
-    "node": "18 || 20 || 22"
+    "node": "18 || 20 || 22 || 24"
   },
   "repository": {
     "type": "git",
@@ -91,7 +91,7 @@
     "eslint-plugin-jsdoc": "^50.6.3",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^15.14.0",
-    "mocha": "^10.4.0",
+    "mocha": "^11.7.2",
     "nyc": "^17.0.0",
     "prettier": "^3.1.1",
     "rimraf": "^5.0.1",
