@@ -1,2 +1,3 @@
 * Adds Node.js 24 as a supported engine.
+* Removes Node.js 18 as a supported engine.
 * Upgrades Mocha.
