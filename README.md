@@ -1,4 +1,4 @@
-# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![Build Status](http://img.shields.io/travis/firebase/superstatic.svg?style=flat-square)](https://travis-ci.org/firebase/superstatic) [![Code Climate](https://codeclimate.com/github/firebase/superstatic/badges/gpa.svg)](https://codeclimate.com/github/firebase/superstatic)
+# Superstatic   [![NPM Module](http://img.shields.io/npm/v/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) [![NPM download count](https://img.shields.io/npm/dm/superstatic.svg?style=flat-square)](https://npmjs.org/package/superstatic) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/firebase/superstatic/node-test.yml?style=flat-square)
 
 Superstatic is an enhanced static web server that was built to power.
 It has fantastic support for HTML5 pushState applications, clean URLs,
