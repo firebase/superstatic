@@ -43,13 +43,9 @@ const CWD = process.cwd();
  * @returns {HandleFunction} router handler.
  */
 const superstatic = function (spec = {}) {
-  if (!spec.stack) {
-    spec.stack = "default";
-  }
+  spec.stack ??= "default";
 
-  if (spec.fallthrough === undefined) {
-    spec.fallthrough = true;
-  }
+  spec.fallthrough ??= true;
 
   if (typeof spec.stack === "string" && superstatic.stacks[spec.stack]) {
     spec.stack = superstatic.stacks[spec.stack];

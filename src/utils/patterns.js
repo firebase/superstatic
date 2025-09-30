@@ -46,7 +46,7 @@ try {
  * @returns {boolean} Whether the config should be applied to the request.
  */
 function configMatcher(path, config) {
-  const glob = config.glob || config.source;
+  const glob = config.glob ?? config.source;
   const regex = config.regex;
   if (glob) {
     return minimatch(path, glob);
@@ -86,7 +86,7 @@ function re2Available() {
  * @returns {boolean}
  */
 function containsRE2Capture(pattern) {
-  return pattern && pattern.includes("?P<");
+  return pattern?.includes("?P<");
 }
 
 /**
@@ -97,7 +97,7 @@ function containsRE2Capture(pattern) {
  * @returns {boolean}
  */
 function containsPCRECapture(pattern) {
-  return pattern && pattern.includes("?<");
+  return pattern?.includes("?<");
 }
 
 module.exports = {

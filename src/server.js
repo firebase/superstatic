@@ -30,9 +30,7 @@ const { ServerOptions } = require("./options");
  * @returns unknown
  */
 module.exports = function (spec) {
-  if (spec.fallthrough === undefined) {
-    spec.fallthrough = false;
-  }
+  spec.fallthrough ??= false;
 
   const app = connect();
   const listen = app.listen.bind(app);

@@ -32,7 +32,7 @@ module.exports = function (filename) {
     return filename;
   }
 
-  filename = filename || CONFIG_FILE;
+  filename = filename ?? CONFIG_FILE;
 
   let configObject = {};
   let config = {};
@@ -63,7 +63,7 @@ module.exports = function (filename) {
   if (_.isString(filename) && _.endsWith(filename, "json")) {
     try {
       config = JSON.parse(fs.readFileSync(path.resolve(filename)));
-      config = config.hosting ? config.hosting : config;
+      config = config.hosting ?? config;
     } catch (e) {
       // do nothing
     }

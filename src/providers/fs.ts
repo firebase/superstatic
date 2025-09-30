@@ -42,8 +42,8 @@ async function multiStat(
 
 module.exports = function provider(options: any) {
   const etagCache: Record<string, { timestamp: Date; value: string }> = {};
-  const cwd = options.cwd || process.cwd();
-  let publicPaths: string[] = options.public || ["."];
+  const cwd = options.cwd ?? process.cwd();
+  let publicPaths: string[] = options.public ?? ["."];
   if (!Array.isArray(publicPaths)) {
     publicPaths = [publicPaths];
   }

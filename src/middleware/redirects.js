@@ -44,7 +44,7 @@ function addQuery(url, qs) {
 }
 
 const Redirect = function (glob, regex, destination, type) {
-  this.type = type || 301;
+  this.type = type ?? 301;
   this.glob = slasher(glob);
   this.regex = regex;
   this.destination = destination;
@@ -80,7 +80,7 @@ Redirect.prototype.test = function (url) {
     if (this.engine === "glob") {
       for (let i = 0; i < this.captureKeys.length; i++) {
         let m = match[i + 1];
-        if (m && m.includes("/")) {
+        if (m?.includes("/")) {
           m = m.split("/");
         }
 
@@ -125,7 +125,7 @@ module.exports = function () {
     const redirects = [];
     if (_.isArray(config)) {
       config.forEach((redir) => {
-        const glob = redir.glob || redir.source;
+        const glob = redir.glob ?? redir.source;
         redirects.push(
           new Redirect(glob, redir.regex, redir.destination, redir.type),
         );

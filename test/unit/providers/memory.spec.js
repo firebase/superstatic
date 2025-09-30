@@ -28,7 +28,7 @@ describe("memory provider", () => {
   let store;
   let provider;
   beforeEach(() => {
-    store = store || {};
+    store = store ?? {};
     provider = memoryProvider({ store: store });
   });
 

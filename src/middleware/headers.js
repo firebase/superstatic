@@ -26,7 +26,7 @@ const onHeaders = require("on-headers");
 const patterns = require("../utils/patterns");
 
 const normalizedConfigHeaders = function (spec, config) {
-  const out = config || [];
+  const out = config ?? [];
   if (_.isArray(config)) {
     const _isAllowed = function (headerToSet) {
       return _.includes(spec.allowedHeaders, headerToSet.key.toLowerCase());
@@ -34,7 +34,7 @@ const normalizedConfigHeaders = function (spec, config) {
 
     for (const c of config) {
       c.source = slasher(c.source);
-      c.headers = c.headers || [];
+      c.headers = c.headers ?? [];
       if (spec.allowedHeaders) {
         c.headers = c.headers.filter(_isAllowed);
       }

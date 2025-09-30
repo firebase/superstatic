@@ -24,7 +24,7 @@ const fs = require("fs");
 const DEFAULT_ERROR_PAGE = __dirname + "/../../templates/not_found.html";
 
 module.exports = function (spec) {
-  const content = fs.readFileSync(spec.errorPage || DEFAULT_ERROR_PAGE);
+  const content = fs.readFileSync(spec.errorPage ?? DEFAULT_ERROR_PAGE);
 
   return function (req, res) {
     // NOTE: provider isn't used to serve the pages
