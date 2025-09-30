@@ -28,7 +28,6 @@ export default [
       "@typescript-eslint/no-unused-expressions": "warn", // TODO(bkendall): remove allow to error.
       "@typescript-eslint/no-unused-vars": "warn", // TODO(bkendall): remove allow to error.
       "@typescript-eslint/prefer-includes": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/prefer-promise-reject-errors": "warn", // TODO(bkendall): remove allow to error.
 
       "no-unused-vars": "off", // Turned off in favor of @typescript-eslint/no-unused-vars.
       "require-atomic-updates": "off", // This rule is so noisy and isn't useful: https://github.com/eslint/eslint/issues/11899

@@ -117,7 +117,10 @@ module.exports = function provider(options: any) {
       if (["ENOENT", "ENOTDIR", "EISDIR", "EINVAL"].includes(err.code)) {
         return null;
       }
-      return Promise.reject(err);
+      if (err instanceof Error) {
+        return Promise.reject(err);
+      }
+      return Promise.reject(new Error(`Unknown error: ${err}`));
     }
   };
 };
