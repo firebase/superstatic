@@ -128,7 +128,7 @@ describe("Responder", () => {
       return responder
         .handleRewrite({ rewrite: { message: "hi" } })
         .then((result) => {
-          expect(result).to.be.true;
+          expect(result).to.equal(true);
           expect(out).to.equal("hi");
         });
     });
@@ -153,7 +153,7 @@ describe("Responder", () => {
           next();
         })
         .then((result) => {
-          expect(result).to.be.false;
+          expect(result).to.equal(false);
         });
     });
   });
@@ -189,31 +189,31 @@ describe("Responder", () => {
     });
 
     it("should be false if there are no if-modified-since or if-none-match headers", () => {
-      expect(responder.isNotModified(result)).to.be.false;
+      expect(responder.isNotModified(result)).to.equal(false);
     });
 
     it("should be false if there is a non-matching etag", () => {
       responder.req.headers["if-none-match"] = "defabc";
-      expect(responder.isNotModified(result)).to.be.false;
+      expect(responder.isNotModified(result)).to.equal(false);
     });
 
     it("should be true if there is a matching etag", () => {
       responder.req.headers["if-none-match"] = "abcdef";
-      expect(responder.isNotModified(result)).to.be.true;
+      expect(responder.isNotModified(result)).to.equal(true);
     });
 
     it("should be true if there is an if-modified-since after the modified", () => {
       responder.req.headers["if-modified-since"] = new Date(
         result.modified + 30000,
       ).toUTCString();
-      expect(responder.isNotModified(result)).to.be.true;
+      expect(responder.isNotModified(result)).to.equal(true);
     });
 
     it("should be false if there is an if-modified-since before the modified", () => {
       responder.req.headers["if-modified-since"] = new Date(
         result.modified - 30000,
       ).toUTCString();
-      expect(responder.isNotModified(result)).to.be.false;
+      expect(responder.isNotModified(result)).to.equal(false);
     });
   });
 

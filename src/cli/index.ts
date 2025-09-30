@@ -34,7 +34,7 @@ const ENV_FILENAME = ".env.json";
 let env: Record<string, string> | undefined = undefined;
 try {
   env = JSON.parse(fs.readFileSync(path.resolve(ENV_FILENAME), "utf8"));
-} catch (e) {
+} catch {
   // do nothing
 }
 

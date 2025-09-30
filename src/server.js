@@ -23,7 +23,6 @@ const connect = require("connect");
 const networkLogger = require("morgan");
 
 const superstatic = require("./superstatic");
-const { ServerOptions } = require("./options");
 
 /**
  * @param {ServerOptions} spec superstatic options.

@@ -23,7 +23,7 @@ let RE2;
 const minimatch = require("minimatch");
 try {
   RE2 = require("re2");
-} catch (er) {
+} catch {
   RE2 = null;
 }
 

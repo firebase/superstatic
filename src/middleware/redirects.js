@@ -101,7 +101,7 @@ Redirect.prototype.test = function (url) {
         type: this.type,
         destination: encodeURI(addQuery(dest, qs)),
       };
-    } catch (e) {
+    } catch {
       return undefined;
     }
   } else if (

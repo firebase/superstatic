@@ -21,7 +21,6 @@
 
 const _ = require("lodash");
 const makerouter = require("router");
-const { HandleFunction } = require("connect");
 
 const fsProvider = require("./providers/fs");
 const Responder = require("./responder");
@@ -31,9 +30,6 @@ const notFound = require("./middleware/missing");
 const promiseback = require("./utils/promiseback");
 const loadConfigFile = require("./loaders/config-file");
 const defaultCompressor = require("compression")();
-
-const { Configuration } = require("./config");
-const { MiddlewareOptions } = require("./options");
 
 const CWD = process.cwd();
 
