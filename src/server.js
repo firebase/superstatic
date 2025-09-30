@@ -27,7 +27,7 @@ const { ServerOptions } = require("./options");
 
 /**
  * @param {ServerOptions} spec superstatic options.
- * @return unknown
+ * @returns unknown
  */
 module.exports = function (spec) {
   if (spec.fallthrough === undefined) {

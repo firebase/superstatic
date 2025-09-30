@@ -40,7 +40,7 @@ const CWD = process.cwd();
 /**
  * Superstatic returns a router that can be used in a server.
  * @param {MiddlewareOptions} spec superstatic options.
- * @return {HandleFunction} router handler.
+ * @returns {HandleFunction} router handler.
  */
 const superstatic = function (spec = {}) {
   if (!spec.stack) {

@@ -42,7 +42,7 @@ interface SuperstaticResponse {
  * Returns middleware for `/__/env.json|js`.
  * @param spec superstatic options.
  * @param spec.env environment variables.
- * @return middleware.
+ * @returns middleware.
  */
 export function env(spec: { env: Record<string, string> }) {
   return (

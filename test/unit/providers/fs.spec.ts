@@ -23,10 +23,10 @@ import { use, expect } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as path from "node:path";
 import * as fs from "node:fs";
-const concatStream = require("concat-stream"); // eslint-disable-line @typescript-eslint/no-var-requires
+const concatStream = require("concat-stream");
 use(chaiAsPromised);
 
-const fsp = require("../../../src/providers/fs"); // eslint-disable-line @typescript-eslint/no-var-requires
+const fsp = require("../../../src/providers/fs");
 
 async function readStatStream(
   stat: {

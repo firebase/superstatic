@@ -23,7 +23,7 @@ import { Command } from "commander";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
+const pkg = require("../../package.json");
 import server = require("../server");
 
 const PORT = "3474";
@@ -65,7 +65,6 @@ cli
       });
       app.listen(() => resolve());
       console.log(
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `Superstatic started.\nVisit http://${options.hostname}:${options.port} to view your app.`,
       );
     });

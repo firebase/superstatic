@@ -22,7 +22,7 @@
 import * as crypto from "node:crypto";
 import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
-const pathjoin = require("join-path"); // eslint-disable-line @typescript-eslint/no-var-requires
+const pathjoin = require("join-path");
 
 async function multiStat(
   paths: string[],

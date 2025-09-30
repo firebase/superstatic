@@ -21,10 +21,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const updateNotifier = require("update-notifier-cjs"); // eslint-disable-line @typescript-eslint/no-var-requires
+const updateNotifier = require("update-notifier-cjs");
 
 import cli from "../cli";
-const pkg = require("../../package.json"); // eslint-disable-line @typescript-eslint/no-var-requires
+const pkg = require("../../package.json");
 
 const updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 

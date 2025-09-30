@@ -27,7 +27,7 @@ const url = require("url");
 /**
  * We cannot redirect to "", redirect to "/" instead.
  * @param {string} path path
- * @return {string} noramlized path
+ * @returns {string} noramlized path
  */
 function normalizeRedirectPath(path) {
   return path || "/";
@@ -192,7 +192,7 @@ module.exports = function () {
  * @param {*} req the Request.
  * @param {*} res the Response.
  * @param {string} p the path to search for.
- * @return {Promise<*>} a non-null value if a file is found.
+ * @returns {Promise<*>} a non-null value if a file is found.
  */
 function providerResult(req, res, p) {
   const promises = [];

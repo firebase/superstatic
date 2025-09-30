@@ -80,7 +80,7 @@ Redirect.prototype.test = function (url) {
     if (this.engine === "glob") {
       for (let i = 0; i < this.captureKeys.length; i++) {
         let m = match[i + 1];
-        if (m && m.indexOf("/") >= 0) {
+        if (m && m.includes("/")) {
           m = m.split("/");
         }
 
