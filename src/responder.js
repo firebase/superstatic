@@ -36,8 +36,8 @@ const Responder = function (req, res, options) {
   this.req = req;
   this.res = res;
   this.provider = options.provider;
-  this.config = options.config || {};
-  this.rewriters = options.rewriters || {};
+  this.config = options.config ?? {};
+  this.rewriters = options.rewriters ?? {};
   this.compressor = options.compressor;
 };
 
@@ -133,13 +133,13 @@ Responder.prototype.handleFileStream = function (file, result) {
   const self = this;
 
   this.streamedFile = file;
-  this.res.statusCode = file.status || 200;
+  this.res.statusCode = file.status ?? 200;
   if (this.res.statusCode === 200 && file.file === this.config.errorPage) {
     this.res.statusCode = 404;
   }
   this.res.setHeader(
     "Content-Type",
-    result.contentType || mime.contentType(path.extname(file.file)),
+    result.contentType ?? mime.contentType(path.extname(file.file)),
   );
   if (result.size) {
     this.res.setHeader("Content-Length", result.size);
@@ -178,7 +178,7 @@ Responder.prototype.handleNotModified = function () {
 };
 
 Responder.prototype.handleRedirect = function (redirect) {
-  this.res.statusCode = redirect.status || 301;
+  this.res.statusCode = redirect.status ?? 301;
   this.res.setHeader("Location", redirect.redirect);
   this.res.setHeader("Content-Type", "text/html; charset=utf-8");
   this.res.end("Redirecting to " + redirect.redirect);
@@ -215,10 +215,10 @@ Responder.prototype.handleRewrite = function (item) {
 };
 
 Responder.prototype.handleData = function (data) {
-  this.res.statusCode = data.status || 200;
+  this.res.statusCode = data.status ?? 200;
   this.res.setHeader(
     "Content-Type",
-    data.contentType || "text/html; charset=utf-8",
+    data.contentType ?? "text/html; charset=utf-8",
   );
   this.res.end(data.data);
   return Promise.resolve(true);

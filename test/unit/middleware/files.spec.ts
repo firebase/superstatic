@@ -27,7 +27,7 @@ import { ServerResponse } from "node:http";
 
 import * as helpers from "../../helpers";
 import * as filesPkg from "../../../src/middleware/files";
-const fsProvider = require("../../../src/providers/fs"); // eslint-disable-line @typescript-eslint/no-var-requires
+const fsProvider = require("../../../src/providers/fs");
 import * as Responder from "../../../src/responder";
 
 const files = helpers.decorator(filesPkg);
@@ -415,7 +415,6 @@ describe("static server with trailing slash customization", () => {
       ],
     },
   ].forEach((t) => {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const desc = `trailing slash ${t.trailingSlashBehavior} cleanUrls ${t.cleanUrls}`;
     t.tests.forEach((tt) => {
       const ttDesc = `${desc} ${JSON.stringify(tt)}`;

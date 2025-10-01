@@ -28,7 +28,7 @@ module.exports = function (spec) {
     if (spec.protect || config.protect) {
       return basicAuth.apply(
         basicAuth,
-        (spec.protect || config.protect).split(":"),
+        (spec.protect ?? config.protect).split(":"),
       )(req, res, next);
     }
 

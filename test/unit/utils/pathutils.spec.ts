@@ -16,8 +16,8 @@ describe("pathutils", () => {
 
   describe("isDirectoryIndex", () => {
     it("should return true if the path ends with `index.html`", () => {
-      expect(pathutils.isDirectoryIndex("path/to/file.txt")).to.be.false;
-      expect(pathutils.isDirectoryIndex("path/to/index.html")).to.be.true;
+      expect(pathutils.isDirectoryIndex("path/to/file.txt")).to.equal(false);
+      expect(pathutils.isDirectoryIndex("path/to/index.html")).to.equal(true);
     });
   });
 

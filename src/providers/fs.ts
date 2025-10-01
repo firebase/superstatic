@@ -22,7 +22,7 @@
 import * as crypto from "node:crypto";
 import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
-const pathjoin = require("join-path"); // eslint-disable-line @typescript-eslint/no-var-requires
+const pathjoin = require("join-path");
 
 async function multiStat(
   paths: string[],
@@ -42,8 +42,8 @@ async function multiStat(
 
 module.exports = function provider(options: any) {
   const etagCache: Record<string, { timestamp: Date; value: string }> = {};
-  const cwd = options.cwd || process.cwd();
-  let publicPaths: string[] = options.public || ["."];
+  const cwd = options.cwd ?? process.cwd();
+  let publicPaths: string[] = options.public ?? ["."];
   if (!Array.isArray(publicPaths)) {
     publicPaths = [publicPaths];
   }
@@ -117,7 +117,10 @@ module.exports = function provider(options: any) {
       if (["ENOENT", "ENOTDIR", "EISDIR", "EINVAL"].includes(err.code)) {
         return null;
       }
-      return Promise.reject(err);
+      if (err instanceof Error) {
+        return Promise.reject(err);
+      }
+      return Promise.reject(new Error(`Unknown error: ${err}`));
     }
   };
 };

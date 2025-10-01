@@ -31,7 +31,7 @@ import { normalizeMultiSlashes } from "./pathutils";
  * If i18n is *not* configured, an empty list is returned.
  * @param p requested path.
  * @param req the request object containing superstatic and i18n configuration.
- * @return list of paths to check for i18n content.
+ * @returns list of paths to check for i18n content.
  */
 export function i18nContentOptions(p: string, req: any): string[] {
   const paths: string[] = [];
@@ -65,7 +65,7 @@ function join(...arr: string[]): string {
 /**
  * Fetches the country code from the headers object.
  * @param headers headers from the request.
- * @return country code, or an empty string.
+ * @returns country code, or an empty string.
  */
 function getCountryCode(headers: Record<string, string>): string {
   const overrideValue = cookieValue(
@@ -81,7 +81,7 @@ function getCountryCode(headers: Record<string, string>): string {
 /**
  * Fetches the languages from the accept-language header.
  * @param headers headers from the request.
- * @return ordered list of languages from the header.
+ * @returns ordered list of languages from the header.
  */
 function getI18nLanguages(headers: Record<string, string>): string[] {
   const overrideValue = cookieValue(
@@ -118,7 +118,7 @@ function getI18nLanguages(headers: Record<string, string>): string[] {
  * Fetches a value from a cookie string.
  * @param cookieString full cookie string.
  * @param key key to look for.
- * @return the value, or empty string;
+ * @returns the value, or empty string;
  */
 function cookieValue(cookieString: string, key: string): string {
   if (!cookieString) {

@@ -25,7 +25,7 @@ import * as connect from "connect";
 
 import * as helpers from "../../helpers";
 import * as rewritesPkg from "../../../src/middleware/rewrites";
-const fsProvider = require("../../../src/providers/fs"); // eslint-disable-line @typescript-eslint/no-var-requires
+const fsProvider = require("../../../src/providers/fs");
 import * as Responder from "../../../src/responder";
 
 const rewrites = helpers.decorator(rewritesPkg);

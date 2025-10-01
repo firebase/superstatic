@@ -21,7 +21,6 @@
 
 const _ = require("lodash");
 const makerouter = require("router");
-const { HandleFunction } = require("connect");
 
 const fsProvider = require("./providers/fs");
 const Responder = require("./responder");
@@ -32,24 +31,17 @@ const promiseback = require("./utils/promiseback");
 const loadConfigFile = require("./loaders/config-file");
 const defaultCompressor = require("compression")();
 
-const { Configuration } = require("./config");
-const { MiddlewareOptions } = require("./options");
-
 const CWD = process.cwd();
 
 /**
  * Superstatic returns a router that can be used in a server.
  * @param {MiddlewareOptions} spec superstatic options.
- * @return {HandleFunction} router handler.
+ * @returns {HandleFunction} router handler.
  */
 const superstatic = function (spec = {}) {
-  if (!spec.stack) {
-    spec.stack = "default";
-  }
+  spec.stack ??= "default";
 
-  if (spec.fallthrough === undefined) {
-    spec.fallthrough = true;
-  }
+  spec.fallthrough ??= true;
 
   if (typeof spec.stack === "string" && superstatic.stacks[spec.stack]) {
     spec.stack = superstatic.stacks[spec.stack];

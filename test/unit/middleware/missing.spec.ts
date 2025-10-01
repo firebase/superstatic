@@ -23,7 +23,7 @@ import * as connect from "connect";
 import * as fs from "node:fs/promises";
 import * as request from "supertest";
 
-const fsProvider = require("../../../src/providers/fs"); // eslint-disable-line @typescript-eslint/no-var-requires
+const fsProvider = require("../../../src/providers/fs");
 import * as helpers from "../../helpers";
 import * as missingModule from "../../../src/middleware/missing";
 import * as Responder from "../../../src/responder";

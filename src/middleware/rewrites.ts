@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const slasher = require("glob-slasher"); // eslint-disable-line @typescript-eslint/no-var-requires
-import * as urlParser from "url"; // eslint-disable-line @typescript-eslint/no-var-requires
+const slasher = require("glob-slasher");
+import * as urlParser from "url";
 import { NextFunction } from "connect";
 import { IncomingMessage, ServerResponse } from "http";
 
@@ -41,7 +41,7 @@ function matcher(rewrites: Rewrite[]) {
 
 /**
  * Looks for possible rewrites for the given req.url.
- * @return middleware for handling rewrites.
+ * @returns middleware for handling rewrites.
  */
 module.exports = function () {
   return function (

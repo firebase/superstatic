@@ -32,7 +32,7 @@ module.exports = function (spec) {
 
   return function (req, res, next) {
     const config = req.superstatic;
-    const errorPage = config.errorPage || "/404.html";
+    const errorPage = config.errorPage ?? "/404.html";
 
     setHeaders(spec)(
       {

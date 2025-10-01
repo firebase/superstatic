@@ -40,12 +40,12 @@ module.exports = function (options) {
     hash.update(content);
 
     return Promise.resolve({
-      modified: options.modified || null,
+      modified: options.modified ?? null,
       stream: stream,
       size: content.length,
       etag: hash.digest("hex"),
     });
   };
-  fn.store = options.store || {};
+  fn.store = options.store ?? {};
   return fn;
 };

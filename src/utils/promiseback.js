@@ -29,7 +29,10 @@ module.exports = function promiseback(userFn, argCount) {
     return new Promise((resolve, reject) => {
       userFn(...args, (err, res) => {
         if (err) {
-          return reject(err);
+          if (err instanceof Error) {
+            return reject(err);
+          }
+          return reject(new Error(`Unknown error: ${err}`));
         }
         resolve(res);
       });

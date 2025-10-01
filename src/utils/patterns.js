@@ -23,7 +23,7 @@ let RE2;
 const minimatch = require("minimatch");
 try {
   RE2 = require("re2");
-} catch (er) {
+} catch {
   RE2 = null;
 }
 
@@ -43,10 +43,10 @@ try {
  * a glob and a regex. normalizeConfig() will error in that case.
  * @param {string} path The URL path from the request.
  * @param {object} config A dictionary from a sanitized JSON configuration.
- * @return {boolean} Whether the config should be applied to the request.
+ * @returns {boolean} Whether the config should be applied to the request.
  */
 function configMatcher(path, config) {
-  const glob = config.glob || config.source;
+  const glob = config.glob ?? config.source;
   const regex = config.regex;
   if (glob) {
     return minimatch(path, glob);
@@ -63,7 +63,7 @@ function configMatcher(path, config) {
  * pattern, depending on whether or not the RE2 library is available as an
  * import.
  * @param {string} pattern A regular expression pattern to test against.
- * @return {RegExp} A regular expression object, created by either base
+ * @returns {RegExp} A regular expression object, created by either base
  *                  RegExp or RE2, which matches the RegExp prototype
  */
 function createRaw(pattern) {
@@ -72,7 +72,7 @@ function createRaw(pattern) {
 
 /**
  * Returns true if RE2, which is an optional dependency, has been loaded.
- * @return {boolean}
+ * @returns {boolean}
  */
 function re2Available() {
   return RE2 ? true : false;
@@ -83,10 +83,10 @@ function re2Available() {
  * group opening, ?P<, which is not interpretable when Superstatic is falling
  * back on the base Javascript RegExp implementation.
  * @param {string} pattern
- * @return {boolean}
+ * @returns {boolean}
  */
 function containsRE2Capture(pattern) {
-  return pattern && pattern.includes("?P<");
+  return pattern?.includes("?P<");
 }
 
 /**
@@ -94,10 +94,10 @@ function containsRE2Capture(pattern) {
  * group opening, ?<, which is not interpretable when Superstatic has loaded
  * the RE2 bindings.
  * @param {string} pattern
- * @return {boolean}
+ * @returns {boolean}
  */
 function containsPCRECapture(pattern) {
-  return pattern && pattern.includes("?<");
+  return pattern?.includes("?<");
 }
 
 module.exports = {

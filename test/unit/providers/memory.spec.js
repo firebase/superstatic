@@ -28,7 +28,7 @@ describe("memory provider", () => {
   let store;
   let provider;
   beforeEach(() => {
-    store = store || {};
+    store = store ?? {};
     provider = memoryProvider({ store: store });
   });
 
@@ -57,8 +57,8 @@ describe("memory provider", () => {
       a: await provider({}, "/a.html"),
       b: await provider({}, "/b.html"),
     }).then((result) => {
-      expect(result.a.etag).not.to.be.null;
-      expect(result.b.etag).not.to.be.null;
+      expect(result.a.etag).to.not.equal(null);
+      expect(result.b.etag).to.not.equal(null);
       expect(result.a.etag).not.to.eq(result.b.etag);
     });
   });

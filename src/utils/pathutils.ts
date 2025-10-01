@@ -23,7 +23,7 @@ const INDEX_FILE = "index.html";
 
 /**
  * @param pathname path to check.
- * @return the path with "/index.html" appended, if required.
+ * @returns the path with "/index.html" appended, if required.
  */
 export function asDirectoryIndex(pathname: string): string {
   if (isDirectoryIndex(pathname)) {
@@ -34,7 +34,7 @@ export function asDirectoryIndex(pathname: string): string {
 
 /**
  * @param pathname path to check.
- * @return true if pathname ends with "/index.html".
+ * @returns true if pathname ends with "/index.html".
  */
 export function isDirectoryIndex(pathname: string): boolean {
   return pathname.endsWith(`/${INDEX_FILE}`);
@@ -42,7 +42,7 @@ export function isDirectoryIndex(pathname: string): boolean {
 
 /**
  * @param pathname path to check.
- * @return true if it ends with a slash.
+ * @returns true if it ends with a slash.
  */
 export function hasTrailingSlash(pathname: string): boolean {
   return pathname.endsWith("/");
@@ -50,7 +50,7 @@ export function hasTrailingSlash(pathname: string): boolean {
 
 /**
  * @param pathname path to check.
- * @return pathname with a trailing slash.
+ * @returns pathname with a trailing slash.
  */
 export function addTrailingSlash(pathname: string): string {
   return hasTrailingSlash(pathname) ? pathname : pathname + "/";
@@ -58,7 +58,7 @@ export function addTrailingSlash(pathname: string): string {
 
 /**
  * @param pathname path to check.
- * @return pathname without a trailing slash.
+ * @returns pathname without a trailing slash.
  */
 export function removeTrailingSlash(pathname: string): string {
   return removeTrailingString(pathname, "/");
@@ -66,7 +66,7 @@ export function removeTrailingSlash(pathname: string): string {
 
 /**
  * @param pathname path to check.
- * @return pathname with any "//" replaced with "/".
+ * @returns pathname with any "//" replaced with "/".
  */
 export function normalizeMultiSlashes(pathname: string): string {
   return pathname.replace(/\/+/g, "/");
@@ -75,7 +75,7 @@ export function normalizeMultiSlashes(pathname: string): string {
 /**
  * @param string string to check.
  * @param rm string to search for.
- * @return string with rm removed if it's the end of string. Else, string.
+ * @returns string with rm removed if it's the end of string. Else, string.
  */
 export function removeTrailingString(string: string, rm: string): string {
   if (!string.endsWith(rm)) {
