@@ -51,6 +51,9 @@ module.exports = function provider(options: any) {
   async function fetchEtag(pathname: string, stat: fs.Stats): Promise<string> {
     return new Promise((resolve, reject) => {
       const cached = etagCache[pathname];
+      // Chaining doesn't work. If `stat.mtime` is undefined, the chained
+      // version is true and breaks the logic.
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (cached && cached.timestamp === stat.mtime) {
         return resolve(cached.value);
       }
