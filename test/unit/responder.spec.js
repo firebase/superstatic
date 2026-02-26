@@ -20,8 +20,9 @@
  */
 
 const Responder = require("../../src/responder");
-const _ = require("lodash");
 const chai = require("chai");
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 const sinon = require("sinon");
 chai.use(require("chai-as-promised"));
 chai.use(require("sinon-chai"));
@@ -32,7 +33,7 @@ describe("Responder", () => {
 
   describe("#handle", () => {
     beforeEach(() => {
-      responder = new Responder({}, { setHeader: _.noop, end: _.noop }, {});
+      responder = new Responder({}, { setHeader: noop, end: noop }, {});
     });
 
     it("should resolve as false with an empty stack", () => {
@@ -91,7 +92,7 @@ describe("Responder", () => {
 
   describe("#_handle", () => {
     beforeEach(() => {
-      responder = new Responder({}, { setHeader: _.noop, end: _.noop }, {});
+      responder = new Responder({}, { setHeader: noop, end: noop }, {});
     });
 
     it("should reject with an unrecognized payload", () => {
@@ -107,7 +108,7 @@ describe("Responder", () => {
       responder = new Responder(
         {},
         {
-          setHeader: _.noop,
+          setHeader: noop,
           end: function (data) {
             out = data;
           },
@@ -138,7 +139,7 @@ describe("Responder", () => {
     let rq;
     beforeEach(() => {
       rq = {};
-      responder = new Responder(rq, { setHeader: _.noop, end: _.noop }, {});
+      responder = new Responder(rq, { setHeader: noop, end: noop }, {});
     });
 
     it("should call the middleware", (done) => {
@@ -219,7 +220,7 @@ describe("Responder", () => {
 
   describe("#handleNotModified", () => {
     it("should return true, indicating it responded", () => {
-      responder = new Responder({}, { removeHeader: _.noop, end: _.noop }, {});
+      responder = new Responder({}, { removeHeader: noop, end: noop }, {});
 
       const r = responder.handleNotModified();
       expect(r).to.equal(true);

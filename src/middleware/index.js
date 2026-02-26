@@ -19,8 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
-
 [
   "protect",
   "redirects",
@@ -31,7 +29,7 @@ const _ = require("lodash");
   "missing",
 ].forEach((name) => {
   exports[name] = function (spec, config) {
-    const mware = require("./" + _.kebabCase(name))(spec, config);
+    const mware = require("./" + name)(spec, config);
     mware._name = name;
     return mware;
   };

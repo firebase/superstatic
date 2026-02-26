@@ -20,7 +20,6 @@
  */
 
 const isUrl = require("is-url");
-const _ = require("lodash");
 
 const patterns = require("../utils/patterns");
 const pathToRegexp = require("path-to-regexp");
@@ -117,13 +116,13 @@ Redirect.prototype.test = function (url) {
 
 module.exports = function () {
   return function (req, res, next) {
-    const config = _.get(req, "superstatic.redirects");
+    const config = req?.superstatic?.redirects;
     if (!config) {
       return next();
     }
 
     const redirects = [];
-    if (_.isArray(config)) {
+    if (Array.isArray(config)) {
       config.forEach((redir) => {
         const glob = redir.glob ?? redir.source;
         redirects.push(

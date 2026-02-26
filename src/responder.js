@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
 const mime = require("mime-types");
+const { isPlainObject } = require("./utils/objectutils");
 const path = require("path");
 const onFinished = require("on-finished");
 const destroy = require("destroy");
@@ -72,11 +72,11 @@ Responder.prototype.handle = function (item, next) {
 };
 
 Responder.prototype._handle = function (item) {
-  if (_.isArray(item)) {
+  if (Array.isArray(item)) {
     return this.handleStack(item);
-  } else if (_.isString(item)) {
+  } else if (typeof item === "string") {
     return this.handleFile({ file: item });
-  } else if (_.isPlainObject(item)) {
+  } else if (isPlainObject(item)) {
     if (item.file) {
       return this.handleFile(item);
     } else if (item.redirect) {
@@ -86,7 +86,7 @@ Responder.prototype._handle = function (item) {
     } else if (item.data) {
       return this.handleData(item);
     }
-  } else if (_.isFunction(item)) {
+  } else if (typeof item === "function") {
     return this.handleMiddleware(item);
   }
 
