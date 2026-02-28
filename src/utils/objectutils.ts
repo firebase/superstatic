@@ -1,10 +1,9 @@
 /**
- * Returns true for plain objects (`{}` or `Object.create(null)`),
- * matching the behaviour of lodash's `_.isPlainObject`.
+ * Returns true for plain objects (`{}` or `Object.create(null)`).
  * @param val value to check
  * @returns value indicating whether the value is a plain object
  */
-function isPlainObject(val) {
+export function isPlainObject(val: unknown): val is Record<string, unknown> {
   return (
     val !== null &&
     typeof val === "object" &&
@@ -13,5 +12,3 @@ function isPlainObject(val) {
       Object.getPrototypeOf(val) === null)
   );
 }
-
-module.exports = { isPlainObject };
