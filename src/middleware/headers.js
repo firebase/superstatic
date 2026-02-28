@@ -20,7 +20,7 @@
  */
 
 const _ = require("lodash");
-const slasher = require("glob-slasher");
+const { slasher } = require("../utils/slasher");
 const urlParser = require("url");
 const onHeaders = require("on-headers");
 const patterns = require("../utils/patterns");

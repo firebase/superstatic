@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const slasher = require("glob-slasher");
+const { slasher } = require("../utils/slasher");
 import * as urlParser from "url";
 import { NextFunction } from "connect";
 import { IncomingMessage, ServerResponse } from "http";
