@@ -22,7 +22,7 @@
 import * as crypto from "node:crypto";
 import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
-const pathjoin = require("join-path");
+import { join } from "node:path";
 
 async function multiStat(
   paths: string[],
@@ -42,7 +42,7 @@ async function multiStat(
 
 module.exports = function provider(options: any) {
   const etagCache: Record<string, { timestamp: Date; value: string }> = {};
-  const cwd = options.cwd ?? process.cwd();
+  const cwd: string = options.cwd ?? process.cwd();
   let publicPaths: string[] = options.public ?? ["."];
   if (!Array.isArray(publicPaths)) {
     publicPaths = [publicPaths];
@@ -103,8 +103,7 @@ module.exports = function provider(options: any) {
     }
 
     const fullPathnames: string[] = publicPaths.map((p) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      pathjoin(cwd, p, pathname),
+      join(cwd, p, pathname),
     );
 
     try {

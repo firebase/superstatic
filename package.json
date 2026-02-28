@@ -58,7 +58,6 @@
     "destroy": "^1.0.4",
     "glob-slasher": "^1.0.1",
     "is-url": "^1.2.2",
-    "join-path": "^1.1.1",
     "lodash": "^4.17.19",
     "mime-types": "^2.1.35",
     "minimatch": "^6.1.6",

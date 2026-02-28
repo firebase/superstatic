@@ -22,7 +22,6 @@
 const fs = require("fs");
 
 const _ = require("lodash");
-const join = require("join-path");
 const path = require("path");
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
@@ -49,7 +48,7 @@ module.exports = function (filename) {
 
   if (_.isArray(filename)) {
     filename = _.find(filename, (name) => {
-      return fs.existsSync(join(process.cwd(), name));
+      return fs.existsSync(path.join(process.cwd(), name));
     });
   }
 
