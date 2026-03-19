@@ -19,7 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
 const { i18nContentOptions } = require("../utils/i18n");
 const pathutils = require("../utils/pathutils");
 const url = require("url");
@@ -42,7 +41,7 @@ module.exports = function () {
     const pathname = pathutils.normalizeMultiSlashes(parsedUrl.pathname);
     const search = parsedUrl.search ?? "";
 
-    const cleanUrlRules = !!_.get(req, "superstatic.cleanUrls");
+    const cleanUrlRules = !!req?.superstatic?.cleanUrls;
 
     // Exact file always wins.
     return providerResult(req, res, pathname)
@@ -50,9 +49,9 @@ module.exports = function () {
         if (result) {
           // If we are using cleanURLs, we'll trim off any `.html` (or `/index.html`), if it exists.
           if (cleanUrlRules) {
-            if (_.endsWith(pathname, ".html")) {
+            if (pathname.endsWith(".html")) {
               let redirPath = pathutils.removeTrailingString(pathname, ".html");
-              if (_.endsWith(redirPath, "/index")) {
+              if (redirPath.endsWith("/index")) {
                 redirPath = pathutils.removeTrailingString(redirPath, "/index");
               }
               if (trailingSlashBehavior === true) {
@@ -154,7 +153,7 @@ module.exports = function () {
                       });
                     }
                     // If we've gotten this far and still have `/index.html` on the end, we want to remove it from the URL.
-                    if (_.endsWith(appendedPath, "/index.html")) {
+                    if (appendedPath.endsWith("/index.html")) {
                       return res.superstatic.handle({
                         redirect: normalizeRedirectPath(
                           pathutils.removeTrailingString(

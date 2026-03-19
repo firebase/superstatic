@@ -19,7 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
 const { slasher } = require("../utils/slasher");
 const urlParser = require("url");
 const onHeaders = require("on-headers");
@@ -27,9 +26,9 @@ const patterns = require("../utils/patterns");
 
 const normalizedConfigHeaders = function (spec, config) {
   const out = config ?? [];
-  if (_.isArray(config)) {
+  if (Array.isArray(config)) {
     const _isAllowed = function (headerToSet) {
-      return _.includes(spec.allowedHeaders, headerToSet.key.toLowerCase());
+      return spec.allowedHeaders.includes(headerToSet.key.toLowerCase());
     };
 
     for (const c of config) {
@@ -61,7 +60,7 @@ const matcher = function (configHeaders) {
 
 module.exports = function (spec) {
   return function (req, res, next) {
-    const config = _.get(req, "superstatic.headers");
+    const config = req?.superstatic?.headers;
     if (!config) {
       return next();
     }
@@ -71,7 +70,7 @@ module.exports = function (spec) {
     const matches = headers(slasher(pathname));
 
     onHeaders(res, () => {
-      _.forEach(matches, (header) => {
+      matches.forEach((header) => {
         res.setHeader(header.key, header.value);
       });
     });
