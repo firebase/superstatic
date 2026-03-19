@@ -60,7 +60,7 @@
     "is-url": "^1.2.2",
     "join-path": "^1.1.1",
     "mime-types": "^2.1.35",
-    "minimatch": "^6.1.6",
+    "minimatch": "^10.2.4",
     "morgan": "^1.8.2",
     "on-finished": "^2.2.0",
     "on-headers": "^1.0.0",
