@@ -20,7 +20,6 @@
  */
 
 const middleware = require("./middleware");
-const _ = require("lodash");
 const promiseback = require("./utils/promiseback");
 
 const Activator = function (spec, provider) {
@@ -28,7 +27,7 @@ const Activator = function (spec, provider) {
   this.provider = provider;
   this.stack = this.buildStack();
 
-  if (_.isFunction(spec.config)) {
+  if (typeof spec.config === "function") {
     this.awaitConfig = spec.config;
   } else {
     this.awaitConfig = function () {
@@ -41,16 +40,16 @@ Activator.prototype.buildStack = function () {
   const self = this;
 
   const stack = this.spec.stack.slice(0);
-  _.forEach(this.spec.before, (wares, name) => {
+  Object.entries(this.spec.before ?? {}).forEach(([name, wares]) => {
     stack.splice(...[stack.indexOf(name), 0].concat(wares));
   });
 
-  _.forEach(this.spec.after, (wares, name) => {
+  Object.entries(this.spec.after ?? {}).forEach(([name, wares]) => {
     stack.splice(...[stack.indexOf(name) + 1, 0].concat(wares));
   });
 
   return stack.map((ware) => {
-    return _.isFunction(ware) ? ware : middleware[ware](self.spec);
+    return typeof ware === "function" ? ware : middleware[ware](self.spec);
   });
 };
 

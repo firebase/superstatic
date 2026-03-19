@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Google LLC
+ * Copyright (c) 2026 Google LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -19,18 +19,17 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-[
-  "protect",
-  "redirects",
-  "headers",
-  "env",
-  "files",
-  "rewrites",
-  "missing",
-].forEach((name) => {
-  exports[name] = function (spec, config) {
-    const mware = require("./" + name)(spec, config);
-    mware._name = name;
-    return mware;
-  };
-});
+/**
+ * Returns true for plain objects (`{}` or `Object.create(null)`).
+ * @param val value to check
+ * @returns value indicating whether the value is a plain object
+ */
+export function isPlainObject(val: unknown): val is Record<string, unknown> {
+  return (
+    val !== null &&
+    typeof val === "object" &&
+    !Array.isArray(val) &&
+    (Object.getPrototypeOf(val) === Object.prototype ||
+      Object.getPrototypeOf(val) === null)
+  );
+}
