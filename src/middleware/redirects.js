@@ -23,7 +23,7 @@ const isUrl = require("is-url");
 
 const patterns = require("../utils/patterns");
 const pathToRegexp = require("path-to-regexp");
-const slasher = require("glob-slasher");
+const { slasher } = require("../utils/slasher");
 
 function formatExternalUrl(u) {
   const cleaned = u

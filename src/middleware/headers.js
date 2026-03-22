@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const slasher = require("glob-slasher");
+const { slasher } = require("../utils/slasher");
 const urlParser = require("url");
 const onHeaders = require("on-headers");
 const patterns = require("../utils/patterns");
