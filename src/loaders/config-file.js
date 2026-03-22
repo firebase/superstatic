@@ -20,14 +20,13 @@
  */
 
 const fs = require("fs");
-
-const _ = require("lodash");
 const path = require("path");
+const { isPlainObject } = require("../utils/objectutils");
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
 
 module.exports = function (filename) {
-  if (_.isFunction(filename)) {
+  if (typeof filename === "function") {
     return filename;
   }
 
@@ -40,26 +39,26 @@ module.exports = function (filename) {
   try {
     configObject = JSON.parse(filename);
   } catch {
-    if (_.isPlainObject(filename)) {
+    if (isPlainObject(filename)) {
       configObject = filename;
       filename = CONFIG_FILE;
     }
   }
 
-  if (_.isArray(filename)) {
-    filename = _.find(filename, (name) => {
+  if (Array.isArray(filename)) {
+    filename = filename.find((name) => {
       return fs.existsSync(path.join(process.cwd(), name));
     });
   }
 
   // Set back to default config file if stringified object is
   // given as config. With this, we override values in the config file
-  if (_.isPlainObject(filename)) {
+  if (isPlainObject(filename)) {
     filename = CONFIG_FILE;
   }
 
   // A file name or array of file names
-  if (_.isString(filename) && _.endsWith(filename, "json")) {
+  if (typeof filename === "string" && filename.endsWith("json")) {
     try {
       config = JSON.parse(fs.readFileSync(path.resolve(filename)));
       config = config.hosting ?? config;
@@ -70,5 +69,5 @@ module.exports = function (filename) {
 
   // Passing an object as the config value merges
   // the config data
-  return _.assign(config, configObject);
+  return { ...config, ...configObject };
 };

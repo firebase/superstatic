@@ -19,7 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const _ = require("lodash");
 const makerouter = require("router");
 
 const fsProvider = require("./providers/fs");
@@ -58,18 +57,11 @@ const superstatic = function (spec = {}) {
   // Set up provider
   const provider = spec.provider
     ? promiseback(spec.provider, 2)
-    : fsProvider(
-        _.extend(
-          {
-            cwd: cwd, // default current working directory
-          },
-          config,
-        ),
-      );
+    : fsProvider({ cwd, ...config });
 
   // Select compression middleware
   let compressor;
-  if (_.isFunction(spec.compression)) {
+  if (typeof spec.compression === "function") {
     compressor = spec.compression;
   } else if (spec.compression ?? spec.gzip) {
     compressor = defaultCompressor;
