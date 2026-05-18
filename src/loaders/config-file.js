@@ -27,7 +27,7 @@ const { isPlainObject } = require("../utils/objectutils");
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
 
-module.exports = function (filename) {
+module.exports = function (filename, mergeConfig = true) {
   if (typeof filename === "function") {
     return filename;
   }
@@ -35,14 +35,17 @@ module.exports = function (filename) {
   filename = filename ?? CONFIG_FILE;
 
   let configObject = {};
+  let configObjectProvided = false;
   let config = {};
 
   // From custom config data passed in
   try {
     configObject = JSON.parse(filename);
+    configObjectProvided = true;
   } catch {
     if (isPlainObject(filename)) {
       configObject = filename;
+      configObjectProvided = true;
       filename = CONFIG_FILE;
     }
   }
@@ -71,5 +74,5 @@ module.exports = function (filename) {
 
   // Passing an object as the config value merges
   // the config data
-  return { ...config, ...configObject };
+  return configObjectProvided && !mergeConfig ? configObject : { ...config, ...configObject };
 };
