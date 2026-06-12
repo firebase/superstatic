@@ -19,6 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { isPlainObject } from "./objectutils";
+
 const INDEX_FILE = "index.html";
 
 /**
@@ -108,7 +110,7 @@ export function slasher(value: any): any {
   if (Array.isArray(value)) {
     return value.map(slasher);
   }
-  if (value !== null && typeof value === "object") {
+  if (isPlainObject(value)) {
     const result: any = {};
     for (const key of Object.keys(value)) {
       result[key] = slasher(value[key]);

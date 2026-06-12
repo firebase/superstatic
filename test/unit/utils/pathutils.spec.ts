@@ -115,6 +115,13 @@ describe("pathutils", () => {
       expect(pathutils.slasher(input)).to.deep.equal(expected);
     });
 
+    it("should leave non-plain objects as-is", () => {
+      const regex = /abc/g;
+      const date = new Date();
+      expect(pathutils.slasher(regex)).to.equal(regex);
+      expect(pathutils.slasher(date)).to.equal(date);
+    });
+
     it("should leave non-string, non-array, non-object values as-is", () => {
       expect(pathutils.slasher(null)).to.equal(null);
       expect(pathutils.slasher(undefined)).to.equal(undefined);
