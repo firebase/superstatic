@@ -99,7 +99,7 @@ describe("pathutils", () => {
       ).to.deep.equal(["/foo/bar", "!/baz/qux", "/already/slashed"]);
     });
 
-    it("should recursively process objects", () => {
+    it("should recursively process objects without slashing keys", () => {
       const input = {
         "key1/path": "val1/path",
         "key2\\path": {
@@ -107,9 +107,9 @@ describe("pathutils", () => {
         },
       };
       const expected = {
-        "/key1/path": "/val1/path",
-        "/key2/path": {
-          "/nested/key": "/nested/value",
+        "key1/path": "/val1/path",
+        "key2\\path": {
+          "nested/key": "/nested/value",
         },
       };
       expect(pathutils.slasher(input)).to.deep.equal(expected);

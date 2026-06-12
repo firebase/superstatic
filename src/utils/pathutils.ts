@@ -111,8 +111,7 @@ export function slasher(value: any): any {
   if (value !== null && typeof value === "object") {
     const result: any = {};
     for (const key of Object.keys(value)) {
-      const newKey = slasher(key);
-      result[newKey] = slasher(value[key]);
+      result[key] = slasher(value[key]);
     }
     return result;
   }
