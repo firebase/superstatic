@@ -56,7 +56,7 @@
     "compression": "^1.7.0",
     "connect": "^3.7.0",
     "destroy": "^1.0.4",
-    "glob-slasher": "^1.0.1",
+    "glob": "^13.0.6",
     "is-url": "^1.2.2",
     "join-path": "^1.1.1",
     "mime-types": "^2.1.35",
