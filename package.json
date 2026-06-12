@@ -78,7 +78,7 @@
     "@types/connect": "^3.4.35",
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^24.3.1",
+    "@types/node": "^25.5.0",
     "@types/supertest": "^6.0.2",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.2",
