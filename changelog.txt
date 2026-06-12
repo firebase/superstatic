@@ -1,1 +1,1 @@
-
+* Replaces obsolete glob-slasher dependency with a local path/glob normalization utility.
