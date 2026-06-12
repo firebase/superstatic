@@ -19,6 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { isPlainObject } from "./objectutils";
+
 const INDEX_FILE = "index.html";
 
 /**
@@ -82,4 +84,38 @@ export function removeTrailingString(string: string, rm: string): string {
     return string;
   }
   return string.slice(0, string.lastIndexOf(rm));
+}
+
+/**
+ * Ensures a glob pattern or path starts with a slash, converts backslashes
+ * to forward slashes, and recursively handles arrays and objects.
+ * Mimics `glob-slasher` but is more robust for glob matching libraries.
+ * @param value The value to slash (string, array, object).
+ * @returns The slashed value.
+ */
+export function slasher(value: any): any {
+  if (typeof value === "string") {
+    let isNegated = false;
+    let val = value;
+    if (val.startsWith("!")) {
+      isNegated = true;
+      val = val.substring(1);
+    }
+    if (!val.startsWith("/")) {
+      val = "/" + val;
+    }
+    val = val.replace(/\\/g, "/").replace(/\/+/g, "/");
+    return isNegated ? "!" + val : val;
+  }
+  if (Array.isArray(value)) {
+    return value.map(slasher);
+  }
+  if (isPlainObject(value)) {
+    const result: any = {};
+    for (const key of Object.keys(value)) {
+      result[key] = slasher(value[key]);
+    }
+    return result;
+  }
+  return value;
 }
