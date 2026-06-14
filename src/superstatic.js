@@ -51,7 +51,7 @@ const superstatic = function (spec = {}) {
 
   // Load data
   /** @type {Configuration} */
-  const config = (spec.config = loadConfigFile(spec.config));
+  const config = (spec.config = loadConfigFile(spec.config, spec.mergeConfig));
   config.errorPage = config.errorPage ?? "/404.html";
 
   // Set up provider

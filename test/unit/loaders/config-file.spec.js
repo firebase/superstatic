@@ -77,6 +77,48 @@ describe("loading config files", () => {
     done();
   });
 
+  describe("mergeConfig: false", () => {
+    it("returns object as-is without merging with superstatic.json", async () => {
+      await fs.writeFile(
+        "superstatic.json",
+        '{"firebase": "superstatic", "public": "./"}',
+        "utf-8",
+      );
+
+      const config = loadConfigFile({ public: "app" }, false);
+
+      expect(config).to.eql({ public: "app" });
+
+      await fs.rm("superstatic.json");
+    });
+
+    it("returns object as-is without merging with firebase.json", async () => {
+      await fs.writeFile(
+        "firebase.json",
+        '{"firebase": "example", "public": "./"}',
+        "utf-8",
+      );
+
+      const config = loadConfigFile({ public: "app" }, false);
+
+      expect(config).to.eql({ public: "app" });
+
+      await fs.rm("firebase.json");
+    });
+
+    it("returns file config as-is when mergeConfig is false and config is a file path", async () => {
+      await fs.writeFile(
+        ".tmp/myconfig.json",
+        '{"public": "app"}',
+        "utf-8",
+      );
+
+      const config = loadConfigFile(".tmp/myconfig.json", false);
+
+      expect(config).to.eql({ public: "app" });
+    });
+  });
+
   describe("extends the file config with the object passed", () => {
     it("superstatic.json", async () => {
       await fs.writeFile(
