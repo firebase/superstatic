@@ -21,7 +21,6 @@
 
 const fs = require("fs");
 
-const join = require("join-path");
 const path = require("path");
 const { isPlainObject } = require("../utils/objectutils");
 
@@ -49,7 +48,7 @@ module.exports = function (filename) {
 
   if (Array.isArray(filename)) {
     filename = filename.find((name) => {
-      return fs.existsSync(join(process.cwd(), name));
+      return fs.existsSync(path.join(process.cwd(), name));
     });
   }
 
