@@ -28,7 +28,7 @@
     "templates"
   ],
   "engines": {
-    "node": "20 || 22 || 24"
+    "node": "22 || 24 || 26"
   },
   "repository": {
     "type": "git",
@@ -56,7 +56,6 @@
     "compression": "^1.7.0",
     "connect": "^3.7.0",
     "destroy": "^1.0.4",
-    "glob-slasher": "^1.0.1",
     "is-url": "^1.2.2",
     "mime-types": "^2.1.35",
     "minimatch": "^6.1.6",
@@ -89,7 +88,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.3.0",
     "mocha": "^11.7.2",
-    "nyc": "^17.0.0",
+    "nyc": "^18.0.0",
     "prettier": "^3.1.1",
     "rimraf": "^6.0.1",
     "sinon": "^17.0.1",
