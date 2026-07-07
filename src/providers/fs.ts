@@ -22,7 +22,7 @@
 import * as crypto from "node:crypto";
 import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
-const pathjoin = require("join-path");
+import * as path from "node:path";
 
 async function multiStat(
   paths: string[],
@@ -103,8 +103,7 @@ module.exports = function provider(options: any) {
     }
 
     const fullPathnames: string[] = publicPaths.map((p) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      pathjoin(cwd, p, pathname),
+      path.join(cwd as string, p, pathname),
     );
 
     try {

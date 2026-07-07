@@ -1,3 +1,4 @@
-- *Breaking:* removed support for Node 20.
-- added support for node 26.
+- *Breaking:* Removed support for Node 20.
+- Added support for node 26.
 - Replaces obsolete glob-slasher dependency with a local path/glob normalization utility.
+- Replaces join-path with native utilities.
