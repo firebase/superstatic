@@ -55,7 +55,7 @@ cli
   .action((folder, options) => {
     return new Promise((resolve) => {
       const app = server({
-        cwd: path.join(process.cwd(), folder),
+        cwd: path.join(process.cwd(), folder ?? ""),
         config: options.config,
         port: options.port,
         hostname: options.hostname,
