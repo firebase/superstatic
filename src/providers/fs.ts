@@ -103,8 +103,7 @@ module.exports = function provider(options: any) {
     }
 
     const fullPathnames: string[] = publicPaths.map((p) =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      path.join(cwd, p, pathname),
+      path.join(cwd as string, p, pathname),
     );
 
     try {
