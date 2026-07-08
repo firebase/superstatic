@@ -20,7 +20,7 @@
  */
 
 import { use, expect } from "chai";
-import * as chaiAsPromised from "chai-as-promised";
+import chaiAsPromised from "chai-as-promised";
 import * as path from "node:path";
 import * as fs from "node:fs";
 const concatStream = require("concat-stream");

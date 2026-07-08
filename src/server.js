@@ -37,12 +37,10 @@ module.exports = function (spec) {
   // Override method because port and host are given
   // in the spec object
   app.listen = function (done) {
-    let server = {};
-
     app.use(superstatic(spec));
 
     // Start server
-    server = listen(spec.port, spec.hostname ?? spec.host, done);
+    const server = listen(spec.port, spec.hostname ?? spec.host, done);
 
     return server;
   };

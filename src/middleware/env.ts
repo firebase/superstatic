@@ -51,12 +51,10 @@ export function env(spec: { env: Record<string, string> }) {
     next: () => void,
   ): void => {
     // const config = req.superstatic.env;
-    let env = undefined;
-    if (spec.env || req.superstatic.env) {
-      env = Object.assign({}, req.superstatic.env, spec.env);
-    } else {
+    if (!spec.env && !req.superstatic.env) {
       return next();
     }
+    const env = Object.assign({}, req.superstatic.env, spec.env);
 
     if (req.url === "/__/env.json") {
       res.superstatic.handleData({
