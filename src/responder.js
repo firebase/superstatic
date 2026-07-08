@@ -58,7 +58,6 @@ Responder.prototype.isNotModified = function (stats) {
 };
 
 Responder.prototype.handle = function (item, next) {
-  const self = this;
   return this._handle(item)
     .then((responded) => {
       if (!responded && next) {
@@ -67,7 +66,7 @@ Responder.prototype.handle = function (item, next) {
       return responded;
     })
     .catch((err) => {
-      return self.handleError(err);
+      return this.handleError(err);
     });
 };
 
@@ -104,10 +103,9 @@ Responder.prototype.handleError = function (err) {
 };
 
 Responder.prototype.handleStack = function (stack) {
-  const self = this;
   if (stack.length) {
     return this._handle(stack.shift()).then((responded) => {
-      return responded ? true : self.handleStack(stack);
+      return responded ? true : this.handleStack(stack);
     });
   }
 
@@ -115,23 +113,20 @@ Responder.prototype.handleStack = function (stack) {
 };
 
 Responder.prototype.handleFile = function (file) {
-  const self = this;
   return this.provider(this.req, file.file).then((result) => {
     if (!result) {
       return false;
     }
 
-    if (self.isNotModified(result)) {
-      return self.handleNotModified(result);
+    if (this.isNotModified(result)) {
+      return this.handleNotModified(result);
     }
 
-    return self.handleFileStream(file, result);
+    return this.handleFileStream(file, result);
   });
 };
 
 Responder.prototype.handleFileStream = function (file, result) {
-  const self = this;
-
   this.streamedFile = file;
   this.res.statusCode = file.status ?? 200;
   if (this.res.statusCode === 200 && file.file === this.config.errorPage) {
@@ -156,10 +151,10 @@ Responder.prototype.handleFileStream = function (file, result) {
 
   if (this.compressor) {
     this.compressor(this.req, this.res, () => {
-      result.stream.pipe(self.res);
+      result.stream.pipe(this.res);
     });
   } else {
-    result.stream.pipe(self.res);
+    result.stream.pipe(this.res);
   }
 
   return awaitFinished(this.res).then(() => {
@@ -186,24 +181,22 @@ Responder.prototype.handleRedirect = function (redirect) {
 };
 
 Responder.prototype.handleMiddleware = function (middleware) {
-  const self = this;
   return new Promise((resolve) => {
-    middleware(self.req, self.res, () => {
+    middleware(this.req, this.res, () => {
       resolve(false);
     });
   });
 };
 
 Responder.prototype.handleRewrite = function (item) {
-  const self = this;
   if (item.rewrite.destination) {
-    return self.handleFile({ file: item.rewrite.destination });
+    return this.handleFile({ file: item.rewrite.destination });
   }
 
   for (const key in this.rewriters) {
     if (item.rewrite[key]) {
       return this.rewriters[key](item.rewrite, this).then((result) => {
-        return self._handle(result);
+        return this._handle(result);
       });
     }
   }
