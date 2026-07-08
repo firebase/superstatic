@@ -60,7 +60,6 @@ export default [
   {
     files: ["**/*.js"],
     rules: {
-      "@typescript-eslint/no-this-alias": "warn", // TODO(bkendall): remove allow to error.
       "@typescript-eslint/no-unsafe-argument": "warn", // TODO(bkendall): remove allow to error.
       "@typescript-eslint/no-unsafe-assignment": "warn", // TODO(bkendall): remove allow to error.
       "@typescript-eslint/no-unsafe-call": "warn", // TODO(bkendall): remove allow to error.
