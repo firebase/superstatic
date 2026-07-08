@@ -20,13 +20,13 @@
  */
 
 import * as fs from "node:fs/promises";
-import * as request from "supertest";
-import * as connect from "connect";
+import request from "supertest";
+import connect from "connect";
 
 import * as helpers from "../../helpers";
-import * as rewritesPkg from "../../../src/middleware/rewrites";
+import rewritesPkg from "../../../src/middleware/rewrites";
 const fsProvider = require("../../../src/providers/fs");
-import * as Responder from "../../../src/responder";
+import Responder from "../../../src/responder";
 
 const rewrites = helpers.decorator(rewritesPkg);
 

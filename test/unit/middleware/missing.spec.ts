@@ -19,14 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import * as connect from "connect";
+import connect from "connect";
 import * as fs from "node:fs/promises";
-import * as request from "supertest";
+import request from "supertest";
 
 const fsProvider = require("../../../src/providers/fs");
 import * as helpers from "../../helpers";
-import * as missingModule from "../../../src/middleware/missing";
-import * as Responder from "../../../src/responder";
+import missingModule from "../../../src/middleware/missing";
+import Responder from "../../../src/responder";
 
 const missing = helpers.decorator(missingModule);
 

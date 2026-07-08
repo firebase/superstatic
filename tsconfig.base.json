@@ -4,6 +4,12 @@
     "declaration": true,
     "module": "commonjs",
     "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
+    "esModuleInterop": true,
+    "types": [
+      "mocha",
+      "node"
+    ],
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,

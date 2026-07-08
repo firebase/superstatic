@@ -43,7 +43,7 @@ function matcher(rewrites: Rewrite[]) {
  * Looks for possible rewrites for the given req.url.
  * @returns middleware for handling rewrites.
  */
-module.exports = function () {
+export = function () {
   return function (
     req: IncomingMessage & { superstatic: Configuration },
     res: ServerResponse & { superstatic: Responder },

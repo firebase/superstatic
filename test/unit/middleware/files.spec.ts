@@ -21,14 +21,14 @@
 
 import * as fs from "node:fs/promises";
 import { expect } from "chai";
-import * as request from "supertest";
-import * as connect from "connect";
+import request from "supertest";
+import connect from "connect";
 import { ServerResponse } from "node:http";
 
 import * as helpers from "../../helpers";
-import * as filesPkg from "../../../src/middleware/files";
+import filesPkg from "../../../src/middleware/files";
 const fsProvider = require("../../../src/providers/fs");
-import * as Responder from "../../../src/responder";
+import Responder from "../../../src/responder";
 
 const files = helpers.decorator(filesPkg);
 
