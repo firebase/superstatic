@@ -37,8 +37,6 @@ const Activator = function (spec, provider) {
 };
 
 Activator.prototype.buildStack = function () {
-  const self = this;
-
   const stack = this.spec.stack.slice(0);
   Object.entries(this.spec.before ?? {}).forEach(([name, wares]) => {
     stack.splice(...[stack.indexOf(name), 0].concat(wares));
@@ -49,19 +47,17 @@ Activator.prototype.buildStack = function () {
   });
 
   return stack.map((ware) => {
-    return typeof ware === "function" ? ware : middleware[ware](self.spec);
+    return typeof ware === "function" ? ware : middleware[ware](this.spec);
   });
 };
 
 Activator.prototype.build = function () {
-  const self = this;
-
-  return function (req, res, next) {
-    promiseback(self.awaitConfig, 2)(req, res).then((config) => {
+  return (req, res, next) => {
+    promiseback(this.awaitConfig, 2)(req, res).then((config) => {
       req.superstatic = config ?? {};
 
-      const stack = self.stack.slice(0).reverse();
-      const _run = function () {
+      const stack = this.stack.slice(0).reverse();
+      const _run = () => {
         if (!stack.length) {
           return next();
         }
