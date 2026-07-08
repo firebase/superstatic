@@ -15,7 +15,7 @@ caching, and many other goodies.
 * [Providers](#providers)
   * [Authoring Providers](#authoring-providers)
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/firebase/superstatic/blob/master/CHANGELOG.md)
+* [Changelog](https://github.com/firebase/superstatic/blob/main/CHANGELOG.md)
 * [Contributing](#contributing)
 
 ## Installation
@@ -199,7 +199,7 @@ app.listen(3000, function() {
 
 ### `superstatic([options])`
 
-Instantiates middleware. See an [example](https://github.com/firebase/superstatic/tree/master/examples) for detail on real world use.
+Instantiates middleware. See an [example](https://github.com/firebase/superstatic/tree/main/examples) for detail on real world use.
 
 * `options` - Optional configuration:
   * `fallthrough` - When `false`, render a 404 page from within Superstatic rather than calling through to the next middleware. Defaults to `true`.
@@ -230,7 +230,7 @@ Instantiates a Connect server, setting up Superstatic middleware, port, host, de
 * `options` - Optional configuration. Uses the same options as the middleware, plus a few more options:
   * `port` - The port of the server. Defaults to `3474`.
   * `host` or `hostname` - The hostname of the server. Defaults to `localhost`.
-  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/master/templates/not_found.html).
+  * `errorPage` - A file path to a custom error page. Defaults to [Superstatic's error page](https://github.com/firebase/superstatic/blob/main/templates/not_found.html).
   * `debug` - A boolean value that tells Superstatic to show or hide network logging in the console. Defaults to `false`.
   * `compression` - A boolean value that tells Superstatic to serve gzip/deflate compressed responses based on the request Accept-Encoding header and the response Content-Type header. Defaults to `false`.
   * `gzip` **[DEPRECATED]** - A boolean value which is now equivalent in behavior to `compression`. Defaults to `false`.
@@ -282,4 +282,4 @@ npm test
 
 ## Contributing
 
-We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/firebase/superstatic/blob/master/CONTRIBUTING.md) before you jump in and get your hands dirty.
+We LOVE open source and open source contributors. If you would like to contribute to Superstatic, please review our [contributing guidelines](https://github.com/firebase/superstatic/blob/main/CONTRIBUTING.md) before you jump in and get your hands dirty.
