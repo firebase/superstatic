@@ -15,7 +15,7 @@ caching, and many other goodies.
 * [Providers](#providers)
   * [Authoring Providers](#authoring-providers)
 * [Run Tests](#run-tests)
-* [Changelog](https://github.com/firebase/superstatic/blob/main/CHANGELOG.md)
+* [Changelog](https://github.com/firebase/superstatic/blob/main/changelog.txt)
 * [Contributing](#contributing)
 
 ## Installation
