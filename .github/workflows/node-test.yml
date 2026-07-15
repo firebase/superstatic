@@ -4,11 +4,16 @@ on:
   - pull_request
   - push
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   check-license:
+    name: Check License
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -21,6 +26,7 @@ jobs:
       - run: env bash -c 'addlicense --check -c "Google LLC" -l MIT src/**/* bin/* examples/**/*'
 
   test:
+    name: Run Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,6 +51,7 @@ jobs:
         continue-on-error: true
 
   check-package-lock:
+    name: Check Package Lock
     runs-on: ubuntu-latest
 
     steps:
