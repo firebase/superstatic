@@ -19,14 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const chai = require("chai");
-chai.use(require("chai-as-promised").default);
-const expect = chai.expect;
+import { use, expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+use(chaiAsPromised);
+
 const memoryProvider = require("../../../src/providers/memory");
 
 describe("memory provider", () => {
-  let store;
-  let provider;
+  let store: Record<string, string> | null = null;
+  let provider: any;
   beforeEach(() => {
     store = store ?? {};
     provider = memoryProvider({ store: store });
@@ -37,10 +38,13 @@ describe("memory provider", () => {
   });
 
   it("should return a stream of the content if found", (done) => {
+    if (!store) {
+      return done(new Error("store not initialized"));
+    }
     store["/index.html"] = "foobar";
-    provider({}, "/index.html").then((result) => {
+    provider({}, "/index.html").then((result: any) => {
       let out = "";
-      result.stream.on("data", (data) => {
+      result.stream.on("data", (data: any) => {
         out += data;
       });
       result.stream.on("end", () => {
@@ -51,6 +55,9 @@ describe("memory provider", () => {
   });
 
   it("should return an etag of the content", async () => {
+    if (!store) {
+      throw new Error("store not initialized");
+    }
     store["/a.html"] = "foo";
     store["/b.html"] = "bar";
     return Promise.resolve({
@@ -64,6 +71,9 @@ describe("memory provider", () => {
   });
 
   it("should return the length of content", () => {
+    if (!store) {
+      throw new Error("store not initialized");
+    }
     store["/index.html"] = "foobar";
     return expect(provider({}, "/index.html")).to.eventually.have.property(
       "size",

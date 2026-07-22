@@ -19,17 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { use, expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+import * as sinon from "sinon";
+import sinonChai from "sinon-chai";
+
 const Responder = require("../../src/responder");
-const chai = require("chai");
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
-const sinon = require("sinon");
-chai.use(require("chai-as-promised").default);
-chai.use(require("sinon-chai"));
-const expect = chai.expect;
+use(chaiAsPromised);
+use(sinonChai);
 
 describe("Responder", () => {
-  let responder;
+  let responder: any;
 
   describe("#handle", () => {
     beforeEach(() => {
@@ -103,19 +106,19 @@ describe("Responder", () => {
   });
 
   describe("#handleRewrite", () => {
-    it("should call through to a registered custom rewriter", () => {
-      let out;
+    it("should call through to a registered custom rewriter", async () => {
+      let out: any;
       responder = new Responder(
         {},
         {
           setHeader: noop,
-          end: function (data) {
+          end: function (data: any) {
             out = data;
           },
         },
         {
           rewriters: {
-            message: function (rewrite) {
+            message: function (rewrite: any) {
               return Promise.resolve({
                 data: rewrite.message,
                 contentType: "text/plain",
@@ -126,17 +129,16 @@ describe("Responder", () => {
         },
       );
 
-      return responder
-        .handleRewrite({ rewrite: { message: "hi" } })
-        .then((result) => {
-          expect(result).to.equal(true);
-          expect(out).to.equal("hi");
-        });
+      const result = await responder.handleRewrite({
+        rewrite: { message: "hi" },
+      });
+      expect(result).to.equal(true);
+      expect(out).to.equal("hi");
     });
   });
 
   describe("#handleMiddleware", () => {
-    let rq;
+    let rq: any;
     beforeEach(() => {
       rq = {};
       responder = new Responder(rq, { setHeader: noop, end: noop }, {});
@@ -148,21 +150,20 @@ describe("Responder", () => {
       });
     });
 
-    it("should resolve false if next is called", () => {
-      return responder
-        .handleMiddleware((req, res, next) => {
+    it("should resolve false if next is called", async () => {
+      const result = await responder.handleMiddleware(
+        (req: any, res: any, next: any) => {
           next();
-        })
-        .then((result) => {
-          expect(result).to.equal(false);
-        });
+        },
+      );
+      expect(result).to.equal(false);
     });
   });
 
   describe("#handleFile", () => {
     const req = {};
     const res = {};
-    let stub;
+    let stub: sinon.SinonStub;
 
     beforeEach(() => {
       stub = sinon.stub();
@@ -179,7 +180,7 @@ describe("Responder", () => {
   });
 
   describe("#isNotModified", () => {
-    let result;
+    let result: any;
 
     beforeEach(() => {
       responder = new Responder({ headers: {} }, {}, {});
