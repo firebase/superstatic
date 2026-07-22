@@ -1,5 +1,5 @@
 const { expect, use } = require("chai");
-use(require("chai-as-promised"));
+use(require("chai-as-promised").default);
 
 const promiseback = require("../../../src/utils/promiseback");
 

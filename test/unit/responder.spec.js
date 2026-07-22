@@ -24,7 +24,7 @@ const chai = require("chai");
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 const sinon = require("sinon");
-chai.use(require("chai-as-promised"));
+chai.use(require("chai-as-promised").default);
 chai.use(require("sinon-chai"));
 const expect = chai.expect;
 
