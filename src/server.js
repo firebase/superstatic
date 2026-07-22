@@ -25,7 +25,7 @@ const networkLogger = require("morgan");
 const superstatic = require("./superstatic");
 
 /**
- * @param {ServerOptions} spec superstatic options.
+ * @param {import("./options").ServerOptions} spec superstatic options.
  * @returns unknown
  */
 module.exports = function (spec) {

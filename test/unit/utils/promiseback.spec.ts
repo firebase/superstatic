@@ -1,12 +1,13 @@
-const { expect, use } = require("chai");
-use(require("chai-as-promised"));
+import { use, expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+use(chaiAsPromised);
 
 const promiseback = require("../../../src/utils/promiseback");
 
 describe("promiseback", () => {
   it("should resolve a promise if one is returned", () => {
     return expect(
-      promiseback((a1, a2) => {
+      promiseback((a1: any, a2: any) => {
         return Promise.resolve({
           a: a1,
           b: a2,
@@ -28,7 +29,7 @@ describe("promiseback", () => {
 
   it("should reject an errback if one is used and errors", () => {
     return expect(
-      promiseback((a1, a2, cb) => {
+      promiseback((a1: any, a2: any, cb: any) => {
         cb(a2);
       }, 2)("foo", "bar"),
     ).to.be.rejectedWith("bar");
@@ -36,7 +37,7 @@ describe("promiseback", () => {
 
   it("should resolve an errback if one is used and resolves", () => {
     return expect(
-      promiseback((a1, a2, cb) => {
+      promiseback((a1: any, a2: any, cb: any) => {
         cb(null, a2);
       }, 2)("foo", "bar"),
     );

@@ -34,8 +34,8 @@ const CWD = process.cwd();
 
 /**
  * Superstatic returns a router that can be used in a server.
- * @param {MiddlewareOptions} spec superstatic options.
- * @returns {HandleFunction} router handler.
+ * @param {import("./options").MiddlewareOptions} spec superstatic options.
+ * @returns {import("connect").HandleFunction} router handler.
  */
 const superstatic = function (spec = {}) {
   spec.stack ??= "default";
@@ -50,7 +50,7 @@ const superstatic = function (spec = {}) {
   const cwd = spec.cwd ?? CWD;
 
   // Load data
-  /** @type {Configuration} */
+  /** @type {import("./config").Configuration} */
   const config = (spec.config = loadConfigFile(spec.config));
   config.errorPage = config.errorPage ?? "/404.html";
 
