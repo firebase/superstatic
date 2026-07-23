@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/chai": "^4.3.3",
+    "@types/chai": "^5.2.0",
     "@types/chai-as-promised": "^8.0.2",
     "@types/connect": "^3.4.35",
     "@types/mime-types": "^2.1.1",
@@ -94,7 +94,7 @@
     "prettier": "^3.9.4",
     "rimraf": "^6.0.1",
     "sinon": "^17.0.1",
-    "sinon-chai": "^3.7.0",
+    "sinon-chai": "^4.0.0",
     "source-map-support": "^0.5.21",
     "std-mocks": "^2.0.0",
     "supertest": "^7.0.0",
