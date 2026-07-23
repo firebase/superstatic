@@ -31,3 +31,4 @@ firebase.json
 superstatic.json
 
 lib
+tsconfig.publish.tsbuildinfo
