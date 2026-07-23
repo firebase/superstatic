@@ -15,7 +15,9 @@
     "test-integration": "mocha \"test/integration/**\"",
     "lint": "eslint",
     "coverage": "nyc mocha \"test/unit/**\" \"test/integration/**\"",
-    "watch": "mocha -w \"test/unit/**\" \"test/integration/**\""
+    "watch": "mocha -w \"test/unit/**\" \"test/integration/**\"",
+    "license:check": "addlicense -check -c \"Google LLC\" -l MIT src examples",
+    "license:add": "addlicense -c \"Google LLC\" -l MIT src examples"
   },
   "author": "Firebase (https://www.firebase.com/)",
   "license": "MIT",
