@@ -81,7 +81,7 @@
     "@types/node": "^26.1.1",
     "@types/sinon": "^22.0.0",
     "@types/sinon-chai": "^4.0.0",
-    "@types/supertest": "^6.0.2",
+    "@types/supertest": "^7.2.1",
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
     "concat-stream": "^2.0.0",
