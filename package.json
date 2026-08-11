@@ -107,5 +107,8 @@
   "overrides": {
     "diff": "8.0.4",
     "serialize-javascript": "7.0.7"
+  },
+  "allowScripts": {
+    "re2@1.26.1": true
   }
 }
