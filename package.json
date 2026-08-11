@@ -69,7 +69,7 @@
     "update-notifier-cjs": "^5.1.6"
   },
   "optionalDependencies": {
-    "re2": "^1.17.7"
+    "re2": "^1.26.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
