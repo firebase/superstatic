@@ -25,6 +25,7 @@ import { Configuration } from "./config";
 
 export interface MiddlewareOptions {
   fallthrough?: boolean;
+  mergeConfig?: boolean;
   config?: string | Configuration;
   protect?: string;
   env?: string | Record<string, string>;
