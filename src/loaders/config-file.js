@@ -26,12 +26,13 @@ const { isPlainObject } = require("../utils/objectutils");
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
 
-module.exports = function (filename) {
+module.exports = function (filename, autoConfig = true) {
+  const defaultFiles = autoConfig ? CONFIG_FILE : [];
   if (typeof filename === "function") {
     return filename;
   }
 
-  filename = filename ?? CONFIG_FILE;
+  filename = filename ?? defaultFiles;
 
   let configObject = {};
   let config = {};
@@ -42,7 +43,7 @@ module.exports = function (filename) {
   } catch {
     if (isPlainObject(filename)) {
       configObject = filename;
-      filename = CONFIG_FILE;
+      filename = defaultFiles;
     }
   }
 
@@ -55,7 +56,7 @@ module.exports = function (filename) {
   // Set back to default config file if stringified object is
   // given as config. With this, we override values in the config file
   if (isPlainObject(filename)) {
-    filename = CONFIG_FILE;
+    filename = defaultFiles;
   }
 
   // A file name or array of file names
