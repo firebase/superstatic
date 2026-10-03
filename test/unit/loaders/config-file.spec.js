@@ -120,7 +120,7 @@ describe("loading config files", () => {
       await fs.rm("firebase.json");
     });
   });
-  describe("without automatic config discovery", () => {
+  describe("automatic config discovery", () => {
     let originalCwd;
 
     beforeEach(() => {
@@ -145,6 +145,11 @@ describe("loading config files", () => {
         expect(loadConfigFile({ public: "app" }, false)).to.eql({
           public: "app",
         });
+        expect(loadConfigFile(JSON.stringify({ public: "app" }), false)).to.eql(
+          {
+            public: "app",
+          },
+        );
         expect(loadConfigFile({}, false)).to.eql({});
         expect(loadConfigFile(undefined, false)).to.eql({});
       });
@@ -162,6 +167,25 @@ describe("loading config files", () => {
           );
 
           expect(loadConfigFile({ public: "app" }, autoConfig)).to.eql({
+            public: "app",
+            cleanUrls: true,
+          });
+        });
+
+        it(`merges a stringified object with ${filename} when autoConfig is ${autoConfig}`, async () => {
+          const fileConfig = { public: "default", cleanUrls: true };
+          await fs.writeFile(
+            filename,
+            JSON.stringify(
+              filename === "firebase.json"
+                ? { hosting: fileConfig }
+                : fileConfig,
+            ),
+          );
+
+          expect(
+            loadConfigFile(JSON.stringify({ public: "app" }), autoConfig),
+          ).to.eql({
             public: "app",
             cleanUrls: true,
           });

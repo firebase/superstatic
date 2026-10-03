@@ -40,6 +40,9 @@ module.exports = function (filename, autoConfig = true) {
   // From custom config data passed in
   try {
     configObject = JSON.parse(filename);
+    if (isPlainObject(configObject)) {
+      filename = defaultFiles;
+    }
   } catch {
     if (isPlainObject(filename)) {
       configObject = filename;
@@ -51,12 +54,6 @@ module.exports = function (filename, autoConfig = true) {
     filename = filename.find((name) => {
       return fs.existsSync(path.join(process.cwd(), name));
     });
-  }
-
-  // Set back to default config file if stringified object is
-  // given as config. With this, we override values in the config file
-  if (isPlainObject(filename)) {
-    filename = defaultFiles;
   }
 
   // A file name or array of file names
