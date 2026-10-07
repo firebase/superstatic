@@ -102,7 +102,7 @@ describe("serves", () => {
       .get("/app.js")
       .expect(200)
       .expect('console.log("js")')
-      .expect("Content-Type", "application/javascript; charset=utf-8");
+      .expect("Content-Type", "text/javascript; charset=utf-8");
   });
 
   it("from custom current working directory", async () => {
@@ -252,7 +252,7 @@ describe("serves", () => {
       await request(app)
         .get("/__/env.js")
         .expect(200)
-        .expect("Content-Type", "application/javascript; charset=utf-8");
+        .expect("Content-Type", "text/javascript; charset=utf-8");
     });
 
     it("defaults to .env.json", async () => {

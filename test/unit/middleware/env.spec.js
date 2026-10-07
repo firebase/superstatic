@@ -69,7 +69,7 @@ describe("env", () => {
     void request(app)
       .get("/__/env.js")
       .expect(200)
-      .expect("content-type", "application/javascript; charset=utf-8")
+      .expect("content-type", "text/javascript; charset=utf-8")
       .end(done);
   });
 });
