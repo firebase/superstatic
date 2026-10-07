@@ -203,7 +203,8 @@ Instantiates middleware. See an [example](https://github.com/firebase/superstati
 
 * `options` - Optional configuration:
   * `fallthrough` - When `false`, render a 404 page from within Superstatic rather than calling through to the next middleware. Defaults to `true`.
-  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration. If an object is provided, it will be merged into existing config in a `superstatic.json`.
+  * `config` - A file path to your application's configuration file (see [Configuration](#configuration)) or an object containing your application's configuration. If an object is provided, it will be merged into existing config in `superstatic.json` or `firebase.json`.
+  * `autoConfig` - When `false`, skip discovery of `superstatic.json` and `firebase.json`. Use this with a `config` object to avoid inheriting headers, rewrites, or other settings from those files. An explicit file path in `config` is still loaded. Defaults to `true`.
   * `protect` - Adds HTTP basic auth. Example:  `username:password`
   * `env`- A file path your application's environment variables file or an object containing values that are made available at the urls `/__/env.json` and `/__/env.js`. See the documentation detail on [environment variables](http://docs.firebase.com/guides/environment-variables).
   * `cwd` - The current working directory to set as the root. Your application's `public` configuration option will be used relative to this.
