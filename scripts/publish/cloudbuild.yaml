@@ -55,13 +55,15 @@ steps:
         echo "Building release artifacts (npm run prepare)..."
         npm run prepare
 
-        echo "Configuring .npmrc for OSS Exit Gate Artifact Registry..."
-        echo "registry=https://us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/" > .npmrc
-        echo "//us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/:always-auth=true" >> .npmrc
-        trap 'rm -f .npmrc' EXIT
+        echo "Configuring ~/.npmrc for OSS Exit Gate Artifact Registry..."
+        echo "registry=https://us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/" > "${HOME}/.npmrc"
+        echo "//us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/:always-auth=true" >> "${HOME}/.npmrc"
+        trap 'rm -f "${HOME}/.npmrc"' EXIT
 
         echo "Authenticating with OSS Exit Gate Artifact Registry..."
-        npx --yes google-artifactregistry-auth
+        npm_config_registry=https://registry.npmjs.org npx --yes google-artifactregistry-auth \
+          --repo-config="${HOME}/.npmrc" \
+          --credential-config="${HOME}/.npmrc"
 
         echo "Staging superstatic@${_VERSION} to Artifact Registry..."
         npm publish
