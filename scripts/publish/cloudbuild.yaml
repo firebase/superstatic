@@ -65,13 +65,14 @@ steps:
           --repo-config=./.npmrc \
           --credential-config=./.npmrc
 
-        echo "Staging superstatic@${_VERSION} to Artifact Registry..."
-        npm publish
+        echo "Staging superstatic@${_VERSION} (tag: ${_NPM_TAG}) to Artifact Registry..."
+        npm publish --tag="${_NPM_TAG}"
         echo "Successfully staged superstatic@${_VERSION} in Artifact Registry."
 
 timeout: 900s
 
 substitutions:
   _VERSION: ""
+  _NPM_TAG: "latest"
   _BRANCH: "main"
   _COMMIT_SHA: ""

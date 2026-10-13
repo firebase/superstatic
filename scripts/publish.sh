@@ -125,7 +125,7 @@ echo "==> Step 1/4: Cloning '${TARGET_BRANCH}' (${REMOTE_SHA}), testing, and sta
 gcloud --project="${GCP_PROJECT}" builds submit \
   --no-source \
   --config=scripts/publish/cloudbuild.yaml \
-  --substitutions="_VERSION=${NEW_VERSION},_BRANCH=${TARGET_BRANCH},_COMMIT_SHA=${REMOTE_SHA}"
+  --substitutions="_VERSION=${NEW_VERSION},_NPM_TAG=${NPM_TAG},_BRANCH=${TARGET_BRANCH},_COMMIT_SHA=${REMOTE_SHA}"
 
 echo "==> Step 2/4: Uploading manifest to GCS to trigger OSS Exit Gate release..."
 MANIFEST_FILE="${TEMP_DIR}/publish_manifest.json"
