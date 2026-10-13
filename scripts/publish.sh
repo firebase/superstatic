@@ -162,7 +162,7 @@ echo "==> Step 3/4: Waiting for superstatic@${NEW_VERSION} to propagate to https
 TIMEOUT=1200
 ELAPSED=0
 INTERVAL=15
-until npm view "superstatic@${NEW_VERSION}" version --registry=https://registry.npmjs.org 2>/dev/null | grep -qx "${NEW_VERSION}"; do
+until [[ "$(npm view "superstatic@${NEW_VERSION}" version --registry=https://registry.npmjs.org 2>/dev/null)" == "${NEW_VERSION}" ]]; do
   if [[ ${ELAPSED} -ge ${TIMEOUT} ]]; then
     echo "Error: Timed out after ${ELAPSED}s waiting for superstatic@${NEW_VERSION} on npm." >&2
     echo "Check the OSS Exit Gate notification emails to firebase-hosting-team@google.com for pipeline logs." >&2
@@ -198,8 +198,8 @@ git tag -a "v${NEW_VERSION}" -m "v${NEW_VERSION}"
 git add "${CHANGELOG_FILE}"
 git commit -m "[firebase-release] Removed change log and reset repo after ${NEW_VERSION} release"
 
-echo "==> Pushing commits and tags to origin/main..."
-git push origin main --tags
+echo "==> Pushing commits and tag v${NEW_VERSION} to origin/main..."
+git push origin main "v${NEW_VERSION}"
 
 echo "==> Creating draft GitHub release v${NEW_VERSION}..."
 gh release create "v${NEW_VERSION}" \

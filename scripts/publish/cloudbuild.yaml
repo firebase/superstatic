@@ -56,10 +56,8 @@ steps:
         npm run prepare
 
         echo "Configuring .npmrc for OSS Exit Gate Artifact Registry..."
-        cat <<'EOF' > .npmrc
-        registry=https://us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/
-        //us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/:always-auth=true
-        EOF
+        echo "registry=https://us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/" > .npmrc
+        echo "//us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/:always-auth=true" >> .npmrc
         trap 'rm -f .npmrc' EXIT
 
         echo "Authenticating with OSS Exit Gate Artifact Registry..."
