@@ -154,6 +154,7 @@ cat "${MANIFEST_FILE}"
 
 gcloud storage cp \
   --impersonate-service-account="${BUILDER_SA}" \
+  --billing-project=LEGACY \
   "${MANIFEST_FILE}" \
   "${EXIT_GATE_GCS_MANIFEST}"
 echo "==> Manifest uploaded to ${EXIT_GATE_GCS_MANIFEST}; OSS Exit Gate release triggered."
