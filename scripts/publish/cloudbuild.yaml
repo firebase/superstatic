@@ -1,0 +1,77 @@
+# Runs on GCP project: fir-tools-builds
+# Triggered by: ./scripts/publish.sh <patch|minor|major|preview> [branch]
+serviceAccount: "projects/${PROJECT_ID}/serviceAccounts/superstatic-builder@${PROJECT_ID}.iam.gserviceaccount.com"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # 1. Clean any stale/abandoned artifacts in OSS Exit Gate Artifact Registry
+  #    (recommended by go/oss-exit-gate-faq#delete-ar-artifacts when using publish_all: true).
+  - id: "clean-ar"
+    name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -euo pipefail
+        echo "Cleaning up any stale superstatic packages in OSS Exit Gate Artifact Registry..."
+        gcloud artifacts packages delete superstatic \
+          --project=oss-exit-gate-prod \
+          --repository=superstatic--npm \
+          --location=us \
+          --quiet || echo "No existing superstatic package in AR to clean up."
+
+  # 2. Clone firebase/superstatic at the target branch & commit, bump version,
+  #    install dependencies, run tests, build TypeScript, and stage to OSS Exit Gate AR.
+  - id: "clone-build-test-stage-ar"
+    name: "node:24"
+    waitFor: ["clean-ar"]
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -euo pipefail
+        npm i --global npm@^11.7.0
+
+        echo "Cloning https://github.com/firebase/superstatic.git (branch: ${_BRANCH})..."
+        git clone --branch "${_BRANCH}" --single-branch https://github.com/firebase/superstatic.git /workspace/superstatic
+        cd /workspace/superstatic
+
+        if [[ -n "${_COMMIT_SHA}" ]]; then
+          echo "Checking out verified commit ${_COMMIT_SHA}..."
+          git checkout --detach "${_COMMIT_SHA}"
+        fi
+
+        echo "Setting package version to ${_VERSION}..."
+        npm version "${_VERSION}" --no-git-tag-version --allow-same-version
+
+        echo "Installing dependencies from public npm..."
+        npm ci
+
+        echo "Checking license headers and running tests..."
+        npm test
+
+        echo "Building release artifacts (npm run prepare)..."
+        npm run prepare
+
+        echo "Configuring .npmrc for OSS Exit Gate Artifact Registry..."
+        cat <<'EOF' > .npmrc
+        registry=https://us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/
+        //us-npm.pkg.dev/oss-exit-gate-prod/superstatic--npm/:always-auth=true
+        EOF
+        trap 'rm -f .npmrc' EXIT
+
+        echo "Authenticating with OSS Exit Gate Artifact Registry..."
+        npx --yes google-artifactregistry-auth
+
+        echo "Staging superstatic@${_VERSION} to Artifact Registry..."
+        npm publish
+        echo "Successfully staged superstatic@${_VERSION} in Artifact Registry."
+
+timeout: 900s
+
+substitutions:
+  _VERSION: ""
+  _BRANCH: "main"
+  _COMMIT_SHA: ""

@@ -32,3 +32,4 @@ superstatic.json
 
 lib
 tsconfig.publish.tsbuildinfo
+.npmrc
