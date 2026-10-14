@@ -22,7 +22,7 @@
   "author": "Firebase (https://www.firebase.com/)",
   "license": "MIT",
   "bin": {
-    "superstatic": "./lib/bin/server.js"
+    "superstatic": "lib/bin/server.js"
   },
   "files": [
     "bin",
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/firebase/superstatic.git"
+    "url": "git+https://github.com/firebase/superstatic.git"
   },
   "bugs": {
     "url": "https://github.com/firebase/superstatic/issues"
