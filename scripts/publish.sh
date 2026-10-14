@@ -152,7 +152,8 @@ fi
 echo "Generated OSS Exit Gate manifest:"
 cat "${MANIFEST_FILE}"
 
-gcloud storage cp \
+CLOUDSDK_STORAGE_PROCESS_COUNT=1 CLOUDSDK_STORAGE_THREAD_COUNT=1 \
+  gcloud storage cp \
   --impersonate-service-account="${BUILDER_SA}" \
   --billing-project=LEGACY \
   "${MANIFEST_FILE}" \
