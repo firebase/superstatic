@@ -1,1 +1,1 @@
-
+- Updates a number of dependencies.
