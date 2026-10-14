@@ -181,7 +181,7 @@ if [[ "${VERSION}" == "preview" ]]; then
   exit 0
 fi
 
-echo "==> Step 4/4: Committing version bump, tagging, resetting ${CHANGELOG_FILE}, and creating draft GitHub release..."
+echo "==> Step 4/4: Committing version bump, tagging, resetting ${CHANGELOG_FILE}, and creating GitHub release..."
 RELEASE_NOTES_FILE="${TEMP_DIR}/release_notes.txt"
 {
   echo "v${NEW_VERSION}"
@@ -203,12 +203,11 @@ git commit -m "[firebase-release] Removed change log and reset repo after ${NEW_
 echo "==> Pushing commits and tag v${NEW_VERSION} to origin/main..."
 git push origin main "v${NEW_VERSION}"
 
-echo "==> Creating draft GitHub release v${NEW_VERSION}..."
+echo "==> Creating GitHub release v${NEW_VERSION}..."
 gh release create "v${NEW_VERSION}" \
   --repo firebase/superstatic \
-  --draft \
   --title "v${NEW_VERSION}" \
   --notes-file "${RELEASE_NOTES_FILE}"
 
-echo "==> Done! Review and publish the draft GitHub release at:"
-echo "    https://github.com/firebase/superstatic/releases"
+echo "==> Done! GitHub release published at:"
+echo "    https://github.com/firebase/superstatic/releases/tag/v${NEW_VERSION}"
