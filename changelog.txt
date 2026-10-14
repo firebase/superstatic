@@ -1,2 +1,0 @@
-- Updates a number of dependencies.
-- Cleans up package.json warnings.
