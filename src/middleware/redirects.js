@@ -34,12 +34,10 @@ function formatExternalUrl(u) {
 }
 
 function addQuery(url, qs) {
-  if (url.indexOf("?") >= 0) {
-    return url + "&" + qs;
-  } else if (qs?.length) {
-    return url + "?" + qs;
+  if (!qs?.length) {
+    return url;
   }
-  return url;
+  return url.indexOf("?") >= 0 ? url + "&" + qs : url + "?" + qs;
 }
 
 const Redirect = function (glob, regex, destination, type) {
@@ -48,7 +46,7 @@ const Redirect = function (glob, regex, destination, type) {
   this.regex = regex;
   this.destination = destination;
 
-  if (this.destination.match(/(?:^|\/):/)) {
+  if (this.destination.match(/(?:^|\/|[?&=]):/)) {
     this.captureKeys = [];
     if (this.glob) {
       this.engine = "glob";
