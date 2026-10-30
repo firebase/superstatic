@@ -1,12 +1,14 @@
-const { expect, use } = require("chai");
-use(require("chai-as-promised"));
+import { expect, use } from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import promiseback = require("../../../src/utils/promiseback");
 
-const promiseback = require("../../../src/utils/promiseback");
+use(chaiAsPromised);
 
 describe("promiseback", () => {
   it("should resolve a promise if one is returned", () => {
     return expect(
-      promiseback((a1, a2) => {
+      promiseback((a1: string, a2: string) => {
         return Promise.resolve({
           a: a1,
           b: a2,
@@ -20,7 +22,7 @@ describe("promiseback", () => {
 
   it("should reject a promise if one is rejected", () => {
     return expect(
-      promiseback(() => {
+      promiseback<[string, string], never>(() => {
         return Promise.reject(new Error("broken"));
       }, 2)("foo", "bar"),
     ).to.be.rejectedWith("broken");
@@ -28,17 +30,23 @@ describe("promiseback", () => {
 
   it("should reject an errback if one is used and errors", () => {
     return expect(
-      promiseback((a1, a2, cb) => {
-        cb(a2);
-      }, 2)("foo", "bar"),
+      promiseback(
+        (a1: string, a2: string, cb: (err: unknown, res?: unknown) => void) => {
+          cb(a2);
+        },
+        2,
+      )("foo", "bar"),
     ).to.be.rejectedWith("bar");
   });
 
   it("should resolve an errback if one is used and resolves", () => {
     return expect(
-      promiseback((a1, a2, cb) => {
-        cb(null, a2);
-      }, 2)("foo", "bar"),
-    );
+      promiseback(
+        (a1: string, a2: string, cb: (err: unknown, res?: string) => void) => {
+          cb(null, a2);
+        },
+        2,
+      )("foo", "bar"),
+    ).to.eventually.eq("bar");
   });
 });

@@ -57,7 +57,7 @@ Activator.prototype.build = function () {
   const self = this;
 
   return function (req, res, next) {
-    promiseback(self.awaitConfig, 2)(req, res).then((config) => {
+    void promiseback(self.awaitConfig, 2)(req, res).then((config) => {
       req.superstatic = config ?? {};
 
       const stack = self.stack.slice(0).reverse();
