@@ -153,6 +153,45 @@ describe("cors middleware", () => {
       });
   });
 
+  it("ignores malformed header entries without a key when allowedHeaders is set", async () => {
+    const app = connect()
+      .use(
+        headers(
+          {
+            headers: [
+              {
+                source: "/malformed",
+                headers: [
+                  {} as Header["headers"][number],
+                  { key: "X-Allowed", value: "yes" },
+                ],
+              },
+            ],
+          },
+          { allowedHeaders: ["x-allowed"] },
+        ),
+      )
+      .use(okay);
+
+    await request(app).get("/malformed").expect(200).expect("X-Allowed", "yes");
+  });
+
+  it("extracts pathname from query strings and leading double slashes", async () => {
+    const app = connect()
+      .use(headers({ headers: defaultHeaders }))
+      .use(okay);
+
+    await request(app)
+      .get("/test1?foo=bar")
+      .expect(200)
+      .expect("Content-Type", "mime/type");
+
+    await request(app)
+      .get("//test1")
+      .expect(200)
+      .expect("Content-Type", "mime/type");
+  });
+
   it("normalizes sources without a leading slash", async () => {
     const app = connect()
       .use(

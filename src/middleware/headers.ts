@@ -21,10 +21,9 @@
 
 import connect from "connect";
 import { ServerResponse } from "node:http";
-import * as urlParser from "node:url";
 import onHeaders from "on-headers";
 
-import { Configuration, Header, Matcher } from "../config";
+import { Configuration, Header } from "../config";
 import { SuperstaticRequest, SuperstaticResponse } from "../options";
 import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
@@ -48,26 +47,19 @@ function normalizedConfigHeaders(
   return config.map((entry) => {
     const rawHeaders = Array.isArray(entry.headers) ? entry.headers : [];
     const filteredHeaders = allowedHeaders
-      ? rawHeaders.filter((headerToSet) =>
-          allowedHeaders.includes(headerToSet.key.toLowerCase()),
+      ? rawHeaders.filter(
+          (headerToSet) =>
+            Boolean(headerToSet?.key) &&
+            allowedHeaders.includes(headerToSet.key.toLowerCase()),
         )
       : rawHeaders;
 
-    if (typeof entry.source === "string") {
-      const matcherConfig: Matcher = {
-        ...entry,
-        source: slashPath(entry.source),
-      };
-      return {
-        ...matcherConfig,
-        headers: filteredHeaders,
-      };
-    }
-
-    const matcherConfig: Matcher = { ...entry };
     return {
-      ...matcherConfig,
+      ...entry,
       headers: filteredHeaders,
+      ...(typeof entry.source === "string"
+        ? { source: slashPath(entry.source) }
+        : {}),
     };
   });
 }
@@ -78,6 +70,18 @@ function matcher(configHeaders: Header[]): (url: string) => HeaderValue[] {
       .filter((configHeader) => patterns.configMatcher(url, configHeader))
       .flatMap((val) => val.headers);
   };
+}
+
+function extractPathname(url?: string): string {
+  const rawUrl = url ?? "/";
+  const normalizedUrl = rawUrl.startsWith("//")
+    ? rawUrl.replace(/^\/+/, "/")
+    : rawUrl;
+  try {
+    return new URL(normalizedUrl, "http://localhost").pathname;
+  } catch {
+    return normalizedUrl.split(/[?#]/, 1)[0] || "/";
+  }
 }
 
 /**
@@ -105,7 +109,7 @@ function headers(
     }
 
     const headerMatcher = matcher(normalizedConfigHeaders(spec, config));
-    const pathname = urlParser.parse(req.url ?? "").pathname ?? "/";
+    const pathname = extractPathname(req.url);
     const matches = headerMatcher(slashPath(pathname));
 
     onHeaders(res, () => {
