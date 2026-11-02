@@ -19,13 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("node:fs/promises");
-const expect = require("chai").expect;
+import * as fs from "node:fs/promises";
+import { expect } from "chai";
 
-const loadConfigFile = require("../../../src/loaders/config-file");
+import loadConfigFile from "../../../src/loaders/config-file";
 
 describe("loading config files", () => {
   beforeEach(async () => {
+    await fs.rm(".tmp", { recursive: true, force: true });
     await fs.mkdir(".tmp");
     await fs.writeFile(".tmp/file.json", '{"key": "value"}', "utf-8");
     await fs.writeFile(
@@ -42,31 +43,29 @@ describe("loading config files", () => {
     await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("filename", (done) => {
+  it("filename", () => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
       key: "value",
     });
-    done();
   });
 
-  it("loads first existing file in array", (done) => {
+  it("loads first existing file in array", () => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
       key: "value",
     });
-    done();
   });
 
-  it("empty object for when no file", (done) => {
+  it("empty object for when no file", () => {
     const data = loadConfigFile(".tmp/nope.json");
+
     expect(data).to.eql({});
-    done();
   });
 
-  it("loads object as config", (done) => {
+  it("loads object as config", () => {
     const config = loadConfigFile({
       my: "data",
     });
@@ -74,7 +73,46 @@ describe("loading config files", () => {
     expect(config).to.eql({
       my: "data",
     });
-    done();
+  });
+
+  it("returns a config loader function unchanged", () => {
+    const loader = () => ({ public: "app" });
+
+    expect(loadConfigFile(loader)).to.equal(loader);
+  });
+
+  it("parses a JSON string as config", () => {
+    const config = loadConfigFile('{"public": "app"}');
+
+    expect(config).to.eql({
+      public: "app",
+    });
+  });
+
+  it("extracts the hosting property when present in JSON file", async () => {
+    await fs.writeFile(
+      ".tmp/firebase-hosting.json",
+      JSON.stringify({
+        hosting: {
+          public: "dist",
+        },
+      }),
+      "utf-8",
+    );
+
+    const config = loadConfigFile(".tmp/firebase-hosting.json");
+
+    expect(config).to.eql({
+      public: "dist",
+    });
+  });
+
+  it("returns an empty object when a JSON file is malformed", async () => {
+    await fs.writeFile(".tmp/invalid.json", "{not valid json", "utf-8");
+
+    const config = loadConfigFile(".tmp/invalid.json");
+
+    expect(config).to.eql({});
   });
 
   describe("extends the file config with the object passed", () => {
@@ -85,18 +123,20 @@ describe("loading config files", () => {
         "utf-8",
       );
 
-      const config = loadConfigFile({
-        override: "test",
-        public: "app",
-      });
+      try {
+        const config = loadConfigFile({
+          override: "test",
+          public: "app",
+        });
 
-      expect(config).to.eql({
-        firebase: "superstatic",
-        override: "test",
-        public: "app",
-      });
-
-      await fs.rm("superstatic.json");
+        expect(config).to.eql({
+          firebase: "superstatic",
+          override: "test",
+          public: "app",
+        });
+      } finally {
+        await fs.rm("superstatic.json", { force: true });
+      }
     });
 
     it("firebase.json", async () => {
@@ -106,18 +146,20 @@ describe("loading config files", () => {
         "utf-8",
       );
 
-      const config = loadConfigFile({
-        override: "test",
-        public: "app",
-      });
+      try {
+        const config = loadConfigFile({
+          override: "test",
+          public: "app",
+        });
 
-      expect(config).to.eql({
-        firebase: "example",
-        override: "test",
-        public: "app",
-      });
-
-      await fs.rm("firebase.json");
+        expect(config).to.eql({
+          firebase: "example",
+          override: "test",
+          public: "app",
+        });
+      } finally {
+        await fs.rm("firebase.json", { force: true });
+      }
     });
   });
 });
