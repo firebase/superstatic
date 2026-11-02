@@ -19,19 +19,47 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs");
+import connect from "connect";
+import * as fs from "node:fs";
 
-const setHeaders = require("./headers");
-const { i18nContentOptions } = require("../utils/i18n");
+import { Configuration } from "../config";
+import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import { i18nContentOptions } from "../utils/i18n";
+import setHeaders from "./headers";
 
-module.exports = function (spec) {
-  let defaultErrorContent = undefined;
+type ErrorHandle =
+  { file: string; status: number } | { data: string; status: number };
+
+/**
+ * Returns middleware for serving 404 error pages.
+ * @param spec superstatic options.
+ * @param spec.errorPage optional fallback error page file path on disk.
+ * @param spec.allowedHeaders optional allowlist of lowercase header names.
+ * @param spec.provider optional provider instance.
+ * @returns middleware.
+ */
+function missing(
+  spec: {
+    errorPage?: string;
+    allowedHeaders?: string[];
+    provider?: unknown;
+  } = {},
+): (
+  req: SuperstaticRequest,
+  res: SuperstaticResponse,
+  next: connect.NextFunction,
+) => void {
+  let defaultErrorContent: string | undefined;
   if (spec.errorPage) {
     defaultErrorContent = fs.readFileSync(spec.errorPage, "utf8");
   }
 
-  return function (req, res, next) {
-    const config = req.superstatic;
+  return function (
+    req: SuperstaticRequest,
+    res: SuperstaticResponse,
+    next: connect.NextFunction,
+  ): void {
+    const config: Configuration = req.superstatic ?? {};
     const errorPage = config.errorPage ?? "/404.html";
 
     setHeaders(spec)(
@@ -41,8 +69,8 @@ module.exports = function (spec) {
       },
       res,
       () => {
-        const handles = [];
-        const i18n = req.superstatic.i18n;
+        const handles: ErrorHandle[] = [];
+        const i18n = config.i18n;
         // To handle i18n, we will try to resolve i18n paths first.
         if (i18n?.root) {
           const paths = i18nContentOptions(errorPage, req);
@@ -58,4 +86,6 @@ module.exports = function (spec) {
       },
     );
   };
-};
+}
+
+export = missing;

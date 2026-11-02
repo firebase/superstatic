@@ -19,14 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { expect } from "chai";
 import connect from "connect";
 import * as fs from "node:fs/promises";
+import { ServerResponse } from "node:http";
+import { createRequire } from "node:module";
 import request from "supertest";
 
-const fsProvider = require("../../../src/providers/fs");
-import * as helpers from "../../helpers";
 import missingModule from "../../../src/middleware/missing";
+import { SuperstaticRequest } from "../../../src/options";
 import Responder from "../../../src/responder";
+import * as helpers from "../../helpers";
+
+type ProviderFactory = (options: { public: string }) => unknown;
+type ResponderConstructor = new (
+  req: connect.IncomingMessage,
+  res: ServerResponse,
+  options: { provider: unknown },
+) => Responder;
+
+const requireModule: (id: string) => unknown = createRequire(__filename);
+const fsProvider = requireModule(
+  "../../../src/providers/fs",
+) as ProviderFactory;
+const ResponderClass = Responder as unknown as ResponderConstructor;
 
 const missing = helpers.decorator(missingModule);
 
@@ -37,27 +53,93 @@ describe("custom not found", () => {
   let app: connect.Server;
 
   beforeEach(async () => {
-    await fs.mkdir(".tmp");
+    await fs.mkdir(".tmp", { recursive: true });
     await fs.writeFile(".tmp/not-found.html", "custom not found file");
 
     app = connect().use(
       (
         req: connect.IncomingMessage,
-        res: any, // TODO(bkendall): extend http.ServerResponse.
+        res: ServerResponse & { superstatic?: Responder },
         next: connect.NextFunction,
       ): void => {
-        res.superstatic = new Responder(req, res, { provider: provider });
+        res.superstatic = new ResponderClass(req, res, { provider });
         next();
       },
     );
   });
 
   afterEach(async () => {
-    await fs.rm(".tmp", { recursive: true });
+    await fs.rm(".tmp", { recursive: true, force: true });
   });
 
   it("serves the file", async () => {
-    app.use(missing({ errorPage: "/not-found.html" }, { provider: provider }));
+    app.use(missing({ errorPage: "/not-found.html" }, { provider }));
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("custom not found file");
+  });
+
+  it("defaults to /404.html when errorPage is not configured", async () => {
+    await fs.writeFile(".tmp/404.html", "default 404 file");
+    app.use(missing({}, { provider }));
+
+    await request(app).get("/anything").expect(404).expect("default 404 file");
+  });
+
+  it("falls back to spec.errorPage content when configured errorPage is missing", async () => {
+    await fs.writeFile(".tmp/fallback-error.html", "fallback error content");
+    app.use(
+      missing(
+        { errorPage: "/does-not-exist.html" },
+        { errorPage: ".tmp/fallback-error.html", provider },
+      ),
+    );
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("fallback error content");
+  });
+
+  it("applies configured custom headers and allowedHeaders to the error page", async () => {
+    app.use(
+      missing(
+        {
+          errorPage: "/not-found.html",
+          headers: [
+            {
+              source: "/not-found.html",
+              headers: [
+                { key: "X-Error-Header", value: "applied" },
+                { key: "X-Disallowed", value: "ignored" },
+              ],
+            },
+          ],
+        },
+        { allowedHeaders: ["x-error-header"], provider },
+      ),
+    );
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("X-Error-Header", "applied")
+      .expect("custom not found file")
+      .expect((res) => {
+        expect(res.headers["x-disallowed"]).to.equal(undefined);
+      });
+  });
+
+  it("supports direct invocation with default spec", async () => {
+    app.use((req, res, next) => {
+      (req as SuperstaticRequest).superstatic = {
+        errorPage: "/not-found.html",
+      };
+      next();
+    });
+    app.use(missingModule() as connect.NextHandleFunction);
 
     await request(app)
       .get("/anything")
@@ -67,9 +149,7 @@ describe("custom not found", () => {
 
   it("skips middleware on file serve error", async () => {
     app
-      .use(
-        missing({ errorPage: "/does-not-exist.html" }, { provider: provider }),
-      )
+      .use(missing({ errorPage: "/does-not-exist.html" }, { provider }))
       .use((req, res) => {
         res.end("does not exist");
       });
@@ -90,7 +170,7 @@ describe("custom not found", () => {
       app.use(
         missing(
           { errorPage: "/not-found.html", i18n: { root: "/i18n" } },
-          { provider: provider },
+          { provider },
         ),
       );
 
@@ -101,7 +181,7 @@ describe("custom not found", () => {
       app.use(
         missing(
           { errorPage: "/not-found.html", i18n: { root: "/i18n" } },
-          { provider: provider },
+          { provider },
         ),
       );
 
