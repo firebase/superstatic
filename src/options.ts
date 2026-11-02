@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 
-import { HandleFunction } from "connect";
+import connect, { HandleFunction } from "connect";
+import { ServerResponse } from "node:http";
 import { Configuration } from "./config";
+import Responder from "./responder";
 
 export interface MiddlewareOptions {
   fallthrough?: boolean;
@@ -43,4 +45,12 @@ export interface ServerOptions extends MiddlewareOptions {
   errorPage?: string;
   debug?: boolean;
   compression?: boolean;
+}
+
+export interface SuperstaticRequest extends connect.IncomingMessage {
+  superstatic: Configuration;
+}
+
+export interface SuperstaticResponse extends ServerResponse {
+  superstatic: Responder;
 }

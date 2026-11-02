@@ -21,22 +21,11 @@
 
 import * as fs from "fs";
 import * as mime from "mime-types";
+import { SuperstaticRequest, SuperstaticResponse } from "../options";
 
 const template = fs
   .readFileSync(`${__dirname}/../../templates/env.js.template`)
   .toString();
-
-interface SuperstaticRequest {
-  superstatic: {
-    env: Record<string, string>;
-  };
-}
-
-interface SuperstaticResponse {
-  superstatic: {
-    handleData: (d: Record<string, string>) => void;
-  };
-}
 
 /**
  * Returns middleware for `/__/env.json|js`.
@@ -46,8 +35,8 @@ interface SuperstaticResponse {
  */
 export function env(spec: { env: Record<string, string> }) {
   return (
-    req: Request & SuperstaticRequest,
-    res: Response & SuperstaticResponse,
+    req: SuperstaticRequest,
+    res: SuperstaticResponse,
     next: () => void,
   ): void => {
     // const config = req.superstatic.env;
@@ -57,13 +46,13 @@ export function env(spec: { env: Record<string, string> }) {
     const env = Object.assign({}, req.superstatic.env, spec.env);
 
     if (req.url === "/__/env.json") {
-      res.superstatic.handleData({
+      void res.superstatic.handleData({
         data: JSON.stringify(env, null, 2),
         contentType: mime.contentType("json") || "",
       });
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
-      res.superstatic.handleData({
+      void res.superstatic.handleData({
         data: payload,
         contentType: mime.contentType("js") || "",
       });

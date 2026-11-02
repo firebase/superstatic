@@ -22,7 +22,7 @@
 
 export interface Configuration {
   // Defaults to the current working directory.
-  public?: string;
+  public?: string | string[];
   cleanUrls?: boolean | string[];
   rewrites?: Rewrite[];
   redirects?: Redirect[];
@@ -30,21 +30,29 @@ export interface Configuration {
   trailingSlash?: boolean;
   i18n?: { root: string };
   errorPage?: string;
+  env?: Record<string, string>;
+  protect?: string;
 }
 
 export interface Rewrite {
-  source: string;
-  destination: string;
+  source?: string;
+  glob?: string;
+  regex?: string;
+  destination?: string;
 }
 
 export interface Redirect {
-  source: string;
+  source?: string;
+  glob?: string;
+  regex?: string;
   destination: string;
   type?: number;
 }
 
 export interface Header {
-  source: string;
+  source?: string;
+  glob?: string;
+  regex?: string;
   headers: {
     key: string;
     value: string;
