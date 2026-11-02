@@ -35,67 +35,6 @@ declare module "basic-auth-connect" {
   export = basicAuth;
 }
 
-declare module "compression" {
-  import connect from "connect";
-
-  function compression(
-    options?: Record<string, unknown>,
-  ): connect.NextHandleFunction;
-
-  export = compression;
-}
-
-declare module "destroy" {
-  function destroy<T extends NodeJS.ReadableStream | NodeJS.WritableStream>(
-    stream: T,
-    suppress?: boolean,
-  ): T;
-
-  export = destroy;
-}
-
-declare module "is-url" {
-  function isUrl(url: string): boolean;
-
-  export = isUrl;
-}
-
-declare module "morgan" {
-  import connect from "connect";
-
-  function morgan(
-    format: string,
-    options?: Record<string, unknown>,
-  ): connect.NextHandleFunction;
-
-  export = morgan;
-}
-
-declare module "on-finished" {
-  import * as http from "node:http";
-
-  function onFinished(
-    msg: http.OutgoingMessage | http.IncomingMessage,
-    listener: (
-      err: Error | null,
-      msg: http.OutgoingMessage | http.IncomingMessage,
-    ) => void,
-  ): http.OutgoingMessage | http.IncomingMessage;
-
-  export = onFinished;
-}
-
-declare module "on-headers" {
-  import * as http from "node:http";
-
-  function onHeaders(
-    res: http.ServerResponse,
-    listener: (this: http.ServerResponse) => void,
-  ): void;
-
-  export = onHeaders;
-}
-
 declare module "router" {
   import * as http from "node:http";
   import connect from "connect";
