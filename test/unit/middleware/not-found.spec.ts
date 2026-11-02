@@ -65,6 +65,16 @@ describe("not found", () => {
       .expect(/Page Not Found/);
   });
 
+  it("serves the default error page when spec is null", async () => {
+    app.use(notFound(null as unknown as Parameters<typeof notFound>[0]));
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect(/Page Not Found/);
+  });
+
   it("throws on file read error", () => {
     expect(() => {
       notFound({

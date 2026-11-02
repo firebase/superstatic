@@ -46,7 +46,7 @@ function notFound(
   req: SuperstaticRequest | connect.IncomingMessage,
   res: SuperstaticResponse | ServerResponse,
 ) => void {
-  const content = fs.readFileSync(spec.errorPage ?? DEFAULT_ERROR_PAGE);
+  const content = fs.readFileSync(spec?.errorPage ?? DEFAULT_ERROR_PAGE);
 
   return (
     _req: SuperstaticRequest | connect.IncomingMessage,
