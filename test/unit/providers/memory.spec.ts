@@ -38,6 +38,11 @@ describe("memory provider", () => {
     return expect(provider({}, "/whatever")).to.eventually.be.null;
   });
 
+  it("should resolve null for falsy store entries", () => {
+    store["/empty.html"] = "";
+    return expect(provider({}, "/empty.html")).to.eventually.be.null;
+  });
+
   it("should return a stream of the content if found", async () => {
     store["/index.html"] = "foobar";
 

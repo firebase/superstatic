@@ -41,7 +41,7 @@ function memoryProvider(
       ? store[decodedPathname]
       : undefined;
 
-    if (content === undefined) {
+    if (!content) {
       return Promise.resolve(null);
     }
 
