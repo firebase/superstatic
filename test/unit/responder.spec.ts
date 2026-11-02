@@ -19,24 +19,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import * as http from "node:http";
+import * as net from "node:net";
+import { Readable } from "node:stream";
 import { use, expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
+import connect from "connect";
 import * as sinon from "sinon";
 import sinonChai from "sinon-chai";
+import request from "supertest";
 
-const Responder = require("../../src/responder");
+import Responder from "../../src/responder";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
 use(chaiAsPromised);
 use(sinonChai);
 
+function createMockRequest(
+  headers: http.IncomingHttpHeaders = {},
+): http.IncomingMessage {
+  const req = new http.IncomingMessage(new net.Socket());
+  req.headers = headers;
+  return req;
+}
+
+function createMockResponse(
+  req: http.IncomingMessage = createMockRequest(),
+): http.ServerResponse {
+  return new http.ServerResponse(req);
+}
+
 describe("Responder", () => {
-  let responder: any;
+  let responder: Responder;
+
+  afterEach(() => {
+    sinon.restore();
+  });
 
   describe("#handle", () => {
     beforeEach(() => {
-      responder = new Responder({}, { setHeader: noop, end: noop }, {});
+      responder = new Responder(createMockRequest(), createMockResponse());
     });
 
     it("should resolve as false with an empty stack", () => {
@@ -49,53 +70,66 @@ describe("Responder", () => {
       );
     });
 
-    it("should call through to handleFile with a string", () => {
+    it("should call through to handleFile with a string", async () => {
       const stub = sinon
         .stub(responder, "handleFile")
         .returns(Promise.resolve(true));
-      responder.handle("abc/def.html");
+      await responder.handle("abc/def.html");
       expect(stub).to.have.been.calledWith({ file: "abc/def.html" });
     });
 
-    it("should call through to handleFile with a file object", () => {
+    it("should call through to handleFile with a file object", async () => {
       const stub = sinon
         .stub(responder, "handleFile")
         .returns(Promise.resolve(true));
-      responder.handle({ file: "abc/def.html" });
+      await responder.handle({ file: "abc/def.html" });
       expect(stub).to.have.been.calledWith({ file: "abc/def.html" });
     });
 
-    it("should call through to handleData with a data object", () => {
+    it("should call through to handleData with a data object", async () => {
       const stub = sinon
         .stub(responder, "handleData")
         .returns(Promise.resolve(true));
       const obj = { data: "abc def" };
-      responder.handle(obj);
+      await responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
     });
 
-    it("should call through to handleRedirect with a redirect object", () => {
+    it("should call through to handleRedirect with a redirect object", async () => {
       const stub = sinon
         .stub(responder, "handleRedirect")
         .returns(Promise.resolve(true));
       const obj = { redirect: "/" };
-      responder.handle(obj);
+      await responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
     });
 
-    it("should call through to handleRewrite with a rewrite object", () => {
+    it("should call through to handleRewrite with a rewrite object", async () => {
       const stub = sinon
         .stub(responder, "handleRewrite")
         .returns(Promise.resolve(true));
       const obj = { rewrite: {} };
-      responder.handle(obj);
+      await responder.handle(obj);
       expect(stub).to.have.been.calledWith(obj);
+    });
+
+    it("should call next when directive resolves to false", async () => {
+      const next = sinon.spy();
+      const responded = await responder.handle([], next);
+      expect(responded).to.equal(false);
+      expect(next).to.have.callCount(1);
+    });
+
+    it("should delegate errors to handleError", async () => {
+      const stub = sinon.stub(responder, "handleError");
+      await responder.handle({ unknown: true });
+      expect(stub).to.have.callCount(1);
     });
   });
 
   describe("#_handle", () => {
     beforeEach(() => {
-      responder = new Responder({}, { setHeader: noop, end: noop }, {});
+      responder = new Responder(createMockRequest(), createMockResponse());
     });
 
     it("should reject with an unrecognized payload", () => {
@@ -106,28 +140,38 @@ describe("Responder", () => {
   });
 
   describe("#handleRewrite", () => {
+    it("should call handleFile when destination is configured", async () => {
+      responder = new Responder(createMockRequest(), createMockResponse());
+      const stub = sinon
+        .stub(responder, "handleFile")
+        .returns(Promise.resolve(true));
+
+      const result = await responder.handleRewrite({
+        rewrite: { destination: "/index.html" },
+      });
+      expect(result).to.equal(true);
+      expect(stub).to.have.been.calledWithExactly({ file: "/index.html" });
+    });
+
     it("should call through to a registered custom rewriter", async () => {
-      let out: any;
-      responder = new Responder(
-        {},
-        {
-          setHeader: noop,
-          end: function (data: any) {
-            out = data;
+      let out: unknown;
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      sinon.stub(res, "end").callsFake((chunk?: unknown) => {
+        out = chunk;
+        return res;
+      });
+      responder = new Responder(req, res, {
+        rewriters: {
+          message: function (rewrite) {
+            return Promise.resolve({
+              data: typeof rewrite.message === "string" ? rewrite.message : "",
+              contentType: "text/plain",
+              status: 200,
+            });
           },
         },
-        {
-          rewriters: {
-            message: function (rewrite: any) {
-              return Promise.resolve({
-                data: rewrite.message,
-                contentType: "text/plain",
-                status: 200,
-              });
-            },
-          },
-        },
-      );
+      });
 
       const result = await responder.handleRewrite({
         rewrite: { message: "hi" },
@@ -135,37 +179,46 @@ describe("Responder", () => {
       expect(result).to.equal(true);
       expect(out).to.equal("hi");
     });
+
+    it("should reject when no matching rewriter is configured", () => {
+      responder = new Responder(createMockRequest(), createMockResponse());
+      return expect(
+        responder.handleRewrite({ rewrite: { unknown: "value" } }),
+      ).to.be.rejectedWith("Unable to find a matching rewriter");
+    });
   });
 
   describe("#handleMiddleware", () => {
-    let rq: any;
+    let rq: http.IncomingMessage;
     beforeEach(() => {
-      rq = {};
-      responder = new Responder(rq, { setHeader: noop, end: noop }, {});
+      rq = createMockRequest();
+      responder = new Responder(rq, createMockResponse(rq));
     });
 
     it("should call the middleware", (done) => {
-      responder.handleMiddleware(() => {
+      void responder.handleMiddleware(() => {
         done();
       });
     });
 
     it("should resolve false if next is called", async () => {
-      const result = await responder.handleMiddleware(
-        (req: any, res: any, next: any) => {
-          next();
-        },
-      );
+      const result = await responder.handleMiddleware((req, res, next) => {
+        expect(req).to.equal(rq);
+        expect(res).to.equal(responder.res);
+        next();
+      });
       expect(result).to.equal(false);
     });
   });
 
   describe("#handleFile", () => {
-    const req = {};
-    const res = {};
+    let req: http.IncomingMessage;
+    let res: http.ServerResponse;
     let stub: sinon.SinonStub;
 
     beforeEach(() => {
+      req = createMockRequest();
+      res = createMockResponse(req);
       stub = sinon.stub();
       responder = new Responder(req, res, {
         provider: stub,
@@ -177,13 +230,152 @@ describe("Responder", () => {
       await responder.handleFile({ file: "abc/def.html" });
       expect(stub).to.have.been.calledWithExactly(req, "abc/def.html");
     });
+
+    it("should return false when provider returns null", async () => {
+      stub.returns(Promise.resolve(null));
+      const result = await responder.handleFile({ file: "missing.html" });
+      expect(result).to.equal(false);
+    });
+
+    it("should call handleNotModified when resource is not modified", async () => {
+      req.headers["if-none-match"] = "etag-1";
+      stub.returns(
+        Promise.resolve({
+          etag: "etag-1",
+          stream: Readable.from(["hello"]),
+        }),
+      );
+      const notModifiedSpy = sinon.spy(responder, "handleNotModified");
+      const result = await responder.handleFile({ file: "abc/def.html" });
+      expect(result).to.equal(true);
+      expect(notModifiedSpy).to.have.callCount(1);
+      expect(res.statusCode).to.equal(304);
+    });
+  });
+
+  describe("#handleFileStream", () => {
+    it("should stream file content, record streamedFile, and set headers", async () => {
+      const modified = Date.UTC(2026, 0, 1);
+      let handleResult: boolean | undefined;
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res, {
+          config: { errorPage: "/404.html" },
+        });
+        void responder
+          .handleFileStream(
+            { file: "/404.html" },
+            {
+              size: 5,
+              etag: "abc123",
+              modified,
+              stream: Readable.from(["hello"]),
+            },
+          )
+          .then((result) => {
+            handleResult = result;
+          });
+      });
+
+      const response = await request(app)
+        .get("/404.html")
+        .expect(404)
+        .expect("hello")
+        .expect("content-type", "text/html; charset=utf-8")
+        .expect("content-length", "5")
+        .expect("etag", "abc123")
+        .expect("last-modified", new Date(modified).toUTCString());
+
+      expect(response.status).to.equal(404);
+      expect(handleResult).to.equal(true);
+      expect(responder.streamedFile).to.deep.equal({ file: "/404.html" });
+    });
+
+    it("should invoke compressor when configured", async () => {
+      const compressor = sinon.spy(
+        (
+          _req: http.IncomingMessage,
+          _res: http.ServerResponse,
+          next: () => void,
+        ) => {
+          next();
+        },
+      );
+      let handleResult: boolean | undefined;
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res, { compressor });
+        void responder
+          .handleFileStream(
+            { file: "/app.js", status: 201 },
+            {
+              stream: Readable.from(["console.log(1)"]),
+            },
+          )
+          .then((result) => {
+            handleResult = result;
+          });
+      });
+
+      await request(app)
+        .get("/app.js")
+        .expect(201)
+        .expect("console.log(1)")
+        .expect("content-type", "application/javascript; charset=utf-8");
+
+      expect(handleResult).to.equal(true);
+      expect(compressor).to.have.callCount(1);
+    });
+  });
+
+  describe("#handleRedirect", () => {
+    it("should set redirect status and Location header", async () => {
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      responder = new Responder(req, res);
+
+      const result = await responder.handleRedirect({ redirect: "/target" });
+      expect(result).to.equal(true);
+      expect(res.statusCode).to.equal(301);
+      expect(res.getHeader("Location")).to.equal("/target");
+      expect(res.getHeader("Content-Type")).to.equal(
+        "text/html; charset=utf-8",
+      );
+    });
+  });
+
+  describe("#handleData", () => {
+    it("should set status and Content-Type header", async () => {
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      responder = new Responder(req, res);
+
+      const result = await responder.handleData({ data: "payload" });
+      expect(result).to.equal(true);
+      expect(res.statusCode).to.equal(200);
+      expect(res.getHeader("Content-Type")).to.equal(
+        "text/html; charset=utf-8",
+      );
+    });
+  });
+
+  describe("#handleError", () => {
+    it("should set status 500 and end the response", () => {
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      const logStub = sinon.stub(console, "log");
+      responder = new Responder(req, res);
+
+      responder.handleError(new Error("boom"));
+      expect(res.statusCode).to.equal(500);
+      expect(res.writableEnded).to.equal(true);
+      expect(logStub).to.have.callCount(1);
+    });
   });
 
   describe("#isNotModified", () => {
-    let result: any;
+    let result: { modified: number; etag: string };
 
     beforeEach(() => {
-      responder = new Responder({ headers: {} }, {}, {});
+      responder = new Responder(createMockRequest(), createMockResponse());
       result = {
         modified: Date.now(),
         etag: "abcdef",
@@ -221,7 +413,7 @@ describe("Responder", () => {
 
   describe("#handleNotModified", () => {
     it("should return true, indicating it responded", () => {
-      responder = new Responder({}, { removeHeader: noop, end: noop }, {});
+      responder = new Responder(createMockRequest(), createMockResponse());
 
       const r = responder.handleNotModified();
       expect(r).to.equal(true);
