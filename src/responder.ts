@@ -196,12 +196,18 @@ class Responder {
         ? stats.modified.getTime()
         : typeof stats.modified === "string"
           ? new Date(stats.modified).getTime()
-          : stats.modified;
+          : typeof stats.modified === "number"
+            ? stats.modified
+            : NaN;
     const ifModifiedSince = this.req.headers["if-modified-since"];
     const reqModified = ifModifiedSince
       ? new Date(ifModifiedSince).getTime()
-      : 0;
-    if (statsModified && reqModified && statsModified < reqModified) {
+      : NaN;
+    if (
+      !Number.isNaN(statsModified) &&
+      !Number.isNaN(reqModified) &&
+      statsModified < reqModified
+    ) {
       return true;
     }
 
@@ -266,13 +272,17 @@ class Responder {
   }
 
   /**
-   * Writes a 500 error response and logs the error stack.
-   * @param err error thrown while handling a directive.
+   * Writes a 500 error response or destroys the response if headers were already sent.
+   * @param err error thrown while handling a directive or stream.
    */
   handleError(err: unknown): void {
-    this.res.statusCode = 500;
     console.log(err instanceof Error ? err.stack : err);
-    this.res.end("Unexpected error occurred.");
+    if (!this.res.headersSent) {
+      this.res.statusCode = 500;
+      this.res.end("Unexpected error occurred.");
+    } else {
+      this.res.destroy();
+    }
   }
 
   /**
@@ -345,9 +355,16 @@ class Responder {
       );
     }
 
+    result.stream.on("error", (err) => {
+      this.handleError(err);
+      destroy(result.stream);
+    });
+
     if (this.compressor) {
       this.compressor(this.req, this.res, () => {
-        result.stream.pipe(this.res);
+        if (!result.stream.destroyed && !this.res.destroyed) {
+          result.stream.pipe(this.res);
+        }
       });
     } else {
       result.stream.pipe(this.res);

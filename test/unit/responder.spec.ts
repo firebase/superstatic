@@ -324,6 +324,42 @@ describe("Responder", () => {
       expect(handleResult).to.equal(true);
       expect(compressor).to.have.callCount(1);
     });
+
+    it("should handle stream errors via handleError and destroy the stream", async () => {
+      const logStub = sinon.stub(console, "log");
+      const failingStream = new Readable({
+        read() {
+          process.nextTick(() => {
+            this.emit("error", new Error("disk read failure"));
+          });
+        },
+      });
+      let handleErrorSpy: sinon.SinonSpy | undefined;
+      let handleResult: boolean | undefined;
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res);
+        handleErrorSpy = sinon.spy(responder, "handleError");
+        void responder
+          .handleFileStream(
+            { file: "/broken.txt" },
+            {
+              stream: failingStream,
+            },
+          )
+          .then((result) => {
+            handleResult = result;
+          });
+      });
+
+      await request(app)
+        .get("/broken.txt")
+        .expect(500, "Unexpected error occurred.");
+
+      expect(handleResult).to.equal(true);
+      expect(failingStream.destroyed).to.equal(true);
+      expect(handleErrorSpy).to.have.callCount(1);
+      expect(logStub).to.have.callCount(1);
+    });
   });
 
   describe("#handleRedirect", () => {
@@ -358,7 +394,7 @@ describe("Responder", () => {
   });
 
   describe("#handleError", () => {
-    it("should set status 500 and end the response", () => {
+    it("should set status 500 and end the response when headers were not sent", () => {
       const req = createMockRequest();
       const res = createMockResponse(req);
       const logStub = sinon.stub(console, "log");
@@ -367,6 +403,23 @@ describe("Responder", () => {
       responder.handleError(new Error("boom"));
       expect(res.statusCode).to.equal(500);
       expect(res.writableEnded).to.equal(true);
+      expect(logStub).to.have.callCount(1);
+    });
+
+    it("should destroy the response when headers were already sent", () => {
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      res.statusCode = 200;
+      Object.defineProperty(res, "headersSent", { value: true });
+      const destroyStub = sinon.stub(res, "destroy").returns(res);
+      const endStub = sinon.stub(res, "end").returns(res);
+      const logStub = sinon.stub(console, "log");
+      responder = new Responder(req, res);
+
+      responder.handleError(new Error("mid-stream boom"));
+      expect(res.statusCode).to.equal(200);
+      expect(endStub).to.have.callCount(0);
+      expect(destroyStub).to.have.callCount(1);
       expect(logStub).to.have.callCount(1);
     });
   });
@@ -408,6 +461,23 @@ describe("Responder", () => {
         result.modified - 30000,
       ).toUTCString();
       expect(responder.isNotModified(result)).to.equal(false);
+    });
+
+    it("should be true when modified is 0 and if-modified-since is after epoch", () => {
+      responder.req.headers["if-modified-since"] = new Date(1000).toUTCString();
+      expect(responder.isNotModified({ modified: 0 })).to.equal(true);
+    });
+
+    it("should be false when modified or if-modified-since is an invalid date", () => {
+      responder.req.headers["if-modified-since"] = "not-a-valid-date";
+      expect(responder.isNotModified(result)).to.equal(false);
+
+      responder.req.headers["if-modified-since"] = new Date(
+        result.modified + 30000,
+      ).toUTCString();
+      expect(
+        responder.isNotModified({ modified: "not-a-valid-date" }),
+      ).to.equal(false);
     });
   });
 
