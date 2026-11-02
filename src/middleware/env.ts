@@ -33,7 +33,7 @@ const template = fs
  * @param spec.env environment variables.
  * @returns middleware.
  */
-export function env(spec: { env: Record<string, string> }) {
+export function env(spec: { env?: Record<string, string> } = {}) {
   return (
     req: SuperstaticRequest,
     res: SuperstaticResponse,
@@ -50,12 +50,14 @@ export function env(spec: { env: Record<string, string> }) {
         data: JSON.stringify(env, null, 2),
         contentType: mime.contentType("json") || "",
       });
+      return;
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(env));
       void res.superstatic.handleData({
         data: payload,
         contentType: mime.contentType("js") || "",
       });
+      return;
     }
 
     return next();

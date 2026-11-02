@@ -23,7 +23,8 @@ const request = require("supertest");
 const connect = require("connect");
 
 const helpers = require("../../helpers");
-const env = helpers.decorator(require("../../../src/middleware/env"));
+const rawEnv = require("../../../src/middleware/env");
+const env = helpers.decorator(rawEnv);
 const Responder = require("../../../src/responder");
 
 describe("env", () => {
@@ -70,6 +71,62 @@ describe("env", () => {
       .get("/__/env.js")
       .expect(200)
       .expect("content-type", "application/javascript; charset=utf-8")
+      .end(done);
+  });
+
+  it("does not call next after serving env json", (done) => {
+    app.use(
+      env({
+        env: {
+          key: "value",
+        },
+      }),
+    );
+    app.use((req, res, next) => {
+      next(new Error("next() should not have been called"));
+    });
+
+    void request(app)
+      .get("/__/env.json")
+      .expect(200)
+      .expect({
+        key: "value",
+      })
+      .end(done);
+  });
+
+  it("does not call next after serving env js", (done) => {
+    app.use(
+      env({
+        env: {
+          key: "value",
+        },
+      }),
+    );
+    app.use((req, res, next) => {
+      next(new Error("next() should not have been called"));
+    });
+
+    void request(app).get("/__/env.js").expect(200).end(done);
+  });
+
+  it("uses request env config when spec is omitted", (done) => {
+    app.use((req, res, next) => {
+      req.superstatic = {
+        env: {
+          key: "value",
+        },
+      };
+      next();
+    });
+    app.use(rawEnv());
+
+    void request(app)
+      .get("/__/env.json")
+      .expect(200)
+      .expect({
+        key: "value",
+      })
       .end(done);
   });
 });

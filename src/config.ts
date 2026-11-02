@@ -34,27 +34,23 @@ export interface Configuration {
   protect?: string;
 }
 
-export interface Rewrite {
-  source?: string;
-  glob?: string;
-  regex?: string;
-  destination?: string;
-}
+export type Matcher =
+  | { source: string; glob?: string; regex?: string }
+  | { source?: string; glob: string; regex?: string }
+  | { source?: string; glob?: string; regex: string };
 
-export interface Redirect {
-  source?: string;
-  glob?: string;
-  regex?: string;
+export type Rewrite = Matcher & {
+  destination?: string;
+};
+
+export type Redirect = Matcher & {
   destination: string;
   type?: number;
-}
+};
 
-export interface Header {
-  source?: string;
-  glob?: string;
-  regex?: string;
+export type Header = Matcher & {
   headers: {
     key: string;
     value: string;
   }[];
-}
+};
