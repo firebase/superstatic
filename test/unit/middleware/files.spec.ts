@@ -20,6 +20,7 @@
  */
 
 import * as fs from "node:fs/promises";
+import { createRequire } from "node:module";
 import { expect } from "chai";
 import request from "supertest";
 import connect from "connect";
@@ -27,8 +28,34 @@ import { ServerResponse } from "node:http";
 
 import * as helpers from "../../helpers";
 import filesPkg from "../../../src/middleware/files";
-const fsProvider = require("../../../src/providers/fs");
 import Responder from "../../../src/responder";
+
+type FsProvider = (
+  req: unknown,
+  pathname: string,
+) => Promise<{
+  modified: number;
+  size: number;
+  etag: string;
+  stream: NodeJS.ReadableStream;
+} | null>;
+
+type FsProviderFactory = (options: {
+  cwd?: string;
+  public?: string | string[];
+}) => FsProvider;
+
+type ResponderConstructor = new (
+  req: connect.IncomingMessage,
+  res: ServerResponse,
+  options: { provider: FsProvider },
+) => Responder;
+
+const requireModule = createRequire(__filename) as (id: string) => unknown;
+const fsProvider = requireModule(
+  "../../../src/providers/fs",
+) as FsProviderFactory;
+const ResponderClass = Responder as unknown as ResponderConstructor;
 
 const files = helpers.decorator(filesPkg);
 
@@ -56,8 +83,7 @@ describe("i18n", () => {
 
     app = connect().use(
       (req, res: ServerResponse & { superstatic?: Responder }, next) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        res.superstatic = new Responder(req, res, { provider });
+        res.superstatic = new ResponderClass(req, res, { provider });
         next();
       },
     );
@@ -170,8 +196,7 @@ describe("static server with trailing slash customization", () => {
 
     app = connect().use(
       (req, res: ServerResponse & { superstatic?: Responder }, next) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        res.superstatic = new Responder(req, res, { provider });
+        res.superstatic = new ResponderClass(req, res, { provider });
         next();
       },
     );
@@ -271,8 +296,8 @@ describe("static server with trailing slash customization", () => {
 
     await request(app)
       .get("/foo?query=params")
-      .expect((req) => {
-        expect(req.headers.location).to.equal("/foo/?query=params");
+      .expect((res) => {
+        expect(res.headers.location).to.equal("/foo/?query=params");
       })
       .expect(301);
   });
@@ -438,5 +463,25 @@ describe("static server with trailing slash customization", () => {
         }
       });
     });
+  });
+
+  it("supports both ES default import and CommonJS require", async () => {
+    const cjsFilesPkg = requireModule(
+      "../../../src/middleware/files",
+    ) as typeof filesPkg;
+    expect(filesPkg).to.be.a("function");
+    expect(cjsFilesPkg).to.be.a("function");
+    expect(cjsFilesPkg).to.equal(filesPkg);
+
+    const cjsFiles = helpers.decorator(cjsFilesPkg);
+    app.use(cjsFiles({}, { provider }));
+
+    await request(app).get("/foo.html").expect(200, "foo.html content");
+  });
+
+  it("calls next when mounted directly on connect without superstatic responder", async () => {
+    const directApp = connect().use(filesPkg());
+
+    await request(directApp).get("/foo.html").expect(404);
   });
 });
