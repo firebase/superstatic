@@ -63,18 +63,19 @@ function loadConfigFile(
   }
 
   let configObject: Record<string, unknown> = {};
-  let candidateFiles: string | string[] | undefined;
+  let candidateFiles: string | string[] | undefined = CONFIG_FILE;
 
   if (typeof filename === "string") {
-    configObject = parseJsonObject(filename);
-    candidateFiles = filename;
+    const parsed = parseJsonObject(filename);
+    if (parsed !== undefined) {
+      configObject = parsed;
+    } else {
+      candidateFiles = filename;
+    }
   } else if (isPlainObject(filename)) {
     configObject = filename;
-    candidateFiles = CONFIG_FILE;
   } else if (Array.isArray(filename)) {
     candidateFiles = filename;
-  } else {
-    candidateFiles = CONFIG_FILE;
   }
 
   const resolvedFilename = Array.isArray(candidateFiles)
@@ -89,7 +90,7 @@ function loadConfigFile(
     try {
       const raw = fs.readFileSync(path.resolve(resolvedFilename), "utf8");
       const parsed = parseJsonObject(raw);
-      config = isPlainObject(parsed.hosting) ? parsed.hosting : parsed;
+      config = isPlainObject(parsed?.hosting) ? parsed.hosting : (parsed ?? {});
     } catch {
       // do nothing
     }
@@ -99,12 +100,12 @@ function loadConfigFile(
 }
 
 /**
- * Parses a JSON string into a plain object, returning an empty object when
+ * Parses a JSON string into a plain object, returning `undefined` when
  * parsing fails or the JSON value is not a plain object.
  * @param raw JSON string to parse.
- * @returns parsed plain object, or an empty object.
+ * @returns parsed plain object, or `undefined`.
  */
-function parseJsonObject(raw: string): Record<string, unknown> {
+function parseJsonObject(raw: string): Record<string, unknown> | undefined {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (isPlainObject(parsed)) {
@@ -113,7 +114,7 @@ function parseJsonObject(raw: string): Record<string, unknown> {
   } catch {
     // Ignore invalid JSON.
   }
-  return {};
+  return undefined;
 }
 
 export = loadConfigFile;

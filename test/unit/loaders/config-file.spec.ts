@@ -161,5 +161,44 @@ describe("loading config files", () => {
         await fs.rm("firebase.json", { force: true });
       }
     });
+
+    it("merges a JSON string config over the default config file", async () => {
+      await fs.writeFile(
+        "superstatic.json",
+        '{"firebase": "superstatic", "public": "./"}',
+        "utf-8",
+      );
+
+      try {
+        const config = loadConfigFile('{"override": "test", "public": "app"}');
+
+        expect(config).to.eql({
+          firebase: "superstatic",
+          override: "test",
+          public: "app",
+        });
+      } finally {
+        await fs.rm("superstatic.json", { force: true });
+      }
+    });
+
+    it("loads default config file when an empty JSON object string is passed", async () => {
+      await fs.writeFile(
+        "superstatic.json",
+        '{"firebase": "superstatic", "public": "./"}',
+        "utf-8",
+      );
+
+      try {
+        const config = loadConfigFile("{}");
+
+        expect(config).to.eql({
+          firebase: "superstatic",
+          public: "./",
+        });
+      } finally {
+        await fs.rm("superstatic.json", { force: true });
+      }
+    });
   });
 });
