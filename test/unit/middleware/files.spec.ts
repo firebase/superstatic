@@ -484,4 +484,30 @@ describe("static server with trailing slash customization", () => {
 
     await request(directApp).get("/foo.html").expect(404);
   });
+
+  it("forwards errors to next when superstatic responder lacks handleError", async () => {
+    const expectedErr = new Error("provider failure");
+    const directApp = connect()
+      .use((_req, res: ServerResponse & { superstatic?: unknown }, next) => {
+        res.superstatic = {
+          provider: () => Promise.reject(expectedErr),
+        };
+        next();
+      })
+      .use(filesPkg())
+      .use(
+        (
+          err: Error,
+          _req: connect.IncomingMessage,
+          res: ServerResponse,
+          _next: connect.NextFunction,
+        ) => {
+          void _next;
+          res.statusCode = 500;
+          res.end(err.message);
+        },
+      );
+
+    await request(directApp).get("/foo.html").expect(500, "provider failure");
+  });
 });

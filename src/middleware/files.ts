@@ -48,7 +48,7 @@ interface FilesResponder {
     file: { file: string; status?: number },
     result: ProviderResult,
   ) => Promise<unknown>;
-  handleError: (err: unknown) => void;
+  handleError?: (err: unknown) => void;
 }
 
 type FilesResponse = Omit<SuperstaticResponse, "superstatic"> & {
@@ -283,7 +283,10 @@ function files(): connect.NextHandleFunction {
     next: NextFunction,
   ): void => {
     handleRequest(req, res, next).catch((err: unknown) => {
-      if ("superstatic" in res && res.superstatic) {
+      if (
+        "superstatic" in res &&
+        typeof res.superstatic?.handleError === "function"
+      ) {
         res.superstatic.handleError(err);
       } else {
         next(err);
