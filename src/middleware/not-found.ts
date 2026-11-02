@@ -19,14 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs");
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { ServerResponse } from "node:http";
+import connect from "connect";
+import { SuperstaticRequest, SuperstaticResponse } from "../options";
 
-const DEFAULT_ERROR_PAGE = __dirname + "/../../templates/not_found.html";
+const DEFAULT_ERROR_PAGE = path.join(
+  __dirname,
+  "../../templates/not_found.html",
+);
 
-module.exports = function (spec) {
+interface NotFoundOptions {
+  errorPage?: string;
+}
+
+/**
+ * Returns middleware for serving the default not-found error page.
+ * @param spec superstatic options.
+ * @param spec.errorPage optional path to a local fallback error page.
+ * @returns middleware.
+ */
+function notFound(
+  spec: NotFoundOptions = {},
+): (
+  req: SuperstaticRequest | connect.IncomingMessage,
+  res: SuperstaticResponse | ServerResponse,
+) => void {
   const content = fs.readFileSync(spec.errorPage ?? DEFAULT_ERROR_PAGE);
 
-  return function (req, res) {
+  return (
+    _req: SuperstaticRequest | connect.IncomingMessage,
+    res: SuperstaticResponse | ServerResponse,
+  ): void => {
     // NOTE: provider isn't used to serve the pages
     // because this middleware should only serve local
     // static pages around the same directory as the
@@ -37,4 +62,6 @@ module.exports = function (spec) {
     res.setHeader("Cache-Control", "public, max-age=3600");
     res.end(content);
   };
-};
+}
+
+export = notFound;
