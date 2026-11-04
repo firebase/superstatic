@@ -20,34 +20,37 @@
  */
 
 import * as fs from "node:fs/promises";
+import { IncomingMessage, ServerResponse } from "node:http";
+import { Socket } from "node:net";
+import * as path from "node:path";
 import { expect } from "chai";
 
 import loadConfigFile from "../../../src/loaders/config-file";
 
+const ROOT_DIR = process.cwd();
+const TMP_DIR = path.join(ROOT_DIR, ".tmp");
+
 describe("loading config files", () => {
   beforeEach(async () => {
-    await fs.rm(".tmp", { recursive: true, force: true });
-    await fs.mkdir(".tmp");
-    await fs.writeFile(".tmp/file.json", '{"key": "value"}', "utf-8");
+    await fs.rm(TMP_DIR, { recursive: true, force: true });
+    await fs.mkdir(TMP_DIR, { recursive: true });
     await fs.writeFile(
-      ".tmp/package.json",
-      JSON.stringify({
-        superstatic: {
-          key: "value",
-        },
-      }),
+      path.join(TMP_DIR, "file.json"),
+      '{"public": "app"}',
+      "utf-8",
     );
   });
 
   afterEach(async () => {
-    await fs.rm(".tmp", { recursive: true, force: true });
+    process.chdir(ROOT_DIR);
+    await fs.rm(TMP_DIR, { recursive: true, force: true });
   });
 
   it("filename", () => {
     const data = loadConfigFile(".tmp/file.json");
 
     expect(data).to.eql({
-      key: "value",
+      public: "app",
     });
   });
 
@@ -55,7 +58,18 @@ describe("loading config files", () => {
     const data = loadConfigFile(["another.json", ".tmp/file.json"]);
 
     expect(data).to.eql({
-      key: "value",
+      public: "app",
+    });
+  });
+
+  it("loads first existing file when array contains absolute paths", () => {
+    const data = loadConfigFile([
+      path.join(TMP_DIR, "nonexistent.json"),
+      path.join(TMP_DIR, "file.json"),
+    ]);
+
+    expect(data).to.eql({
+      public: "app",
     });
   });
 
@@ -67,16 +81,34 @@ describe("loading config files", () => {
 
   it("loads object as config", () => {
     const config = loadConfigFile({
-      my: "data",
+      public: "dist",
+      cleanUrls: true,
     });
 
     expect(config).to.eql({
-      my: "data",
+      public: "dist",
+      cleanUrls: true,
     });
   });
 
   it("returns a config loader function unchanged", () => {
-    const loader = () => ({ public: "app" });
+    const loader = (req: IncomingMessage, res: ServerResponse) => ({
+      public: req.url ?? (res.statusCode ? "app" : "public"),
+    });
+    const configInput: string | typeof loader = loader;
+    const resolved = loadConfigFile(configInput);
+
+    expect(resolved).to.equal(loader);
+    if (typeof resolved === "function") {
+      const req = new IncomingMessage(new Socket());
+      req.url = "/site";
+      const res = new ServerResponse(req);
+      expect(resolved(req, res)).to.eql({ public: "/site" });
+    }
+  });
+
+  it("returns an async config loader function unchanged", () => {
+    const loader = () => Promise.resolve({ public: "app" });
 
     expect(loadConfigFile(loader)).to.equal(loader);
   });
@@ -91,10 +123,13 @@ describe("loading config files", () => {
 
   it("extracts the hosting property when present in JSON file", async () => {
     await fs.writeFile(
-      ".tmp/firebase-hosting.json",
+      path.join(TMP_DIR, "firebase-hosting.json"),
       JSON.stringify({
         hosting: {
           public: "dist",
+        },
+        firestore: {
+          rules: "firestore.rules",
         },
       }),
       "utf-8",
@@ -107,8 +142,28 @@ describe("loading config files", () => {
     });
   });
 
+  it("returns an empty object when hosting is a multi-site array in JSON file", async () => {
+    await fs.writeFile(
+      path.join(TMP_DIR, "firebase-multisite.json"),
+      JSON.stringify({
+        hosting: [{ target: "site-a", public: "public" }],
+        firestore: { rules: "firestore.rules" },
+        functions: { source: "functions" },
+      }),
+      "utf-8",
+    );
+
+    const config = loadConfigFile(".tmp/firebase-multisite.json");
+
+    expect(config).to.eql({});
+  });
+
   it("returns an empty object when a JSON file is malformed", async () => {
-    await fs.writeFile(".tmp/invalid.json", "{not valid json", "utf-8");
+    await fs.writeFile(
+      path.join(TMP_DIR, "invalid.json"),
+      "{not valid json",
+      "utf-8",
+    );
 
     const config = loadConfigFile(".tmp/invalid.json");
 
@@ -116,89 +171,79 @@ describe("loading config files", () => {
   });
 
   describe("extends the file config with the object passed", () => {
+    beforeEach(() => {
+      process.chdir(TMP_DIR);
+    });
+
     it("superstatic.json", async () => {
       await fs.writeFile(
         "superstatic.json",
-        '{"firebase": "superstatic", "public": "./"}',
+        '{"cleanUrls": true, "public": "./"}',
         "utf-8",
       );
 
-      try {
-        const config = loadConfigFile({
-          override: "test",
-          public: "app",
-        });
+      const config = loadConfigFile({
+        trailingSlash: false,
+        public: "app",
+      });
 
-        expect(config).to.eql({
-          firebase: "superstatic",
-          override: "test",
-          public: "app",
-        });
-      } finally {
-        await fs.rm("superstatic.json", { force: true });
-      }
+      expect(config).to.eql({
+        cleanUrls: true,
+        trailingSlash: false,
+        public: "app",
+      });
     });
 
     it("firebase.json", async () => {
       await fs.writeFile(
         "firebase.json",
-        '{"firebase": "example", "public": "./"}',
+        '{"cleanUrls": true, "public": "./"}',
         "utf-8",
       );
 
-      try {
-        const config = loadConfigFile({
-          override: "test",
-          public: "app",
-        });
+      const config = loadConfigFile({
+        trailingSlash: false,
+        public: "app",
+      });
 
-        expect(config).to.eql({
-          firebase: "example",
-          override: "test",
-          public: "app",
-        });
-      } finally {
-        await fs.rm("firebase.json", { force: true });
-      }
+      expect(config).to.eql({
+        cleanUrls: true,
+        trailingSlash: false,
+        public: "app",
+      });
     });
 
     it("merges a JSON string config over the default config file", async () => {
       await fs.writeFile(
         "superstatic.json",
-        '{"firebase": "superstatic", "public": "./"}',
+        '{"cleanUrls": true, "public": "./"}',
         "utf-8",
       );
 
-      try {
-        const config = loadConfigFile('{"override": "test", "public": "app"}');
+      const config = loadConfigFile(
+        '{"trailingSlash": false, "public": "app"}',
+      );
 
-        expect(config).to.eql({
-          firebase: "superstatic",
-          override: "test",
-          public: "app",
-        });
-      } finally {
-        await fs.rm("superstatic.json", { force: true });
-      }
+      expect(config).to.eql({
+        cleanUrls: true,
+        trailingSlash: false,
+        public: "app",
+      });
     });
 
     it("loads default config file when an empty JSON object string is passed", async () => {
       await fs.writeFile(
         "superstatic.json",
-        '{"firebase": "superstatic", "public": "./"}',
+        '{"cleanUrls": true, "public": "./"}',
         "utf-8",
       );
 
-      try {
-        const config = loadConfigFile("{}");
+      const config = loadConfigFile("{}");
 
-        expect(config).to.eql({
-          firebase: "superstatic",
-          public: "./",
-        });
-      } finally {
-        await fs.rm("superstatic.json", { force: true });
-      }
+      expect(config).to.eql({
+        cleanUrls: true,
+        public: "./",
+      });
     });
   });
 });

@@ -20,6 +20,7 @@
  */
 
 import * as fs from "node:fs";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import * as path from "node:path";
 
 import { Configuration } from "../config";
@@ -27,7 +28,10 @@ import { isPlainObject } from "../utils/objectutils";
 
 const CONFIG_FILE = ["superstatic.json", "firebase.json"];
 
-type ConfigLoaderFn = (...args: never) => unknown;
+type ConfigLoaderFn = (
+  req: IncomingMessage,
+  res: ServerResponse,
+) => Configuration | Promise<Configuration>;
 
 /**
  * Loads Superstatic configuration from a file path, candidate file list, JSON
@@ -37,17 +41,10 @@ type ConfigLoaderFn = (...args: never) => unknown;
  */
 function loadConfigFile<T extends ConfigLoaderFn>(filename: T): T;
 function loadConfigFile(
-  filename?: string | string[] | Configuration | Record<string, unknown> | null,
+  filename?: string | string[] | Configuration | null,
 ): Configuration;
-function loadConfigFile<T extends ConfigLoaderFn>(
-  filename:
-    | string
-    | string[]
-    | Configuration
-    | Record<string, unknown>
-    | T
-    | null
-    | undefined,
+function loadConfigFile<T extends ConfigLoaderFn = ConfigLoaderFn>(
+  filename?: string | string[] | Configuration | T | null,
 ): Configuration | T;
 function loadConfigFile(
   filename?:
@@ -79,9 +76,7 @@ function loadConfigFile(
   }
 
   const resolvedFilename = Array.isArray(candidateFiles)
-    ? candidateFiles.find((name) =>
-        fs.existsSync(path.join(process.cwd(), name)),
-      )
+    ? candidateFiles.find((name) => fs.existsSync(path.resolve(name)))
     : candidateFiles;
 
   let config: Record<string, unknown> = {};
@@ -90,7 +85,13 @@ function loadConfigFile(
     try {
       const raw = fs.readFileSync(path.resolve(resolvedFilename), "utf8");
       const parsed = parseJsonObject(raw);
-      config = isPlainObject(parsed?.hosting) ? parsed.hosting : (parsed ?? {});
+      if (parsed) {
+        if ("hosting" in parsed) {
+          config = isPlainObject(parsed.hosting) ? parsed.hosting : {};
+        } else {
+          config = parsed;
+        }
+      }
     } catch {
       // do nothing
     }
