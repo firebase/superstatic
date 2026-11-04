@@ -30,6 +30,22 @@ const template = fs
   .readFileSync(`${__dirname}/../../templates/env.js.template`)
   .toString();
 
+function sendEnvResponse(
+  res: ServerResponse & { superstatic?: Responder },
+  data: string,
+  contentType: string,
+): void {
+  if (res.superstatic) {
+    void res.superstatic.handleData({ data, contentType });
+    return;
+  }
+  res.statusCode = 200;
+  if (contentType) {
+    res.setHeader("Content-Type", contentType);
+  }
+  res.end(data);
+}
+
 /**
  * Returns middleware for `/__/env.json|js`.
  * @param spec superstatic options.
@@ -50,17 +66,15 @@ function env(spec: env.EnvOptions = {}): connect.NextHandleFunction {
     const mergedEnv = Object.assign({}, configEnv, spec.env);
 
     if (req.url === "/__/env.json") {
-      void res.superstatic?.handleData({
-        data: JSON.stringify(mergedEnv, null, 2),
-        contentType: mime.contentType("json") || "",
-      });
+      sendEnvResponse(
+        res,
+        JSON.stringify(mergedEnv, null, 2),
+        mime.contentType("json") || "",
+      );
       return;
     } else if (req.url === "/__/env.js") {
       const payload = template.replace("{{ENV}}", JSON.stringify(mergedEnv));
-      void res.superstatic?.handleData({
-        data: payload,
-        contentType: mime.contentType("js") || "",
-      });
+      sendEnvResponse(res, payload, mime.contentType("js") || "");
       return;
     }
 

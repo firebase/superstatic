@@ -150,4 +150,33 @@ describe("env", () => {
 
     void request(standalone).get("/__/env.json").expect(204).end(done);
   });
+
+  it("serves env json when mounted standalone with spec.env", async () => {
+    const standalone = connect();
+    standalone.use(rawEnv({ env: { key: "value" } }));
+
+    await request(standalone)
+      .get("/__/env.json")
+      .expect(200)
+      .expect("content-type", "application/json; charset=utf-8")
+      .expect({ key: "value" });
+  });
+
+  it("serves env js when mounted standalone with spec.env", async () => {
+    const expectedBody = fs
+      .readFileSync(
+        path.resolve(__dirname, "../../../templates/env.js.template"),
+        "utf8",
+      )
+      .replace("{{ENV}}", JSON.stringify({ key: "value" }));
+
+    const standalone = connect();
+    standalone.use(rawEnv({ env: { key: "value" } }));
+
+    await request(standalone)
+      .get("/__/env.js")
+      .expect(200)
+      .expect("content-type", "application/javascript; charset=utf-8")
+      .expect(expectedBody);
+  });
 });
