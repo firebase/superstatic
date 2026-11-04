@@ -20,11 +20,62 @@
  */
 
 import { expect } from "chai";
+import Module from "node:module";
+import * as sinon from "sinon";
 
-import { Matcher } from "../../../src/config";
 import * as patterns from "../../../src/utils/patterns";
 
+type PatternsModule = typeof import("../../../src/utils/patterns");
+
+const originalCreateRequire = Module.createRequire;
+
+class StubRE2 extends RegExp {
+  constructor(pattern: string | RegExp, flags?: string) {
+    const source = typeof pattern === "string" ? pattern : pattern.source;
+    super(source.replace(/\(\?P<([^>]+)>/g, "(?<$1>"), flags);
+  }
+}
+
+function loadPatternsWithRe2(loadRe2: () => unknown): PatternsModule {
+  const baseRequire = originalCreateRequire(__filename);
+  const patternsPath = baseRequire.resolve("../../../src/utils/patterns");
+  delete require.cache[patternsPath];
+
+  sinon
+    .stub(Module, "createRequire")
+    .callsFake((filename: string | URL): NodeJS.Require => {
+      const realRequire = originalCreateRequire(filename);
+      const customRequire = Object.assign(
+        (id: string): unknown => {
+          if (id === "re2") {
+            return loadRe2();
+          }
+          const mod: unknown = realRequire(id);
+          return mod;
+        },
+        {
+          resolve: realRequire.resolve,
+          cache: realRequire.cache,
+          extensions: realRequire.extensions,
+          main: realRequire.main,
+        },
+      );
+      return customRequire as NodeJS.Require;
+    });
+
+  const loaded: unknown = baseRequire(patternsPath);
+  return loaded as PatternsModule;
+}
+
 describe("patterns", () => {
+  afterEach(() => {
+    sinon.restore();
+    const patternsPath = originalCreateRequire(__filename).resolve(
+      "../../../src/utils/patterns",
+    );
+    delete require.cache[patternsPath];
+  });
+
   describe("configMatcher", () => {
     it("matches paths using glob", () => {
       expect(
@@ -69,8 +120,17 @@ describe("patterns", () => {
       );
     });
 
+    it("accepts config objects with optional matcher fields", () => {
+      const config: { glob?: string; regex?: string } = {
+        regex: "^/optional/\\d+$",
+      };
+
+      expect(patterns.configMatcher("/optional/42", config)).to.equal(true);
+      expect(patterns.configMatcher("/optional/no", config)).to.equal(false);
+    });
+
     it("returns false when no matcher is configured", () => {
-      expect(patterns.configMatcher("/foo", {} as Matcher)).to.equal(false);
+      expect(patterns.configMatcher("/foo", {})).to.equal(false);
       expect(
         patterns.configMatcher("/foo", { glob: "", source: "", regex: "" }),
       ).to.equal(false);
@@ -94,22 +154,89 @@ describe("patterns", () => {
       expect(match?.[1]).to.equal("capture");
       expect(match?.[2]).to.equal("there");
     });
+  });
 
-    if (patterns.re2Available()) {
-      it("supports RE2 named capture groups when RE2 is loaded", () => {
-        const regex = patterns.createRaw("/(?P<section>foo)/bar");
+  describe("when re2 is unavailable", () => {
+    let fallbackPatterns: PatternsModule;
 
-        const match = regex.exec("/foo/bar");
-
-        expect(match?.groups?.section).to.equal("foo");
+    beforeEach(() => {
+      fallbackPatterns = loadPatternsWithRe2(() => {
+        throw new Error("Cannot find module 're2'");
       });
-    } else {
-      it("falls back to native RegExp when RE2 is unavailable", () => {
-        const regex = patterns.createRaw("^/fallback$");
+    });
 
-        expect(regex).to.be.an.instanceOf(RegExp);
+    it("reports re2Available as false", () => {
+      expect(fallbackPatterns.re2Available()).to.equal(false);
+    });
+
+    it("creates native RegExp instances with the Unicode flag", () => {
+      const regex = fallbackPatterns.createRaw("/(?<section>foo)/bar");
+
+      expect(regex).to.be.an.instanceOf(RegExp);
+      expect(regex.flags).to.include("u");
+      expect(regex.exec("/foo/bar")?.groups?.section).to.equal("foo");
+    });
+
+    it("matches regex and Unicode patterns using native RegExp", () => {
+      expect(
+        fallbackPatterns.configMatcher("/users/123", {
+          regex: "^/users/\\d+$",
+        }),
+      ).to.equal(true);
+      expect(
+        fallbackPatterns.configMatcher("/äöü", { regex: "^/äöü$" }),
+      ).to.equal(true);
+      expect(
+        fallbackPatterns.configMatcher("/aou", { regex: "^/äöü$" }),
+      ).to.equal(false);
+    });
+  });
+
+  describe("when re2 is available", () => {
+    let re2Patterns: PatternsModule;
+
+    beforeEach(() => {
+      re2Patterns = loadPatternsWithRe2(() => {
+        try {
+          const realRe2: unknown = originalCreateRequire(__filename)("re2");
+          return realRe2;
+        } catch {
+          return StubRE2;
+        }
       });
-    }
+    });
+
+    it("reports re2Available as true", () => {
+      expect(re2Patterns.re2Available()).to.equal(true);
+    });
+
+    it("supports RE2 named capture groups in createRaw", () => {
+      const regex = re2Patterns.createRaw("/(?P<section>foo)/bar");
+
+      const match = regex.exec("/foo/bar");
+
+      expect(match?.groups?.section).to.equal("foo");
+    });
+
+    it("matches regex patterns in configMatcher", () => {
+      expect(
+        re2Patterns.configMatcher("/users/123", { regex: "^/users/\\d+$" }),
+      ).to.equal(true);
+      expect(
+        re2Patterns.configMatcher("/users/abc", { regex: "^/users/\\d+$" }),
+      ).to.equal(false);
+    });
+  });
+
+  describe("when re2 export is not a constructor", () => {
+    it("falls back to native RegExp", () => {
+      const invalidRe2Patterns = loadPatternsWithRe2(() => ({}));
+
+      expect(invalidRe2Patterns.re2Available()).to.equal(false);
+      expect(invalidRe2Patterns.createRaw("^/fallback$")).to.be.an.instanceOf(
+        RegExp,
+      );
+    });
   });
 
   describe("re2Available", () => {

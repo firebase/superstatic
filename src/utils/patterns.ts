@@ -21,16 +21,15 @@
 
 import { minimatch } from "minimatch";
 import { createRequire } from "node:module";
-import type RE2Type from "re2";
 
-import { Matcher } from "../config";
+type RE2Constructor = new (pattern: string | RegExp, flags?: string) => RegExp;
 
-let RE2: typeof RE2Type | null;
+let RE2: RE2Constructor | null;
 try {
   const requireModule: (id: string) => unknown = createRequire(__filename);
   const re2Module = requireModule("re2");
-  // Cast is required because createRequire returns untyped NodeJS.Require at runtime.
-  RE2 = typeof re2Module === "function" ? (re2Module as typeof RE2Type) : null;
+  // Cast is required because requireModule returns unknown at runtime.
+  RE2 = typeof re2Module === "function" ? (re2Module as RE2Constructor) : null;
 } catch {
   RE2 = null;
 }
@@ -51,9 +50,15 @@ try {
  * a glob and a regex. normalizeConfig() will error in that case.
  * @param path The URL path from the request.
  * @param config A dictionary from a sanitized JSON configuration.
+ * @param config.source A Node-like glob pattern specification.
+ * @param config.glob A Node-like glob pattern specification.
+ * @param config.regex A regular expression pattern specification.
  * @returns Whether the config should be applied to the request.
  */
-export function configMatcher(path: string, config: Matcher): boolean {
+export function configMatcher(
+  path: string,
+  config: { source?: string; glob?: string; regex?: string },
+): boolean {
   const glob = config.glob ?? config.source;
   const regex = config.regex;
   if (glob) {
