@@ -75,6 +75,17 @@ describe("not found", () => {
       .expect(/Page Not Found/);
   });
 
+  it("serves the default error page when errorPage is empty string", async () => {
+    const options: notFound.NotFoundOptions = { errorPage: "" };
+    app.use(notFound(options));
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect(/Page Not Found/);
+  });
+
   it("throws on file read error", () => {
     expect(() => {
       notFound({

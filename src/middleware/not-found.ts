@@ -30,10 +30,6 @@ const DEFAULT_ERROR_PAGE = path.join(
   "../../templates/not_found.html",
 );
 
-interface NotFoundOptions {
-  errorPage?: string;
-}
-
 /**
  * Returns middleware for serving the default not-found error page.
  * @param spec superstatic options.
@@ -41,12 +37,16 @@ interface NotFoundOptions {
  * @returns middleware.
  */
 function notFound(
-  spec: NotFoundOptions = {},
+  spec: notFound.NotFoundOptions = {},
 ): (
   req: SuperstaticRequest | connect.IncomingMessage,
   res: SuperstaticResponse | ServerResponse,
 ) => void {
-  const content = fs.readFileSync(spec?.errorPage ?? DEFAULT_ERROR_PAGE);
+  let errorPage = DEFAULT_ERROR_PAGE;
+  if (spec?.errorPage) {
+    errorPage = spec.errorPage;
+  }
+  const content = fs.readFileSync(errorPage);
 
   return (
     _req: SuperstaticRequest | connect.IncomingMessage,
@@ -62,6 +62,13 @@ function notFound(
     res.setHeader("Cache-Control", "public, max-age=3600");
     res.end(content);
   };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace notFound {
+  export interface NotFoundOptions {
+    errorPage?: string;
+  }
 }
 
 export = notFound;
