@@ -22,9 +22,11 @@
 import { expect } from "chai";
 import connect from "connect";
 import { ServerResponse } from "node:http";
+import { Readable } from "node:stream";
 import sinon from "sinon";
 import request from "supertest";
 
+import superstatic from "../../../src";
 import { Redirect } from "../../../src/config";
 import redirectsPkg from "../../../src/middleware/redirects";
 import Responder from "../../../src/responder";
@@ -737,6 +739,129 @@ describe("redirect middleware", () => {
     } finally {
       createRawSpy.restore();
     }
+  });
+
+  it("propagates an error rather than failing open when mounted in superstatic with invalid redirects", async () => {
+    let capturedError: Error | undefined;
+    const app = connect()
+      .use(
+        superstatic({
+          fallthrough: false,
+          provider: () => ({
+            stream: Readable.from("static content"),
+          }),
+          config: {
+            redirects: "invalid" as unknown as Redirect[],
+          },
+        }),
+      )
+      .use(
+        (
+          err: Error,
+          _req: connect.IncomingMessage,
+          res: ServerResponse,
+          next: connect.NextFunction,
+        ) => {
+          void next;
+          capturedError = err;
+          res.statusCode = 500;
+          res.end(err.message);
+        },
+      );
+
+    await request(app)
+      .get("/")
+      .expect(500, "redirects provided in an unrecognized format");
+    expect(capturedError?.message).to.equal(
+      "redirects provided in an unrecognized format",
+    );
+  });
+
+  it("redirects requests with raw percent characters in query parameters", async () => {
+    const app = connect()
+      .use(superstaticSetup)
+      .use(
+        redirect({
+          redirects: [
+            {
+              source: "/source",
+              destination: "/destination",
+              type: 301,
+            },
+          ],
+        }),
+      );
+
+    await request(app)
+      .get("/source?discount=50%")
+      .expect(301)
+      .expect("Location", "/destination?discount=50%");
+
+    await request(app)
+      .get("/source?%")
+      .expect(301)
+      .expect("Location", "/destination?%");
+  });
+
+  it("does not double-encode already percent-encoded query parameters", async () => {
+    const app = connect()
+      .use(superstaticSetup)
+      .use(
+        redirect({
+          redirects: [
+            {
+              source: "/source",
+              destination: "/destination",
+              type: 301,
+            },
+            {
+              source: "/captured/:foo",
+              destination: "/:foo/bar",
+              type: 301,
+            },
+          ],
+        }),
+      );
+
+    await request(app)
+      .get("/source?filter=a%26b")
+      .expect(301)
+      .expect("Location", "/destination?filter=a%26b");
+
+    await request(app)
+      .get("/source?redirect=%3A8080")
+      .expect(301)
+      .expect("Location", "/destination?redirect=%3A8080");
+
+    await request(app)
+      .get("/captured/wat?filter=a%26b")
+      .expect(301)
+      .expect("Location", "/wat/bar?filter=a%26b");
+  });
+
+  it("accepts middleware options in factory and attaches to connect directly", async () => {
+    const middleware = redirectsPkg({ fallthrough: false });
+    const app = connect()
+      .use((req, res, next) => {
+        Object.assign(req, {
+          superstatic: {
+            redirects: [
+              {
+                source: "/source",
+                destination: "/destination",
+                type: 301,
+              },
+            ],
+          },
+        });
+        superstaticSetup(req, res, next);
+      })
+      .use(middleware);
+
+    await request(app)
+      .get("/source")
+      .expect(301)
+      .expect("Location", "/destination");
   });
 
   it("passes an error to next when a redirect matches without responder initialized", async () => {

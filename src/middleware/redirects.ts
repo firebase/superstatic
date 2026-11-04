@@ -25,7 +25,8 @@ import { ServerResponse } from "node:http";
 import pathToRegexp from "path-to-regexp";
 
 import { Configuration, Redirect as RedirectConfig } from "../config";
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import { MiddlewareOptions } from "../options";
+import Responder from "../responder";
 import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
 
@@ -42,13 +43,23 @@ function formatExternalUrl(u: string): string {
   return isUrl(cleaned) ? cleaned : u;
 }
 
-function addQuery(url: string, qs: string): string {
-  if (url.includes("?")) {
-    return `${url}&${qs}`;
-  } else if (qs.length > 0) {
-    return `${url}?${qs}`;
+function formatDestination(dest: string, qs: string): string {
+  const qIndex = dest.indexOf("?");
+  const rawDestPath = qIndex >= 0 ? dest.slice(0, qIndex) : dest;
+  const destQuery = qIndex >= 0 ? dest.slice(qIndex + 1) : "";
+  const encodedPath = encodeURI(rawDestPath);
+
+  const queryParts: string[] = [];
+  if (destQuery.length > 0) {
+    queryParts.push(destQuery);
   }
-  return url;
+  if (qs.length > 0) {
+    queryParts.push(qs);
+  }
+
+  return queryParts.length > 0
+    ? `${encodedPath}?${queryParts.join("&")}`
+    : encodedPath;
 }
 
 class Redirect {
@@ -81,15 +92,7 @@ class Redirect {
     }
   }
 
-  test(url: string): RedirectResult | undefined {
-    let qs = "";
-    let pathname = url;
-    const qIndex = pathname.indexOf("?");
-    if (qIndex >= 0) {
-      qs = pathname.slice(qIndex + 1);
-      pathname = pathname.slice(0, qIndex);
-    }
-
+  test(pathname: string, qs = ""): RedirectResult | undefined {
     const match = this.capture?.exec(pathname);
     if (match && this.compileDestination) {
       const params: Record<string, string | string[] | undefined> = {};
@@ -113,7 +116,7 @@ class Redirect {
         const dest = decodeURIComponent(this.compileDestination(params));
         return {
           type: this.type,
-          destination: encodeURI(addQuery(dest, qs)),
+          destination: formatDestination(dest, qs),
         };
       } catch {
         return undefined;
@@ -121,7 +124,7 @@ class Redirect {
     } else if (this.matchesPattern(pathname)) {
       return {
         type: this.type,
-        destination: encodeURI(addQuery(this.destination, qs)),
+        destination: formatDestination(this.destination, qs),
       };
     }
     return undefined;
@@ -140,22 +143,25 @@ class Redirect {
 
 /**
  * Looks for possible redirects for the given req.url.
+ * @param spec superstatic options.
  * @returns middleware for handling redirects.
  */
-export = function (): (
-  req: SuperstaticRequest | connect.IncomingMessage,
-  res: SuperstaticResponse | ServerResponse,
+function redirects(
+  spec?: MiddlewareOptions,
+): (
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  res: ServerResponse & { superstatic?: Responder },
   next: connect.NextFunction,
 ) => void {
+  void spec;
   const cache = new WeakMap<RedirectConfig[], Redirect[]>();
 
   return function (
-    req: SuperstaticRequest | connect.IncomingMessage,
-    res: SuperstaticResponse | ServerResponse,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
     next: connect.NextFunction,
   ): void {
-    const config: Configuration["redirects"] =
-      "superstatic" in req ? req.superstatic?.redirects : undefined;
+    const config: Configuration["redirects"] = req.superstatic?.redirects;
     if (!config) {
       return next();
     }
@@ -166,22 +172,26 @@ export = function (): (
       return next();
     }
 
-    let redirects = cache.get(config);
-    if (!redirects) {
-      redirects = config.map((redir) => new Redirect(redir));
-      cache.set(config, redirects);
+    let compiledRedirects = cache.get(config);
+    if (!compiledRedirects) {
+      compiledRedirects = config.map((redir) => new Redirect(redir));
+      cache.set(config, compiledRedirects);
     }
 
-    let decodedUrl: string;
+    const qIndex = req.url.indexOf("?");
+    const rawPath = qIndex >= 0 ? req.url.slice(0, qIndex) : req.url;
+    const rawQuery = qIndex >= 0 ? req.url.slice(qIndex + 1) : "";
+
+    let decodedPath: string;
     try {
-      decodedUrl = decodeURI(req.url);
+      decodedPath = decodeURI(rawPath);
     } catch {
       return next();
     }
 
     let match: RedirectResult | undefined;
-    for (const redirect of redirects) {
-      const result = redirect.test(decodedUrl);
+    for (const redirect of compiledRedirects) {
+      const result = redirect.test(decodedPath, rawQuery);
       if (result) {
         match = result;
         break;
@@ -192,7 +202,7 @@ export = function (): (
       return next();
     }
 
-    if (!("superstatic" in res) || !res.superstatic) {
+    if (!res.superstatic) {
       return next(new Error("Responder middleware is not initialized"));
     }
 
@@ -204,4 +214,6 @@ export = function (): (
       status: match.type,
     });
   };
-};
+}
+
+export = redirects;
