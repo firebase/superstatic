@@ -21,9 +21,10 @@
 
 import connect from "connect";
 import * as fs from "node:fs";
+import { ServerResponse } from "node:http";
 
 import { Configuration } from "../config";
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import Responder from "../responder";
 import { i18nContentOptions } from "../utils/i18n";
 import setHeaders from "./headers";
 
@@ -45,8 +46,8 @@ function missing(
     provider?: unknown;
   } = {},
 ): (
-  req: SuperstaticRequest,
-  res: SuperstaticResponse,
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  res: ServerResponse & { superstatic?: Responder },
   next: connect.NextFunction,
 ) => void {
   let defaultErrorContent: string | undefined;
@@ -55,36 +56,44 @@ function missing(
   }
 
   return function (
-    req: SuperstaticRequest,
-    res: SuperstaticResponse,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
     next: connect.NextFunction,
   ): void {
     const config: Configuration = req.superstatic ?? {};
     const errorPage = config.errorPage ?? "/404.html";
-
-    setHeaders(spec)(
+    const headerReq: connect.IncomingMessage & {
+      superstatic?: Configuration;
+    } = Object.assign(
+      Object.create(req) as connect.IncomingMessage & {
+        superstatic?: Configuration;
+      },
       {
         superstatic: config,
         url: errorPage,
       },
-      res,
-      () => {
-        const handles: ErrorHandle[] = [];
-        const i18n = config.i18n;
-        // To handle i18n, we will try to resolve i18n paths first.
-        if (i18n?.root) {
-          const paths = i18nContentOptions(errorPage, req);
-          for (const pth of paths) {
-            handles.push({ file: pth, status: 404 });
-          }
-        }
-        handles.push({ file: errorPage, status: 404 });
-        if (defaultErrorContent) {
-          handles.push({ data: defaultErrorContent, status: 404 });
-        }
-        res.superstatic.handle(handles, next);
-      },
     );
+
+    setHeaders(spec)(headerReq, res, () => {
+      const handles: ErrorHandle[] = [];
+      const i18n = config.i18n;
+      // To handle i18n, we will try to resolve i18n paths first.
+      if (i18n?.root) {
+        const paths = i18nContentOptions(errorPage, req);
+        for (const pth of paths) {
+          handles.push({ file: pth, status: 404 });
+        }
+      }
+      handles.push({ file: errorPage, status: 404 });
+      if (defaultErrorContent) {
+        handles.push({ data: defaultErrorContent, status: 404 });
+      }
+      if (!res.superstatic) {
+        next();
+        return;
+      }
+      res.superstatic.handle(handles, next);
+    });
   };
 }
 

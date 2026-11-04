@@ -192,6 +192,73 @@ describe("cors middleware", () => {
       .expect("Content-Type", "mime/type");
   });
 
+  it("preserves security headers when path contains backslashes", async () => {
+    const app = connect()
+      .use(
+        headers({
+          headers: [
+            {
+              source: "/admin/**",
+              headers: [
+                { key: "X-Frame-Options", value: "DENY" },
+                { key: "Cache-Control", value: "no-store" },
+              ],
+            },
+          ],
+        }),
+      )
+      .use(okay);
+
+    await request(app)
+      .get("/\\admin/secret.js")
+      .expect(200)
+      .expect("X-Frame-Options", "DENY")
+      .expect("Cache-Control", "no-store");
+  });
+
+  it("matches decoded non-ASCII paths against non-ASCII header rules", async () => {
+    const app = connect()
+      .use((req, res, next) => {
+        (req as SuperstaticRequest).superstatic = {
+          headers: [
+            {
+              source: "/äää.html",
+              headers: [{ key: "X-Unicode", value: "matched" }],
+            },
+          ],
+        };
+        req.url = "/äää.html";
+        next();
+      })
+      .use(headersModule())
+      .use(okay);
+
+    await request(app)
+      .get("/placeholder")
+      .expect(200)
+      .expect("X-Unicode", "matched");
+  });
+
+  it("normalizes unslashed glob patterns", async () => {
+    const app = connect()
+      .use(
+        headers({
+          headers: [
+            {
+              glob: "admin/**",
+              headers: [{ key: "X-Glob-Normalized", value: "ok" }],
+            },
+          ],
+        }),
+      )
+      .use(okay);
+
+    await request(app)
+      .get("/admin/page.html")
+      .expect(200)
+      .expect("X-Glob-Normalized", "ok");
+  });
+
   it("normalizes sources without a leading slash", async () => {
     const app = connect()
       .use(

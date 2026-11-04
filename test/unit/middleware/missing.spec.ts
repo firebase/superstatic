@@ -26,8 +26,8 @@ import { ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import request from "supertest";
 
+import { Configuration } from "../../../src/config";
 import missingModule from "../../../src/middleware/missing";
-import { SuperstaticRequest } from "../../../src/options";
 import Responder from "../../../src/responder";
 import * as helpers from "../../helpers";
 
@@ -132,14 +132,40 @@ describe("custom not found", () => {
       });
   });
 
+  it("applies headers to decoded non-ASCII errorPage paths", async () => {
+    await fs.writeFile(".tmp/äää.html", "unicode 404");
+    app.use(
+      missing(
+        {
+          errorPage: "/äää.html",
+          headers: [
+            {
+              source: "/äää.html",
+              headers: [{ key: "X-Unicode-404", value: "ok" }],
+            },
+          ],
+        },
+        { provider },
+      ),
+    );
+
+    await request(app)
+      .get("/missing")
+      .expect(404)
+      .expect("X-Unicode-404", "ok")
+      .expect("unicode 404");
+  });
+
   it("supports direct invocation with default spec", async () => {
     app.use((req, res, next) => {
-      (req as SuperstaticRequest).superstatic = {
+      (
+        req as connect.IncomingMessage & { superstatic?: Configuration }
+      ).superstatic = {
         errorPage: "/not-found.html",
       };
       next();
     });
-    app.use(missingModule() as connect.NextHandleFunction);
+    app.use(missingModule());
 
     await request(app)
       .get("/anything")

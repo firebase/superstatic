@@ -24,11 +24,12 @@ import { ServerResponse } from "node:http";
 import onHeaders from "on-headers";
 
 import { Configuration, Header } from "../config";
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import Responder from "../responder";
 import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
 
 const slashPath = slasher as (value: string) => string;
+const ABSOLUTE_URI_RE = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//;
 
 interface HeaderValue {
   key: string;
@@ -60,6 +61,9 @@ function normalizedConfigHeaders(
       ...(typeof entry.source === "string"
         ? { source: slashPath(entry.source) }
         : {}),
+      ...(typeof entry.glob === "string"
+        ? { glob: slashPath(entry.glob) }
+        : {}),
     };
   });
 }
@@ -74,14 +78,15 @@ function matcher(configHeaders: Header[]): (url: string) => HeaderValue[] {
 
 function extractPathname(url?: string): string {
   const rawUrl = url ?? "/";
-  const normalizedUrl = rawUrl.startsWith("//")
-    ? rawUrl.replace(/^\/+/, "/")
-    : rawUrl;
-  try {
-    return new URL(normalizedUrl, "http://localhost").pathname;
-  } catch {
-    return normalizedUrl.split(/[?#]/, 1)[0] || "/";
+  if (ABSOLUTE_URI_RE.test(rawUrl)) {
+    try {
+      return slashPath(new URL(rawUrl).pathname);
+    } catch {
+      // Fall through to raw path splitting.
+    }
   }
+  const rawPath = rawUrl.split(/[?#]/, 1)[0] ?? "";
+  return slashPath(rawPath === "" ? "/" : rawPath);
 }
 
 /**
@@ -93,13 +98,13 @@ function extractPathname(url?: string): string {
 function headers(
   spec: { allowedHeaders?: string[] } = {},
 ): (
-  req: Pick<Partial<SuperstaticRequest>, "superstatic" | "url">,
-  res: ServerResponse | SuperstaticResponse,
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  res: ServerResponse & { superstatic?: Responder },
   next: connect.NextFunction,
 ) => void {
   return function (
-    req: Pick<Partial<SuperstaticRequest>, "superstatic" | "url">,
-    res: ServerResponse | SuperstaticResponse,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
     next: connect.NextFunction,
   ): void {
     const config: Configuration["headers"] = req.superstatic?.headers;
@@ -110,7 +115,7 @@ function headers(
 
     const headerMatcher = matcher(normalizedConfigHeaders(spec, config));
     const pathname = extractPathname(req.url);
-    const matches = headerMatcher(slashPath(pathname));
+    const matches = headerMatcher(pathname);
 
     onHeaders(res, () => {
       matches.forEach((header) => {

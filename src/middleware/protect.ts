@@ -20,13 +20,15 @@
  */
 
 import connect from "connect";
+import { ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import { Configuration } from "../config";
+import Responder from "../responder";
 
 type BasicAuthMiddleware = (
   user: string,
-  pass?: string,
+  pass: string,
   realm?: string,
 ) => connect.NextHandleFunction;
 
@@ -36,29 +38,41 @@ const basicAuth = requireModule("basic-auth-connect") as BasicAuthMiddleware;
 /**
  * Returns middleware for HTTP Basic authentication.
  * @param spec superstatic options.
- * @param spec.protect colon-separated `user:pass[:realm]` credentials.
+ * @param spec.protect colon-separated `user:pass` credentials.
  * @returns middleware.
  */
 function protect(
   spec: { protect?: string } = {},
 ): (
-  req: SuperstaticRequest,
-  res: SuperstaticResponse,
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  res: ServerResponse & { superstatic?: Responder },
   next: connect.NextFunction,
 ) => void {
   return function (
-    req: SuperstaticRequest,
-    res: SuperstaticResponse,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
     next: connect.NextFunction,
   ): void {
-    const credentials = spec.protect ?? req.superstatic?.protect;
-    if (credentials) {
-      const [user, pass, realm] = credentials.split(":");
-      basicAuth(user, pass, realm)(req, res, next);
+    let credentials = req.superstatic?.protect;
+    if (spec.protect) {
+      credentials = spec.protect;
+    }
+    if (!credentials) {
+      next();
       return;
     }
 
-    next();
+    const colonIndex = credentials.indexOf(":");
+    if (colonIndex === -1) {
+      res.statusCode = 401;
+      res.setHeader("WWW-Authenticate", 'Basic realm="Authorization Required"');
+      res.end("Unauthorized");
+      return;
+    }
+
+    const user = credentials.slice(0, colonIndex);
+    const pass = credentials.slice(colonIndex + 1);
+    basicAuth(user, pass)(req, res, next);
   };
 }
 
