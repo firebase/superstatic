@@ -19,11 +19,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { Readable } from "node:stream";
 import { use, expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 import memoryProvider, { MemoryProvider } from "../../../src/providers/memory";
 
 use(chaiAsPromised);
+
+function readStream(stream: Readable): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on("error", reject);
+    stream.on("data", (chunk: Buffer | string) => {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    });
+    stream.on("end", () => {
+      resolve(Buffer.concat(chunks).toString("utf8"));
+    });
+  });
+}
 
 describe("memory provider", () => {
   let store: Record<string, string>;
@@ -38,9 +52,17 @@ describe("memory provider", () => {
     return expect(provider({}, "/whatever")).to.eventually.be.null;
   });
 
-  it("should resolve null for falsy store entries", () => {
+  it("should resolve null for falsy, non-string, and prototype store lookups", async () => {
     store["/empty.html"] = "";
-    return expect(provider({}, "/empty.html")).to.eventually.be.null;
+    (store as Record<string, unknown>)["/null.html"] = null;
+    await expect(provider({}, "/empty.html")).to.eventually.be.null;
+    await expect(provider({}, "/null.html")).to.eventually.be.null;
+    await expect(provider({}, "/toString")).to.eventually.be.null;
+  });
+
+  it("should resolve null for malformed URI paths", async () => {
+    await expect(provider({}, "/%")).to.eventually.be.null;
+    await expect(provider({}, "/%E0%A4%A")).to.eventually.be.null;
   });
 
   it("should return a stream of the content if found", async () => {
@@ -52,16 +74,7 @@ describe("memory provider", () => {
       throw new Error("expected provider result");
     }
 
-    const out = await new Promise<string>((resolve, reject) => {
-      let data = "";
-      result.stream.on("error", reject);
-      result.stream.on("data", (chunk: Buffer | string) => {
-        data += chunk.toString();
-      });
-      result.stream.on("end", () => {
-        resolve(data);
-      });
-    });
+    const out = await readStream(result.stream);
     expect(out).to.eq("foobar");
   });
 
@@ -89,6 +102,22 @@ describe("memory provider", () => {
     );
   });
 
+  it("should compute byteLength size and stream full multi-byte UTF-8 content", async () => {
+    const content = "héllo 🚀 world!";
+    store["/page.html"] = content;
+
+    const result = await provider({}, "/page.html");
+    expect(result).to.not.equal(null);
+    expect(result?.size).to.equal(Buffer.byteLength(content, "utf8"));
+    expect(result?.size).to.equal(18);
+    if (!result) {
+      throw new Error("expected provider result");
+    }
+
+    const out = await readStream(result.stream);
+    expect(out).to.equal(content);
+  });
+
   it("should expose the backing store on the provider function", async () => {
     const defaultProvider = memoryProvider();
     defaultProvider.store["/default.html"] = "hello";
@@ -98,6 +127,21 @@ describe("memory provider", () => {
     expect(result).to.not.equal(null);
     expect(result?.size).to.equal(5);
     expect(result?.modified).to.equal(null);
+  });
+
+  it("should reflect reassigning provider.store on subsequent lookups", async () => {
+    const dynamicProvider = memoryProvider();
+    dynamicProvider.store = { "/app.html": "hello" };
+
+    const result = await dynamicProvider({}, "/app.html");
+    expect(result).to.not.equal(null);
+    expect(result?.size).to.equal(5);
+    if (!result) {
+      throw new Error("expected provider result");
+    }
+
+    const out = await readStream(result.stream);
+    expect(out).to.equal("hello");
   });
 
   it("should include modified timestamp when configured", async () => {

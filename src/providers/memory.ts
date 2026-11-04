@@ -21,6 +21,7 @@
 
 import * as crypto from "node:crypto";
 import { Readable } from "node:stream";
+import { FileStats, Provider, ProviderResult } from "../options";
 
 /**
  * Creates an in-memory file provider backed by a key-value map.
@@ -30,37 +31,39 @@ import { Readable } from "node:stream";
 function memoryProvider(
   options: memoryProvider.MemoryProviderOptions = {},
 ): memoryProvider.MemoryProvider {
-  const store: Record<string, string> = options.store ?? {};
-
   const fn = (
     req: unknown,
     pathname: string,
   ): Promise<memoryProvider.MemoryProviderResult | null> => {
-    const decodedPathname = decodeURI(pathname);
-    const content = Object.hasOwn(store, decodedPathname)
-      ? store[decodedPathname]
-      : undefined;
-
-    if (!content) {
+    let decodedPathname: string;
+    try {
+      decodedPathname = decodeURI(pathname);
+    } catch {
       return Promise.resolve(null);
     }
 
-    const stream = new Readable();
-    stream.push(content);
-    stream.push(null);
+    const currentStore = fn.store ?? {};
+    const content = Object.hasOwn(currentStore, decodedPathname)
+      ? currentStore[decodedPathname]
+      : undefined;
 
-    const hash = crypto.createHash("md5");
-    hash.update(content);
+    if (typeof content !== "string" || !content) {
+      return Promise.resolve(null);
+    }
+
+    const buf = Buffer.from(content, "utf8");
+    const stream = Readable.from(buf);
+    const etag = crypto.createHash("md5").update(buf).digest("hex");
 
     return Promise.resolve({
       modified: options.modified ?? null,
       stream,
-      size: content.length,
-      etag: hash.digest("hex"),
+      size: buf.byteLength,
+      etag,
     });
   };
 
-  fn.store = store;
+  fn.store = options.store ?? {};
   return fn;
 }
 
@@ -68,17 +71,17 @@ function memoryProvider(
 namespace memoryProvider {
   export interface MemoryProviderOptions {
     store?: Record<string, string>;
-    modified?: number | Date | null;
+    modified?: FileStats["modified"];
   }
 
-  export interface MemoryProviderResult {
-    modified: number | Date | null;
+  export interface MemoryProviderResult extends ProviderResult {
+    modified: Exclude<FileStats["modified"], undefined>;
     stream: Readable;
     size: number;
     etag: string;
   }
 
-  export interface MemoryProvider {
+  export interface MemoryProvider extends Provider {
     (req: unknown, pathname: string): Promise<MemoryProviderResult | null>;
     store: Record<string, string>;
   }
