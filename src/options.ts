@@ -20,22 +20,96 @@
  * SOFTWARE.
  */
 
-import connect, { HandleFunction } from "connect";
 import { ServerResponse } from "node:http";
+import { Readable } from "node:stream";
+import connect, { HandleFunction } from "connect";
 import { Configuration } from "./config";
 import Responder from "./responder";
+
+export interface FileStats {
+  modified?: number | string | Date | null;
+  size?: number;
+  etag?: string;
+  contentType?: string;
+}
+
+export interface ProviderResult extends FileStats {
+  stream: Readable;
+}
+
+export type Provider = (
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  pathname: string,
+) =>
+  | Promise<ProviderResult | null | undefined>
+  | ProviderResult
+  | null
+  | undefined;
+
+export interface FileDirective {
+  file: string;
+  status?: number;
+}
+
+export interface RedirectDirective {
+  redirect: string;
+  status?: number;
+}
+
+export interface RewriteConfig {
+  source?: string;
+  glob?: string;
+  regex?: string;
+  destination?: string;
+  function?: string | { functionId: string; region?: string; pinTag?: boolean };
+  run?: { serviceId: string; region?: string; pinTag?: boolean };
+  dynamicLinks?: boolean;
+  [key: string]: unknown;
+}
+
+export interface RewriteDirective {
+  rewrite: RewriteConfig;
+}
+
+export interface DataDirective {
+  data: string | Uint8Array;
+  status?: number;
+  contentType?: string;
+}
+
+export type ResponderMiddleware = (
+  req: connect.IncomingMessage,
+  res: ServerResponse,
+  next: (err?: unknown) => void,
+) => unknown;
+
+export type ResponderDirective =
+  | FileDirective
+  | RedirectDirective
+  | RewriteDirective
+  | DataDirective
+  | ResponderMiddleware
+  | string
+  | ResponderDirective[];
+
+export type RewriterFunction = (
+  rewrite: RewriteConfig,
+  responder: Responder,
+) => Promise<ResponderDirective>;
 
 export interface MiddlewareOptions {
   fallthrough?: boolean;
   config?: string | Configuration;
   protect?: string;
-  env?: string | Record<string, string>;
+  env?: Record<string, string>;
   cwd?: string;
-  compression?: boolean;
+  compression?: boolean | HandleFunction;
   stack?: string | string[];
-  after?: Record<string, HandleFunction>;
-  before?: Record<string, HandleFunction>;
-  rewriters?: Record<string, unknown>;
+  after?: Record<string, HandleFunction | HandleFunction[]>;
+  before?: Record<string, HandleFunction | HandleFunction[]>;
+  rewriters?: Record<string, RewriterFunction>;
+  provider?: Provider;
+  allowedHeaders?: string[];
   errorPage?: string;
 }
 
@@ -44,7 +118,7 @@ export interface ServerOptions extends MiddlewareOptions {
   hostname?: string;
   errorPage?: string;
   debug?: boolean;
-  compression?: boolean;
+  compression?: boolean | HandleFunction;
 }
 
 export interface SuperstaticRequest extends connect.IncomingMessage {

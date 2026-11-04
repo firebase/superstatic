@@ -19,6 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+const fs = require("node:fs");
+const path = require("node:path");
 const request = require("supertest");
 const connect = require("connect");
 
@@ -59,6 +61,13 @@ describe("env", () => {
   });
 
   it("serves javascript", (done) => {
+    const expectedBody = fs
+      .readFileSync(
+        path.resolve(__dirname, "../../../templates/env.js.template"),
+        "utf8",
+      )
+      .replace("{{ENV}}", JSON.stringify({ key: "value" }));
+
     app.use(
       env({
         env: {
@@ -71,6 +80,7 @@ describe("env", () => {
       .get("/__/env.js")
       .expect(200)
       .expect("content-type", "application/javascript; charset=utf-8")
+      .expect(expectedBody)
       .end(done);
   });
 
@@ -128,5 +138,16 @@ describe("env", () => {
         key: "value",
       })
       .end(done);
+  });
+
+  it("calls next cleanly when mounted standalone without req.superstatic", (done) => {
+    const standalone = connect();
+    standalone.use(rawEnv());
+    standalone.use((req, res) => {
+      res.statusCode = 204;
+      res.end();
+    });
+
+    void request(standalone).get("/__/env.json").expect(204).end(done);
   });
 });

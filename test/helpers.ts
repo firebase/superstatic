@@ -46,10 +46,10 @@ export function decorator<Spec = Record<string, unknown>>(
       req: connect.IncomingMessage,
       res: ServerResponse,
       next: connect.NextFunction,
-    ): void {
+    ): unknown {
       const superstaticReq = req as SuperstaticRequest;
       superstaticReq.superstatic = config ?? {};
-      middleware((spec ?? {}) as Spec)(
+      return middleware((spec ?? {}) as Spec)(
         superstaticReq,
         res as SuperstaticResponse,
         next,

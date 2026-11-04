@@ -19,9 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import * as fs from "fs";
+import * as fs from "node:fs";
+import { ServerResponse } from "node:http";
+import connect from "connect";
 import * as mime from "mime-types";
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import { Configuration } from "../config";
+import Responder from "../responder";
 
 const template = fs
   .readFileSync(`${__dirname}/../../templates/env.js.template`)
@@ -33,35 +36,43 @@ const template = fs
  * @param spec.env environment variables.
  * @returns middleware.
  */
-export function env(spec: { env?: Record<string, string> } = {}) {
+function env(spec: env.EnvOptions = {}): connect.NextHandleFunction {
   return (
-    req: SuperstaticRequest,
-    res: SuperstaticResponse,
-    next: () => void,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
+    next: connect.NextFunction,
   ): void => {
-    // const config = req.superstatic.env;
-    if (!spec.env && !req.superstatic.env) {
-      return next();
+    const configEnv = req.superstatic?.env;
+    if (!spec.env && !configEnv) {
+      next();
+      return;
     }
-    const env = Object.assign({}, req.superstatic.env, spec.env);
+    const mergedEnv = Object.assign({}, configEnv, spec.env);
 
     if (req.url === "/__/env.json") {
-      void res.superstatic.handleData({
-        data: JSON.stringify(env, null, 2),
+      void res.superstatic?.handleData({
+        data: JSON.stringify(mergedEnv, null, 2),
         contentType: mime.contentType("json") || "",
       });
       return;
     } else if (req.url === "/__/env.js") {
-      const payload = template.replace("{{ENV}}", JSON.stringify(env));
-      void res.superstatic.handleData({
+      const payload = template.replace("{{ENV}}", JSON.stringify(mergedEnv));
+      void res.superstatic?.handleData({
         data: payload,
         contentType: mime.contentType("js") || "",
       });
       return;
     }
 
-    return next();
+    next();
   };
 }
 
-module.exports = env;
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace env {
+  export interface EnvOptions {
+    env?: Record<string, string>;
+  }
+}
+
+export = env;

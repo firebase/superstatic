@@ -24,7 +24,7 @@ declare module "basic-auth-connect" {
 
   function basicAuth(
     user: string,
-    pass?: string,
+    pass: string,
     realm?: string,
   ): connect.NextHandleFunction;
   function basicAuth(

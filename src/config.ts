@@ -39,9 +39,17 @@ export type Matcher =
   | { source?: string; glob: string; regex?: string }
   | { source?: string; glob?: string; regex: string };
 
-export type Rewrite = Matcher & {
-  destination?: string;
-};
+export type RewriteTarget =
+  | { destination: string }
+  | {
+      function:
+        string | { functionId: string; region?: string; pinTag?: boolean };
+    }
+  | { run: { serviceId: string; region?: string; pinTag?: boolean } }
+  | { dynamicLinks: boolean }
+  | ({ destination?: string } & Record<string, unknown>);
+
+export type Rewrite = Matcher & RewriteTarget;
 
 export type Redirect = Matcher & {
   destination: string;
