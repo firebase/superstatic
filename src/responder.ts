@@ -24,82 +24,19 @@ import destroy from "destroy";
 import * as mime from "mime-types";
 import * as http from "node:http";
 import * as path from "node:path";
-import { Readable } from "node:stream";
 import onFinished from "on-finished";
 
 import { Configuration } from "./config";
+import {
+  FileStats as OptionsFileStats,
+  Provider as OptionsProvider,
+  ProviderResult as OptionsProviderResult,
+  ResponderDirective as OptionsResponderDirective,
+  ResponderMiddleware as OptionsResponderMiddleware,
+  RewriteConfig as OptionsRewriteConfig,
+  RewriteDirective as OptionsRewriteDirective,
+} from "./options";
 import { isPlainObject } from "./utils/objectutils";
-
-interface FileStats {
-  modified?: number | string | Date | null;
-  etag?: string;
-}
-
-interface ProviderResult extends FileStats {
-  size?: number;
-  contentType?: string;
-  stream: Readable;
-}
-
-type Provider = (
-  req: http.IncomingMessage,
-  pathname: string,
-) => Promise<ProviderResult | null | undefined>;
-
-interface FileDirective {
-  file: string;
-  status?: number;
-}
-
-interface RedirectDirective {
-  redirect: string;
-  status?: number;
-}
-
-interface RewriteConfig {
-  destination?: string;
-  source?: string;
-  glob?: string;
-  regex?: string;
-  [key: string]: unknown;
-}
-
-interface RewriteDirective {
-  rewrite: RewriteConfig;
-}
-
-interface DataDirective {
-  data: string | Uint8Array;
-  status?: number;
-  contentType?: string;
-}
-
-type ResponderMiddleware = (
-  req: http.IncomingMessage,
-  res: http.ServerResponse,
-  next: () => void,
-) => unknown;
-
-type ResponderDirective =
-  | FileDirective
-  | RedirectDirective
-  | RewriteDirective
-  | DataDirective
-  | ResponderMiddleware
-  | string
-  | ResponderDirective[];
-
-type RewriterFunction = (
-  rewrite: RewriteConfig,
-  responder: Responder,
-) => Promise<ResponderDirective>;
-
-interface ResponderOptions {
-  provider?: Provider;
-  config?: Configuration;
-  rewriters?: Record<string, RewriterFunction>;
-  compressor?: connect.NextHandleFunction | null;
-}
 
 function awaitFinished(res: http.ServerResponse): Promise<void> {
   return new Promise((resolve) => {
@@ -109,25 +46,31 @@ function awaitFinished(res: http.ServerResponse): Promise<void> {
   });
 }
 
-function isFileDirective(item: unknown): item is FileDirective {
+function isFileDirective(item: unknown): item is Responder.FileDirective {
   return (
     isPlainObject(item) &&
     typeof item.file === "string" &&
     item.file.length > 0 &&
-    (item.status === undefined || typeof item.status === "number")
+    (item.status === undefined ||
+      item.status === null ||
+      typeof item.status === "number")
   );
 }
 
-function isRedirectDirective(item: unknown): item is RedirectDirective {
+function isRedirectDirective(
+  item: unknown,
+): item is Responder.RedirectDirective {
   return (
     isPlainObject(item) &&
     typeof item.redirect === "string" &&
     item.redirect.length > 0 &&
-    (item.status === undefined || typeof item.status === "number")
+    (item.status === undefined ||
+      item.status === null ||
+      typeof item.status === "number")
   );
 }
 
-function isRewriteDirective(item: unknown): item is RewriteDirective {
+function isRewriteDirective(item: unknown): item is Responder.RewriteDirective {
   return (
     isPlainObject(item) &&
     isPlainObject(item.rewrite) &&
@@ -136,17 +79,18 @@ function isRewriteDirective(item: unknown): item is RewriteDirective {
   );
 }
 
-function isDataDirective(item: unknown): item is DataDirective {
+function isDataDirective(item: unknown): item is Responder.DataDirective {
   return (
     isPlainObject(item) &&
-    ((typeof item.data === "string" && item.data.length > 0) ||
-      item.data instanceof Uint8Array) &&
-    (item.status === undefined || typeof item.status === "number") &&
+    (typeof item.data === "string" || item.data instanceof Uint8Array) &&
+    (item.status === undefined ||
+      item.status === null ||
+      typeof item.status === "number") &&
     (item.contentType === undefined || typeof item.contentType === "string")
   );
 }
 
-function isMiddleware(item: unknown): item is ResponderMiddleware {
+function isMiddleware(item: unknown): item is Responder.ResponderMiddleware {
   return typeof item === "function";
 }
 
@@ -154,13 +98,13 @@ function isMiddleware(item: unknown): item is ResponderMiddleware {
  * Handles responder directives and writes HTTP responses.
  */
 class Responder {
-  req: http.IncomingMessage;
+  req: connect.IncomingMessage & { superstatic?: Configuration };
   res: http.ServerResponse;
-  provider?: Provider;
+  provider?: Responder.Provider;
   config: Configuration;
-  rewriters: Record<string, RewriterFunction>;
+  rewriters: Record<string, Responder.RewriterFunction>;
   compressor?: connect.NextHandleFunction | null;
-  streamedFile?: FileDirective;
+  streamedFile?: Responder.FileDirective;
 
   /**
    * Creates a Responder for an HTTP request/response pair.
@@ -169,9 +113,9 @@ class Responder {
    * @param options responder configuration and provider options.
    */
   constructor(
-    req: http.IncomingMessage,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
     res: http.ServerResponse,
-    options: ResponderOptions = {},
+    options: Responder.ResponderOptions = {},
   ) {
     this.req = req;
     this.res = res;
@@ -186,7 +130,7 @@ class Responder {
    * @param stats resource metadata containing etag and modified timestamp.
    * @returns true if a 304 Not Modified response should be sent.
    */
-  isNotModified(stats: FileStats): boolean {
+  isNotModified(stats: Responder.FileStats): boolean {
     if (stats.etag && stats.etag === this.req.headers["if-none-match"]) {
       return true;
     }
@@ -221,11 +165,9 @@ class Responder {
    * @returns promise resolving to true if responded, false if passed through, or void on error.
    */
   handle(
-    item: ResponderDirective,
+    item: Responder.ResponderDirective,
     next?: connect.NextFunction,
-  ): Promise<boolean | void>;
-  handle(item: unknown, next?: connect.NextFunction): Promise<boolean | void>;
-  handle(item: unknown, next?: connect.NextFunction): Promise<boolean | void> {
+  ): Promise<boolean | void> {
     return this._handle(item)
       .then((responded) => {
         if (!responded && next) {
@@ -243,30 +185,30 @@ class Responder {
    * @param item responder directive or stack of directives.
    * @returns promise resolving to true if a response was written, false otherwise.
    */
-  _handle(item: ResponderDirective): Promise<boolean>;
-  _handle(item: unknown): Promise<boolean>;
-  _handle(item: unknown): Promise<boolean> {
+  _handle(item: Responder.ResponderDirective): Promise<boolean> {
     if (Array.isArray(item)) {
       return this.handleStack(item);
     } else if (typeof item === "string") {
       return this.handleFile({ file: item });
-    } else if (isPlainObject(item)) {
-      if (isFileDirective(item)) {
-        return this.handleFile(item);
-      } else if (isRedirectDirective(item)) {
-        return this.handleRedirect(item);
-      } else if (isRewriteDirective(item)) {
-        return this.handleRewrite(item);
-      } else if (isDataDirective(item)) {
-        return this.handleData(item);
+    }
+    const directive: unknown = item;
+    if (isPlainObject(directive)) {
+      if (isFileDirective(directive)) {
+        return this.handleFile(directive);
+      } else if (isRedirectDirective(directive)) {
+        return this.handleRedirect(directive);
+      } else if (isRewriteDirective(directive)) {
+        return this.handleRewrite(directive);
+      } else if (isDataDirective(directive)) {
+        return this.handleData(directive);
       }
-    } else if (isMiddleware(item)) {
-      return this.handleMiddleware(item);
+    } else if (isMiddleware(directive)) {
+      return this.handleMiddleware(directive);
     }
 
     return Promise.reject(
       new Error(
-        JSON.stringify(item) + " is not a recognized responder directive",
+        JSON.stringify(directive) + " is not a recognized responder directive",
       ),
     );
   }
@@ -278,8 +220,16 @@ class Responder {
   handleError(err: unknown): void {
     console.log(err instanceof Error ? err.stack : err);
     if (!this.res.headersSent) {
+      const errorMessage = "Unexpected error occurred.";
       this.res.statusCode = 500;
-      this.res.end("Unexpected error occurred.");
+      this.res.removeHeader("Content-Length");
+      this.res.removeHeader("Content-Encoding");
+      this.res.removeHeader("Transfer-Encoding");
+      this.res.removeHeader("ETag");
+      this.res.removeHeader("Last-Modified");
+      this.res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      this.res.setHeader("Content-Length", Buffer.byteLength(errorMessage));
+      this.res.end(errorMessage);
     } else {
       this.res.destroy();
     }
@@ -290,10 +240,11 @@ class Responder {
    * @param stack list of responder directives to evaluate in order.
    * @returns promise resolving to true if any directive responded, false otherwise.
    */
-  handleStack(stack: unknown[]): Promise<boolean> {
-    if (stack.length) {
-      return this._handle(stack.shift()).then((responded) => {
-        return responded ? true : this.handleStack(stack);
+  handleStack(stack: Responder.ResponderDirective[]): Promise<boolean> {
+    if (stack.length > 0) {
+      const [first, ...rest] = stack;
+      return this._handle(first).then((responded) => {
+        return responded ? true : this.handleStack(rest);
       });
     }
 
@@ -305,21 +256,23 @@ class Responder {
    * @param file file directive describing the target path and status code.
    * @returns promise resolving to true if the file was handled, false if not found.
    */
-  handleFile(file: FileDirective): Promise<boolean> {
+  handleFile(file: Responder.FileDirective): Promise<boolean> {
     if (!this.provider) {
       return Promise.reject(new Error("No provider configured"));
     }
-    return this.provider(this.req, file.file).then((result) => {
-      if (!result) {
-        return false;
-      }
+    return Promise.resolve(this.provider(this.req, file.file)).then(
+      (result) => {
+        if (!result) {
+          return false;
+        }
 
-      if (this.isNotModified(result)) {
-        return this.handleNotModified();
-      }
+        if (this.isNotModified(result)) {
+          return this.handleNotModified();
+        }
 
-      return this.handleFileStream(file, result);
-    });
+        return this.handleFileStream(file, result);
+      },
+    );
   }
 
   /**
@@ -329,8 +282,8 @@ class Responder {
    * @returns promise resolving to true once the response finishes.
    */
   handleFileStream(
-    file: FileDirective,
-    result: ProviderResult,
+    file: Responder.FileDirective,
+    result: Responder.ProviderResult,
   ): Promise<boolean> {
     this.streamedFile = file;
     this.res.statusCode = file.status ?? 200;
@@ -348,11 +301,14 @@ class Responder {
     if (result.etag) {
       this.res.setHeader("ETag", result.etag);
     }
-    if (result.modified) {
-      this.res.setHeader(
-        "Last-Modified",
-        new Date(result.modified).toUTCString(),
-      );
+    if (result.modified != null) {
+      const modifiedDate =
+        result.modified instanceof Date
+          ? result.modified
+          : new Date(result.modified);
+      if (!Number.isNaN(modifiedDate.getTime())) {
+        this.res.setHeader("Last-Modified", modifiedDate.toUTCString());
+      }
     }
 
     result.stream.on("error", (err) => {
@@ -394,7 +350,7 @@ class Responder {
    * @param redirect redirect directive containing destination URL and optional status code.
    * @returns promise resolving to true.
    */
-  handleRedirect(redirect: RedirectDirective): Promise<boolean> {
+  handleRedirect(redirect: Responder.RedirectDirective): Promise<boolean> {
     this.res.statusCode = redirect.status ?? 301;
     this.res.setHeader("Location", redirect.redirect);
     this.res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -407,11 +363,22 @@ class Responder {
    * @param middleware middleware function to invoke.
    * @returns promise resolving to false if `next` is called.
    */
-  handleMiddleware(middleware: ResponderMiddleware): Promise<boolean> {
-    return new Promise((resolve) => {
-      middleware(this.req, this.res, () => {
-        resolve(false);
-      });
+  handleMiddleware(
+    middleware: Responder.ResponderMiddleware,
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const next = (err?: unknown): void => {
+        if (err) {
+          reject(
+            err instanceof Error
+              ? err
+              : new Error(typeof err === "string" ? err : JSON.stringify(err)),
+          );
+        } else {
+          resolve(false);
+        }
+      };
+      Promise.resolve(middleware(this.req, this.res, next)).catch(reject);
     });
   }
 
@@ -420,7 +387,7 @@ class Responder {
    * @param item rewrite directive configuration.
    * @returns promise resolving to true if handled, false otherwise.
    */
-  handleRewrite(item: RewriteDirective): Promise<boolean> {
+  handleRewrite(item: Responder.RewriteDirective): Promise<boolean> {
     if (item.rewrite.destination) {
       return this.handleFile({ file: item.rewrite.destination });
     }
@@ -445,7 +412,7 @@ class Responder {
    * @param data data directive containing payload, status, and content type.
    * @returns promise resolving to true.
    */
-  handleData(data: DataDirective): Promise<boolean> {
+  handleData(data: Responder.DataDirective): Promise<boolean> {
     this.res.statusCode = data.status ?? 200;
     this.res.setHeader(
       "Content-Type",
@@ -453,6 +420,45 @@ class Responder {
     );
     this.res.end(data.data);
     return Promise.resolve(true);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace Responder {
+  export type FileStats = OptionsFileStats;
+  export type ProviderResult = OptionsProviderResult;
+  export type Provider = OptionsProvider;
+  export interface FileDirective {
+    file: string;
+    status?: number | null;
+  }
+  export interface RedirectDirective {
+    redirect: string;
+    status?: number | null;
+  }
+  export type RewriteConfig = OptionsRewriteConfig;
+  export type RewriteDirective = OptionsRewriteDirective;
+  export interface DataDirective {
+    data: string | Uint8Array;
+    status?: number | null;
+    contentType?: string;
+  }
+  export type ResponderMiddleware = OptionsResponderMiddleware;
+  export type ResponderDirective =
+    | OptionsResponderDirective
+    | FileDirective
+    | RedirectDirective
+    | DataDirective
+    | ResponderDirective[];
+  export type RewriterFunction = (
+    rewrite: RewriteConfig,
+    responder: Responder,
+  ) => Promise<ResponderDirective>;
+  export interface ResponderOptions {
+    provider?: Provider;
+    config?: Configuration;
+    rewriters?: Record<string, RewriterFunction>;
+    compressor?: connect.NextHandleFunction | null;
   }
 }
 

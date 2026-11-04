@@ -120,9 +120,36 @@ describe("Responder", () => {
       expect(next).to.have.callCount(1);
     });
 
+    it("should resolve true and send 200 when data is an empty string", async () => {
+      let body: unknown;
+      sinon.stub(responder.res, "end").callsFake((chunk?: unknown) => {
+        body = chunk;
+        return responder.res;
+      });
+
+      const responded = await responder.handle({ data: "" });
+      expect(responded).to.equal(true);
+      expect(responder.res.statusCode).to.equal(200);
+      expect(body).to.equal("");
+    });
+
+    it("should delegate rejected async middleware promises to handleError", async () => {
+      const error = new Error("async failure");
+      const stub = sinon.stub(responder, "handleError");
+      const middleware: Responder.ResponderMiddleware = async () => {
+        await Promise.resolve();
+        throw error;
+      };
+
+      await responder.handle(middleware);
+      expect(stub).to.have.been.calledOnceWithExactly(error);
+    });
+
     it("should delegate errors to handleError", async () => {
       const stub = sinon.stub(responder, "handleError");
-      await responder.handle({ unknown: true });
+      await responder.handle({
+        unknown: true,
+      } as unknown as Responder.ResponderDirective);
       expect(stub).to.have.callCount(1);
     });
   });
@@ -133,9 +160,38 @@ describe("Responder", () => {
     });
 
     it("should reject with an unrecognized payload", () => {
-      return expect(responder._handle({ foo: "bar" })).to.be.rejectedWith(
-        "is not a recognized responder directive",
-      );
+      return expect(
+        responder._handle({
+          foo: "bar",
+        } as unknown as Responder.ResponderDirective),
+      ).to.be.rejectedWith("is not a recognized responder directive");
+    });
+  });
+
+  describe("#handleStack", () => {
+    beforeEach(() => {
+      responder = new Responder(createMockRequest(), createMockResponse());
+    });
+
+    it("should reject when stack contains an undefined directive", () => {
+      return expect(
+        responder.handleStack([
+          undefined as unknown as Responder.ResponderDirective,
+          "/index.html",
+        ]),
+      ).to.be.rejectedWith("is not a recognized responder directive");
+    });
+
+    it("should evaluate directives in order without mutating the input stack", async () => {
+      const stack: Responder.ResponderDirective[] = [
+        [],
+        { data: "matched" },
+        { data: "unreachable" },
+      ];
+
+      const responded = await responder.handleStack(stack);
+      expect(responded).to.equal(true);
+      expect(stack).to.have.lengthOf(3);
     });
   });
 
@@ -208,6 +264,24 @@ describe("Responder", () => {
         next();
       });
       expect(result).to.equal(false);
+    });
+
+    it("should reject if next is called with an error", async () => {
+      await expect(
+        responder.handleMiddleware((_req, _res, next) => {
+          next(new Error("middleware failure"));
+        }),
+      ).to.be.rejectedWith("middleware failure");
+    });
+
+    it("should reject if an async middleware returns a rejected Promise", async () => {
+      const middleware: Responder.ResponderMiddleware = async () => {
+        await Promise.resolve();
+        throw new Error("async middleware failure");
+      };
+      await expect(responder.handleMiddleware(middleware)).to.be.rejectedWith(
+        "async middleware failure",
+      );
     });
   });
 
@@ -360,6 +434,108 @@ describe("Responder", () => {
       expect(handleErrorSpy).to.have.callCount(1);
       expect(logStub).to.have.callCount(1);
     });
+
+    it("should clear stale headers and respond with 500 when stream errors before headers flush with size > 26", async () => {
+      const logStub = sinon.stub(console, "log");
+      const failingStream = new Readable({
+        read() {
+          process.nextTick(() => {
+            this.emit("error", new Error("disk read failure"));
+          });
+        },
+      });
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res);
+        void responder.handleFileStream(
+          { file: "/large-broken.txt" },
+          {
+            size: 1000,
+            etag: "abc123",
+            modified: Date.UTC(2026, 0, 1),
+            stream: failingStream,
+          },
+        );
+      });
+
+      const response = await request(app)
+        .get("/large-broken.txt")
+        .expect(500, "Unexpected error occurred.")
+        .expect("content-type", "text/plain; charset=utf-8")
+        .expect("content-length", "26");
+
+      expect(response.headers.etag).to.equal(undefined);
+      expect(response.headers["last-modified"]).to.equal(undefined);
+      expect(failingStream.destroyed).to.equal(true);
+      expect(logStub).to.have.callCount(1);
+    });
+
+    it("should clear stale headers and respond with 500 when stream errors before headers flush with size < 26", async () => {
+      const logStub = sinon.stub(console, "log");
+      const failingStream = new Readable({
+        read() {
+          process.nextTick(() => {
+            this.emit("error", new Error("disk read failure"));
+          });
+        },
+      });
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res);
+        void responder.handleFileStream(
+          { file: "/small-broken.txt" },
+          {
+            size: 5,
+            etag: "abc123",
+            modified: Date.UTC(2026, 0, 1),
+            stream: failingStream,
+          },
+        );
+      });
+
+      const response = await request(app)
+        .get("/small-broken.txt")
+        .expect(500, "Unexpected error occurred.")
+        .expect("content-type", "text/plain; charset=utf-8")
+        .expect("content-length", "26");
+
+      expect(response.headers.etag).to.equal(undefined);
+      expect(response.headers["last-modified"]).to.equal(undefined);
+      expect(failingStream.destroyed).to.equal(true);
+      expect(logStub).to.have.callCount(1);
+    });
+
+    it("should omit Last-Modified header when modified is an invalid date string", async () => {
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res);
+        void responder.handleFileStream(
+          { file: "/index.html" },
+          {
+            modified: "not-a-valid-date",
+            stream: Readable.from(["hello"]),
+          },
+        );
+      });
+
+      const response = await request(app)
+        .get("/index.html")
+        .expect(200, "hello")
+        .expect("content-type", "text/html; charset=utf-8");
+
+      expect(response.headers["last-modified"]).to.equal(undefined);
+    });
+
+    it("should default status to 200 when status is null", async () => {
+      const app = connect().use((req, res) => {
+        responder = new Responder(req, res);
+        void responder.handleFileStream(
+          { file: "/index.html", status: null },
+          {
+            stream: Readable.from(["hello"]),
+          },
+        );
+      });
+
+      await request(app).get("/index.html").expect(200, "hello");
+    });
   });
 
   describe("#handleRedirect", () => {
@@ -376,6 +552,20 @@ describe("Responder", () => {
         "text/html; charset=utf-8",
       );
     });
+
+    it("should default status to 301 when status is null", async () => {
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      responder = new Responder(req, res);
+
+      const result = await responder.handleRedirect({
+        redirect: "/target",
+        status: null,
+      });
+      expect(result).to.equal(true);
+      expect(res.statusCode).to.equal(301);
+      expect(res.getHeader("Location")).to.equal("/target");
+    });
   });
 
   describe("#handleData", () => {
@@ -390,6 +580,22 @@ describe("Responder", () => {
       expect(res.getHeader("Content-Type")).to.equal(
         "text/html; charset=utf-8",
       );
+    });
+
+    it("should support empty string data and null status", async () => {
+      let body: unknown;
+      const req = createMockRequest();
+      const res = createMockResponse(req);
+      sinon.stub(res, "end").callsFake((chunk?: unknown) => {
+        body = chunk;
+        return res;
+      });
+      responder = new Responder(req, res);
+
+      const result = await responder.handleData({ data: "", status: null });
+      expect(result).to.equal(true);
+      expect(res.statusCode).to.equal(200);
+      expect(body).to.equal("");
     });
   });
 
@@ -487,6 +693,54 @@ describe("Responder", () => {
 
       const r = responder.handleNotModified();
       expect(r).to.equal(true);
+    });
+  });
+
+  describe("namespace exports", () => {
+    it("should export all Responder configuration and directive types", () => {
+      const stats: Responder.FileStats = { size: 5, etag: "v1" };
+      const providerResult: Responder.ProviderResult = {
+        ...stats,
+        stream: Readable.from(["hello"]),
+      };
+      const provider: Responder.Provider = () => providerResult;
+      const fileDirective: Responder.FileDirective = {
+        file: "/index.html",
+        status: null,
+      };
+      const redirectDirective: Responder.RedirectDirective = {
+        redirect: "/next",
+        status: null,
+      };
+      const rewriteConfig: Responder.RewriteConfig = {
+        destination: "/index.html",
+      };
+      const rewriteDirective: Responder.RewriteDirective = {
+        rewrite: rewriteConfig,
+      };
+      const dataDirective: Responder.DataDirective = {
+        data: "",
+        status: null,
+      };
+      const middleware: Responder.ResponderMiddleware = (_req, _res, next) => {
+        next();
+      };
+      const rewriter: Responder.RewriterFunction = () =>
+        Promise.resolve(fileDirective);
+      const directives: Responder.ResponderDirective = [
+        fileDirective,
+        redirectDirective,
+        rewriteDirective,
+        dataDirective,
+        middleware,
+      ];
+      const options: Responder.ResponderOptions = {
+        provider,
+        rewriters: { custom: rewriter },
+      };
+
+      expect(options.provider).to.equal(provider);
+      expect(directives).to.have.lengthOf(5);
     });
   });
 });
