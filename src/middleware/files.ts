@@ -19,41 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect, { NextFunction } from "connect";
 import { ServerResponse } from "node:http";
-import * as url from "node:url";
+import connect from "connect";
 
 import { Configuration } from "../config";
-import { SuperstaticRequest, SuperstaticResponse } from "../options";
+import { MiddlewareOptions, Provider, ProviderResult } from "../options";
+import Responder from "../responder";
 import { i18nContentOptions } from "../utils/i18n";
 import * as pathutils from "../utils/pathutils";
-
-interface ProviderResult {
-  modified?: number | Date | null;
-  size?: number;
-  etag?: string;
-  contentType?: string;
-  stream: NodeJS.ReadableStream;
-}
-
-type Provider = (
-  req: SuperstaticRequest | connect.IncomingMessage,
-  pathname: string,
-) => Promise<ProviderResult | null | undefined>;
-
-interface FilesResponder {
-  provider?: Provider;
-  handle: (item: { redirect: string; status?: number }) => Promise<unknown>;
-  handleFileStream: (
-    file: { file: string; status?: number },
-    result: ProviderResult,
-  ) => Promise<unknown>;
-  handleError?: (err: unknown) => void;
-}
-
-type FilesResponse = Omit<SuperstaticResponse, "superstatic"> & {
-  superstatic: FilesResponder;
-};
 
 /**
  * We cannot redirect to "", redirect to "/" instead.
@@ -65,6 +38,27 @@ function normalizeRedirectPath(path: string): string {
 }
 
 /**
+ * Extracts normalized pathname and search string from a request URL without `url.parse`.
+ * @param reqUrl raw request URL.
+ * @returns normalized pathname and query string.
+ */
+function parseRequestUrl(reqUrl: string): {
+  pathname: string;
+  search: string;
+} {
+  const hashIndex = reqUrl.indexOf("#");
+  const urlWithoutHash = hashIndex === -1 ? reqUrl : reqUrl.slice(0, hashIndex);
+  const queryIndex = urlWithoutHash.indexOf("?");
+  const rawPathname =
+    queryIndex === -1 ? urlWithoutHash : urlWithoutHash.slice(0, queryIndex);
+  const search = queryIndex === -1 ? "" : urlWithoutHash.slice(queryIndex);
+  return {
+    pathname: pathutils.normalizeMultiSlashes(rawPathname),
+    search,
+  };
+}
+
+/**
  * Uses the provider to look for a file given a path.
  * This also takes into account i18n settings.
  * @param req the Request.
@@ -73,25 +67,25 @@ function normalizeRedirectPath(path: string): string {
  * @returns a non-null value if a file is found.
  */
 async function providerResult(
-  req: SuperstaticRequest | connect.IncomingMessage,
-  responder: FilesResponder,
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  responder: Responder,
   p: string,
 ): Promise<ProviderResult | undefined> {
-  const provider = responder.provider;
+  const provider = (responder as { provider?: Provider }).provider;
   if (!provider) {
-    return undefined;
+    throw new Error("No provider configured");
   }
 
   const promises: Promise<ProviderResult | null | undefined>[] = [];
 
-  const i18n = "superstatic" in req ? req.superstatic?.i18n : undefined;
+  const i18n = req.superstatic?.i18n;
   if (i18n?.root) {
     const paths = i18nContentOptions(p, req);
     for (const pth of paths) {
-      promises.push(provider(req, pth));
+      promises.push(Promise.resolve(provider(req, pth)));
     }
   }
-  promises.push(provider(req, p));
+  promises.push(Promise.resolve(provider(req, p)));
 
   const results = await Promise.all(promises);
   for (const r of results) {
@@ -106,32 +100,25 @@ async function providerResult(
  * Handles static file resolution, directory index redirects, and clean URLs.
  * @param req the Request.
  * @param res the Response.
- * @param next middleware continuation callback.
+ * @returns true if a response or redirect was handled, false to pass to next().
  */
 async function handleRequest(
-  req: SuperstaticRequest | connect.IncomingMessage,
-  res: FilesResponse | ServerResponse,
-  next: NextFunction,
-): Promise<void> {
-  const config: Configuration =
-    "superstatic" in req && req.superstatic ? req.superstatic : {};
+  req: connect.IncomingMessage & { superstatic?: Configuration },
+  res: ServerResponse & { superstatic?: Responder },
+): Promise<boolean> {
+  const config: Configuration = req.superstatic ?? {};
   const trailingSlashBehavior = config.trailingSlash;
 
   if (!req.url) {
-    next();
-    return;
+    return false;
   }
 
-  const responder = "superstatic" in res ? res.superstatic : undefined;
+  const responder = res.superstatic;
   if (!responder) {
-    next();
-    return;
+    return false;
   }
 
-  const parsedUrl = url.parse(req.url);
-  const pathname = pathutils.normalizeMultiSlashes(parsedUrl.pathname ?? "");
-  const search = parsedUrl.search ?? "";
-
+  const { pathname, search } = parseRequestUrl(req.url);
   const cleanUrlRules = Boolean(config.cleanUrls);
 
   // Exact file always wins.
@@ -149,10 +136,10 @@ async function handleRequest(
       await responder.handle({
         redirect: normalizeRedirectPath(redirPath + search),
       });
-      return;
+      return true;
     }
     await responder.handleFileStream({ file: pathname }, result);
-    return;
+    return true;
   }
 
   // Now, let's consider the trailing slash.
@@ -178,7 +165,7 @@ async function handleRequest(
       await responder.handle({
         redirect: pathutils.addTrailingSlash(pathname) + search,
       });
-      return;
+      return true;
     }
     if (
       trailingSlashBehavior === false &&
@@ -191,20 +178,20 @@ async function handleRequest(
           pathutils.removeTrailingSlash(pathname) + search,
         ),
       });
-      return;
+      return true;
     }
     if (trailingSlashBehavior === true && !hasTrailingSlash) {
       await responder.handle({
         redirect: pathutils.addTrailingSlash(pathname) + search,
       });
-      return;
+      return true;
     }
     // If we haven't returned yet, our path is "correct" and we should be serving a file, not redirecting.
     await responder.handleFileStream(
       { file: pathAsDirectoryWithIndex },
       pathAsDirectoryWithIndexResult,
     );
-    return;
+    return true;
   }
 
   // Let's check on the clean URLs property.
@@ -236,7 +223,7 @@ async function handleRequest(
             pathutils.removeTrailingSlash(pathname) + search,
           ),
         });
-        return;
+        return true;
       }
       if (trailingSlashBehavior === true && !hasTrailingSlash) {
         // If we are missing a slash and need to add it, we want to make sure our appended path is cleaned up.
@@ -245,7 +232,7 @@ async function handleRequest(
         await responder.handle({
           redirect: pathutils.addTrailingSlash(appendedPath) + search,
         });
-        return;
+        return true;
       }
       // If we've gotten this far and still have `/index.html` on the end, we want to remove it from the URL.
       if (appendedPath.endsWith("/index.html")) {
@@ -255,43 +242,48 @@ async function handleRequest(
               search,
           ),
         });
-        return;
+        return true;
       }
       // And if we should be serving a file and we're at the right path, we'll serve the file.
       await responder.handleFileStream(
         { file: appendedPath },
         appendedPathResult,
       );
-      return;
+      return true;
     }
 
-    next();
-    return;
+    return false;
   }
 
-  next();
+  return false;
 }
 
 /**
  * Returns middleware for serving static files, directory indexes, and clean URLs.
+ * @param spec superstatic middleware options.
  * @returns middleware for serving static files.
  */
+function files(spec?: MiddlewareOptions): connect.NextHandleFunction;
 function files(): connect.NextHandleFunction {
   return (
-    req: SuperstaticRequest | connect.IncomingMessage,
-    res: FilesResponse | ServerResponse,
-    next: NextFunction,
+    req: connect.IncomingMessage & { superstatic?: Configuration },
+    res: ServerResponse & { superstatic?: Responder },
+    next: connect.NextFunction,
   ): void => {
-    handleRequest(req, res, next).catch((err: unknown) => {
-      if (
-        "superstatic" in res &&
-        typeof res.superstatic?.handleError === "function"
-      ) {
-        res.superstatic.handleError(err);
-      } else {
-        next(err);
-      }
-    });
+    handleRequest(req, res).then(
+      (handled) => {
+        if (!handled) {
+          next();
+        }
+      },
+      (err: unknown) => {
+        if (typeof res.superstatic?.handleError === "function") {
+          res.superstatic.handleError(err);
+        } else {
+          next(err);
+        }
+      },
+    );
   };
 }
 

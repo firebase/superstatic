@@ -20,35 +20,28 @@
  */
 
 import * as fs from "node:fs/promises";
+import { ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { expect } from "chai";
-import request from "supertest";
 import connect from "connect";
-import { ServerResponse } from "node:http";
+import * as sinon from "sinon";
+import request from "supertest";
 
-import * as helpers from "../../helpers";
+import { Configuration } from "../../../src/config";
 import filesPkg from "../../../src/middleware/files";
+import { Provider } from "../../../src/options";
 import Responder from "../../../src/responder";
-
-type FsProvider = (
-  req: unknown,
-  pathname: string,
-) => Promise<{
-  modified: number;
-  size: number;
-  etag: string;
-  stream: NodeJS.ReadableStream;
-} | null>;
+import * as helpers from "../../helpers";
 
 type FsProviderFactory = (options: {
   cwd?: string;
   public?: string | string[];
-}) => FsProvider;
+}) => Provider;
 
 type ResponderConstructor = new (
   req: connect.IncomingMessage,
   res: ServerResponse,
-  options: { provider: FsProvider },
+  options: { provider?: Provider; config?: Configuration },
 ) => Responder;
 
 const requireModule = createRequire(__filename) as (id: string) => unknown;
@@ -263,6 +256,23 @@ describe("static server with trailing slash customization", () => {
       .expect("test");
   });
 
+  it("strips hash fragments before parsing query parameters", async () => {
+    app.use(files({}, { provider: provider }));
+
+    await request(app)
+      .get("/foo?query=params#section?ignored=1")
+      .expect((res) => {
+        expect(res.headers.location).to.equal("/foo/?query=params");
+      })
+      .expect(301);
+  });
+
+  it("does not normalize parent directory traversal segments", async () => {
+    app.use(files({}, { provider: provider }));
+
+    await request(app).get("/../package.json").expect(404);
+  });
+
   it("does not redirect the root url because of the trailing slash", async () => {
     await fs.writeFile(".tmp/index.html", "an actual index", "utf8");
 
@@ -465,13 +475,14 @@ describe("static server with trailing slash customization", () => {
     });
   });
 
-  it("supports both ES default import and CommonJS require", async () => {
+  it("supports both ES default import, CommonJS require, and optional spec argument", async () => {
     const cjsFilesPkg = requireModule(
       "../../../src/middleware/files",
     ) as typeof filesPkg;
     expect(filesPkg).to.be.a("function");
     expect(cjsFilesPkg).to.be.a("function");
     expect(cjsFilesPkg).to.equal(filesPkg);
+    expect(filesPkg({})).to.be.a("function");
 
     const cjsFiles = helpers.decorator(cjsFilesPkg);
     app.use(cjsFiles({}, { provider }));
@@ -488,10 +499,10 @@ describe("static server with trailing slash customization", () => {
   it("forwards errors to next when superstatic responder lacks handleError", async () => {
     const expectedErr = new Error("provider failure");
     const directApp = connect()
-      .use((_req, res: ServerResponse & { superstatic?: unknown }, next) => {
+      .use((_req, res: ServerResponse & { superstatic?: Responder }, next) => {
         res.superstatic = {
           provider: () => Promise.reject(expectedErr),
-        };
+        } as unknown as Responder;
         next();
       })
       .use(filesPkg())
@@ -509,5 +520,63 @@ describe("static server with trailing slash customization", () => {
       );
 
     await request(directApp).get("/foo.html").expect(500, "provider failure");
+  });
+
+  it("rejects with an error when responder has no provider configured", async () => {
+    let seenErr: unknown;
+    const directApp = connect()
+      .use((req, res: ServerResponse & { superstatic?: Responder }, next) => {
+        const responder = new ResponderClass(req, res, {});
+        sinon.stub(responder, "handleError").callsFake((err: unknown) => {
+          seenErr = err;
+          res.statusCode = 500;
+          res.end(err instanceof Error ? err.message : "unknown error");
+        });
+        res.superstatic = responder;
+        next();
+      })
+      .use(filesPkg());
+
+    await request(directApp)
+      .get("/foo.html")
+      .expect(500, "No provider configured");
+    expect(seenErr).to.be.an("error");
+    expect((seenErr as Error).message).to.equal("No provider configured");
+  });
+
+  it("does not trigger handleError when downstream next() throws synchronously", async () => {
+    const handleError = sinon.spy();
+    const downstreamError = new Error("downstream sync error");
+    const nextStub = sinon.stub().throws(downstreamError);
+
+    const req = {
+      url: "/nonexistent.html",
+      headers: {},
+    } as connect.IncomingMessage;
+    const res = {
+      superstatic: {
+        provider: () => Promise.resolve(null),
+        handleError,
+      },
+    } as unknown as ServerResponse & { superstatic?: Responder };
+
+    let unhandledRejection: unknown;
+    const onUnhandledRejection = (reason: unknown): void => {
+      unhandledRejection = reason;
+    };
+    process.once("unhandledRejection", onUnhandledRejection);
+    try {
+      filesPkg()(req, res, nextStub);
+      await new Promise<void>((resolve) => {
+        setImmediate(resolve);
+      });
+    } finally {
+      process.removeListener("unhandledRejection", onUnhandledRejection);
+    }
+
+    expect(nextStub.calledOnce).to.equal(true);
+    expect(nextStub.firstCall.args).to.deep.equal([]);
+    expect(handleError.called).to.equal(false);
+    expect(unhandledRejection).to.equal(downstreamError);
   });
 });
