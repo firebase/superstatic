@@ -22,7 +22,7 @@
 
 export interface Configuration {
   // Defaults to the current working directory.
-  public?: string;
+  public?: string | string[];
   cleanUrls?: boolean | string[];
   rewrites?: Rewrite[];
   redirects?: Redirect[];
@@ -30,23 +30,35 @@ export interface Configuration {
   trailingSlash?: boolean;
   i18n?: { root: string };
   errorPage?: string;
+  env?: Record<string, string>;
+  protect?: string;
 }
 
-export interface Rewrite {
-  source: string;
-  destination: string;
-}
+export type Matcher =
+  | { source: string; glob?: string; regex?: string }
+  | { source?: string; glob: string; regex?: string }
+  | { source?: string; glob?: string; regex: string };
 
-export interface Redirect {
-  source: string;
+export type RewriteTarget =
+  | { destination: string }
+  | {
+      function:
+        string | { functionId: string; region?: string; pinTag?: boolean };
+    }
+  | { run: { serviceId: string; region?: string; pinTag?: boolean } }
+  | { dynamicLinks: boolean }
+  | ({ destination?: string } & Record<string, unknown>);
+
+export type Rewrite = Matcher & RewriteTarget;
+
+export type Redirect = Matcher & {
   destination: string;
   type?: number;
-}
+};
 
-export interface Header {
-  source: string;
+export type Header = Matcher & {
   headers: {
     key: string;
     value: string;
   }[];
-}
+};

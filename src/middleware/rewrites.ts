@@ -61,6 +61,6 @@ export = function () {
     }
 
     res.statusCode = 200;
-    res.superstatic.handle({ rewrite: match }, next);
+    void res.superstatic.handle({ rewrite: match }, next);
   };
 };

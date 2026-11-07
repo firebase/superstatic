@@ -19,11 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+const fs = require("node:fs");
+const path = require("node:path");
 const request = require("supertest");
 const connect = require("connect");
 
 const helpers = require("../../helpers");
-const env = helpers.decorator(require("../../../src/middleware/env"));
+const rawEnv = require("../../../src/middleware/env");
+const env = helpers.decorator(rawEnv);
 const Responder = require("../../../src/responder");
 
 describe("env", () => {
@@ -58,6 +61,13 @@ describe("env", () => {
   });
 
   it("serves javascript", (done) => {
+    const expectedBody = fs
+      .readFileSync(
+        path.resolve(__dirname, "../../../templates/env.js.template"),
+        "utf8",
+      )
+      .replace("{{ENV}}", JSON.stringify({ key: "value" }));
+
     app.use(
       env({
         env: {
@@ -70,6 +80,103 @@ describe("env", () => {
       .get("/__/env.js")
       .expect(200)
       .expect("content-type", "application/javascript; charset=utf-8")
+      .expect(expectedBody)
       .end(done);
+  });
+
+  it("does not call next after serving env json", (done) => {
+    app.use(
+      env({
+        env: {
+          key: "value",
+        },
+      }),
+    );
+    app.use((req, res, next) => {
+      next(new Error("next() should not have been called"));
+    });
+
+    void request(app)
+      .get("/__/env.json")
+      .expect(200)
+      .expect({
+        key: "value",
+      })
+      .end(done);
+  });
+
+  it("does not call next after serving env js", (done) => {
+    app.use(
+      env({
+        env: {
+          key: "value",
+        },
+      }),
+    );
+    app.use((req, res, next) => {
+      next(new Error("next() should not have been called"));
+    });
+
+    void request(app).get("/__/env.js").expect(200).end(done);
+  });
+
+  it("uses request env config when spec is omitted", (done) => {
+    app.use((req, res, next) => {
+      req.superstatic = {
+        env: {
+          key: "value",
+        },
+      };
+      next();
+    });
+    app.use(rawEnv());
+
+    void request(app)
+      .get("/__/env.json")
+      .expect(200)
+      .expect({
+        key: "value",
+      })
+      .end(done);
+  });
+
+  it("calls next cleanly when mounted standalone without req.superstatic", (done) => {
+    const standalone = connect();
+    standalone.use(rawEnv());
+    standalone.use((req, res) => {
+      res.statusCode = 204;
+      res.end();
+    });
+
+    void request(standalone).get("/__/env.json").expect(204).end(done);
+  });
+
+  it("serves env json when mounted standalone with spec.env", async () => {
+    const standalone = connect();
+    standalone.use(rawEnv({ env: { key: "value" } }));
+
+    await request(standalone)
+      .get("/__/env.json")
+      .expect(200)
+      .expect("content-type", "application/json; charset=utf-8")
+      .expect({ key: "value" });
+  });
+
+  it("serves env js when mounted standalone with spec.env", async () => {
+    const expectedBody = fs
+      .readFileSync(
+        path.resolve(__dirname, "../../../templates/env.js.template"),
+        "utf8",
+      )
+      .replace("{{ENV}}", JSON.stringify({ key: "value" }));
+
+    const standalone = connect();
+    standalone.use(rawEnv({ env: { key: "value" } }));
+
+    await request(standalone)
+      .get("/__/env.js")
+      .expect(200)
+      .expect("content-type", "application/javascript; charset=utf-8")
+      .expect(expectedBody);
   });
 });
