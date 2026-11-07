@@ -19,10 +19,17 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-let RE2;
-const minimatch = require("minimatch");
+import { minimatch } from "minimatch";
+import { createRequire } from "node:module";
+
+type RE2Constructor = new (pattern: string | RegExp, flags?: string) => RegExp;
+
+let RE2: RE2Constructor | null;
 try {
-  RE2 = require("re2");
+  const requireModule: (id: string) => unknown = createRequire(__filename);
+  const re2Module = requireModule("re2");
+  // Cast is required because requireModule returns unknown at runtime.
+  RE2 = typeof re2Module === "function" ? (re2Module as RE2Constructor) : null;
 } catch {
   RE2 = null;
 }
@@ -41,11 +48,17 @@ try {
  *
  * No special consideration is taken if the configuration hash contains both
  * a glob and a regex. normalizeConfig() will error in that case.
- * @param {string} path The URL path from the request.
- * @param {object} config A dictionary from a sanitized JSON configuration.
- * @returns {boolean} Whether the config should be applied to the request.
+ * @param path The URL path from the request.
+ * @param config A dictionary from a sanitized JSON configuration.
+ * @param config.source A Node-like glob pattern specification.
+ * @param config.glob A Node-like glob pattern specification.
+ * @param config.regex A regular expression pattern specification.
+ * @returns Whether the config should be applied to the request.
  */
-function configMatcher(path, config) {
+export function configMatcher(
+  path: string,
+  config: { source?: string; glob?: string; regex?: string },
+): boolean {
   const glob = config.glob ?? config.source;
   const regex = config.regex;
   if (glob) {
@@ -62,48 +75,40 @@ function configMatcher(path, config) {
  * Creates either an RE2 or a Javascript RegExp from a provided string
  * pattern, depending on whether or not the RE2 library is available as an
  * import.
- * @param {string} pattern A regular expression pattern to test against.
- * @returns {RegExp} A regular expression object, created by either base
- *                  RegExp or RE2, which matches the RegExp prototype
+ * @param pattern A regular expression pattern to test against.
+ * @returns A regular expression object, created by either base
+ *                  RegExp or RE2, which matches the RegExp prototype.
  */
-function createRaw(pattern) {
+export function createRaw(pattern: string): RegExp {
   return RE2 ? new RE2(pattern, "u") : new RegExp(pattern, "u");
 }
 
 /**
  * Returns true if RE2, which is an optional dependency, has been loaded.
- * @returns {boolean}
+ * @returns Whether RE2 bindings are available.
  */
-function re2Available() {
-  return RE2 ? true : false;
+export function re2Available(): boolean {
+  return RE2 !== null;
 }
 
 /**
- * Is truthy if the provided raw string pattern contains a RE2 named capture
+ * Checks whether the provided raw string pattern contains a RE2 named capture
  * group opening, ?P<, which is not interpretable when Superstatic is falling
  * back on the base Javascript RegExp implementation.
- * @param {string} pattern
- * @returns {boolean}
+ * @param pattern A regular expression pattern string.
+ * @returns Whether the pattern contains a RE2 named capture group opening.
  */
-function containsRE2Capture(pattern) {
-  return pattern?.includes("?P<");
+export function containsRE2Capture(pattern?: string): boolean {
+  return pattern?.includes("?P<") ?? false;
 }
 
 /**
- * Is truthy if the provided raw string pattern contains a PCRE named capture
+ * Checks whether the provided raw string pattern contains a PCRE named capture
  * group opening, ?<, which is not interpretable when Superstatic has loaded
  * the RE2 bindings.
- * @param {string} pattern
- * @returns {boolean}
+ * @param pattern A regular expression pattern string.
+ * @returns Whether the pattern contains a PCRE named capture group opening.
  */
-function containsPCRECapture(pattern) {
-  return pattern?.includes("?<");
+export function containsPCRECapture(pattern?: string): boolean {
+  return pattern?.includes("?<") ?? false;
 }
-
-module.exports = {
-  configMatcher: configMatcher,
-  createRaw: createRaw,
-  re2Available: re2Available,
-  containsRE2Capture: containsRE2Capture,
-  containsPCRECapture: containsPCRECapture,
-};
