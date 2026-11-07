@@ -92,7 +92,7 @@ function missing(
         next();
         return;
       }
-      res.superstatic.handle(handles, next);
+      void res.superstatic.handle(handles, next);
     });
   };
 }
