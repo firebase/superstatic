@@ -19,46 +19,71 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("node:fs/promises");
-const request = require("supertest");
-const connect = require("connect");
-const { join } = require("path");
-const { expect } = require("chai");
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import connect from "connect";
+import request from "supertest";
+import { expect } from "chai";
 
-const notFound = require("../../../src/middleware/not-found");
-const Responder = require("../../../src/responder");
+import notFound from "../../../src/middleware/not-found";
 
 describe("not found", () => {
-  let app;
+  let app: connect.Server;
 
   beforeEach(async () => {
-    await fs.mkdir(".tmp");
+    await fs.mkdir(".tmp", { recursive: true });
     await fs.writeFile(".tmp/not-found.html", "not found file", "utf8");
 
-    app = connect().use((req, res, next) => {
-      res.superstatic = new Responder(req, res, {
-        provider: {},
-      });
-      next();
-    });
+    app = connect();
   });
 
   afterEach(async () => {
     await fs.rm(".tmp", { recursive: true, force: true });
   });
 
-  it("serves the file", (done) => {
+  it("serves the file", async () => {
     app.use(
       notFound({
         errorPage: ".tmp/not-found.html",
       }),
     );
 
-    void request(app)
+    await request(app)
       .get("/anything")
       .expect(404)
-      .expect("not found file")
-      .end(done);
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect("not found file");
+  });
+
+  it("serves the default error page when spec is omitted", async () => {
+    app.use(notFound());
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect(/Page Not Found/);
+  });
+
+  it("serves the default error page when spec is null", async () => {
+    app.use(notFound(null as unknown as Parameters<typeof notFound>[0]));
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect(/Page Not Found/);
+  });
+
+  it("serves the default error page when errorPage is empty string", async () => {
+    const options: notFound.NotFoundOptions = { errorPage: "" };
+    app.use(notFound(options));
+
+    await request(app)
+      .get("/anything")
+      .expect(404)
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect(/Page Not Found/);
   });
 
   it("throws on file read error", () => {
@@ -69,17 +94,16 @@ describe("not found", () => {
     }).to.throw("ENOENT");
   });
 
-  it("caches for one hour", (done) => {
+  it("caches for one hour", async () => {
     app.use(
       notFound({
-        errorPage: join(process.cwd(), ".tmp/not-found.html"),
+        errorPage: path.join(process.cwd(), ".tmp/not-found.html"),
       }),
     );
 
-    void request(app)
+    await request(app)
       .get("/anything")
       .expect(404)
-      .expect("Cache-Control", "public, max-age=3600")
-      .end(done);
+      .expect("Cache-Control", "public, max-age=3600");
   });
 });
