@@ -53,20 +53,25 @@ Activator.prototype.buildStack = function () {
 
 Activator.prototype.build = function () {
   return (req, res, next) => {
-    promiseback(this.awaitConfig, 2)(req, res).then((config) => {
-      req.superstatic = config ?? {};
+    promiseback(this.awaitConfig, 2)(req, res)
+      .then((config) => {
+        req.superstatic = config ?? {};
 
-      const stack = this.stack.slice(0).reverse();
-      const _run = () => {
-        if (!stack.length) {
-          return next();
-        }
-        const fn = stack.pop();
-        return fn(req, res, _run);
-      };
+        const stack = this.stack.slice(0).reverse();
+        const _run = (err) => {
+          if (err) {
+            return next(err);
+          }
+          if (!stack.length) {
+            return next();
+          }
+          const fn = stack.pop();
+          return fn(req, res, _run);
+        };
 
-      _run();
-    }, next);
+        return _run();
+      })
+      .catch(next);
   };
 };
 
