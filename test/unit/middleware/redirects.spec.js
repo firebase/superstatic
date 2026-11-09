@@ -299,6 +299,28 @@ describe("redirect middleware", () => {
       .end(done);
   });
 
+  it("redirects using regexp captures in query parameters", (done) => {
+    const app = connect()
+      .use(superstaticSetup)
+      .use(
+        redirect({
+          redirects: [
+            {
+              regex: "/(\\w+)",
+              destination: "/index.html?u=:1",
+              type: 301,
+            },
+          ],
+        }),
+      );
+
+    void request(app)
+      .get("/Ryan")
+      .expect(301)
+      .expect("location", "/index.html?u=Ryan")
+      .end(done);
+  });
+
   it("redirects using regexp captures across path segments", (done) => {
     const app = connect()
       .use(superstaticSetup)
