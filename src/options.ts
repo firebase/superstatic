@@ -20,27 +20,142 @@
  * SOFTWARE.
  */
 
-import { HandleFunction } from "connect";
+import { ServerResponse } from "node:http";
+import { Readable } from "node:stream";
+import {
+  HandleFunction,
+  IncomingMessage as ConnectIncomingMessage,
+} from "connect";
 import { Configuration } from "./config";
+
+type Responder = import("./responder");
+
+export interface FileStats {
+  modified?: number | string | Date | null;
+  size?: number;
+  etag?: string;
+  contentType?: string;
+}
+
+export interface ProviderResult extends FileStats {
+  stream: Readable;
+}
+
+export type ProviderCallback = (
+  err: unknown,
+  result?: ProviderResult | null,
+) => void;
+
+export type Provider = (
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
+  pathname: string,
+) =>
+  | Promise<ProviderResult | null | undefined>
+  | ProviderResult
+  | null
+  | undefined;
+
+export type CallbackProvider = (
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
+  pathname: string,
+  callback: ProviderCallback,
+) => void;
+
+export interface FileDirective {
+  file: string;
+  status?: number | null;
+}
+
+export interface RedirectDirective {
+  redirect: string;
+  status?: number | null;
+}
+
+export interface RewriteConfig {
+  source?: string;
+  glob?: string;
+  regex?: string;
+  destination?: string;
+  function?: string | { functionId: string; region?: string; pinTag?: boolean };
+  run?: { serviceId: string; region?: string; pinTag?: boolean };
+  dynamicLinks?: boolean;
+  [key: string]: unknown;
+}
+
+export interface RewriteDirective {
+  rewrite: RewriteConfig;
+}
+
+export interface DataDirective {
+  data: string | Uint8Array;
+  status?: number | null;
+  contentType?: string;
+}
+
+export type ResponderMiddleware = {
+  bivarianceHack(
+    req: ConnectIncomingMessage,
+    res: ServerResponse,
+    next: (err?: unknown) => void,
+  ): unknown;
+}["bivarianceHack"];
+
+export type ResponderDirective =
+  | FileDirective
+  | RedirectDirective
+  | RewriteDirective
+  | DataDirective
+  | ResponderMiddleware
+  | string
+  | ResponderDirective[];
+
+export type RewriterFunction = {
+  bivarianceHack(
+    rewrite: RewriteConfig,
+    responder: Responder,
+  ): Promise<ResponderDirective>;
+}["bivarianceHack"];
+
+export type MiddlewareHandler =
+  | HandleFunction
+  | {
+      bivarianceHack(
+        req: ConnectIncomingMessage,
+        res: ServerResponse,
+        next: (err?: unknown) => void,
+      ): unknown;
+    }["bivarianceHack"];
 
 export interface MiddlewareOptions {
   fallthrough?: boolean;
   config?: string | Configuration;
   protect?: string;
-  env?: string | Record<string, string>;
+  env?: Record<string, string>;
   cwd?: string;
-  compression?: boolean;
+  compression?: boolean | MiddlewareHandler;
+  gzip?: boolean;
   stack?: string | string[];
-  after?: Record<string, HandleFunction>;
-  before?: Record<string, HandleFunction>;
-  rewriters?: Record<string, unknown>;
+  after?: Record<string, MiddlewareHandler | MiddlewareHandler[]>;
+  before?: Record<string, MiddlewareHandler | MiddlewareHandler[]>;
+  rewriters?: Record<string, RewriterFunction>;
+  provider?: Provider | CallbackProvider;
+  allowedHeaders?: string[];
   errorPage?: string;
 }
 
 export interface ServerOptions extends MiddlewareOptions {
   port?: number;
   hostname?: string;
+  host?: string;
   errorPage?: string;
   debug?: boolean;
-  compression?: boolean;
+  compression?: boolean | MiddlewareHandler;
+}
+
+export interface SuperstaticRequest extends ConnectIncomingMessage {
+  superstatic: Configuration;
+}
+
+export interface SuperstaticResponse extends ServerResponse {
+  superstatic: Responder;
 }

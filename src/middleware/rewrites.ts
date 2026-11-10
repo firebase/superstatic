@@ -25,8 +25,9 @@ import { NextFunction } from "connect";
 import { IncomingMessage, ServerResponse } from "http";
 
 import { Configuration, Rewrite } from "../config";
-import Responder = require("../responder");
 import * as patterns from "../utils/patterns";
+
+type Responder = import("../responder");
 
 function matcher(rewrites: Rewrite[]) {
   return function (url: string) {
@@ -61,6 +62,6 @@ export = function () {
     }
 
     res.statusCode = 200;
-    res.superstatic.handle({ rewrite: match }, next);
+    void res.superstatic.handle({ rewrite: match }, next);
   };
 };

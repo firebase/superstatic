@@ -19,14 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("fs");
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { ServerResponse } from "node:http";
+import { IncomingMessage as ConnectIncomingMessage } from "connect";
+import { SuperstaticRequest, SuperstaticResponse } from "../options";
 
-const DEFAULT_ERROR_PAGE = __dirname + "/../../templates/not_found.html";
+const DEFAULT_ERROR_PAGE = path.join(
+  __dirname,
+  "../../templates/not_found.html",
+);
 
-module.exports = function (spec) {
-  const content = fs.readFileSync(spec.errorPage ?? DEFAULT_ERROR_PAGE);
+/**
+ * Returns middleware for serving the default not-found error page.
+ * @param spec superstatic options.
+ * @param spec.errorPage optional path to a local fallback error page.
+ * @returns middleware.
+ */
+function notFound(
+  spec: notFound.NotFoundOptions = {},
+): (
+  req: SuperstaticRequest | ConnectIncomingMessage,
+  res: SuperstaticResponse | ServerResponse,
+) => void {
+  let errorPage = DEFAULT_ERROR_PAGE;
+  if (spec?.errorPage) {
+    errorPage = spec.errorPage;
+  }
+  const content = fs.readFileSync(errorPage);
 
-  return function (req, res) {
+  return (
+    _req: SuperstaticRequest | ConnectIncomingMessage,
+    res: SuperstaticResponse | ServerResponse,
+  ): void => {
     // NOTE: provider isn't used to serve the pages
     // because this middleware should only serve local
     // static pages around the same directory as the
@@ -37,4 +62,13 @@ module.exports = function (spec) {
     res.setHeader("Cache-Control", "public, max-age=3600");
     res.end(content);
   };
-};
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace notFound {
+  export interface NotFoundOptions {
+    errorPage?: string;
+  }
+}
+
+export = notFound;
