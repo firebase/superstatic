@@ -19,16 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+} from "connect";
 import isUrl from "is-url";
 import { ServerResponse } from "node:http";
 import pathToRegexp from "path-to-regexp";
 
 import { Configuration, Redirect as RedirectConfig } from "../config";
 import { MiddlewareOptions } from "../options";
-import Responder from "../responder";
 import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
+
+type Responder = import("../responder");
 
 interface RedirectResult {
   readonly type: number;
@@ -149,17 +153,17 @@ class Redirect {
 function redirects(
   spec?: MiddlewareOptions,
 ): (
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   res: ServerResponse & { superstatic?: Responder },
-  next: connect.NextFunction,
+  next: NextFunction,
 ) => void {
   void spec;
   const cache = new WeakMap<RedirectConfig[], Redirect[]>();
 
   return function (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void {
     const config: Configuration["redirects"] = req.superstatic?.redirects;
     if (!config) {

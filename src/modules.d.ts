@@ -20,32 +20,32 @@
  */
 
 declare module "basic-auth-connect" {
-  import connect from "connect";
+  import { NextHandleFunction } from "connect";
 
   function basicAuth(
     user: string,
     pass: string,
     realm?: string,
-  ): connect.NextHandleFunction;
+  ): NextHandleFunction;
   function basicAuth(
     callback: (user: string, pass: string) => boolean,
     realm?: string,
-  ): connect.NextHandleFunction;
+  ): NextHandleFunction;
 
   export = basicAuth;
 }
 
 declare module "router" {
   import * as http from "node:http";
-  import connect from "connect";
+  import { HandleFunction, NextFunction, NextHandleFunction } from "connect";
 
-  interface Router extends connect.NextHandleFunction {
-    use(...handlers: connect.HandleFunction[]): this;
-    use(route: string, ...handlers: connect.HandleFunction[]): this;
+  interface Router extends NextHandleFunction {
+    use(...handlers: HandleFunction[]): this;
+    use(route: string, ...handlers: HandleFunction[]): this;
     handle(
       req: http.IncomingMessage,
       res: http.ServerResponse,
-      callback: connect.NextFunction,
+      callback: NextFunction,
     ): void;
   }
 

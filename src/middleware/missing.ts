@@ -19,14 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+} from "connect";
 import * as fs from "node:fs";
 import { ServerResponse } from "node:http";
 
 import { Configuration } from "../config";
-import Responder from "../responder";
 import { i18nContentOptions } from "../utils/i18n";
 import setHeaders from "./headers";
+
+type Responder = import("../responder");
 
 type ErrorHandle =
   { file: string; status: number } | { data: string; status: number };
@@ -46,9 +50,9 @@ function missing(
     provider?: unknown;
   } = {},
 ): (
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   res: ServerResponse & { superstatic?: Responder },
-  next: connect.NextFunction,
+  next: NextFunction,
 ) => void {
   let defaultErrorContent: string | undefined;
   if (spec.errorPage) {
@@ -56,16 +60,16 @@ function missing(
   }
 
   return function (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void {
     const config: Configuration = req.superstatic ?? {};
     const errorPage = config.errorPage ?? "/404.html";
-    const headerReq: connect.IncomingMessage & {
+    const headerReq: ConnectIncomingMessage & {
       superstatic?: Configuration;
     } = Object.assign(
-      Object.create(req) as connect.IncomingMessage & {
+      Object.create(req) as ConnectIncomingMessage & {
         superstatic?: Configuration;
       },
       {

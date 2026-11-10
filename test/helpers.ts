@@ -19,7 +19,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+  NextHandleFunction,
+} from "connect";
 import { ServerResponse } from "node:http";
 import { Configuration } from "../src/config";
 import { SuperstaticRequest, SuperstaticResponse } from "../src/options";
@@ -27,7 +31,7 @@ import { SuperstaticRequest, SuperstaticResponse } from "../src/options";
 export type SuperstaticMiddlewareHandler = (
   req: SuperstaticRequest,
   res: SuperstaticResponse,
-  next: connect.NextFunction,
+  next: NextFunction,
 ) => unknown;
 
 /**
@@ -37,19 +41,16 @@ export type SuperstaticMiddlewareHandler = (
  */
 export function decorator<Spec = Record<string, unknown>>(
   middleware: (spec: Spec) => SuperstaticMiddlewareHandler,
-): (config?: Configuration, spec?: Spec) => connect.NextHandleFunction {
-  return function (
-    config?: Configuration,
-    spec?: Spec,
-  ): connect.NextHandleFunction {
+): (config?: Configuration, spec?: Spec) => NextHandleFunction {
+  return function (config?: Configuration, spec?: Spec): NextHandleFunction {
     return function (
-      req: connect.IncomingMessage,
+      req: ConnectIncomingMessage,
       res: ServerResponse,
-      next: connect.NextFunction,
+      next: NextFunction,
     ): unknown {
       const superstaticReq = req as SuperstaticRequest;
       superstaticReq.superstatic = config ?? {};
-      return middleware((spec ?? {}) as Spec)(
+      return middleware(spec as Spec)(
         superstaticReq,
         res as SuperstaticResponse,
         next,

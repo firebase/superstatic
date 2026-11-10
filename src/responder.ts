@@ -19,7 +19,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+  NextHandleFunction,
+} from "connect";
 import destroy from "destroy";
 import * as mime from "mime-types";
 import * as http from "node:http";
@@ -28,13 +32,17 @@ import onFinished from "on-finished";
 
 import { Configuration } from "./config";
 import {
+  DataDirective as OptionsDataDirective,
+  FileDirective as OptionsFileDirective,
   FileStats as OptionsFileStats,
   Provider as OptionsProvider,
   ProviderResult as OptionsProviderResult,
+  RedirectDirective as OptionsRedirectDirective,
   ResponderDirective as OptionsResponderDirective,
   ResponderMiddleware as OptionsResponderMiddleware,
   RewriteConfig as OptionsRewriteConfig,
   RewriteDirective as OptionsRewriteDirective,
+  RewriterFunction as OptionsRewriterFunction,
 } from "./options";
 import { isPlainObject } from "./utils/objectutils";
 
@@ -98,12 +106,12 @@ function isMiddleware(item: unknown): item is Responder.ResponderMiddleware {
  * Handles responder directives and writes HTTP responses.
  */
 class Responder {
-  req: connect.IncomingMessage & { superstatic?: Configuration };
+  req: ConnectIncomingMessage & { superstatic?: Configuration };
   res: http.ServerResponse;
   provider?: Responder.Provider;
   config: Configuration;
   rewriters: Record<string, Responder.RewriterFunction>;
-  compressor?: connect.NextHandleFunction | null;
+  compressor?: NextHandleFunction | null;
   streamedFile?: Responder.FileDirective;
 
   /**
@@ -113,7 +121,7 @@ class Responder {
    * @param options responder configuration and provider options.
    */
   constructor(
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: http.ServerResponse,
     options: Responder.ResponderOptions = {},
   ) {
@@ -166,7 +174,7 @@ class Responder {
    */
   handle(
     item: Responder.ResponderDirective,
-    next?: connect.NextFunction,
+    next?: NextFunction,
   ): Promise<boolean | void> {
     return this._handle(item)
       .then((responded) => {
@@ -428,37 +436,19 @@ namespace Responder {
   export type FileStats = OptionsFileStats;
   export type ProviderResult = OptionsProviderResult;
   export type Provider = OptionsProvider;
-  export interface FileDirective {
-    file: string;
-    status?: number | null;
-  }
-  export interface RedirectDirective {
-    redirect: string;
-    status?: number | null;
-  }
+  export type FileDirective = OptionsFileDirective;
+  export type RedirectDirective = OptionsRedirectDirective;
   export type RewriteConfig = OptionsRewriteConfig;
   export type RewriteDirective = OptionsRewriteDirective;
-  export interface DataDirective {
-    data: string | Uint8Array;
-    status?: number | null;
-    contentType?: string;
-  }
+  export type DataDirective = OptionsDataDirective;
   export type ResponderMiddleware = OptionsResponderMiddleware;
-  export type ResponderDirective =
-    | OptionsResponderDirective
-    | FileDirective
-    | RedirectDirective
-    | DataDirective
-    | ResponderDirective[];
-  export type RewriterFunction = (
-    rewrite: RewriteConfig,
-    responder: Responder,
-  ) => Promise<ResponderDirective>;
+  export type ResponderDirective = OptionsResponderDirective;
+  export type RewriterFunction = OptionsRewriterFunction;
   export interface ResponderOptions {
     provider?: Provider;
     config?: Configuration;
     rewriters?: Record<string, RewriterFunction>;
-    compressor?: connect.NextHandleFunction | null;
+    compressor?: NextHandleFunction | null;
   }
 }
 

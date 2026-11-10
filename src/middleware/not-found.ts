@@ -22,7 +22,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ServerResponse } from "node:http";
-import connect from "connect";
+import { IncomingMessage as ConnectIncomingMessage } from "connect";
 import { SuperstaticRequest, SuperstaticResponse } from "../options";
 
 const DEFAULT_ERROR_PAGE = path.join(
@@ -39,7 +39,7 @@ const DEFAULT_ERROR_PAGE = path.join(
 function notFound(
   spec: notFound.NotFoundOptions = {},
 ): (
-  req: SuperstaticRequest | connect.IncomingMessage,
+  req: SuperstaticRequest | ConnectIncomingMessage,
   res: SuperstaticResponse | ServerResponse,
 ) => void {
   let errorPage = DEFAULT_ERROR_PAGE;
@@ -49,7 +49,7 @@ function notFound(
   const content = fs.readFileSync(errorPage);
 
   return (
-    _req: SuperstaticRequest | connect.IncomingMessage,
+    _req: SuperstaticRequest | ConnectIncomingMessage,
     res: SuperstaticResponse | ServerResponse,
   ): void => {
     // NOTE: provider isn't used to serve the pages

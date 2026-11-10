@@ -21,10 +21,15 @@
 
 import * as fs from "node:fs";
 import { ServerResponse } from "node:http";
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+  NextHandleFunction,
+} from "connect";
 import * as mime from "mime-types";
 import { Configuration } from "../config";
-import Responder from "../responder";
+
+type Responder = import("../responder");
 
 const template = fs
   .readFileSync(`${__dirname}/../../templates/env.js.template`)
@@ -52,11 +57,11 @@ function sendEnvResponse(
  * @param spec.env environment variables.
  * @returns middleware.
  */
-function env(spec: env.EnvOptions = {}): connect.NextHandleFunction {
+function env(spec: env.EnvOptions = {}): NextHandleFunction {
   return (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void => {
     const configEnv = req.superstatic?.env;
     if (!spec.env && !configEnv) {

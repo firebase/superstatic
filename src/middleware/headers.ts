@@ -19,14 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+} from "connect";
 import { ServerResponse } from "node:http";
 import onHeaders from "on-headers";
 
 import { Configuration, Header } from "../config";
-import Responder from "../responder";
 import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
+
+type Responder = import("../responder");
 
 const slashPath = slasher as (value: string) => string;
 const ABSOLUTE_URI_RE = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//;
@@ -98,14 +102,14 @@ function extractPathname(url?: string): string {
 function headers(
   spec: { allowedHeaders?: string[] } = {},
 ): (
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   res: ServerResponse & { superstatic?: Responder },
-  next: connect.NextFunction,
+  next: NextFunction,
 ) => void {
   return function (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void {
     const config: Configuration["headers"] = req.superstatic?.headers;
     if (!config) {

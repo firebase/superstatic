@@ -19,18 +19,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+  NextHandleFunction,
+} from "connect";
 import { ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 
 import { Configuration } from "../config";
-import Responder from "../responder";
+
+type Responder = import("../responder");
 
 type BasicAuthMiddleware = (
   user: string,
   pass: string,
   realm?: string,
-) => connect.NextHandleFunction;
+) => NextHandleFunction;
 
 const requireModule: (id: string) => unknown = createRequire(__filename);
 const basicAuth = requireModule("basic-auth-connect") as BasicAuthMiddleware;
@@ -44,14 +49,14 @@ const basicAuth = requireModule("basic-auth-connect") as BasicAuthMiddleware;
 function protect(
   spec: { protect?: string } = {},
 ): (
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   res: ServerResponse & { superstatic?: Responder },
-  next: connect.NextFunction,
+  next: NextFunction,
 ) => void {
   return function (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void {
     let credentials = req.superstatic?.protect;
     if (spec.protect) {

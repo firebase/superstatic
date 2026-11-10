@@ -22,6 +22,7 @@
 import * as fs from "node:fs/promises";
 import { ServerResponse } from "node:http";
 import { createRequire } from "node:module";
+import { Readable } from "node:stream";
 import { expect } from "chai";
 import connect from "connect";
 import * as sinon from "sinon";
@@ -578,5 +579,36 @@ describe("static server with trailing slash customization", () => {
     expect(nextStub.firstCall.args).to.deep.equal([]);
     expect(handleError.called).to.equal(false);
     expect(unhandledRejection).to.equal(downstreamError);
+  });
+
+  it("strips scheme and host for proxy-form request URIs", async () => {
+    const req = {
+      url: "http://example.com/foo.html?bar=1#frag",
+      headers: {},
+    } as connect.IncomingMessage;
+    let handledFile: string | undefined;
+    const handleFileStream = sinon.spy((directive: { file: string }) => {
+      handledFile = directive.file;
+      return Promise.resolve(true);
+    });
+    const res = {
+      superstatic: {
+        provider: (_req: unknown, pathname: string) =>
+          pathname === "/foo.html"
+            ? Promise.resolve({ stream: Readable.from(["foo.html content"]) })
+            : Promise.resolve(null),
+        handleFileStream,
+        handleError: sinon.spy(),
+      },
+    } as unknown as ServerResponse & { superstatic?: Responder };
+    const nextSpy = sinon.spy();
+
+    filesPkg()(req, res, nextSpy);
+    await new Promise<void>((resolve) => {
+      setImmediate(resolve);
+    });
+
+    expect(handledFile).to.equal("/foo.html");
+    expect(nextSpy.called).to.equal(false);
   });
 });

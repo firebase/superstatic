@@ -20,13 +20,20 @@
  */
 
 import { ServerResponse } from "node:http";
-import connect from "connect";
+import {
+  IncomingMessage as ConnectIncomingMessage,
+  NextFunction,
+  NextHandleFunction,
+} from "connect";
 
 import { Configuration } from "../config";
 import { MiddlewareOptions, Provider, ProviderResult } from "../options";
-import Responder from "../responder";
 import { i18nContentOptions } from "../utils/i18n";
 import * as pathutils from "../utils/pathutils";
+
+type Responder = import("../responder");
+
+const ABSOLUTE_URI_RE = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//;
 
 /**
  * We cannot redirect to "", redirect to "/" instead.
@@ -46,8 +53,18 @@ function parseRequestUrl(reqUrl: string): {
   pathname: string;
   search: string;
 } {
-  const hashIndex = reqUrl.indexOf("#");
-  const urlWithoutHash = hashIndex === -1 ? reqUrl : reqUrl.slice(0, hashIndex);
+  let pathWithQuery = reqUrl;
+  if (ABSOLUTE_URI_RE.test(reqUrl)) {
+    try {
+      const parsed = new URL(reqUrl);
+      pathWithQuery = `${parsed.pathname}${parsed.search}`;
+    } catch {
+      // Fall through to raw path splitting.
+    }
+  }
+  const hashIndex = pathWithQuery.indexOf("#");
+  const urlWithoutHash =
+    hashIndex === -1 ? pathWithQuery : pathWithQuery.slice(0, hashIndex);
   const queryIndex = urlWithoutHash.indexOf("?");
   const rawPathname =
     queryIndex === -1 ? urlWithoutHash : urlWithoutHash.slice(0, queryIndex);
@@ -67,7 +84,7 @@ function parseRequestUrl(reqUrl: string): {
  * @returns a non-null value if a file is found.
  */
 async function providerResult(
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   responder: Responder,
   p: string,
 ): Promise<ProviderResult | undefined> {
@@ -103,7 +120,7 @@ async function providerResult(
  * @returns true if a response or redirect was handled, false to pass to next().
  */
 async function handleRequest(
-  req: connect.IncomingMessage & { superstatic?: Configuration },
+  req: ConnectIncomingMessage & { superstatic?: Configuration },
   res: ServerResponse & { superstatic?: Responder },
 ): Promise<boolean> {
   const config: Configuration = req.superstatic ?? {};
@@ -263,12 +280,12 @@ async function handleRequest(
  * @param spec superstatic middleware options.
  * @returns middleware for serving static files.
  */
-function files(spec?: MiddlewareOptions): connect.NextHandleFunction;
-function files(): connect.NextHandleFunction {
+function files(spec?: MiddlewareOptions): NextHandleFunction;
+function files(): NextHandleFunction {
   return (
-    req: connect.IncomingMessage & { superstatic?: Configuration },
+    req: ConnectIncomingMessage & { superstatic?: Configuration },
     res: ServerResponse & { superstatic?: Responder },
-    next: connect.NextFunction,
+    next: NextFunction,
   ): void => {
     handleRequest(req, res).then(
       (handled) => {
