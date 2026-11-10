@@ -67,7 +67,9 @@ function loadConfigFile(
   }
 
   let configObject: Record<string, unknown> = {};
-  let candidateFiles: string | string[] | undefined = autoConfig ? CONFIG_FILE : [];
+  let candidateFiles: string | string[] | undefined = autoConfig
+    ? CONFIG_FILE
+    : [];
 
   if (typeof filename === "string") {
     const parsed = parseJsonObject(filename);

@@ -188,9 +188,11 @@ describe("loading config files", () => {
         expect(loadConfigFile({ public: "app" }, false)).to.eql({
           public: "app",
         });
-        expect(loadConfigFile(JSON.stringify({ public: "app" }), false)).to.eql({
-          public: "app",
-        });
+        expect(loadConfigFile(JSON.stringify({ public: "app" }), false)).to.eql(
+          {
+            public: "app",
+          },
+        );
         expect(loadConfigFile({}, false)).to.eql({});
         expect(loadConfigFile(undefined, false)).to.eql({});
       });
@@ -201,7 +203,9 @@ describe("loading config files", () => {
           await fs.writeFile(
             filename,
             JSON.stringify(
-              filename === "firebase.json" ? { hosting: fileConfig } : fileConfig,
+              filename === "firebase.json"
+                ? { hosting: fileConfig }
+                : fileConfig,
             ),
           );
 
@@ -216,7 +220,9 @@ describe("loading config files", () => {
           await fs.writeFile(
             filename,
             JSON.stringify(
-              filename === "firebase.json" ? { hosting: fileConfig } : fileConfig,
+              filename === "firebase.json"
+                ? { hosting: fileConfig }
+                : fileConfig,
             ),
           );
 
