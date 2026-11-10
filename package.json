@@ -1,6 +1,6 @@
 {
   "name": "superstatic",
-  "version": "11.0.0",
+  "version": "11.1.0",
   "description": "A static file server for fancy apps",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -22,7 +22,7 @@
   "author": "Firebase (https://www.firebase.com/)",
   "license": "MIT",
   "bin": {
-    "superstatic": "./lib/bin/server.js"
+    "superstatic": "lib/bin/server.js"
   },
   "files": [
     "bin",
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/firebase/superstatic.git"
+    "url": "git+https://github.com/firebase/superstatic.git"
   },
   "bugs": {
     "url": "https://github.com/firebase/superstatic/issues"
@@ -91,7 +91,7 @@
     "eslint-plugin-jsdoc": "^64.0.2",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.7.0",
-    "mocha": "^11.7.2",
+    "mocha": "^12.0.3",
     "nyc": "^18.0.0",
     "prettier": "^3.9.4",
     "rimraf": "^6.0.1",
