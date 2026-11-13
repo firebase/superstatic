@@ -46,7 +46,8 @@ function formatUnknownError(err: unknown): string {
     return String(err);
   }
   try {
-    return JSON.stringify(err);
+    const serialized: string | undefined = JSON.stringify(err);
+    return serialized ?? Object.prototype.toString.call(err);
   } catch {
     return Object.prototype.toString.call(err);
   }
