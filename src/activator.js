@@ -71,7 +71,7 @@ Activator.prototype.build = function () {
 
         return _run();
       })
-      .catch(next);
+      .catch((err) => next(err));
   };
 };
 

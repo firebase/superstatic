@@ -2,12 +2,12 @@ import { use, expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 use(chaiAsPromised);
 
-const promiseback = require("../../../src/utils/promiseback");
+import promiseback from "../../../src/utils/promiseback";
 
 describe("promiseback", () => {
   it("should resolve a promise if one is returned", () => {
     return expect(
-      promiseback((a1: any, a2: any) => {
+      promiseback((a1: string, a2: string) => {
         return Promise.resolve({
           a: a1,
           b: a2,
@@ -21,7 +21,7 @@ describe("promiseback", () => {
 
   it("should reject a promise if one is rejected", () => {
     return expect(
-      promiseback(() => {
+      promiseback<[string, string], never>(() => {
         return Promise.reject(new Error("broken"));
       }, 2)("foo", "bar"),
     ).to.be.rejectedWith("broken");
@@ -29,17 +29,39 @@ describe("promiseback", () => {
 
   it("should reject an errback if one is used and errors", () => {
     return expect(
-      promiseback((a1: any, a2: any, cb: any) => {
-        cb(a2);
-      }, 2)("foo", "bar"),
+      promiseback(
+        (a1: string, a2: string, cb: (err?: unknown, res?: string) => void) => {
+          void a1;
+          cb(a2);
+        },
+        2,
+      )("foo", "bar"),
     ).to.be.rejectedWith("bar");
   });
 
   it("should resolve an errback if one is used and resolves", () => {
     return expect(
-      promiseback((a1: any, a2: any, cb: any) => {
-        cb(null, a2);
-      }, 2)("foo", "bar"),
-    );
+      promiseback(
+        (a1: string, a2: string, cb: (err?: unknown, res?: string) => void) => {
+          void a1;
+          cb(null, a2);
+        },
+        2,
+      )("foo", "bar"),
+    ).to.eventually.equal("bar");
+  });
+
+  it("should fall back to Object.prototype.toString for function errback errors", () => {
+    const fnErr = (): void => undefined;
+    return expect(
+      promiseback(
+        (a1: string, a2: string, cb: (err?: unknown, res?: string) => void) => {
+          void a1;
+          void a2;
+          cb(fnErr);
+        },
+        2,
+      )("foo", "bar"),
+    ).to.be.rejectedWith("Unknown error: [object Function]");
   });
 });

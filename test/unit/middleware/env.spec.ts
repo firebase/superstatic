@@ -19,29 +19,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
-const request = require("supertest");
-const connect = require("connect");
+import connect from "connect";
+import * as fs from "node:fs";
+import { ServerResponse } from "node:http";
+import * as path from "node:path";
+import request from "supertest";
 
-const helpers = require("../../helpers");
-const rawEnv = require("../../../src/middleware/env");
+import rawEnv from "../../../src/middleware/env";
+import { SuperstaticRequest } from "../../../src/options";
+import Responder from "../../../src/responder";
+import * as helpers from "../../helpers";
+
 const env = helpers.decorator(rawEnv);
-const Responder = require("../../../src/responder");
 
 describe("env", () => {
-  let app;
+  let app: connect.Server;
 
   beforeEach(() => {
-    app = connect().use((req, res, next) => {
-      res.superstatic = new Responder(req, res, {
-        provider: {},
-      });
-      next();
-    });
+    app = connect().use(
+      (
+        req: connect.IncomingMessage,
+        res: ServerResponse & { superstatic?: Responder },
+        next: connect.NextFunction,
+      ) => {
+        res.superstatic = new Responder(req, res);
+        next();
+      },
+    );
   });
 
-  it("serves json", (done) => {
+  it("serves json", async () => {
     app.use(
       env({
         env: {
@@ -50,17 +57,16 @@ describe("env", () => {
       }),
     );
 
-    void request(app)
+    await request(app)
       .get("/__/env.json")
       .expect(200)
       .expect({
         key: "value",
       })
-      .expect("content-type", "application/json; charset=utf-8")
-      .end(done);
+      .expect("content-type", "application/json; charset=utf-8");
   });
 
-  it("serves javascript", (done) => {
+  it("serves javascript", async () => {
     const expectedBody = fs
       .readFileSync(
         path.resolve(__dirname, "../../../templates/env.js.template"),
@@ -76,15 +82,14 @@ describe("env", () => {
       }),
     );
 
-    void request(app)
+    await request(app)
       .get("/__/env.js")
       .expect(200)
       .expect("content-type", "application/javascript; charset=utf-8")
-      .expect(expectedBody)
-      .end(done);
+      .expect(expectedBody);
   });
 
-  it("does not call next after serving env json", (done) => {
+  it("does not call next after serving env json", async () => {
     app.use(
       env({
         env: {
@@ -92,20 +97,16 @@ describe("env", () => {
         },
       }),
     );
-    app.use((req, res, next) => {
+    app.use((_req, _res, next) => {
       next(new Error("next() should not have been called"));
     });
 
-    void request(app)
-      .get("/__/env.json")
-      .expect(200)
-      .expect({
-        key: "value",
-      })
-      .end(done);
+    await request(app).get("/__/env.json").expect(200).expect({
+      key: "value",
+    });
   });
 
-  it("does not call next after serving env js", (done) => {
+  it("does not call next after serving env js", async () => {
     app.use(
       env({
         env: {
@@ -113,16 +114,16 @@ describe("env", () => {
         },
       }),
     );
-    app.use((req, res, next) => {
+    app.use((_req, _res, next) => {
       next(new Error("next() should not have been called"));
     });
 
-    void request(app).get("/__/env.js").expect(200).end(done);
+    await request(app).get("/__/env.js").expect(200);
   });
 
-  it("uses request env config when spec is omitted", (done) => {
-    app.use((req, res, next) => {
-      req.superstatic = {
+  it("uses request env config when spec is omitted", async () => {
+    app.use((req, _res, next) => {
+      (req as SuperstaticRequest).superstatic = {
         env: {
           key: "value",
         },
@@ -131,24 +132,20 @@ describe("env", () => {
     });
     app.use(rawEnv());
 
-    void request(app)
-      .get("/__/env.json")
-      .expect(200)
-      .expect({
-        key: "value",
-      })
-      .end(done);
+    await request(app).get("/__/env.json").expect(200).expect({
+      key: "value",
+    });
   });
 
-  it("calls next cleanly when mounted standalone without req.superstatic", (done) => {
+  it("calls next cleanly when mounted standalone without req.superstatic", async () => {
     const standalone = connect();
     standalone.use(rawEnv());
-    standalone.use((req, res) => {
+    standalone.use((_req, res) => {
       res.statusCode = 204;
       res.end();
     });
 
-    void request(standalone).get("/__/env.json").expect(204).end(done);
+    await request(standalone).get("/__/env.json").expect(204);
   });
 
   it("serves env json when mounted standalone with spec.env", async () => {
