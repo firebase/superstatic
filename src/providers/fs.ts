@@ -24,11 +24,13 @@ import { stat as fsStat } from "node:fs/promises";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
+import { Provider, ProviderResult } from "../options";
+
 async function multiStat(
   paths: string[],
 ): Promise<fs.Stats & { pathname: string }> {
   // const pathname = paths.shift();
-  let err: any;
+  let err: unknown;
   for (const pathname of paths) {
     try {
       const stat = await fsStat(pathname);
@@ -40,13 +42,20 @@ async function multiStat(
   throw err;
 }
 
-module.exports = function provider(options: any) {
+/**
+ * Creates a filesystem-backed file provider.
+ * @param options provider configuration options.
+ * @returns provider lookup function.
+ */
+function fsProvider(
+  options: fsProvider.FsProviderOptions = {},
+): fsProvider.FsProvider {
   const etagCache: Record<string, { timestamp: Date; value: string }> = {};
   const cwd = options.cwd ?? process.cwd();
-  let publicPaths: string[] = options.public ?? ["."];
-  if (!Array.isArray(publicPaths)) {
-    publicPaths = [publicPaths];
-  }
+  const rawPublic = options.public ?? ["."];
+  const publicPaths: string[] = Array.isArray(rawPublic)
+    ? rawPublic
+    : [rawPublic];
 
   async function fetchEtag(pathname: string, stat: fs.Stats): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -67,7 +76,8 @@ module.exports = function provider(options: any) {
 
       fd.on("end", () => {
         hash.end();
-        const etag = hash.read();
+        const rawEtag: unknown = hash.read();
+        const etag = typeof rawEtag === "string" ? rawEtag : "";
         etagCache[pathname] = {
           timestamp: stat.mtime,
           value: etag,
@@ -83,12 +93,7 @@ module.exports = function provider(options: any) {
   return async function (
     req: unknown,
     pathname: string,
-  ): Promise<{
-    modified: number;
-    size: number;
-    etag: string;
-    stream: fs.ReadStream;
-  } | null> {
+  ): Promise<fsProvider.FsProviderResult | null> {
     pathname = decodeURI(pathname);
     // jumping to parent directories is not allowed
     if (
@@ -103,7 +108,7 @@ module.exports = function provider(options: any) {
     }
 
     const fullPathnames: string[] = publicPaths.map((p) =>
-      path.join(cwd as string, p, pathname),
+      path.join(cwd, p, pathname),
     );
 
     try {
@@ -115,14 +120,40 @@ module.exports = function provider(options: any) {
         etag: await fetchEtag(stat.pathname, stat),
         stream: fs.createReadStream(stat.pathname),
       };
-    } catch (err: any) {
-      if (["ENOENT", "ENOTDIR", "EISDIR", "EINVAL"].includes(err.code)) {
+    } catch (err: unknown) {
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "code" in err &&
+        typeof err.code === "string" &&
+        ["ENOENT", "ENOTDIR", "EISDIR", "EINVAL"].includes(err.code)
+      ) {
         return null;
       }
       if (err instanceof Error) {
         return Promise.reject(err);
       }
-      return Promise.reject(new Error(`Unknown error: ${err}`));
+      return Promise.reject(new Error(`Unknown error: ${String(err)}`));
     }
   };
-};
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace fsProvider {
+  export interface FsProviderOptions {
+    cwd?: string;
+    public?: string | string[];
+  }
+
+  export interface FsProviderResult extends ProviderResult {
+    modified: number;
+    size: number;
+    etag: string;
+    stream: fs.ReadStream;
+  }
+
+  export type FsProvider = Provider &
+    ((req: unknown, pathname: string) => Promise<FsProviderResult | null>);
+}
+
+export = fsProvider;

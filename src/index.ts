@@ -19,9 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import superstatic = require("./superstatic");
-import server = require("./server");
-import patterns = require("./utils/patterns");
+import { createRequire } from "node:module";
+
+import * as patterns from "./utils/patterns";
+
+const requireModule: (id: string) => unknown = createRequire(__filename);
+const superstatic = requireModule(
+  "./superstatic",
+) as typeof import("./superstatic");
+const server = requireModule("./server") as typeof import("./server");
 const RE2mode = patterns.re2Available;
 
 export default superstatic;

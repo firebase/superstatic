@@ -21,12 +21,12 @@
 
 import { use, expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
+import concatStream from "concat-stream";
 import * as path from "node:path";
 import * as fs from "node:fs";
-const concatStream = require("concat-stream");
 use(chaiAsPromised);
 
-const fsp = require("../../../src/providers/fs");
+import fsp from "../../../src/providers/fs";
 
 async function readStatStream(
   stat: {
@@ -39,7 +39,11 @@ async function readStatStream(
   const stream = stat?.stream;
   return new Promise((resolve, reject) => {
     stream.on("error", reject);
-    stream.pipe(concatStream({ encoding: "string" }, resolve));
+    stream.pipe(
+      concatStream({ encoding: "string" }, (body: string) => {
+        resolve(body);
+      }),
+    );
   });
 }
 

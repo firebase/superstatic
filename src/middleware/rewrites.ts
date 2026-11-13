@@ -55,6 +55,9 @@ export = function () {
       return next();
     }
     const pathname = urlParser.parse(req.url).pathname;
+    if (!pathname) {
+      return next();
+    }
     const match = rewrites(slasher(pathname));
 
     if (!match) {

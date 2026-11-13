@@ -19,7 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import type { IncomingHttpHeaders } from "node:http";
+
+import type { Configuration } from "../config";
 import { normalizeMultiSlashes } from "./pathutils";
+
+export interface I18nRequest {
+  superstatic?: Pick<Configuration, "i18n">;
+  headers: IncomingHttpHeaders;
+}
 
 /**
  * Returns the list of paths to check for i18n content.
@@ -33,9 +41,9 @@ import { normalizeMultiSlashes } from "./pathutils";
  * @param req the request object containing superstatic and i18n configuration.
  * @returns list of paths to check for i18n content.
  */
-export function i18nContentOptions(p: string, req: any): string[] {
+export function i18nContentOptions(p: string, req: I18nRequest): string[] {
   const paths: string[] = [];
-  const i18n = req.superstatic.i18n;
+  const i18n = req.superstatic?.i18n;
   if (!i18n?.root) {
     return paths;
   }
@@ -67,7 +75,7 @@ function join(...arr: string[]): string {
  * @param headers headers from the request.
  * @returns country code, or an empty string.
  */
-function getCountryCode(headers: Record<string, string>): string {
+function getCountryCode(headers: IncomingHttpHeaders): string {
   const overrideValue = cookieValue(
     headers.cookie,
     "firebase-country-override",
@@ -75,7 +83,8 @@ function getCountryCode(headers: Record<string, string>): string {
   if (overrideValue) {
     return overrideValue;
   }
-  return headers["x-country-code"] || "";
+  const countryCode = headers["x-country-code"];
+  return typeof countryCode === "string" ? countryCode : "";
 }
 
 /**
@@ -83,7 +92,7 @@ function getCountryCode(headers: Record<string, string>): string {
  * @param headers headers from the request.
  * @returns ordered list of languages from the header.
  */
-function getI18nLanguages(headers: Record<string, string>): string[] {
+function getI18nLanguages(headers: IncomingHttpHeaders): string[] {
   const overrideValue = cookieValue(
     headers.cookie,
     "firebase-language-override",
@@ -120,7 +129,7 @@ function getI18nLanguages(headers: Record<string, string>): string[] {
  * @param key key to look for.
  * @returns the value, or empty string;
  */
-function cookieValue(cookieString: string, key: string): string {
+function cookieValue(cookieString: string | undefined, key: string): string {
   if (!cookieString) {
     return "";
   }

@@ -21,10 +21,42 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const updateNotifier = require("update-notifier-cjs");
+import * as fs from "node:fs";
+import { createRequire } from "node:module";
+import * as path from "node:path";
 
 import cli from "../cli";
-const pkg = require("../../package.json");
+import { isPlainObject } from "../utils/objectutils";
+
+interface PackageJson {
+  name: string;
+  version: string;
+}
+
+interface UpdateNotifierOptions {
+  pkg: PackageJson;
+  updateCheckInterval?: number;
+  shouldNotifyInNpmScript?: boolean;
+}
+
+interface UpdateNotifier {
+  notify(): void;
+}
+
+const requireModule: (id: string) => unknown = createRequire(__filename);
+const updateNotifier = requireModule("update-notifier-cjs") as (
+  options: UpdateNotifierOptions,
+) => UpdateNotifier;
+
+const rawPkg: unknown = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf8"),
+);
+const pkg: PackageJson = isPlainObject(rawPkg)
+  ? {
+      name: typeof rawPkg.name === "string" ? rawPkg.name : "superstatic",
+      version: typeof rawPkg.version === "string" ? rawPkg.version : "0.0.0",
+    }
+  : { name: "superstatic", version: "0.0.0" };
 
 const updateCheckInterval = 1000 * 60 * 60 * 24 * 7; // 1 week
 
