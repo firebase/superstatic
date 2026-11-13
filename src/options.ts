@@ -128,7 +128,7 @@ export type MiddlewareHandler =
 
 export interface MiddlewareOptions {
   fallthrough?: boolean;
-  config?: string | Configuration;
+  config?: string | string[] | Configuration;
   protect?: string;
   env?: Record<string, string>;
   cwd?: string;

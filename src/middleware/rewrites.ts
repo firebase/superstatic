@@ -19,15 +19,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { slasher } from "../utils/pathutils";
-import * as urlParser from "url";
 import { NextFunction } from "connect";
 import { IncomingMessage, ServerResponse } from "http";
 
 import { Configuration, Rewrite } from "../config";
+import { slasher } from "../utils/pathutils";
 import * as patterns from "../utils/patterns";
 
 type Responder = import("../responder");
+
+const ABSOLUTE_URI_RE = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//;
+
+function extractPathname(url: string): string {
+  if (ABSOLUTE_URI_RE.test(url)) {
+    try {
+      return new URL(url).pathname;
+    } catch {
+      // Fall through to raw path splitting.
+    }
+  }
+  const rawPath = url.split(/[?#]/, 1)[0] ?? "";
+  return rawPath === "" ? "/" : rawPath;
+}
 
 function matcher(rewrites: Rewrite[]) {
   return function (url: string) {
@@ -54,7 +67,7 @@ export = function () {
     if (!req.url) {
       return next();
     }
-    const pathname = urlParser.parse(req.url).pathname;
+    const pathname = extractPathname(req.url);
     const match = rewrites(slasher(pathname));
 
     if (!match) {

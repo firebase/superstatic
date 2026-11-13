@@ -24,7 +24,7 @@ export default [
       "jsdoc/require-param-type": "off",
       "jsdoc/require-returns-type": "off",
 
-      "@typescript-eslint/no-require-imports": "warn", // TODO(bkendall): remove allow to error.
+      "@typescript-eslint/no-require-imports": "error",
 
       "no-unused-vars": "off", // Turned off in favor of @typescript-eslint/no-unused-vars.
       "require-atomic-updates": "off", // This rule is so noisy and isn't useful: https://github.com/eslint/eslint/issues/11899
@@ -50,23 +50,11 @@ export default [
   {
     files: ["**/*.ts"],
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-argument": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-assignment": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-call": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-member-access": "warn", // TODO(bkendall): remove allow to error.
-    },
-  },
-  {
-    files: ["**/*.js"],
-    rules: {
-      "@typescript-eslint/no-unsafe-argument": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-assignment": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-call": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-member-access": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-unsafe-return": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/no-var-requires": "warn", // TODO(bkendall): remove allow to error.
-      "@typescript-eslint/unbound-method": "warn", // TODO(bkendall): remove allow to error.
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
     },
   },
 ];
