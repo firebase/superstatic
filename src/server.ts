@@ -38,13 +38,13 @@ function server(spec: ServerOptions = {}): server.SuperstaticServer {
   const listen = app.listen.bind(app) as (
     port?: number,
     hostname?: string,
-    callback?: (err?: unknown) => void,
+    callback?: () => void,
   ) => http.Server;
 
   // Override method because port and host are given
   // in the spec object
   const serverApp = app as unknown as server.SuperstaticServer;
-  serverApp.listen = function (done?: (err?: unknown) => void): http.Server {
+  serverApp.listen = function (done?: () => void): http.Server {
     app.use(superstatic(spec));
 
     // Start server
@@ -67,7 +67,7 @@ namespace server {
     next?: connect.NextFunction,
   ) => void) &
     Omit<connect.Server, "listen"> & {
-      listen(done?: (err?: unknown) => void): http.Server;
+      listen(done?: () => void): http.Server;
     };
 }
 

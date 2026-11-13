@@ -71,18 +71,27 @@ class Activator {
   }
 
   buildStack(): ActivatorMiddleware[] {
-    const stack: (string | MiddlewareHandler)[] = Array.isArray(this.spec.stack)
-      ? this.spec.stack.slice(0)
-      : [];
+    if (!Array.isArray(this.spec.stack)) {
+      throw new TypeError(
+        "Expected spec.stack to be an array of middleware names or functions",
+      );
+    }
+    const stack: (string | MiddlewareHandler)[] = this.spec.stack.slice(0);
 
     Object.entries(this.spec.before ?? {}).forEach(([name, wares]) => {
-      const items = Array.isArray(wares) ? wares : [wares];
-      stack.splice(stack.indexOf(name), 0, ...items);
+      const index = stack.indexOf(name);
+      if (index !== -1) {
+        const items = Array.isArray(wares) ? wares : [wares];
+        stack.splice(index, 0, ...items);
+      }
     });
 
     Object.entries(this.spec.after ?? {}).forEach(([name, wares]) => {
-      const items = Array.isArray(wares) ? wares : [wares];
-      stack.splice(stack.indexOf(name) + 1, 0, ...items);
+      const index = stack.indexOf(name);
+      if (index !== -1) {
+        const items = Array.isArray(wares) ? wares : [wares];
+        stack.splice(index + 1, 0, ...items);
+      }
     });
 
     return stack.map((ware) => {
@@ -169,7 +178,7 @@ namespace activator {
 
   export type ActivatorOptions = Omit<MiddlewareOptions, "config" | "stack"> & {
     config?: ConfigValue | ConfigLoader;
-    stack?: string | (string | MiddlewareHandler)[];
+    stack: (string | MiddlewareHandler)[];
   };
 }
 
