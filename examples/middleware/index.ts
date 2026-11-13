@@ -19,21 +19,27 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { server: superstaticServer } = require("../../");
+import connect from "connect";
+
+import superstatic from "../../src";
 
 const spec = {
-  port: 3474,
   config: {
     public: "./app",
+    rewrites: [
+      {
+        source: "**",
+        destination: "/index.html",
+      },
+    ],
   },
-  cwd: __dirname,
-  errorPage: __dirname + "/error.html",
+  cwd: process.cwd(),
   compression: true,
-  debug: true,
 };
 
-const app = superstaticServer(spec);
-app.listen((err) => {
+const app = connect().use(superstatic(spec));
+
+app.listen(3474, undefined, (err?: unknown) => {
   if (err) {
     console.log(err);
   }
