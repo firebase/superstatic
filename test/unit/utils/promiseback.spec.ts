@@ -50,4 +50,18 @@ describe("promiseback", () => {
       )("foo", "bar"),
     ).to.eventually.equal("bar");
   });
+
+  it("should fall back to Object.prototype.toString for function errback errors", () => {
+    const fnErr = (): void => undefined;
+    return expect(
+      promiseback(
+        (a1: string, a2: string, cb: (err?: unknown, res?: string) => void) => {
+          void a1;
+          void a2;
+          cb(fnErr);
+        },
+        2,
+      )("foo", "bar"),
+    ).to.be.rejectedWith("Unknown error: [object Function]");
+  });
 });
