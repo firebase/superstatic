@@ -35,9 +35,6 @@ const spec = {
 };
 
 const app = superstaticServer(spec);
-app.listen((err?: unknown) => {
-  if (err) {
-    console.log(err);
-  }
+app.listen(() => {
   console.log("Superstatic now serving on port 3474 ...");
 });

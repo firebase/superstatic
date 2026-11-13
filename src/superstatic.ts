@@ -69,11 +69,15 @@ function superstatic(spec: MiddlewareOptions = {}): NextHandleFunction {
 
   spec.fallthrough ??= true;
 
-  if (
-    typeof spec.stack === "string" &&
-    Object.hasOwn(superstatic.stacks, spec.stack)
-  ) {
-    spec.stack = superstatic.stacks[spec.stack];
+  let stack: string[];
+  if (typeof spec.stack === "string") {
+    if (!Object.hasOwn(superstatic.stacks, spec.stack)) {
+      throw new TypeError(`Unknown middleware stack "${spec.stack}"`);
+    }
+    stack = superstatic.stacks[spec.stack];
+    spec.stack = stack;
+  } else {
+    stack = spec.stack;
   }
 
   const router = makerouter();
@@ -117,7 +121,7 @@ function superstatic(spec: MiddlewareOptions = {}): NextHandleFunction {
     },
   );
 
-  router.use(activator({ ...spec, config }, provider));
+  router.use(activator({ ...spec, config, stack }, provider));
 
   // Handle not found pages
   if (!spec.fallthrough) {
