@@ -19,30 +19,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const connect = require("connect");
-const networkLogger = require("morgan");
+import connect from "connect";
+import networkLogger from "morgan";
+import * as http from "node:http";
 
-const superstatic = require("./superstatic");
+import { ServerOptions } from "./options";
+import superstatic from "./superstatic";
 
 /**
- * @param {import("./options").ServerOptions} spec superstatic options.
- * @returns unknown
+ * Creates a Connect server configured with Superstatic middleware.
+ * @param spec superstatic server options.
+ * @returns configured Connect server with a zero-arg/callback `listen` method.
  */
-module.exports = function (spec) {
+function server(spec: ServerOptions = {}): server.SuperstaticServer {
   spec.fallthrough ??= false;
 
   const app = connect();
-  const listen = app.listen.bind(app);
+  const listen = app.listen.bind(app) as (
+    port?: number,
+    hostname?: string,
+    callback?: () => void,
+  ) => http.Server;
 
   // Override method because port and host are given
   // in the spec object
-  app.listen = function (done) {
+  const serverApp = app as unknown as server.SuperstaticServer;
+  serverApp.listen = function (done?: () => void): http.Server {
     app.use(superstatic(spec));
 
     // Start server
-    const server = listen(spec.port, spec.hostname ?? spec.host, done);
-
-    return server;
+    return listen(spec.port, spec.hostname ?? spec.host, done);
   };
 
   // Console output for network requests
@@ -50,5 +56,19 @@ module.exports = function (spec) {
     app.use(networkLogger("combined"));
   }
 
-  return app;
-};
+  return serverApp;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace server {
+  export type SuperstaticServer = ((
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    next?: connect.NextFunction,
+  ) => void) &
+    Omit<connect.Server, "listen"> & {
+      listen(done?: () => void): http.Server;
+    };
+}
+
+export = server;
