@@ -29,8 +29,7 @@ import { Provider, ProviderResult } from "../options";
 async function multiStat(
   paths: string[],
 ): Promise<fs.Stats & { pathname: string }> {
-  // const pathname = paths.shift();
-  let err: unknown;
+  let err: unknown = new Error("No paths provided to multiStat");
   for (const pathname of paths) {
     try {
       const stat = await fsStat(pathname);
@@ -50,7 +49,7 @@ async function multiStat(
 function fsProvider(
   options: fsProvider.FsProviderOptions = {},
 ): fsProvider.FsProvider {
-  const etagCache: Record<string, { timestamp: Date; value: string }> = {};
+  const etagCache: Record<string, { timestamp: number; value: string }> = {};
   const cwd = options.cwd ?? process.cwd();
   const rawPublic = options.public ?? ["."];
   const publicPaths: string[] = Array.isArray(rawPublic)
@@ -59,11 +58,9 @@ function fsProvider(
 
   async function fetchEtag(pathname: string, stat: fs.Stats): Promise<string> {
     return new Promise((resolve, reject) => {
+      const mtime = stat.mtime?.getTime() ?? stat.mtimeMs;
       const cached = etagCache[pathname];
-      // Chaining doesn't work. If `stat.mtime` is undefined, the chained
-      // version is true and breaks the logic.
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (cached && cached.timestamp === stat.mtime) {
+      if (cached?.timestamp === mtime) {
         return resolve(cached.value);
       }
 
@@ -79,7 +76,7 @@ function fsProvider(
         const rawEtag: unknown = hash.read();
         const etag = typeof rawEtag === "string" ? rawEtag : "";
         etagCache[pathname] = {
-          timestamp: stat.mtime,
+          timestamp: mtime,
           value: etag,
         };
         resolve(etag);

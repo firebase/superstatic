@@ -19,15 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { createRequire } from "node:module";
-
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import superstatic = require("./superstatic");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import server = require("./server");
 import * as patterns from "./utils/patterns";
 
-const requireModule: (id: string) => unknown = createRequire(__filename);
-const superstatic = requireModule(
-  "./superstatic",
-) as typeof import("./superstatic");
-const server = requireModule("./server") as typeof import("./server");
 const RE2mode = patterns.re2Available;
 
 export default superstatic;

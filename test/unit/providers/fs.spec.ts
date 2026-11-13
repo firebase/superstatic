@@ -24,6 +24,7 @@ import chaiAsPromised from "chai-as-promised";
 import concatStream from "concat-stream";
 import * as path from "node:path";
 import * as fs from "node:fs";
+import * as fsPromises from "node:fs/promises";
 use(chaiAsPromised);
 
 import fsp from "../../../src/providers/fs";
@@ -63,6 +64,46 @@ describe("provider: fs", () => {
       .then((body: string) => {
         expect(body.trim()).to.eq("A");
       });
+  });
+
+  it("should reuse cached etag when mtime is unchanged and recompute when mtime changes", async () => {
+    const tmpDir = await fsPromises.mkdtemp(path.join(".tmp-fs-cache-"));
+    try {
+      const filePath = path.join(tmpDir, "cached.txt");
+      await fsPromises.writeFile(filePath, "initial", "utf8");
+      const fixedTime = new Date(1700000000000);
+      await fsPromises.utimes(filePath, fixedTime, fixedTime);
+
+      const provider = fsp({ cwd: tmpDir, public: "." });
+      const first = await provider({}, "/cached.txt");
+      first?.stream.destroy();
+
+      // Change content while keeping mtime identical: cache should return first.etag.
+      await fsPromises.writeFile(filePath, "updated", "utf8");
+      await fsPromises.utimes(filePath, fixedTime, fixedTime);
+      const second = await provider({}, "/cached.txt");
+      second?.stream.destroy();
+
+      expect(first?.etag).to.be.a("string");
+      expect(second?.etag).to.equal(first?.etag);
+
+      // Bump mtime: cache should miss and recompute etag for updated content.
+      const bumpedTime = new Date(1700000001000);
+      await fsPromises.utimes(filePath, bumpedTime, bumpedTime);
+      const third = await provider({}, "/cached.txt");
+      third?.stream.destroy();
+
+      expect(third?.etag).to.be.a("string");
+      expect(third?.etag).to.not.equal(first?.etag);
+    } finally {
+      await fsPromises.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it("should reject with an Error when public is empty", async () => {
+    await expect(
+      fsp({ ...opts, public: [] })({}, "/index.html"),
+    ).to.eventually.be.rejectedWith("No paths provided to multiStat");
   });
 
   it("should return null if ../", async () => {

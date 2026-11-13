@@ -76,6 +76,25 @@ describe("static router", () => {
       .expect("content-type", "text/html; charset=utf-8");
   });
 
+  it("strips query strings before matching a route", async () => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "/my-route",
+            destination: "/index.html",
+          },
+        ],
+      }),
+    );
+
+    await request(app)
+      .get("/my-route?foo=bar")
+      .expect(200)
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8");
+  });
+
   it("serves a route with a glob", async () => {
     app.use(
       rewrites({
