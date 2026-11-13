@@ -38,10 +38,10 @@ export type MiddlewareFactory<
 
 function wrapMiddleware<Spec, T extends MiddlewareHandler>(
   name: string,
-  factory: (spec?: Spec) => T,
+  factory: (spec?: Spec, config?: unknown) => T,
 ): MiddlewareFactory<Spec, T> {
-  return (spec?: Spec): NamedMiddleware<T> => {
-    return Object.assign(factory(spec), { _name: name });
+  return (spec?: Spec, config?: unknown): NamedMiddleware<T> => {
+    return Object.assign(factory(spec, config), { _name: name });
   };
 }
 
