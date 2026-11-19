@@ -839,6 +839,75 @@ describe("redirect middleware", () => {
       .expect("Location", "/wat/bar?filter=a%26b");
   });
 
+  it("does not double-encode already percent-encoded path segments", async () => {
+    const app = connect()
+      .use(superstaticSetup)
+      .use(
+        redirect({
+          redirects: [
+            {
+              source: "/u/:id",
+              destination: "/users/:id",
+              type: 301,
+            },
+            {
+              regex: "^/r/(.+)$",
+              destination: "/users/:1",
+              type: 301,
+            },
+            {
+              source: "/t/:id",
+              destination: "/a%2540b/:id",
+              type: 301,
+            },
+          ],
+        }),
+      );
+
+    await request(app)
+      .get("/u/user%40example.com")
+      .expect(301)
+      .expect("Location", "/users/user%40example.com");
+
+    await request(app)
+      .get("/u/c%2B%2B")
+      .expect(301)
+      .expect("Location", "/users/c%2B%2B");
+
+    await request(app)
+      .get("/u/a%2Fb")
+      .expect(301)
+      .expect("Location", "/users/a%2Fb");
+
+    await request(app)
+      .get("/u/a%20b%3Fc")
+      .expect(301)
+      .expect("Location", "/users/a%20b%3Fc");
+
+    await request(app)
+      .get("/r/user%40example.com")
+      .expect(301)
+      .expect("Location", "/users/user%40example.com");
+
+    // A literal "%" in the request or in the destination stays a literal "%".
+    await request(app)
+      .get("/u/a%2540b")
+      .expect(301)
+      .expect("Location", "/users/a%2540b");
+
+    await request(app)
+      .get("/u/100%25")
+      .expect(301)
+      .expect("Location", "/users/100%25");
+
+    await request(app)
+      .get("/u/a%252Fb")
+      .expect(301)
+      .expect("Location", "/users/a%252Fb");
+
+    await request(app).get("/t/x").expect(301).expect("Location", "/a%2540b/x");
+  });
+
   it("accepts middleware options in factory and attaches to connect directly", async () => {
     const middleware = redirectsPkg({ fallthrough: false });
     const app = connect()

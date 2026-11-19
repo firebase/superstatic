@@ -47,11 +47,26 @@ function formatExternalUrl(u: string): string {
   return isUrl(cleaned) ? cleaned : u;
 }
 
-function formatDestination(dest: string, qs: string): string {
+// decodeURI leaves the escapes of reserved characters (such as %40 or %2F) in
+// place, but turns %25 into a plain "%". Escaping %25 once more first keeps the
+// two apart, so every "%" left after decoding starts an escape.
+function protectPercent(p: string): string {
+  return p.replace(/%25/g, "%2525");
+}
+
+function formatDestination(
+  dest: string,
+  qs: string,
+  keepEscapes = false,
+): string {
   const qIndex = dest.indexOf("?");
   const rawDestPath = qIndex >= 0 ? dest.slice(0, qIndex) : dest;
   const destQuery = qIndex >= 0 ? dest.slice(qIndex + 1) : "";
-  const encodedPath = encodeURI(rawDestPath);
+  // With keepEscapes, the %XX sequences already in the path are not encoded a
+  // second time (into %2540 or %252F).
+  const encodedPath = keepEscapes
+    ? encodeURI(rawDestPath).replace(/%25([0-9A-Fa-f]{2})/g, "%$1")
+    : encodeURI(rawDestPath);
 
   const queryParts: string[] = [];
   if (destQuery.length > 0) {
@@ -92,27 +107,39 @@ class Redirect {
         this.engine = "pattern";
         this.capture = patterns.createRaw(this.regex);
       }
-      this.compileDestination = pathToRegexp.compile(this.destination);
+      this.compileDestination = pathToRegexp.compile(
+        protectPercent(this.destination),
+      );
     }
   }
 
-  test(pathname: string, qs = ""): RedirectResult | undefined {
+  test(
+    pathname: string,
+    qs = "",
+    capturePath = pathname,
+  ): RedirectResult | undefined {
     const match = this.capture?.exec(pathname);
     if (match && this.compileDestination) {
+      // Take the captured values from the path that still has literal "%"
+      // escaped, as long as it matches the same rule.
+      const values =
+        (capturePath !== pathname
+          ? this.capture?.exec(capturePath)
+          : undefined) ?? match;
       const params: Record<string, string | string[] | undefined> = {};
       if (this.engine === "glob") {
         for (let i = 0; i < this.captureKeys.length; i++) {
-          const rawMatch = match[i + 1];
+          const rawMatch = values[i + 1];
           params[this.captureKeys[i].name] = rawMatch?.includes("/")
             ? rawMatch.split("/")
             : rawMatch;
         }
       } else {
-        for (let j = 0; j < match.length; j++) {
-          params[j.toString()] = match[j];
+        for (let j = 0; j < values.length; j++) {
+          params[j.toString()] = values[j];
         }
-        if (match.groups) {
-          Object.assign(params, match.groups);
+        if (values.groups) {
+          Object.assign(params, values.groups);
         }
       }
 
@@ -120,7 +147,7 @@ class Redirect {
         const dest = decodeURIComponent(this.compileDestination(params));
         return {
           type: this.type,
-          destination: formatDestination(dest, qs),
+          destination: formatDestination(dest, qs, true),
         };
       } catch {
         return undefined;
@@ -187,15 +214,17 @@ function redirects(
     const rawQuery = qIndex >= 0 ? req.url.slice(qIndex + 1) : "";
 
     let decodedPath: string;
+    let capturePath: string;
     try {
       decodedPath = decodeURI(rawPath);
+      capturePath = decodeURI(protectPercent(rawPath));
     } catch {
       return next();
     }
 
     let match: RedirectResult | undefined;
     for (const redirect of compiledRedirects) {
-      const result = redirect.test(decodedPath, rawQuery);
+      const result = redirect.test(decodedPath, rawQuery, capturePath);
       if (result) {
         match = result;
         break;

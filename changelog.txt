@@ -1,1 +1,2 @@
 - *Breaking:* The `env` middleware no longer calls `next()` after serving `/__/env.json` or `/__/env.js`.
+- Fixes redirects that double-encoded percent-encoded characters (such as `%40` or `%2F`) captured from the request path.
