@@ -121,7 +121,7 @@ function superstatic(spec: MiddlewareOptions = {}): NextHandleFunction {
     },
   );
 
-  router.use(activator({ ...spec, stack }, provider));
+  router.use(activator({ ...spec, config, stack }, provider));
 
   // Handle not found pages
   if (!spec.fallthrough) {

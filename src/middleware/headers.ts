@@ -32,7 +32,6 @@ import * as patterns from "../utils/patterns";
 
 type Responder = import("../responder");
 
-const slashPath = slasher as (value: string) => string;
 const ABSOLUTE_URI_RE = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//;
 
 interface HeaderValue {
@@ -63,11 +62,9 @@ function normalizedConfigHeaders(
       ...entry,
       headers: filteredHeaders,
       ...(typeof entry.source === "string"
-        ? { source: slashPath(entry.source) }
+        ? { source: slasher(entry.source) }
         : {}),
-      ...(typeof entry.glob === "string"
-        ? { glob: slashPath(entry.glob) }
-        : {}),
+      ...(typeof entry.glob === "string" ? { glob: slasher(entry.glob) } : {}),
     };
   });
 }
@@ -84,13 +81,13 @@ function extractPathname(url?: string): string {
   const rawUrl = url ?? "/";
   if (ABSOLUTE_URI_RE.test(rawUrl)) {
     try {
-      return slashPath(new URL(rawUrl).pathname);
+      return slasher(new URL(rawUrl).pathname);
     } catch {
       // Fall through to raw path splitting.
     }
   }
   const rawPath = rawUrl.split(/[?#]/, 1)[0] ?? "";
-  return slashPath(rawPath === "" ? "/" : rawPath);
+  return slasher(rawPath === "" ? "/" : rawPath);
 }
 
 /**
