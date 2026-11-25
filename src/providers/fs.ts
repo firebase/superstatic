@@ -33,7 +33,7 @@ async function multiStat(
   for (const pathname of paths) {
     try {
       const stat = await fsStat(pathname);
-      return { pathname, ...stat };
+      return Object.assign(stat, { pathname });
     } catch (e: unknown) {
       err = e;
     }

@@ -56,8 +56,12 @@ try {
   if (isPlainObject(parsedEnv)) {
     const stringEnv: Record<string, string> = {};
     for (const [key, value] of Object.entries(parsedEnv)) {
-      if (typeof value === "string") {
-        stringEnv[key] = value;
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+      ) {
+        stringEnv[key] = String(value);
       }
     }
     env = stringEnv;
@@ -84,13 +88,11 @@ cli
     return new Promise<void>((resolve) => {
       const parsedPort =
         options.port !== undefined ? Number(options.port) : undefined;
+      const isValidPort = parsedPort !== undefined && !Number.isNaN(parsedPort);
       const app = server({
         cwd: path.join(process.cwd(), folder ?? ""),
         config: options.config,
-        port:
-          parsedPort !== undefined && !Number.isNaN(parsedPort)
-            ? parsedPort
-            : undefined,
+        port: isValidPort ? parsedPort : Number(PORT),
         hostname: options.hostname,
         compression: options.compression,
         gzip: options.gzip,
@@ -99,7 +101,7 @@ cli
       });
       app.listen(() => resolve());
       console.log(
-        `Superstatic started.\nVisit http://${options.hostname ?? HOSTNAME}:${options.port ?? PORT} to view your app.`,
+        `Superstatic started.\nVisit http://${options.hostname ?? HOSTNAME}:${isValidPort ? parsedPort : PORT} to view your app.`,
       );
     });
   });

@@ -45,4 +45,18 @@ describe("i18nContentOptions", () => {
       "/i18n/fr/index.html",
     ]);
   });
+
+  it("should strip quality parameters and regions from accept-language", () => {
+    const paths = i18nContentOptions("/index.html", {
+      superstatic: { i18n: { root: "/i18n" } },
+      headers: { "accept-language": "en-US,en;q=0.9, fr;q=0.8" },
+    });
+
+    expect(paths).to.have.members([
+      "/i18n/en_ALL/index.html",
+      "/i18n/en/index.html",
+      "/i18n/fr_ALL/index.html",
+      "/i18n/fr/index.html",
+    ]);
+  });
 });

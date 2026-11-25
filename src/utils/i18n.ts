@@ -111,7 +111,7 @@ function getI18nLanguages(headers: IncomingHttpHeaders): string[] {
   const languagesSeen = new Set<string>();
   const languagesOrdered = [];
   for (const v of acceptLanguage.split(",")) {
-    const l = v.split("-")[0];
+    const l = v.split(";")[0]?.split("-")[0]?.trim();
     if (!l) {
       continue;
     }
