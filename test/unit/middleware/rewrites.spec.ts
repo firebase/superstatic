@@ -20,12 +20,13 @@
  */
 
 import * as fs from "node:fs/promises";
+import { ServerResponse } from "node:http";
 import request from "supertest";
 import connect from "connect";
 
 import * as helpers from "../../helpers";
 import rewritesPkg from "../../../src/middleware/rewrites";
-const fsProvider = require("../../../src/providers/fs");
+import fsProvider from "../../../src/providers/fs";
 import Responder from "../../../src/responder";
 
 const rewrites = helpers.decorator(rewritesPkg);
@@ -40,10 +41,16 @@ describe("static router", () => {
     await fs.mkdir(".tmp", { recursive: true });
     await fs.writeFile(".tmp/index.html", "index", "utf8");
 
-    app = connect().use((req, res: any, next) => {
-      res.superstatic = new Responder(req, res, { provider });
-      next();
-    });
+    app = connect().use(
+      (
+        req: connect.IncomingMessage,
+        res: ServerResponse & { superstatic?: Responder },
+        next: connect.NextFunction,
+      ) => {
+        res.superstatic = new Responder(req, res, { provider });
+        next();
+      },
+    );
   });
 
   afterEach(async () => {
@@ -64,6 +71,25 @@ describe("static router", () => {
 
     await request(app)
       .get("/my-route")
+      .expect(200)
+      .expect("index")
+      .expect("content-type", "text/html; charset=utf-8");
+  });
+
+  it("strips query strings before matching a route", async () => {
+    app.use(
+      rewrites({
+        rewrites: [
+          {
+            source: "/my-route",
+            destination: "/index.html",
+          },
+        ],
+      }),
+    );
+
+    await request(app)
+      .get("/my-route?foo=bar")
       .expect(200)
       .expect("index")
       .expect("content-type", "text/html; charset=utf-8");
