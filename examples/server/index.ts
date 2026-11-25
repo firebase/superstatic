@@ -19,18 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-[
-  "protect",
-  "redirects",
-  "headers",
-  "env",
-  "files",
-  "rewrites",
-  "missing",
-].forEach((name) => {
-  exports[name] = function (spec, config) {
-    const mware = require("./" + name)(spec, config);
-    mware._name = name;
-    return mware;
-  };
+import * as path from "node:path";
+
+import { server as superstaticServer } from "../../src";
+
+const spec = {
+  port: 3474,
+  config: {
+    public: "./app",
+  },
+  cwd: __dirname,
+  errorPage: path.join(__dirname, "error.html"),
+  compression: true,
+  debug: true,
+};
+
+const app = superstaticServer(spec);
+app.listen(() => {
+  console.log("Superstatic now serving on port 3474 ...");
 });

@@ -19,14 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const path = require("path");
+import { expect } from "chai";
+import * as fs from "node:fs/promises";
+import { AddressInfo } from "node:net";
+import * as path from "node:path";
+import * as stdMocks from "std-mocks";
+import request from "supertest";
 
-const fs = require("node:fs/promises");
-const request = require("supertest");
-const expect = require("chai").expect;
-const stdMocks = require("std-mocks");
-
-const server = require("../../src/server");
+import server from "../../src/server";
 
 // NOTE: skipping these tests because of how
 // supertest runs a connect server. The Superstatic
@@ -67,7 +67,8 @@ describe.skip("server", () => {
     });
 
     const s = app.listen(() => {
-      expect(s.address().port).to.equal(9876);
+      const addr = s.address() as AddressInfo;
+      expect(addr.port).to.equal(9876);
 
       s.close(done);
     });
@@ -79,7 +80,8 @@ describe.skip("server", () => {
     });
 
     const s = app.listen(() => {
-      expect(s.address().address).to.equal("127.0.0.1");
+      const addr = s.address() as AddressInfo;
+      expect(addr.address).to.equal("127.0.0.1");
 
       s.close(done);
     });
@@ -91,14 +93,15 @@ describe.skip("server", () => {
     });
 
     const s = app.listen(() => {
-      expect(s.address().address).to.equal("127.0.0.1");
+      const addr = s.address() as AddressInfo;
+      expect(addr.address).to.equal("127.0.0.1");
 
       s.close(done);
     });
   });
 
   it("with debug", (done) => {
-    let output;
+    let output: { stdout: string[]; stderr: string[] };
     const app = server({
       debug: true,
     });
@@ -120,7 +123,7 @@ describe.skip("server", () => {
 
   it("with env filename", (done) => {
     const app = server({
-      env: ".tmp/.env.json",
+      env: ".tmp/.env.json" as unknown as Record<string, string>,
       config: {
         public: ".tmp",
       },
