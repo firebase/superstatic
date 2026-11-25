@@ -23,24 +23,56 @@ import { Command } from "commander";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-const pkg = require("../../package.json");
-import server = require("../server");
+import server from "../server";
+import { isPlainObject } from "../utils/objectutils";
+
+interface ServeOptions {
+  config?: string | string[];
+  port?: string;
+  hostname?: string;
+  compression?: boolean;
+  gzip?: boolean;
+  debug?: boolean;
+}
 
 const PORT = "3474";
 const HOSTNAME = "localhost";
 const CONFIG_FILENAME = ["superstatic.json", "firebase.json"];
 const ENV_FILENAME = ".env.json";
 
+const rawPkg: unknown = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf8"),
+);
+const pkgVersion =
+  isPlainObject(rawPkg) && typeof rawPkg.version === "string"
+    ? rawPkg.version
+    : "0.0.0";
+
 let env: Record<string, string> | undefined = undefined;
 try {
-  env = JSON.parse(fs.readFileSync(path.resolve(ENV_FILENAME), "utf8"));
+  const parsedEnv: unknown = JSON.parse(
+    fs.readFileSync(path.resolve(ENV_FILENAME), "utf8"),
+  );
+  if (isPlainObject(parsedEnv)) {
+    const stringEnv: Record<string, string> = {};
+    for (const [key, value] of Object.entries(parsedEnv)) {
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+      ) {
+        stringEnv[key] = String(value);
+      }
+    }
+    env = stringEnv;
+  }
 } catch {
   // do nothing
 }
 
 const cli = new Command();
 
-cli.name("superstatic").version(pkg.version, "-v, --version");
+cli.name("superstatic").version(pkgVersion, "-v, --version");
 
 cli
   .command("serve", { isDefault: true })
@@ -52,20 +84,24 @@ cli
   .option("--gzip")
   .option("--compression")
   .description("start server")
-  .action((folder, options) => {
-    return new Promise((resolve) => {
+  .action((folder: string | undefined, options: ServeOptions) => {
+    return new Promise<void>((resolve) => {
+      const parsedPort =
+        options.port !== undefined ? Number(options.port) : undefined;
+      const isValidPort = parsedPort !== undefined && !Number.isNaN(parsedPort);
       const app = server({
         cwd: path.join(process.cwd(), folder ?? ""),
         config: options.config,
-        port: options.port,
+        port: isValidPort ? parsedPort : Number(PORT),
         hostname: options.hostname,
         compression: options.compression,
+        gzip: options.gzip,
         debug: options.debug,
         env: env,
       });
       app.listen(() => resolve());
       console.log(
-        `Superstatic started.\nVisit http://${options.hostname}:${options.port} to view your app.`,
+        `Superstatic started.\nVisit http://${options.hostname ?? HOSTNAME}:${isValidPort ? parsedPort : PORT} to view your app.`,
       );
     });
   });

@@ -93,7 +93,9 @@ export function removeTrailingString(string: string, rm: string): string {
  * @param value The value to slash (string, array, object).
  * @returns The slashed value.
  */
-export function slasher(value: any): any {
+export function slasher(value: string): string;
+export function slasher<T>(value: T): T;
+export function slasher(value: unknown): unknown {
   if (typeof value === "string") {
     let isNegated = false;
     let val = value;
@@ -108,10 +110,10 @@ export function slasher(value: any): any {
     return isNegated ? "!" + val : val;
   }
   if (Array.isArray(value)) {
-    return value.map(slasher);
+    return (value as unknown[]).map((item) => slasher(item));
   }
   if (isPlainObject(value)) {
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const key of Object.keys(value)) {
       result[key] = slasher(value[key]);
     }
