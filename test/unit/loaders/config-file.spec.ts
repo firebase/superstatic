@@ -170,6 +170,87 @@ describe("loading config files", () => {
     expect(config).to.eql({});
   });
 
+  describe("automatic config discovery", () => {
+    beforeEach(() => {
+      process.chdir(TMP_DIR);
+    });
+
+    for (const filename of ["superstatic.json", "firebase.json"]) {
+      it(`does not merge ${filename} into an explicit object`, async () => {
+        const fileConfig = { public: "default", headers: [{ source: "**" }] };
+        await fs.writeFile(
+          filename,
+          JSON.stringify(
+            filename === "firebase.json" ? { hosting: fileConfig } : fileConfig,
+          ),
+        );
+
+        expect(loadConfigFile({ public: "app" }, false)).to.eql({
+          public: "app",
+        });
+        expect(loadConfigFile(JSON.stringify({ public: "app" }), false)).to.eql(
+          {
+            public: "app",
+          },
+        );
+        expect(loadConfigFile({}, false)).to.eql({});
+        expect(loadConfigFile(undefined, false)).to.eql({});
+      });
+
+      for (const autoConfig of [undefined, true]) {
+        it(`still merges ${filename} when autoConfig is ${autoConfig}`, async () => {
+          const fileConfig = { public: "default", cleanUrls: true };
+          await fs.writeFile(
+            filename,
+            JSON.stringify(
+              filename === "firebase.json"
+                ? { hosting: fileConfig }
+                : fileConfig,
+            ),
+          );
+
+          expect(loadConfigFile({ public: "app" }, autoConfig)).to.eql({
+            public: "app",
+            cleanUrls: true,
+          });
+        });
+
+        it(`merges a stringified object with ${filename} when autoConfig is ${autoConfig}`, async () => {
+          const fileConfig = { public: "default", cleanUrls: true };
+          await fs.writeFile(
+            filename,
+            JSON.stringify(
+              filename === "firebase.json"
+                ? { hosting: fileConfig }
+                : fileConfig,
+            ),
+          );
+
+          expect(
+            loadConfigFile(JSON.stringify({ public: "app" }), autoConfig),
+          ).to.eql({
+            public: "app",
+            cleanUrls: true,
+          });
+        });
+      }
+    }
+
+    it("still loads an explicit config filename", async () => {
+      await fs.writeFile(
+        "custom.json",
+        JSON.stringify({ hosting: { public: "app" } }),
+      );
+      expect(loadConfigFile("custom.json", false)).to.eql({ public: "app" });
+    });
+
+    it("still loads a stringified config object", () => {
+      expect(loadConfigFile(JSON.stringify({ public: "app" }), false)).to.eql({
+        public: "app",
+      });
+    });
+  });
+
   describe("extends the file config with the object passed", () => {
     beforeEach(() => {
       process.chdir(TMP_DIR);

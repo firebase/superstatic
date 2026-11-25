@@ -37,14 +37,20 @@ type ConfigLoaderFn = (
  * Loads Superstatic configuration from a file path, candidate file list, JSON
  * string, configuration object, or loader function.
  * @param filename config source or loader function.
+ * @param autoConfig whether to discover default config files.
  * @returns resolved configuration object, or the loader function unchanged.
  */
-function loadConfigFile<T extends ConfigLoaderFn>(filename: T): T;
+function loadConfigFile<T extends ConfigLoaderFn>(
+  filename: T,
+  autoConfig?: boolean,
+): T;
 function loadConfigFile(
   filename?: string | string[] | Configuration | null,
+  autoConfig?: boolean,
 ): Configuration;
 function loadConfigFile<T extends ConfigLoaderFn = ConfigLoaderFn>(
   filename?: string | string[] | Configuration | T | null,
+  autoConfig?: boolean,
 ): Configuration | T;
 function loadConfigFile(
   filename?:
@@ -54,13 +60,16 @@ function loadConfigFile(
     | Record<string, unknown>
     | ConfigLoaderFn
     | null,
+  autoConfig = true,
 ): Configuration | ConfigLoaderFn {
   if (typeof filename === "function") {
     return filename;
   }
 
   let configObject: Record<string, unknown> = {};
-  let candidateFiles: string | string[] | undefined = CONFIG_FILE;
+  let candidateFiles: string | string[] | undefined = autoConfig
+    ? CONFIG_FILE
+    : [];
 
   if (typeof filename === "string") {
     const parsed = parseJsonObject(filename);

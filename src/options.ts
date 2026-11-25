@@ -129,6 +129,8 @@ export type MiddlewareHandler =
 export interface MiddlewareOptions {
   fallthrough?: boolean;
   config?: string | Configuration;
+  /** Whether to discover default config files. Defaults to true. */
+  autoConfig?: boolean;
   protect?: string;
   env?: Record<string, string>;
   cwd?: string;
