@@ -19,28 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { default: superstatic } = require("../../");
-const connect = require("connect");
+import * as path from "node:path";
+
+import { server as superstaticServer } from "../../src";
 
 const spec = {
+  port: 3474,
   config: {
     public: "./app",
-    rewrites: [
-      {
-        source: "**",
-        destination: "/index.html",
-      },
-    ],
   },
-  cwd: process.cwd(),
+  cwd: __dirname,
+  errorPage: path.join(__dirname, "error.html"),
   compression: true,
+  debug: true,
 };
 
-const app = connect().use(superstatic(spec));
-
-app.listen(3474, (err) => {
-  if (err) {
-    console.log(err);
-  }
+const app = superstaticServer(spec);
+app.listen(() => {
   console.log("Superstatic now serving on port 3474 ...");
 });
